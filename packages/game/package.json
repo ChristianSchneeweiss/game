@@ -1,7 +1,14 @@
 {
-  "name": "game",
-  "module": "index.ts",
+  "name": "@loot-game/game",
+  "main": "index.ts",
+  "types": "index.ts",
   "type": "module",
+  "exports": {
+    "./*": {
+      "types": "./src/*.ts",
+      "import": "./src/*.ts"
+    }
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },

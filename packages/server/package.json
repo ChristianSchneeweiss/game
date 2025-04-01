@@ -1,5 +1,5 @@
 {
-  "name": "@better-t/server",
+  "name": "@loot-game/server",
   "main": "src/index.ts",
   "type": "module",
   "scripts": {
@@ -8,6 +8,7 @@
     "deploy": "bunx wrangler deploy --minify"
   },
   "dependencies": {
+    "@loot-game/game": "workspace:*",
     "@hono/trpc-server": "^0.3.4",
     "@supabase/supabase-js": "^2.49.4",
     "@trpc/server": "^11.0.1",
