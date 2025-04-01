@@ -4,7 +4,6 @@ import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { createContext } from "./lib/context";
 import { appRouter } from "./routers/index";
-import { EntityFactory } from "@loot-game/game/entity-factory";
 
 type Bindings = {
   FOO: string;
@@ -32,8 +31,5 @@ app.use(
 app.get("/healthCheck", (c) => {
   return c.text("OK");
 });
-
-const player = EntityFactory.createPlayer("player");
-console.log(player);
 
 export default app;

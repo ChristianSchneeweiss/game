@@ -23,23 +23,22 @@ export class BaseEntity implements Entity {
   spells: Spell[];
   battleManager?: BattleManager;
 
-  constructor(id: string, name: string, team: Team) {
+  constructor(
+    id: string,
+    name: string,
+    team: Team,
+    maxHealth: number,
+    maxMana: number,
+    baseAttributes: EntityAttributes
+  ) {
     this.id = id;
     this.name = name;
     this.team = team;
-    this.maxHealth = 100;
+    this.maxHealth = maxHealth;
     this.health = this.maxHealth;
-    this.maxMana = 100;
+    this.maxMana = maxMana;
     this.mana = this.maxMana;
-
-    this.baseAttributes = {
-      strength: 10,
-      intelligence: 10,
-      vitality: 10,
-      agility: 10,
-      //   fireResistance: 0,
-      //   iceResistance: 0,
-    };
+    this.baseAttributes = baseAttributes;
 
     this.activeEffects = [];
     this.statModifiers = [];

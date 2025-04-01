@@ -9,20 +9,30 @@ export const Route = createFileRoute("/")({
 });
 
 function HomeComponent() {
-  const healthCheck = useQuery(trpc.healthCheck.queryOptions());
   const { user } = userStore();
   const { data } = useQuery(
-    trpc.protected.queryOptions(undefined, {
+    trpc.getPlayer.queryOptions(undefined, {
       enabled: !!user,
     }),
   );
 
   return (
     <div className="flex w-[600px] flex-col items-center justify-center p-2 text-white">
-      <h3>Welcome Home!</h3>
       <Link to="/dashboard">Go to Dashboard</Link>
-      <p>healthCheck: {healthCheck.data}</p>
-      <p>protected: {data?.email}</p>
+      {data && (
+        <div className="mt-4 rounded-lg bg-gray-800 p-4">
+          <h4 className="mb-2 text-xl">Player: {data.name}</h4>
+          <div className="grid grid-cols-2 gap-2">
+            <p>Health: {data.health}</p>
+            <p>Mana: {data.mana}</p>
+            <p>Intelligence: {data.intelligence}</p>
+            <p>Vitality: {data.vitality}</p>
+            <p>Agility: {data.agility}</p>
+            <p>Strength: {data.strength}</p>
+          </div>
+        </div>
+      )}
+
       {user ? <p>User is logged in</p> : <AuthForm />}
     </div>
   );

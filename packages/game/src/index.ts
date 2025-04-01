@@ -1,5 +1,5 @@
 import { BM } from "./battle";
-import { EntityFactory } from "./entity-factory";
+import { EntityFactory } from "../../server/src/game-usecases/entity-factory";
 
 const player = EntityFactory.createPlayer("player");
 const enemy = EntityFactory.createEnemy();

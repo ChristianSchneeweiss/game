@@ -1,5 +1,7 @@
-import { TB_user } from "../db/schema";
+import { TB_player, TB_user } from "../db/schema";
+import { createInitialPlayer } from "../game-usecases/create-initial-player";
 import { protectedProcedure, publicProcedure, router } from "../lib/trpc";
+import { eq } from "drizzle-orm";
 
 export const appRouter = router({
   healthCheck: publicProcedure.query(() => {
@@ -20,6 +22,21 @@ export const appRouter = router({
         email: session.email,
       })
       .onConflictDoNothing();
+
+    await createInitialPlayer("player", session.id, db);
+  }),
+
+  getPlayer: protectedProcedure.query(async ({ ctx }) => {
+    const { session, db } = ctx;
+    if (!session) {
+      throw new Error("No session found");
+    }
+    const [player] = await db
+      .select()
+      .from(TB_player)
+      .where(eq(TB_player.userId, session.id));
+
+    return player;
   }),
 });
 
