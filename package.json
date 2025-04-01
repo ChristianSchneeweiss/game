@@ -3,7 +3,8 @@
   "private": true,
   "workspaces": [
     "packages/client",
-    "packages/server"
+    "packages/server",
+    "packages/game"
   ],
   "scripts": {
     "dev": "bun run --filter '@better-t/*' dev",

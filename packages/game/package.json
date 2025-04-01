@@ -1,0 +1,16 @@
+{
+  "name": "game",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@types/lodash": "^4.17.16",
+    "lodash": "^4.17.21",
+    "nanoid": "^5.1.5"
+  }
+}
