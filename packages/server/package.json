@@ -1,0 +1,23 @@
+{
+  "name": "@better-t/server",
+  "main": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "bunx wrangler dev --port 3000",
+    "start": "bun run src/index.ts",
+    "deploy": "bunx wrangler deploy --minify"
+  },
+  "dependencies": {
+    "@hono/trpc-server": "^0.3.4",
+    "@supabase/supabase-js": "^2.49.4",
+    "@trpc/server": "^11.0.1",
+    "drizzle-orm": "^0.41.0",
+    "hono": "^4.7.5",
+    "postgres": "^3.4.5",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.8",
+    "drizzle-kit": "^0.30.6"
+  }
+}
