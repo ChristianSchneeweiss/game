@@ -4,6 +4,7 @@ import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import type { AppRouter } from "../../../server/src/routers";
 import { toast } from "sonner";
 import { userStore } from "./user-store";
+import { SuperJSON } from "superjson";
 
 export const queryClient = new QueryClient({
   queryCache: new QueryCache({
@@ -24,6 +25,7 @@ export const trpcClient = createTRPCClient<AppRouter>({
   links: [
     httpBatchLink({
       url: import.meta.env.VITE_API_URL,
+      transformer: SuperJSON,
       fetch: async (url, options) => {
         const user = userStore.getState().user;
         if (user && options) {

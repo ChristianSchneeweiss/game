@@ -137,7 +137,7 @@ export interface BattleManager {
   reviveEntity(entityId: string, health: number): boolean;
   getCurrentRound(): BattleRound;
   join(entity: Entity): void;
-  processEntityDeath(entity: Entity): void;
+  processEntityDeath(entity: Entity, cause: { spellId: string }): void;
 }
 
 export interface BattleRound {
@@ -147,11 +147,22 @@ export interface BattleRound {
 
 export interface BattleHandler {
   damage(
+    spell: Spell | Effect,
     amount: number,
     type: DamageType,
     source: Entity,
     target: Entity
   ): number;
-  healing(amount: number, source: Entity, target: Entity): number;
-  effect(effect: Effect, source: Entity, target: Entity): Effect | null;
+  healing(
+    spell: Spell | Effect,
+    amount: number,
+    source: Entity,
+    target: Entity
+  ): number;
+  effect(
+    spell: Spell | Effect,
+    effect: Effect,
+    source: Entity,
+    target: Entity
+  ): Effect | null;
 }

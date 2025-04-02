@@ -17,13 +17,13 @@ export default function Header() {
             Home
           </Link>
           <Link
-            to="/dashboard"
+            to="/dungeons"
             activeProps={{
               className: "font-bold",
             }}
             activeOptions={{ exact: true }}
           >
-            Dashboard
+            Dungeons
           </Link>
           <Link
             to="/about"

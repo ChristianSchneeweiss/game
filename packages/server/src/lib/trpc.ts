@@ -1,11 +1,14 @@
 import { initTRPC, TRPCError } from "@trpc/server";
 import type { Context } from "./context";
+import { SuperJSON } from "superjson";
 
 /**
  * Initialization of tRPC backend
  * Should be done only once per backend!
  */
-const t = initTRPC.context<Context>().create();
+const t = initTRPC.context<Context>().create({
+  transformer: SuperJSON,
+});
 /**
  * Export reusable router and procedure helpers
  * that can be used throughout the router
@@ -18,5 +21,5 @@ export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
   if (!session) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
-  return next({ ctx });
+  return next({ ctx: { ...ctx, session } });
 });

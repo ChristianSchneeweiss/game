@@ -18,7 +18,6 @@ function HomeComponent() {
 
   return (
     <div className="flex w-[600px] flex-col items-center justify-center p-2 text-white">
-      <Link to="/dashboard">Go to Dashboard</Link>
       {data && (
         <div className="mt-4 rounded-lg bg-gray-800 p-4">
           <h4 className="mb-2 text-xl">Player: {data.name}</h4>
@@ -29,6 +28,19 @@ function HomeComponent() {
             <p>Vitality: {data.vitality}</p>
             <p>Agility: {data.agility}</p>
             <p>Strength: {data.strength}</p>
+          </div>
+          <div className="mt-4">
+            <h4 className="mb-2 text-xl">Spells</h4>
+            <div className="grid grid-cols-2 gap-3">
+              {data.spells.map((spell) => (
+                <div
+                  key={spell.id}
+                  className="rounded-md bg-gray-700 p-2 shadow-sm"
+                >
+                  <p className="font-medium capitalize">{spell.type}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}

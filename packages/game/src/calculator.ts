@@ -1,4 +1,10 @@
-import type { BattleHandler, BattleManager, DamageType, Effect } from "./types";
+import type {
+  BattleHandler,
+  BattleManager,
+  DamageType,
+  Effect,
+  Spell,
+} from "./types";
 import type { Entity } from "./types";
 
 export class calculator {
@@ -51,6 +57,7 @@ export class Handler implements BattleHandler {
   constructor(private battleManager: BattleManager) {}
 
   damage(
+    spell: Spell | Effect,
     amount: number,
     type: DamageType,
     source: Entity,
@@ -59,18 +66,30 @@ export class Handler implements BattleHandler {
     const damage = calculator.calculateRealDamage(source, target, amount, type);
     target.applyDamage(damage, type, source);
     if (target.isDead()) {
-      this.battleManager.processEntityDeath(target);
+      this.battleManager.processEntityDeath(target, {
+        spellId: spell.config.id,
+      });
     }
     return damage;
   }
 
-  healing(amount: number, source: Entity, target: Entity): number {
+  healing(
+    spell: Spell | Effect,
+    amount: number,
+    source: Entity,
+    target: Entity
+  ): number {
     const healing = calculator.calculateRealHealing(source, target, amount);
     target.applyHealing(healing, source);
     return healing;
   }
 
-  effect(effect: Effect, source: Entity, target: Entity): Effect | null {
+  effect(
+    spell: Spell | Effect,
+    effect: Effect,
+    source: Entity,
+    target: Entity
+  ): Effect | null {
     const realEffect = calculator.calculateRealEffect(effect);
     if (!realEffect) return null;
     console.log(

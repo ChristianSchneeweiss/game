@@ -136,6 +136,7 @@ export class DamageOverTimeEffect
 
   onRoundEnd(): void {
     const damage = this.battleHandler?.damage(
+      this,
       this.damagePerRound,
       this.damageType,
       this.source,
@@ -167,6 +168,7 @@ export class HealingOverTimeEffect
 
   onRoundEnd(): void {
     const healing = this.battleHandler?.healing(
+      this,
       this.healingPerRound,
       this.source,
       this.target
@@ -251,6 +253,7 @@ export class CompositeEffect extends BaseEffect {
       if (effect instanceof DamageOverTimeEffect) {
         const dotEffect = effect as DamageOverTimeEffectExposed;
         this.battleHandler?.damage(
+          this,
           dotEffect.damagePerRound,
           dotEffect.damageType,
           this.source,

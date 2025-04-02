@@ -15,6 +15,11 @@ export class BM implements BattleManager {
   rounds: BattleRound[];
   handler: BattleHandler;
   lifeCycleHooks: LifeCycleHooks[];
+  roundEvents: {
+    round: number;
+    result: SpellResult[];
+    deathEvents: { entityId: string; spellId: string }[];
+  }[] = [];
 
   constructor(entities: Entity[]) {
     this.deadEntities = new Map();
@@ -64,11 +69,15 @@ export class BM implements BattleManager {
     return true;
   }
 
-  processEntityDeath(entity: Entity): void {
+  processEntityDeath(entity: Entity, cause: { spellId: string }): void {
     if (!entity.isDead()) return;
 
     this.entities = this.entities.filter((e) => e.id !== entity.id);
     this.deadEntities.set(entity.id, entity);
+    this.roundEvents[this.rounds.length - 1]!.deathEvents.push({
+      entityId: entity.id,
+      spellId: cause.spellId,
+    });
     console.log(`${entity.name} has died`);
   }
 
@@ -81,6 +90,7 @@ export class BM implements BattleManager {
     };
 
     this.rounds.push(round);
+    this.roundEvents.push({ round: round.round, result: [], deathEvents: [] });
 
     this.lifeCycleHooks.forEach((hook) => {
       hook.onRoundStart?.();
@@ -181,6 +191,9 @@ export class BM implements BattleManager {
           if (targets.length > 0 || spell.config.targetType === "NO_TARGET") {
             const targetIds = targets.length > 0 ? [targets[0]!.id] : [];
             const result = this.castSpell(caster, spell.config.id, targetIds);
+
+            this.roundEvents[this.rounds.length - 1]!.result.push(result);
+
             console.log(prettyPrintSpellResult(result));
           }
         });

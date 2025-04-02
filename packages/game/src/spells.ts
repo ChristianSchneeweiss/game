@@ -143,6 +143,7 @@ export class DamageSpell extends BaseSpell {
     targets.forEach((target) => {
       const damage = Math.floor(this.calculateRawDamage(caster, target, roll));
       const realDamage = battleManager.handler.damage(
+        this,
         damage,
         this.damageType,
         caster,
@@ -194,6 +195,7 @@ export class HealingSpell extends BaseSpell {
     targets.forEach((target) => {
       const scaledHealing = this.calculateHealing(caster);
       const realHealing = battleManager.handler.healing(
+        this,
         scaledHealing,
         caster,
         target
@@ -248,7 +250,12 @@ export class ApplyStatusSpell extends BaseSpell {
 
     targets.forEach((target) => {
       const effect = this.effectFactory(caster, target, this);
-      const realEffect = battleManager.handler.effect(effect, caster, target);
+      const realEffect = battleManager.handler.effect(
+        this,
+        effect,
+        caster,
+        target
+      );
       if (realEffect) {
         effectsApplied.push(realEffect);
       }
@@ -485,6 +492,7 @@ export class AutoAttackSpell extends BaseSpell {
       };
     }
     const damage = battleManager.handler.damage(
+      this,
       1.5 * roll,
       "PHYSICAL",
       caster,

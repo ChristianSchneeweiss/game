@@ -21,10 +21,16 @@ export const createInitialPlayer = async (
       })
       .onConflictDoNothing()
       .returning();
-    const spellStats = await tx.insert(TB_spellStats).values({
-      playerId: player.id,
-      type: "fireball",
-    });
+    const spellStats = await tx.insert(TB_spellStats).values([
+      {
+        playerId: player.id,
+        type: "fireball",
+      },
+      {
+        playerId: player.id,
+        type: "autoattack",
+      },
+    ]);
 
     return player;
   });
