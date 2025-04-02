@@ -1,7 +1,13 @@
-import { integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  integer,
+  pgTable,
+  text,
+  timestamp,
+} from "drizzle-orm/pg-core";
 import { customAlphabet } from "nanoid";
 
-const id = customAlphabet("1234567890abcdefghijklmnopqrstuvwxyz", 12);
+export const id = customAlphabet("1234567890abcdefghijklmnopqrstuvwxyz", 12);
 
 export const TB_user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -34,6 +40,28 @@ export const TB_spellStats = pgTable("spell_stats", {
     .primaryKey()
     .$defaultFn(() => id()),
   type: text("type").notNull(),
+  playerId: text("player_id")
+    .notNull()
+    .references(() => TB_player.id),
+});
+
+export const TB_dungeonData = pgTable("dungeon_data", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => id()),
+  key: text("key").notNull(),
+  round: integer("round").notNull().default(0),
+  cleared: boolean("cleared").notNull().default(false),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+});
+
+export const TB_dungeonParticipant = pgTable("dungeon_participant", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => id()),
+  dungeonId: text("dungeon_id")
+    .notNull()
+    .references(() => TB_dungeonData.id),
   playerId: text("player_id")
     .notNull()
     .references(() => TB_player.id),

@@ -21,7 +21,7 @@ export const createInitialPlayer = async (
       })
       .onConflictDoNothing()
       .returning();
-    const spellStats = await tx.insert(TB_spellStats).values([
+    await tx.insert(TB_spellStats).values([
       {
         playerId: player.id,
         type: "fireball",

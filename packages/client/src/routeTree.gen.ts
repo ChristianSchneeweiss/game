@@ -11,17 +11,12 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as DungeonsImport } from './routes/dungeons'
 import { Route as AboutImport } from './routes/about'
 import { Route as IndexImport } from './routes/index'
+import { Route as DungeonsIndexImport } from './routes/dungeons/index'
+import { Route as DungeonsIdImport } from './routes/dungeons/$id'
 
 // Create/Update Routes
-
-const DungeonsRoute = DungeonsImport.update({
-  id: '/dungeons',
-  path: '/dungeons',
-  getParentRoute: () => rootRoute,
-} as any)
 
 const AboutRoute = AboutImport.update({
   id: '/about',
@@ -32,6 +27,18 @@ const AboutRoute = AboutImport.update({
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const DungeonsIndexRoute = DungeonsIndexImport.update({
+  id: '/dungeons/',
+  path: '/dungeons/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const DungeonsIdRoute = DungeonsIdImport.update({
+  id: '/dungeons/$id',
+  path: '/dungeons/$id',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -53,11 +60,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutImport
       parentRoute: typeof rootRoute
     }
-    '/dungeons': {
-      id: '/dungeons'
+    '/dungeons/$id': {
+      id: '/dungeons/$id'
+      path: '/dungeons/$id'
+      fullPath: '/dungeons/$id'
+      preLoaderRoute: typeof DungeonsIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/dungeons/': {
+      id: '/dungeons/'
       path: '/dungeons'
       fullPath: '/dungeons'
-      preLoaderRoute: typeof DungeonsImport
+      preLoaderRoute: typeof DungeonsIndexImport
       parentRoute: typeof rootRoute
     }
   }
@@ -68,41 +82,46 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/dungeons': typeof DungeonsRoute
+  '/dungeons/$id': typeof DungeonsIdRoute
+  '/dungeons': typeof DungeonsIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/dungeons': typeof DungeonsRoute
+  '/dungeons/$id': typeof DungeonsIdRoute
+  '/dungeons': typeof DungeonsIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/dungeons': typeof DungeonsRoute
+  '/dungeons/$id': typeof DungeonsIdRoute
+  '/dungeons/': typeof DungeonsIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/dungeons'
+  fullPaths: '/' | '/about' | '/dungeons/$id' | '/dungeons'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/dungeons'
-  id: '__root__' | '/' | '/about' | '/dungeons'
+  to: '/' | '/about' | '/dungeons/$id' | '/dungeons'
+  id: '__root__' | '/' | '/about' | '/dungeons/$id' | '/dungeons/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
-  DungeonsRoute: typeof DungeonsRoute
+  DungeonsIdRoute: typeof DungeonsIdRoute
+  DungeonsIndexRoute: typeof DungeonsIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
-  DungeonsRoute: DungeonsRoute,
+  DungeonsIdRoute: DungeonsIdRoute,
+  DungeonsIndexRoute: DungeonsIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -117,7 +136,8 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/about",
-        "/dungeons"
+        "/dungeons/$id",
+        "/dungeons/"
       ]
     },
     "/": {
@@ -126,8 +146,11 @@ export const routeTree = rootRoute
     "/about": {
       "filePath": "about.tsx"
     },
-    "/dungeons": {
-      "filePath": "dungeons.tsx"
+    "/dungeons/$id": {
+      "filePath": "dungeons/$id.tsx"
+    },
+    "/dungeons/": {
+      "filePath": "dungeons/index.tsx"
     }
   }
 }

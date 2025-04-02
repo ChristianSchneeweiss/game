@@ -1,9 +1,17 @@
-import { TB_player, TB_spellStats, TB_user } from "../db/schema";
+import { dungeonManager } from "../game-usecases/dungeon-manager";
+import { eq, and } from "drizzle-orm";
+import { z } from "zod";
+import {
+  TB_dungeonData,
+  TB_dungeonParticipant,
+  TB_player,
+  TB_spellStats,
+  TB_user,
+} from "../db/schema";
 import { createInitialPlayer } from "../game-usecases/create-initial-player";
-import { protectedProcedure, publicProcedure, router } from "../lib/trpc";
-import { eq } from "drizzle-orm";
-import { Dungeon1 } from "@loot-game/game/dungeons/dungeon-1";
 import { EntityFactory } from "../game-usecases/entity-factory";
+import { protectedProcedure, publicProcedure, router } from "../lib/trpc";
+import { produce } from "immer";
 
 export const appRouter = router({
   healthCheck: publicProcedure.query(() => {
@@ -46,27 +54,55 @@ export const appRouter = router({
     return { ...player, spells };
   }),
 
-  fightDungeon: protectedProcedure.mutation(async ({ ctx }) => {
+  enterDungeon: protectedProcedure.mutation(async ({ ctx }) => {
     const { session, db } = ctx;
-    const dungeon = new Dungeon1();
-    const player = await EntityFactory.createPlayer(session.id, db);
-    dungeon.addPlayer(player);
-    const result = dungeon.fightRound();
-    return result.map((r) => ({
-      round: r.round,
-      result: r.result.map((r) => ({
-        ...r,
-        caster: r.caster.id,
-        affectedTargets: r.affectedTargets.map((t) => t.id),
-        entitiesSummoned: r.entitiesSummoned?.map((t) => t.id),
-        entitiesRevived: r.entitiesRevived?.map((t) => t.id),
-      })),
-      deathEvents: r.deathEvents.map((r) => ({
-        entityId: r.entityId,
-        spellId: r.spellId,
-      })),
-    }));
+    const player = await EntityFactory.createPlayerFromUser(session.id, db);
+    const dungeon = await dungeonManager.enterDungeon(player, "dungeon-1", db);
+    return dungeon;
   }),
+
+  activeDungeons: protectedProcedure.query(async ({ ctx }) => {
+    const { session, db } = ctx;
+    const dungeons = await db
+      .select({ id: TB_dungeonData.id, key: TB_dungeonData.key })
+      .from(TB_dungeonData)
+      .innerJoin(
+        TB_dungeonParticipant,
+        eq(TB_dungeonData.id, TB_dungeonParticipant.dungeonId)
+      )
+      .innerJoin(TB_player, eq(TB_dungeonParticipant.playerId, TB_player.id))
+      .where(
+        and(eq(TB_player.userId, session.id), eq(TB_dungeonData.cleared, false))
+      );
+
+    return dungeons;
+  }),
+
+  fightDungeon: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { session, db } = ctx;
+      const bm = await dungeonManager.fightRound(input.id, db);
+
+      const dto = produce(bm.roundEvents, (draft) => {
+        draft.forEach((r) => {
+          r.result.forEach((r) => {
+            r.caster.battleManager = undefined;
+            r.affectedTargets.forEach((t) => {
+              t.battleManager = undefined;
+              t.spells.forEach((s) => {
+                s.battleManager = undefined;
+              });
+            });
+            r.caster.spells.forEach((s) => {
+              s.battleManager = undefined;
+            });
+          });
+        });
+      });
+
+      return dto;
+    }),
 });
 
 export type AppRouter = typeof appRouter;

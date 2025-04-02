@@ -22,6 +22,20 @@ export class EntityFactory {
     return baseEntity;
   }
 
+  static async createPlayerFromUser(
+    userId: string,
+    db: PostgresJsDatabase
+  ): Promise<Entity> {
+    const [player] = await db
+      .select()
+      .from(TB_player)
+      .where(eq(TB_player.userId, userId));
+    if (!player) {
+      throw new Error("Player not found");
+    }
+    return this.createPlayer(player.id, db);
+  }
+
   static async createPlayer(
     id: string,
     db: PostgresJsDatabase
@@ -29,7 +43,7 @@ export class EntityFactory {
     const [player] = await db
       .select()
       .from(TB_player)
-      .where(eq(TB_player.userId, id));
+      .where(eq(TB_player.id, id));
     if (!player) {
       throw new Error("Player not found");
     }
