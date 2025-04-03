@@ -13,6 +13,10 @@ RUN bun install
 # Build the Vite application
 RUN bun run build:client
 
+ARG VITE_SUPABASE_KEY
+ARG VITE_SUPABASE_URL
+ARG VITE_API_URL
+
 # Expose the port
 EXPOSE 3000
 
