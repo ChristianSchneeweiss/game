@@ -11,7 +11,7 @@ COPY . .
 RUN bun install
 
 # Build the Vite application
-RUN bun run build
+RUN bun run build:client
 
 # Expose the port
 EXPOSE 3000
