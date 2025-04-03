@@ -17,4 +17,4 @@ RUN bun run build:client
 EXPOSE 3000
 
 # Serve the built files with Bun
-CMD ["bun", "--hot", "serve", "packages/client/dist"]
+CMD ["bunx", "serve", "packages/client/dist", "--port", "3000"]
