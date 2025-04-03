@@ -3,9 +3,10 @@ import { BaseEntity } from "@loot-game/game/base-entity";
 import type { Entity } from "@loot-game/game/types";
 import { FireballSpell } from "@loot-game/game/spells/fireball";
 import { AutoAttackSpell } from "@loot-game/game/spells";
-import { TB_player, TB_spellStats } from "../db/schema";
+import { TB_dungeonEnemy, TB_player, TB_spellStats } from "../db/schema";
 import { eq } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import { Goblin } from "@loot-game/game/enemies/goblin";
 
 export class EntityFactory {
   static createEnemy(): Entity {
@@ -20,6 +21,32 @@ export class EntityFactory {
       new AutoAttackSpell(nanoid()),
     ];
     return baseEntity;
+  }
+
+  static createEnemyFromKey(key: string, db: PostgresJsDatabase): Entity {
+    const type = key.split("_")[0];
+    switch (type) {
+      case "goblin":
+        const goblin = new Goblin();
+        goblin.id = key;
+        return goblin;
+      default:
+        throw new Error(`Unknown enemy type: ${type}`);
+    }
+  }
+
+  static createEnemyFromDb(
+    enemies: (typeof TB_dungeonEnemy.$inferSelect)[],
+    db: PostgresJsDatabase
+  ): Entity[][] {
+    const entitiesByRound: Entity[][] = [];
+    for (const enemy of enemies) {
+      const entity = this.createEnemyFromKey(enemy.enemyKey, db);
+      const current = entitiesByRound[enemy.inRound] || [];
+      entitiesByRound[enemy.inRound] = [...current, entity];
+    }
+
+    return entitiesByRound;
   }
 
   static async createPlayerFromUser(

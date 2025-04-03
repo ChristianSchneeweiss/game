@@ -4,7 +4,12 @@ import type { DungeonData } from "@loot-game/game/dungeons/types";
 import type { Entity } from "@loot-game/game/types";
 import { eq } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import { id, TB_dungeonData, TB_dungeonParticipant } from "../db/schema";
+import {
+  id,
+  TB_dungeonData,
+  TB_dungeonEnemy,
+  TB_dungeonParticipant,
+} from "../db/schema";
 import { EntityFactory } from "./entity-factory";
 
 export const dungeonManager = {
@@ -31,6 +36,15 @@ export const dungeonManager = {
         dungeonId: dungeon.id,
         playerId: player.id,
       });
+      for (const [index, round] of dungeon.actualEnemies.entries()) {
+        await tx.insert(TB_dungeonEnemy).values(
+          round.map((enemy) => ({
+            dungeonId: dungeon.id,
+            enemyKey: enemy.id,
+            inRound: index,
+          }))
+        );
+      }
     });
 
     // todo store in db
@@ -48,6 +62,12 @@ export const dungeonManager = {
       .select()
       .from(TB_dungeonParticipant)
       .where(eq(TB_dungeonParticipant.dungeonId, id));
+    const enemyData = await db
+      .select()
+      .from(TB_dungeonEnemy)
+      .where(eq(TB_dungeonEnemy.dungeonId, id));
+
+    const enemies = EntityFactory.createEnemyFromDb(enemyData, db);
     const playerTeam = await EntityFactory.createPlayer(
       participants[0].playerId,
       db
@@ -57,7 +77,7 @@ export const dungeonManager = {
       id,
       playerTeam: [playerTeam],
       round: dungeon.round,
-      actualEnemies: dungeon1().rollEnemies(),
+      actualEnemies: enemies,
       key: dungeon.key,
     } as DungeonData;
   },

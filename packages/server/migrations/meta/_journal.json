@@ -15,6 +15,20 @@
       "when": 1743614940820,
       "tag": "0001_gorgeous_nitro",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1743670509365,
+      "tag": "0002_lame_thena",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1743670544375,
+      "tag": "0003_secret_skullbuster",
+      "breakpoints": true
     }
   ]
 }

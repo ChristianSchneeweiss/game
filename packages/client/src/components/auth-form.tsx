@@ -4,6 +4,7 @@ import { userStore } from "@/utils/user-store";
 import { trpc, trpcClient } from "@/utils/trpc";
 import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
+import { Button } from "./ui/button";
 
 type AuthFormProps = {
   onSuccess?: () => void;
@@ -17,6 +18,12 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
   const { mutateAsync: createUser } = useMutation(
     trpc.createUser.mutationOptions(),
   );
+
+  const googleLogin = async () => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -102,6 +109,7 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
             : "Don't have an account? Sign up"}
         </button>
       </div>
+      <Button onClick={googleLogin}>Google</Button>
     </div>
   );
 }

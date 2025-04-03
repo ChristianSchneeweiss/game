@@ -66,3 +66,14 @@ export const TB_dungeonParticipant = pgTable("dungeon_participant", {
     .notNull()
     .references(() => TB_player.id),
 });
+
+export const TB_dungeonEnemy = pgTable("dungeon_enemy", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => id()),
+  dungeonId: text("dungeon_id")
+    .notNull()
+    .references(() => TB_dungeonData.id),
+  enemyKey: text("enemy_key").notNull(),
+  inRound: integer("in_round").notNull(),
+});

@@ -1,0 +1,1 @@
+ALTER TABLE "dungeon_enemy" ADD COLUMN "in_round" integer NOT NULL;
