@@ -1,6 +1,7 @@
 {
   "name": "@loot-game/server",
   "main": "src/index.ts",
+  "packageManager": "bun@1.2.8",
   "type": "module",
   "scripts": {
     "dev": "bunx wrangler dev --port 3000",

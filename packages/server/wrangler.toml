@@ -1,4 +1,4 @@
-name = "hono-template"
+name = 'game-server'
 main = "src/index.ts"
 compatibility_date = "2025-03-14"
 
