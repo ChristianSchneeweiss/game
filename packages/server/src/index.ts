@@ -23,7 +23,7 @@ app.use(
     // @ts-ignore
     router: appRouter,
     createContext: ({ req }, c) => {
-      return createContext({ req, env: c.env });
+      return createContext({ req, env: process.env as Record<string, string> });
     },
   })
 );
