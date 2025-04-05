@@ -15,6 +15,7 @@ import { Route as AboutImport } from './routes/about'
 import { Route as IndexImport } from './routes/index'
 import { Route as DungeonsIndexImport } from './routes/dungeons/index'
 import { Route as DungeonsIdImport } from './routes/dungeons/$id'
+import { Route as BattleIdImport } from './routes/battle/$id'
 
 // Create/Update Routes
 
@@ -42,6 +43,12 @@ const DungeonsIdRoute = DungeonsIdImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const BattleIdRoute = BattleIdImport.update({
+  id: '/battle/$id',
+  path: '/battle/$id',
+  getParentRoute: () => rootRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -58,6 +65,13 @@ declare module '@tanstack/react-router' {
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutImport
+      parentRoute: typeof rootRoute
+    }
+    '/battle/$id': {
+      id: '/battle/$id'
+      path: '/battle/$id'
+      fullPath: '/battle/$id'
+      preLoaderRoute: typeof BattleIdImport
       parentRoute: typeof rootRoute
     }
     '/dungeons/$id': {
@@ -82,6 +96,7 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/battle/$id': typeof BattleIdRoute
   '/dungeons/$id': typeof DungeonsIdRoute
   '/dungeons': typeof DungeonsIndexRoute
 }
@@ -89,6 +104,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/battle/$id': typeof BattleIdRoute
   '/dungeons/$id': typeof DungeonsIdRoute
   '/dungeons': typeof DungeonsIndexRoute
 }
@@ -97,22 +113,30 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/battle/$id': typeof BattleIdRoute
   '/dungeons/$id': typeof DungeonsIdRoute
   '/dungeons/': typeof DungeonsIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/dungeons/$id' | '/dungeons'
+  fullPaths: '/' | '/about' | '/battle/$id' | '/dungeons/$id' | '/dungeons'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/dungeons/$id' | '/dungeons'
-  id: '__root__' | '/' | '/about' | '/dungeons/$id' | '/dungeons/'
+  to: '/' | '/about' | '/battle/$id' | '/dungeons/$id' | '/dungeons'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/battle/$id'
+    | '/dungeons/$id'
+    | '/dungeons/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  BattleIdRoute: typeof BattleIdRoute
   DungeonsIdRoute: typeof DungeonsIdRoute
   DungeonsIndexRoute: typeof DungeonsIndexRoute
 }
@@ -120,6 +144,7 @@ export interface RootRouteChildren {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  BattleIdRoute: BattleIdRoute,
   DungeonsIdRoute: DungeonsIdRoute,
   DungeonsIndexRoute: DungeonsIndexRoute,
 }
@@ -136,6 +161,7 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/about",
+        "/battle/$id",
         "/dungeons/$id",
         "/dungeons/"
       ]
@@ -145,6 +171,9 @@ export const routeTree = rootRoute
     },
     "/about": {
       "filePath": "about.tsx"
+    },
+    "/battle/$id": {
+      "filePath": "battle/$id.tsx"
     },
     "/dungeons/$id": {
       "filePath": "dungeons/$id.tsx"

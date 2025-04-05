@@ -1,11 +1,14 @@
+import type { EventData, EventTypes } from "@loot-game/game/types";
 import {
   boolean,
   integer,
+  json,
   pgTable,
   text,
   timestamp,
 } from "drizzle-orm/pg-core";
 import { customAlphabet } from "nanoid";
+import SuperJSON from "superjson";
 
 export const id = customAlphabet("1234567890abcdefghijklmnopqrstuvwxyz", 12);
 
@@ -76,4 +79,15 @@ export const TB_dungeonEnemy = pgTable("dungeon_enemy", {
     .references(() => TB_dungeonData.id),
   enemyKey: text("enemy_key").notNull(),
   inRound: integer("in_round").notNull(),
+});
+
+export const TB_timeline = pgTable("timeline", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => id(24)),
+  battleId: text("battle_id").notNull(),
+  inBattleIndex: integer("in_battle_index").notNull(),
+  round: integer("round").notNull(),
+  eventType: text("event_type").$type<EventTypes>().notNull(),
+  data: json("data").notNull(), // superjson event data
 });

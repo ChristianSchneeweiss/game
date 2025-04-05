@@ -10,8 +10,8 @@ import type {
   Effect,
   Entity,
   Spell,
+  SpellCastEvent,
   SpellConfig,
-  SpellResult,
 } from "./types";
 
 export abstract class BaseSpell implements Spell {
@@ -70,31 +70,24 @@ export abstract class BaseSpell implements Spell {
     }
   }
 
-  cast(caster: Entity, targets: Entity[]): SpellResult {
+  cast(caster: Entity, targets: Entity[]): SpellCastEvent | null {
     if (!this.battleManager) throw new Error("Battle manager not set");
     if (!this.canCast(caster)) {
-      return {
-        success: false,
-        message: "Cannot cast spell",
-        affectedTargets: [],
-        caster,
-        spellId: this.config.id,
-      };
+      return null;
     }
 
     if (!this.validateTargets(caster, targets)) {
-      return {
-        success: false,
-        message: "Invalid targets",
-        affectedTargets: [],
-        caster,
-        spellId: this.config.id,
-      };
+      return null;
     }
 
     this.processCasting(caster);
     const roll = Math.round(Math.random() * 20);
-    return this._cast(caster, targets, this.battleManager, roll);
+    const result = this._cast(caster, targets, this.battleManager, roll);
+    if (!result) return null;
+    return {
+      eventType: "SPELL_CAST",
+      data: result,
+    };
   }
 
   protected abstract _cast(
@@ -102,7 +95,7 @@ export abstract class BaseSpell implements Spell {
     targets: Entity[],
     battleManager: BattleManager,
     roll: number
-  ): SpellResult;
+  ): SpellCastEvent["data"] | null;
 
   protected validateTargets(caster: Entity, targets: Entity[]): boolean {
     if (this.config.targetType === "NO_TARGET") return true;
@@ -137,7 +130,7 @@ export class DamageSpell extends BaseSpell {
     targets: Entity[],
     battleManager: BattleManager,
     roll: number
-  ): SpellResult {
+  ): SpellCastEvent["data"] | null {
     const damageDealt = new Map<string, number>();
 
     targets.forEach((target) => {
@@ -157,13 +150,10 @@ export class DamageSpell extends BaseSpell {
       .reduce((acc, curr) => acc + curr, 0);
 
     return {
-      success: true,
-      message: `${caster.name} cast ${this.config.name} for ${totalDamage} damage`,
-      affectedTargets: targets,
-      damageDealt,
       roll,
-      caster,
       spellId: this.config.id,
+      totalDamage,
+      damageApplied: damageDealt,
     };
   }
 
@@ -189,7 +179,7 @@ export class HealingSpell extends BaseSpell {
     targets: Entity[],
     battleManager: BattleManager,
     roll: number
-  ): SpellResult {
+  ): SpellCastEvent["data"] | null {
     const healingDone = new Map<string, number>();
 
     targets.forEach((target) => {
@@ -204,12 +194,8 @@ export class HealingSpell extends BaseSpell {
     });
 
     return {
-      success: true,
-      message: `${caster.name} cast ${this.config.name}`,
-      affectedTargets: targets,
-      healingDone,
+      healingApplied: healingDone,
       roll,
-      caster,
       spellId: this.config.id,
     };
   }
@@ -245,8 +231,8 @@ export class ApplyStatusSpell extends BaseSpell {
     targets: Entity[],
     battleManager: BattleManager,
     roll: number
-  ): SpellResult {
-    const effectsApplied: Effect[] = [];
+  ): SpellCastEvent["data"] | null {
+    const effectsApplied = new Map<string, string>();
 
     targets.forEach((target) => {
       const effect = this.effectFactory(caster, target, this);
@@ -257,17 +243,13 @@ export class ApplyStatusSpell extends BaseSpell {
         target
       );
       if (realEffect) {
-        effectsApplied.push(realEffect);
+        // effectsApplied.set(target.id, realEffect.) // TODO
       }
     });
 
     return {
-      success: true,
-      message: `${caster.name} cast ${this.config.name}`,
-      affectedTargets: targets,
       effectsApplied,
       roll,
-      caster,
       spellId: this.config.id,
     };
   }
@@ -347,7 +329,7 @@ export class SummonSpell extends BaseSpell {
     targets: Entity[],
     battleManager: BattleManager,
     roll: number
-  ): SpellResult {
+  ): SpellCastEvent["data"] | null {
     const summonedEntity = this.summonFactory();
     summonedEntity.team = caster.team;
     battleManager.join(summonedEntity);
@@ -380,7 +362,7 @@ export class ResurrectionSpell extends BaseSpell {
     targets: Entity[],
     battleManager: BattleManager,
     roll: number
-  ): SpellResult {
+  ): SpellCastEvent["data"] | null {
     const revivedEntities: Entity[] = [];
 
     targets.forEach((target) => {
@@ -417,38 +399,22 @@ export class TimeWarpSpell extends BaseSpell {
     targets: Entity[],
     battleState: BattleManager,
     roll: number
-  ): SpellResult {
+  ): SpellCastEvent["data"] | null {
     const currentRound = battleState.getCurrentRound();
     const target = targets[0];
     if (!target) {
-      return {
-        success: false,
-        message: "No valid target for time warp",
-        affectedTargets: [],
-        caster,
-        spellId: this.config.id,
-      };
+      return null;
     }
 
     const targetIndex = currentRound.order.indexOf(target.id);
     if (targetIndex === -1) {
-      return {
-        success: false,
-        message: "Target not found in turn order",
-        affectedTargets: [],
-        caster,
-        spellId: this.config.id,
-      };
+      return null;
     }
 
     currentRound.order.splice(targetIndex, 0, target.id);
 
     return {
-      success: true,
-      message: `${caster.name} granted ${target.name} an extra action`,
-      affectedTargets: targets,
       roll,
-      caster,
       spellId: this.config.id,
     };
   }
@@ -480,16 +446,10 @@ export class AutoAttackSpell extends BaseSpell {
     targets: Entity[],
     battleManager: BattleManager,
     roll: number
-  ): SpellResult {
+  ): SpellCastEvent["data"] | null {
     const target = targets[0];
     if (!target) {
-      return {
-        success: false,
-        message: "No valid target for auto-attack",
-        affectedTargets: [],
-        caster,
-        spellId: this.config.id,
-      };
+      return null;
     }
     const damage = battleManager.handler.damage(
       this,
@@ -500,13 +460,10 @@ export class AutoAttackSpell extends BaseSpell {
     );
 
     return {
-      success: true,
-      message: `${caster.name} auto-attacks ${target.name} for ${damage} damage`,
-      affectedTargets: [target],
-      damageDealt: new Map([[target.id, damage]]),
+      damageApplied: new Map([[target.id, damage]]),
       roll,
-      caster,
       spellId: this.config.id,
+      totalDamage: damage,
     };
   }
 }

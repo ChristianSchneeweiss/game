@@ -1,12 +1,14 @@
 import { Handler } from "./calculator";
 import type {
-  BattleManager,
-  Entity,
-  BattleRound,
-  Team,
-  SpellResult,
   BattleHandler,
+  BattleManager,
+  BattleRound,
+  Entity,
   LifeCycleHooks,
+  SpellCastEvent,
+  Team,
+  TimelineEvent,
+  TimelineEventFull,
 } from "./types";
 
 export class BM implements BattleManager {
@@ -15,11 +17,7 @@ export class BM implements BattleManager {
   rounds: BattleRound[];
   handler: BattleHandler;
   lifeCycleHooks: LifeCycleHooks[];
-  roundEvents: {
-    round: number;
-    result: SpellResult[];
-    deathEvents: { entityId: string; spellId: string }[];
-  }[] = [];
+  events: TimelineEventFull[] = [];
 
   constructor(entities: Entity[]) {
     this.deadEntities = new Map();
@@ -40,6 +38,10 @@ export class BM implements BattleManager {
       spell.battleManager = this;
       this.lifeCycleHooks.push(spell);
     });
+  }
+
+  processEvent(event: TimelineEvent): void {
+    this.events.push({ round: this.getCurrentRound().round, event });
   }
 
   getTeam(team: Team): Entity[] {
@@ -64,7 +66,6 @@ export class BM implements BattleManager {
     this.deadEntities.delete(entityId);
 
     entity.health = Math.min(health, entity.maxHealth);
-    this.entities.push(entity);
 
     return true;
   }
@@ -72,11 +73,10 @@ export class BM implements BattleManager {
   processEntityDeath(entity: Entity, cause: { spellId: string }): void {
     if (!entity.isDead()) return;
 
-    this.entities = this.entities.filter((e) => e.id !== entity.id);
     this.deadEntities.set(entity.id, entity);
-    this.roundEvents[this.rounds.length - 1]!.deathEvents.push({
-      entityId: entity.id,
-      spellId: cause.spellId,
+    this.processEvent({
+      eventType: "DEATH",
+      data: { id: entity.id },
     });
     console.log(`${entity.name} has died`);
   }
@@ -84,13 +84,12 @@ export class BM implements BattleManager {
   startNextRound(): void {
     const round: BattleRound = {
       round: this.rounds.length,
-      order: this.entities
+      order: this.getAliveEntities()
         .sort((a, b) => b.getStat("agility") - a.getStat("agility"))
         .map((e) => e.id),
     };
 
     this.rounds.push(round);
-    this.roundEvents.push({ round: round.round, result: [], deathEvents: [] });
 
     this.lifeCycleHooks.forEach((hook) => {
       hook.onRoundStart?.();
@@ -140,32 +139,22 @@ export class BM implements BattleManager {
     return currentRound;
   }
 
-  castSpell(caster: Entity, spellId: string, targetIds: string[]): SpellResult {
-    // Find the spell
+  castSpell(
+    caster: Entity,
+    spellId: string,
+    targetIds: string[]
+  ): SpellCastEvent | null {
     const spell = caster.spells.find((s) => s.config.id === spellId);
     if (!spell) {
-      return {
-        success: false,
-        message: `Spell ${spellId} not found for ${caster.name}`,
-        affectedTargets: [],
-        caster,
-        spellId,
-      };
+      return null;
     }
 
-    // Find targets
     const targets = targetIds
       .map((id) => this.getEntityById(id))
       .filter((e): e is Entity => e !== undefined);
 
     if (targets.length === 0 && spell.config.targetType !== "NO_TARGET") {
-      return {
-        success: false,
-        message: `No valid targets found for spell ${spell.config.name}`,
-        affectedTargets: [],
-        caster,
-        spellId,
-      };
+      return null;
     }
 
     return spell.cast(caster, targets);
@@ -192,9 +181,9 @@ export class BM implements BattleManager {
             const targetIds = targets.length > 0 ? [targets[0]!.id] : [];
             const result = this.castSpell(caster, spell.config.id, targetIds);
 
-            this.roundEvents[this.rounds.length - 1]!.result.push(result);
-
-            console.log(prettyPrintSpellResult(result));
+            if (result) {
+              this.processEvent(result);
+            }
           }
         });
       }
@@ -204,29 +193,4 @@ export class BM implements BattleManager {
     const winner = this.getWinningTeam();
     console.log(`Game over! ${winner} wins!`);
   }
-}
-
-function prettyPrintSpellResult(result: SpellResult): string {
-  let s = `${result.caster.name} casts ${result.spellId}: ${result.message}:
-  `;
-
-  if (result.damageDealt) {
-    s += `damage taken:
-     ${Array.from(result.damageDealt.entries())
-       .map(([id, damage]) => `${id}: ${damage}`)
-       .join(", ")}`;
-  }
-
-  if (result.healingDone) {
-    s += `healing done:
-     ${Array.from(result.healingDone.entries())
-       .map(([id, healing]) => `${id}: ${healing}`)
-       .join(", ")}`;
-  }
-
-  if (result.effectsApplied) {
-    s += `effects applied:
-     ${result.effectsApplied.map((effect) => effect.effectType).join(", ")}`;
-  }
-  return s;
 }

@@ -12,6 +12,7 @@ import { createInitialPlayer } from "../game-usecases/create-initial-player";
 import { EntityFactory } from "../game-usecases/entity-factory";
 import { protectedProcedure, publicProcedure, router } from "../lib/trpc";
 import { produce } from "immer";
+import { bmStorage } from "../game-usecases/bm-storage";
 
 export const appRouter = router({
   healthCheck: publicProcedure.query(() => {
@@ -78,31 +79,29 @@ export const appRouter = router({
     return dungeons;
   }),
 
+  getDungeon: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const { db } = ctx;
+      const dungeon = await dungeonManager.getDungeon(input.id, db);
+      return dungeon;
+    }),
+
   fightDungeon: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { session, db } = ctx;
       const bm = await dungeonManager.fightRound(input.id, db);
 
-      const dto = produce(bm.roundEvents, (draft) => {
-        draft.forEach((r) => {
-          r.result.forEach((r) => {
-            r.caster.battleManager = undefined;
-            r.affectedTargets.forEach((t) => {
-              t.battleManager = undefined;
-              t.spells.forEach((s) => {
-                s.battleManager = undefined;
-              });
-            });
-            r.caster.spells.forEach((s) => {
-              s.battleManager = undefined;
-            });
-          });
-        });
-      });
-
-      return dto;
+      const battleId = await bmStorage.save(bm);
+      return battleId;
     }),
+
+  getBattle: publicProcedure.input(z.string()).query(async ({ input, ctx }) => {
+    const { db } = ctx;
+    const timeline = await bmStorage.get(input);
+    return timeline;
+  }),
 });
 
 export type AppRouter = typeof appRouter;

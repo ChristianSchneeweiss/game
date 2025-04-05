@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export type Team = "TEAM_A" | "TEAM_B";
 
 export interface EntityAttributes {
@@ -97,7 +99,7 @@ export interface Spell
 
   canCast(caster: Entity): boolean;
   getValidTargets(caster: Entity): Entity[] | null;
-  cast(caster: Entity, targets: Entity[]): SpellResult;
+  cast(caster: Entity, targets: Entity[]): SpellCastEvent | null;
 }
 
 export interface SpellConfig {
@@ -110,26 +112,13 @@ export interface SpellConfig {
   targetType: TargetType;
 }
 
-export interface SpellResult {
-  caster: Entity;
-  spellId: string;
-  success: boolean;
-  message: string;
-  affectedTargets: Entity[];
-  roll?: number;
-  damageDealt?: Map<string, number>;
-  healingDone?: Map<string, number>;
-  effectsApplied?: Effect[];
-  entitiesSummoned?: Entity[];
-  entitiesRevived?: Entity[];
-}
-
 export interface BattleManager {
   entities: Entity[];
   deadEntities: Map<string, Entity>;
   rounds: BattleRound[];
   handler: BattleHandler;
   lifeCycleHooks: LifeCycleHooks[];
+  events: TimelineEventFull[];
 
   getTeam(team: Team): Entity[];
   getAliveEntities(): Entity[];
@@ -138,6 +127,7 @@ export interface BattleManager {
   getCurrentRound(): BattleRound;
   join(entity: Entity): void;
   processEntityDeath(entity: Entity, cause: { spellId: string }): void;
+  processEvent(event: TimelineEvent): void;
 }
 
 export interface BattleRound {
@@ -166,3 +156,39 @@ export interface BattleHandler {
     target: Entity
   ): Effect | null;
 }
+
+const spellCastEvent = z.object({
+  eventType: z.literal("SPELL_CAST"),
+  data: z.object({
+    spellId: z.string(),
+    roll: z.number().int(),
+    totalDamage: z.number().int().optional(),
+    damageApplied: z.map(z.string(), z.number().int()).optional(),
+    healingApplied: z.map(z.string(), z.number().int()).optional(),
+    effectsApplied: z.map(z.string(), z.string()).optional(),
+  }),
+});
+
+export type SpellCastEvent = z.infer<typeof spellCastEvent>;
+
+const deathEvent = z.object({
+  eventType: z.literal("DEATH"),
+  data: z.object({
+    id: z.string(),
+  }),
+});
+
+const allEvents = z.union([spellCastEvent, deathEvent]);
+
+export const timelineEventSchema = z.object({
+  round: z.number().int(),
+  event: allEvents,
+});
+
+export type TimelineEventFull = z.infer<typeof timelineEventSchema>;
+
+export type TimelineEvent = Omit<TimelineEventFull, "round">["event"];
+
+export type EventTypes = z.infer<typeof allEvents>["eventType"];
+
+export type EventData = TimelineEvent["data"];
