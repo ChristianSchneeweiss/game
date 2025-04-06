@@ -1,4 +1,6 @@
+import { cn } from "@/lib/utils";
 import { trpc } from "@/utils/trpc";
+import type { Entity, TimelineEventFull } from "@loot-game/game/types";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
@@ -13,8 +15,8 @@ function RouteComponent() {
     trpc.getBattle.queryOptions(id, { staleTime: Infinity }),
   );
   const { timelineEvents, participants } = data;
-
   const [visibleEvents, setVisibleEvents] = useState(0);
+
   const timelineEventsNode = useMemo(() => {
     const events: ReactNode[] = [];
 
@@ -46,6 +48,11 @@ function RouteComponent() {
     return events;
   }, [timelineEvents]);
 
+  const statsTimeline = useMemo(
+    () => calculateStatsTimeline(participants, timelineEvents, visibleEvents),
+    [participants, timelineEvents, visibleEvents],
+  );
+
   useEffect(() => {
     if (visibleEvents < timelineEvents.length) {
       const timer = setTimeout(() => {
@@ -62,33 +69,7 @@ function RouteComponent() {
       <div className="mb-6 grid grid-cols-2 gap-4">
         {participants.map((entity) => {
           // Calculate current health and mana based on processed events
-          const currentStats = timelineEvents.slice(0, visibleEvents).reduce(
-            (stats, event) => {
-              if (event.event.eventType === "SPELL_CAST") {
-                const spellId = event.event.data.spellId;
-                const { damageApplied, healingApplied } = event.event.data;
-
-                if (damageApplied && damageApplied.has(entity.id)) {
-                  stats.health -= damageApplied.get(entity.id) || 0;
-                }
-
-                if (healingApplied && healingApplied.has(entity.id)) {
-                  stats.health += healingApplied.get(entity.id) || 0;
-                }
-
-                // For simplicity, reduce mana for each spell cast by this entity
-                if (entity.spells.some((s) => s.config.id === spellId)) {
-                  stats.mana = Math.max(0, stats.mana - 10);
-                }
-              }
-
-              return stats;
-            },
-            {
-              health: entity.maxHealth,
-              mana: entity.maxMana || 100,
-            },
-          );
+          const currentStats = statsTimeline.get(entity.id)!;
 
           // Ensure health doesn't go below 0 or above max
           const displayHealth = Math.max(
@@ -98,13 +79,19 @@ function RouteComponent() {
           const healthPercent = (displayHealth / entity.maxHealth) * 100;
 
           // Ensure mana doesn't go below 0 or above max
-          const maxMana = entity.maxMana || 100;
+          const maxMana = entity.maxMana;
           const displayMana = Math.max(0, Math.min(currentStats.mana, maxMana));
           const manaPercent = (displayMana / maxMana) * 100;
 
           return (
-            <div key={entity.id} className="rounded border p-4 shadow">
-              <div className="flex justify-between">
+            <div
+              key={entity.id}
+              className={cn(
+                "rounded border p-4 shadow",
+                currentStats.flags.casting && "border-blue-400",
+              )}
+            >
+              <div className={cn("flex justify-between")}>
                 <h3 className="font-bold">{entity.name}</h3>
                 <span
                   className={`text-sm ${entity.team === "TEAM_A" ? "text-blue-600" : "text-red-600"}`}
@@ -163,4 +150,58 @@ function RouteComponent() {
       )}
     </div>
   );
+}
+
+type Stats = {
+  health: number;
+  mana: number;
+  flags: {
+    casting: boolean;
+  };
+};
+
+function calculateStatsTimeline(
+  participants: Entity[],
+  timelineEvents: TimelineEventFull[],
+  visible: number,
+) {
+  const timeline = new Map<string, Stats>();
+  participants.forEach((entity) => {
+    const statsTimeline = timelineEvents.slice(0, visible).reduce(
+      (stats, event) => {
+        if (event.event.eventType === "SPELL_CAST") {
+          const spellId = event.event.data.spellId;
+          const { damageApplied, healingApplied } = event.event.data;
+
+          if (damageApplied && damageApplied.has(entity.id)) {
+            stats.health -= damageApplied.get(entity.id) || 0;
+          }
+
+          if (healingApplied && healingApplied.has(entity.id)) {
+            stats.health += healingApplied.get(entity.id) || 0;
+          }
+
+          if (entity.spells.some((s) => s.config.id === spellId)) {
+            stats.mana = Math.max(0, stats.mana - 10); // we need the spell here
+            stats.flags.casting = true;
+          } else {
+            stats.flags.casting = false;
+          }
+        }
+
+        return stats;
+      },
+      {
+        health: entity.maxHealth,
+        mana: entity.maxMana,
+        flags: {
+          casting: false,
+        },
+      } as Stats,
+    );
+
+    timeline.set(entity.id, statsTimeline);
+  });
+
+  return timeline;
 }
