@@ -32,4 +32,4 @@ RUN bun run build:client
 EXPOSE 3000
 
 # Serve the built files with Bun
-CMD ["bunx", "serve", "packages/client/dist"]
+CMD ["bunx", "serve", "-s", "packages/client/dist"]
