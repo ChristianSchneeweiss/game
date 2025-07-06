@@ -2,13 +2,14 @@
   "name": "@loot-game/stack",
   "private": true,
   "workspaces": [
-    "packages/*"
+    "apps/*"
   ],
   "scripts": {
     "dev": "bun run --filter '@loot-game/*' dev",
     "dev:client": "bun run --filter @loot-game/client dev",
     "dev:server": "bun run --filter @loot-game/server dev",
-    "build:client": "bun run --filter @loot-game/client build"
+    "build:client": "bun run --filter @loot-game/client build",
+    "deploy": "bun run --filter @loot-game/client build && bun run --filter @loot-game/server deploy"
   },
   "dependencies": {}
 }

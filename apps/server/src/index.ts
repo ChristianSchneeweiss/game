@@ -2,6 +2,7 @@ import { trpcServer } from "@hono/trpc-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
+import { envSchema } from "./env";
 import { createContext } from "./lib/context";
 import { appRouter } from "./routers/index";
 
@@ -23,7 +24,7 @@ app.use(
     // @ts-ignore
     router: appRouter,
     createContext: ({ req }, c) => {
-      return createContext({ req, env: process.env as Record<string, string> });
+      return createContext({ req, env: envSchema.parse(process.env) });
     },
   })
 );

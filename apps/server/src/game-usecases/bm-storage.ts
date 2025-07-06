@@ -1,14 +1,17 @@
+import { BaseEntity } from "@loot-game/game/base-entity";
 import type { BM } from "@loot-game/game/battle";
 import { timelineEventSchema, type Entity } from "@loot-game/game/types";
-import { parse, stringify } from "superjson";
+import { Redis } from "@upstash/redis/cloudflare";
+import { produce } from "immer";
+import { deserialize, stringify, type SuperJSONResult } from "superjson";
 import { z } from "zod";
 import { id } from "../db/schema";
 
-import Redis from "ioredis";
-import { BaseEntity } from "@loot-game/game/base-entity";
-import { produce } from "immer";
+const client = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL!,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+});
 
-const client = new Redis(process.env.REDIS_URL!);
 const storageSchema = z.object({
   timelineEvents: z.array(timelineEventSchema),
   participants: z.array(z.any()), // TODO
@@ -36,7 +39,7 @@ export const bmStorage = {
   get: async (id: string) => {
     const timeline = await client.get(`battle:${id}`);
     if (!timeline) throw new Error("battle does not exist");
-    const serialized = parse(timeline);
+    const serialized = deserialize(timeline as SuperJSONResult);
 
     const x = storageSchema.safeParse(serialized);
     if (!x.success) throw new Error(x.error.message);

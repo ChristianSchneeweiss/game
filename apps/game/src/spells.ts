@@ -26,6 +26,13 @@ export abstract class BaseSpell implements Spell {
 
   onRoundEnd(): void {
     if (this.currentCooldown > 0) {
+      this.battleManager?.processEvent({
+        eventType: "REDUCE_COOLDOWN",
+        data: {
+          spellId: this.config.id,
+          amount: 1,
+        },
+      });
       this.currentCooldown--;
     }
   }
@@ -107,7 +114,12 @@ export abstract class BaseSpell implements Spell {
 
   protected processCasting(caster: Entity): void {
     caster.mana -= this.config.manaCost;
-    this.currentCooldown = this.config.cooldown + 1; // because we already reduce the cooldown on round end in the cast round
+    // because we already reduce the cooldown on round end in the cast round
+    // we need to add 1 to make sure a cooldown of 1 is not the next round but the one after that
+    // eg: spell with cooldown 1 cast at round 1 will be available at round 3
+    // one round cooldown
+    this.currentCooldown =
+      this.config.cooldown === 0 ? 0 : this.config.cooldown + 1;
   }
 }
 

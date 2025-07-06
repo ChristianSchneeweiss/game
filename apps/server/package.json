@@ -1,0 +1,30 @@
+{
+  "name": "@loot-game/server",
+  "main": "src/index.ts",
+  "packageManager": "bun@1.2.18",
+  "type": "module",
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "start": "bun run src/index.ts",
+    "deploy": "bunx wrangler deploy"
+  },
+  "dependencies": {
+    "@hono/trpc-server": "^0.4.0",
+    "@loot-game/game": "workspace:*",
+    "@supabase/supabase-js": "^2.50.3",
+    "@trpc/server": "^11.4.3",
+    "@upstash/redis": "^1.35.1",
+    "drizzle-orm": "^0.44.2",
+    "hono": "^4.8.4",
+    "immer": "^10.1.1",
+    "nanoid": "^5.1.5",
+    "postgres": "^3.4.7",
+    "superjson": "^2.2.2",
+    "wrangler": "^4.23.0",
+    "zod": "^3.25.74"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.18",
+    "drizzle-kit": "^0.31.4"
+  }
+}

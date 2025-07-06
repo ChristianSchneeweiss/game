@@ -1,4 +1,4 @@
-import type { EventData, EventTypes } from "@loot-game/game/types";
+import type { EventTypes } from "@loot-game/game/types";
 import {
   boolean,
   integer,
@@ -8,7 +8,6 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core";
 import { customAlphabet } from "nanoid";
-import SuperJSON from "superjson";
 
 export const id = customAlphabet("1234567890abcdefghijklmnopqrstuvwxyz", 12);
 

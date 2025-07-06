@@ -1,5 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { drizzle } from "drizzle-orm/postgres-js";
+import type z from "zod";
+import type { envSchema } from "../env";
 import { createSB } from "../supabase";
 
 export async function createContext({
@@ -7,9 +9,9 @@ export async function createContext({
   env,
 }: {
   req: Request;
-  env: Record<string, string>;
+  env: z.infer<typeof envSchema>;
 }) {
-  const sb = createSB(env.SUPABASE_URL!, env.SUPABASE_KEY!);
+  const sb = createSB(env.SUPABASE_URL, env.SUPABASE_KEY);
 
   if (!sb) {
     throw new TRPCError({
@@ -18,7 +20,7 @@ export async function createContext({
     });
   }
 
-  const db = drizzle(env.DATABASE_URL!);
+  const db = drizzle(env.DATABASE_URL);
 
   if (!db) {
     throw new TRPCError({

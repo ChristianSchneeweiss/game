@@ -178,7 +178,15 @@ const deathEvent = z.object({
   }),
 });
 
-const allEvents = z.union([spellCastEvent, deathEvent]);
+const reduceCooldownEvent = z.object({
+  eventType: z.literal("REDUCE_COOLDOWN"),
+  data: z.object({
+    spellId: z.string(),
+    amount: z.number().int(),
+  }),
+});
+
+const allEvents = z.union([spellCastEvent, deathEvent, reduceCooldownEvent]);
 
 export const timelineEventSchema = z.object({
   round: z.number().int(),
