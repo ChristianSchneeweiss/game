@@ -4,19 +4,19 @@ import type {
   BattleManager,
   BattleRound,
   Entity,
-  LifeCycleHooks,
+  RoundLifecycleHooks,
   SpellCastEvent,
   Team,
   TimelineEvent,
   TimelineEventFull,
 } from "./types";
 
-export class BM implements BattleManager {
+export class BM implements BattleManager, RoundLifecycleHooks {
   entities: Entity[];
   deadEntities: Map<string, Entity>;
   rounds: BattleRound[];
   handler: BattleHandler;
-  lifeCycleHooks: LifeCycleHooks[];
+  lifeCycleHooks: RoundLifecycleHooks[];
   events: TimelineEventFull[] = [];
 
   constructor(entities: Entity[]) {
@@ -37,6 +37,27 @@ export class BM implements BattleManager {
     entity.spells.forEach((spell) => {
       spell.battleManager = this;
       this.lifeCycleHooks.push(spell);
+    });
+  }
+
+  onPreRound(): void {
+    const round: BattleRound = {
+      round: this.rounds.length,
+      order: this.getAliveEntities()
+        .sort((a, b) => b.getStat("agility") - a.getStat("agility"))
+        .map((e) => e.id),
+    };
+
+    this.rounds.push(round);
+
+    this.lifeCycleHooks.forEach((hook) => {
+      hook.onPreRound?.();
+    });
+  }
+
+  onPostRound(): void {
+    this.lifeCycleHooks.forEach((hook) => {
+      hook.onPostRound?.();
     });
   }
 
@@ -81,27 +102,6 @@ export class BM implements BattleManager {
     console.log(`${entity.name} has died`);
   }
 
-  startNextRound(): void {
-    const round: BattleRound = {
-      round: this.rounds.length,
-      order: this.getAliveEntities()
-        .sort((a, b) => b.getStat("agility") - a.getStat("agility"))
-        .map((e) => e.id),
-    };
-
-    this.rounds.push(round);
-
-    this.lifeCycleHooks.forEach((hook) => {
-      hook.onRoundStart?.();
-    });
-  }
-
-  endRound(): void {
-    this.lifeCycleHooks.forEach((hook) => {
-      hook.onRoundEnd?.();
-    });
-  }
-
   isGameOver(): boolean {
     const teamAAlive = this.getTeam("TEAM_A").some(
       (entity) => !entity.isDead()
@@ -128,7 +128,19 @@ export class BM implements BattleManager {
     }
 
     const currentRound = this.getCurrentRound();
+    const upkeepEvents = entity.onUpkeep?.();
+    if (upkeepEvents) {
+      upkeepEvents.forEach((event) => this.processEvent(event));
+    }
+    const actionEvents = entity.onActionSelection?.();
+    if (actionEvents) {
+      actionEvents.forEach((event) => this.processEvent(event));
+    }
     action(currentRound);
+    const endStepEvents = entity.onEndStep?.();
+    if (endStepEvents) {
+      endStepEvents.forEach((event) => this.processEvent(event));
+    }
   }
 
   getCurrentRound(): BattleRound {
@@ -162,7 +174,7 @@ export class BM implements BattleManager {
 
   fight() {
     while (!this.isGameOver()) {
-      this.startNextRound();
+      this.onPreRound();
       console.log(`\n`, this.getCurrentRound());
 
       while (this.getCurrentRound().order.length > 0) {
@@ -188,7 +200,7 @@ export class BM implements BattleManager {
         });
       }
 
-      this.endRound();
+      this.onPostRound();
     }
     const winner = this.getWinningTeam();
     console.log(`Game over! ${winner} wins!`);

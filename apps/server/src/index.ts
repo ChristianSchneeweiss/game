@@ -33,4 +33,7 @@ app.get("/healthCheck", (c) => {
   return c.text("OK");
 });
 
-export default app;
+export default {
+  fetch: app.fetch,
+  idleTimeout: 60,
+};

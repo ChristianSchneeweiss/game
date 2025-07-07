@@ -1,12 +1,12 @@
-import { nanoid } from "nanoid";
 import { BaseEntity } from "@loot-game/game/base-entity";
-import type { Entity } from "@loot-game/game/types";
-import { FireballSpell } from "@loot-game/game/spells/fireball";
-import { AutoAttackSpell } from "@loot-game/game/spells";
-import { TB_dungeonEnemy, TB_player, TB_spellStats } from "../db/schema";
-import { eq } from "drizzle-orm";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { Goblin } from "@loot-game/game/enemies/goblin";
+import { AutoAttackSpell } from "@loot-game/game/spells";
+import { FireballSpell } from "@loot-game/game/spells/fireball";
+import type { Entity } from "@loot-game/game/types";
+import { eq, inArray } from "drizzle-orm";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import { nanoid } from "nanoid";
+import { TB_character, TB_dungeonEnemy, TB_spellStats } from "../db/schema";
 
 export class EntityFactory {
   static createEnemy(): Entity {
@@ -49,61 +49,67 @@ export class EntityFactory {
     return entitiesByRound;
   }
 
-  static async createPlayerFromUser(
+  static async createCharactersFromUser(
     userId: string,
     db: PostgresJsDatabase
-  ): Promise<Entity> {
-    const [player] = await db
+  ): Promise<Entity[]> {
+    const characters = await db
       .select()
-      .from(TB_player)
-      .where(eq(TB_player.userId, userId));
-    if (!player) {
-      throw new Error("Player not found");
+      .from(TB_character)
+      .where(eq(TB_character.userId, userId));
+    if (characters.length === 0) {
+      throw new Error("No characters found");
     }
-    return this.createPlayer(player.id, db);
+    const entities: Entity[] = [];
+    for (const character of characters) {
+      entities.push(await this.createCharacter(character.id, db));
+    }
+    return entities;
   }
 
-  static async createPlayer(
+  static async createCharacter(
     id: string,
     db: PostgresJsDatabase
   ): Promise<Entity> {
-    const [player] = await db
+    const [character] = await db
       .select()
-      .from(TB_player)
-      .where(eq(TB_player.id, id));
-    if (!player) {
+      .from(TB_character)
+      .where(eq(TB_character.id, id));
+    if (!character) {
       throw new Error("Player not found");
     }
+
+    const equippedSpells = character.equippedSpells;
 
     const spells = await db
       .select()
       .from(TB_spellStats)
-      .where(eq(TB_spellStats.playerId, player.id));
+      .where(inArray(TB_spellStats.id, equippedSpells));
 
     const baseEntity = new BaseEntity(
-      player.id,
-      player.name,
+      character.id,
+      character.name,
       "TEAM_A",
-      player.health,
-      player.mana,
+      character.health,
+      character.mana,
       {
-        intelligence: player.intelligence,
-        vitality: player.vitality,
-        agility: player.agility,
-        strength: player.strength,
+        intelligence: character.intelligence,
+        vitality: character.vitality,
+        agility: character.agility,
+        strength: character.strength,
       }
     );
     baseEntity.spells = spells.map((spell) => {
       switch (spell.type) {
         case "fireball":
           return new FireballSpell(spell.id);
-        case "autoattack":
-          return new AutoAttackSpell(spell.id);
         default:
           throw new Error(`Unknown spell type: ${spell.type}`);
       }
     });
-    console.log(baseEntity);
+
+    // todo not sure about this. maybe we should have it as a proper spell in TB_spellStats
+    baseEntity.spells.push(new AutoAttackSpell(baseEntity.id));
     return baseEntity;
   }
 }

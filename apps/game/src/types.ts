@@ -40,14 +40,22 @@ export interface StatModifier {
   operation: ModifierOperation;
 }
 
-export interface LifeCycleHooks {
-  onRoundStart?: () => void;
-  onRoundEnd?: () => void;
+export interface RoundLifecycleHooks {
+  onPreRound?: () => void;
+  onPostRound?: () => void;
+
+  // todo move these?
   onApply?: () => void;
   onRemove?: () => void;
 }
 
-export interface Effect extends LifeCycleHooks {
+export interface TurnLifecycleHooks {
+  onUpkeep?: () => TimelineEvent[] | null;
+  onActionSelection?: () => TimelineEvent[] | null;
+  onEndStep?: () => TimelineEvent[] | null;
+}
+
+export interface Effect extends RoundLifecycleHooks, TurnLifecycleHooks {
   effectType: EffectType;
   duration: number;
   source: Entity;
@@ -66,7 +74,8 @@ export interface Effect extends LifeCycleHooks {
 }
 
 export interface Entity
-  extends Pick<LifeCycleHooks, "onRoundStart" | "onRoundEnd"> {
+  extends Pick<RoundLifecycleHooks, "onPreRound" | "onPostRound">,
+    TurnLifecycleHooks {
   id: string;
   name: string;
   team: Team;
@@ -92,7 +101,8 @@ export interface Entity
 }
 
 export interface Spell
-  extends Pick<LifeCycleHooks, "onRoundStart" | "onRoundEnd"> {
+  extends Pick<RoundLifecycleHooks, "onPreRound" | "onPostRound">,
+    TurnLifecycleHooks {
   config: SpellConfig;
   currentCooldown: number;
   battleManager?: BattleManager;
@@ -117,7 +127,7 @@ export interface BattleManager {
   deadEntities: Map<string, Entity>;
   rounds: BattleRound[];
   handler: BattleHandler;
-  lifeCycleHooks: LifeCycleHooks[];
+  lifeCycleHooks: RoundLifecycleHooks[];
   events: TimelineEventFull[];
 
   getTeam(team: Team): Entity[];
@@ -186,7 +196,32 @@ const reduceCooldownEvent = z.object({
   }),
 });
 
-const allEvents = z.union([spellCastEvent, deathEvent, reduceCooldownEvent]);
+const healthRegenEvent = z.object({
+  eventType: z.literal("HEALTH_REGEN"),
+  data: z.object({
+    entityId: z.string(),
+    amount: z.number().int(),
+  }),
+});
+
+const manaRegenEvent = z.object({
+  eventType: z.literal("MANA_REGEN"),
+  data: z.object({
+    entityId: z.string(),
+    amount: z.number().int(),
+  }),
+});
+
+type ManaRegenEvent = z.infer<typeof manaRegenEvent>;
+type HealthRegenEvent = z.infer<typeof healthRegenEvent>;
+
+const allEvents = z.union([
+  spellCastEvent,
+  deathEvent,
+  reduceCooldownEvent,
+  healthRegenEvent,
+  manaRegenEvent,
+]);
 
 export const timelineEventSchema = z.object({
   round: z.number().int(),

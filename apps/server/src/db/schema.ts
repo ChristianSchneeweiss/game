@@ -17,7 +17,15 @@ export const TB_user = pgTable("user", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 
-export const TB_player = pgTable("player", {
+export const TB_team = pgTable("team", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => id()),
+  name: text("name").notNull(),
+  characters: text("characters").array(),
+});
+
+export const TB_character = pgTable("character", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => id()),
@@ -27,6 +35,7 @@ export const TB_player = pgTable("player", {
 
   name: text("name").notNull(),
   health: integer("health").notNull(),
+  equippedSpells: text("equipped_spells").array().notNull().default([]),
 
   mana: integer("mana").notNull(),
   intelligence: integer("intelligence").notNull(),
@@ -42,9 +51,9 @@ export const TB_spellStats = pgTable("spell_stats", {
     .primaryKey()
     .$defaultFn(() => id()),
   type: text("type").notNull(),
-  playerId: text("player_id")
+  userId: text("user_id")
     .notNull()
-    .references(() => TB_player.id),
+    .references(() => TB_user.id),
 });
 
 export const TB_dungeonData = pgTable("dungeon_data", {
@@ -64,9 +73,9 @@ export const TB_dungeonParticipant = pgTable("dungeon_participant", {
   dungeonId: text("dungeon_id")
     .notNull()
     .references(() => TB_dungeonData.id),
-  playerId: text("player_id")
+  characterId: text("character_id")
     .notNull()
-    .references(() => TB_player.id),
+    .references(() => TB_character.id),
 });
 
 export const TB_dungeonEnemy = pgTable("dungeon_enemy", {

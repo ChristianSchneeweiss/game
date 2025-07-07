@@ -1,16 +1,18 @@
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import {
+  id,
+  TB_character,
   TB_dungeonData,
   TB_dungeonParticipant,
-  TB_player,
   TB_spellStats,
   TB_user,
 } from "../db/schema";
 import { bmStorage } from "../game-usecases/bm-storage";
-import { createInitialPlayer } from "../game-usecases/create-initial-player";
+import { createCharacter, equipSpell } from "../game-usecases/character";
 import { dungeonManager } from "../game-usecases/dungeon-manager";
 import { EntityFactory } from "../game-usecases/entity-factory";
+import { createSpell } from "../game-usecases/spell-factory";
 import { protectedProcedure, publicProcedure, router } from "../lib/trpc";
 
 export const appRouter = router({
@@ -33,31 +35,83 @@ export const appRouter = router({
       })
       .onConflictDoNothing();
 
-    await createInitialPlayer("player", session.id, db);
+    await createCharacter("noobie", session.id, db);
   }),
 
-  getPlayer: protectedProcedure.query(async ({ ctx }) => {
+  createCharacter: protectedProcedure.mutation(async ({ ctx }) => {
     const { session, db } = ctx;
     if (!session) {
       throw new Error("No session found");
     }
-    const [player] = await db
-      .select()
-      .from(TB_player)
-      .where(eq(TB_player.userId, session.id));
+    await createCharacter(`noobie-${id()}`, session.id, db);
+  }),
 
+  getCharacters: protectedProcedure.query(async ({ ctx }) => {
+    const { session, db } = ctx;
+    if (!session) {
+      throw new Error("No session found");
+    }
+    const characters = await EntityFactory.createCharactersFromUser(
+      session.id,
+      db
+    );
+
+    return characters;
+  }),
+
+  equipSpell: protectedProcedure
+    .input(
+      z.object({
+        characterId: z.string(),
+        spellId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { session, db } = ctx;
+      if (!session) {
+        throw new Error("No session found");
+      }
+      await equipSpell(input.characterId, input.spellId, db);
+    }),
+
+  createSpell: protectedProcedure
+    .input(
+      z.object({
+        type: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { session, db } = ctx;
+      if (!session) {
+        throw new Error("No session found");
+      }
+      await createSpell(session.id, input.type, db);
+    }),
+
+  getMySpells: protectedProcedure.query(async ({ ctx }) => {
+    const { session, db } = ctx;
+    if (!session) {
+      throw new Error("No session found");
+    }
     const spells = await db
       .select()
       .from(TB_spellStats)
-      .where(eq(TB_spellStats.playerId, player.id));
-
-    return { ...player, spells };
+      .where(eq(TB_spellStats.userId, session.id));
+    return spells;
   }),
 
   enterDungeon: protectedProcedure.mutation(async ({ ctx }) => {
     const { session, db } = ctx;
-    const player = await EntityFactory.createPlayerFromUser(session.id, db);
-    const dungeon = await dungeonManager.enterDungeon(player, "dungeon-1", db);
+    const characters = await EntityFactory.createCharactersFromUser(
+      session.id,
+      db
+    );
+    console.log("characters", characters.length);
+    const dungeon = await dungeonManager.enterDungeon(
+      characters,
+      "dungeon-1",
+      db
+    );
     return dungeon;
   }),
 
@@ -70,9 +124,15 @@ export const appRouter = router({
         TB_dungeonParticipant,
         eq(TB_dungeonData.id, TB_dungeonParticipant.dungeonId)
       )
-      .innerJoin(TB_player, eq(TB_dungeonParticipant.playerId, TB_player.id))
+      .innerJoin(
+        TB_character,
+        eq(TB_dungeonParticipant.characterId, TB_character.id)
+      )
       .where(
-        and(eq(TB_player.userId, session.id), eq(TB_dungeonData.cleared, false))
+        and(
+          eq(TB_character.userId, session.id),
+          eq(TB_dungeonData.cleared, false)
+        )
       );
 
     return dungeons;

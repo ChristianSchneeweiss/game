@@ -14,4 +14,13 @@ export default defineConfig({
   build: {
     outDir: "../server/dist",
   },
+  server: {
+    proxy: {
+      "/trpc": {
+        target: "http://localhost:3000/trpc",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/trpc/, ""),
+      },
+    },
+  },
 });

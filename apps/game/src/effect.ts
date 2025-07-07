@@ -31,9 +31,9 @@ export abstract class BaseEffect implements Effect {
     this.spellSource = spellSource;
   }
 
-  onRoundStart(): void {}
+  onPreRound(): void {}
 
-  onRoundEnd(): void {
+  onPostRound(): void {
     this.duration--;
 
     if (this.duration <= 0) {
@@ -134,7 +134,7 @@ export class DamageOverTimeEffect
     this.damageType = damageType;
   }
 
-  onRoundEnd(): void {
+  onPostRound(): void {
     const damage = this.battleHandler?.damage(
       this,
       this.damagePerRound,
@@ -145,7 +145,7 @@ export class DamageOverTimeEffect
     console.log(
       `${this.source.name} deals ${damage} damage to ${this.target.name} with ${this.spellSource.config.name}`
     );
-    super.onRoundEnd();
+    super.onPostRound();
   }
 }
 
@@ -166,7 +166,7 @@ export class HealingOverTimeEffect
     this.healingPerRound = healingPerRound;
   }
 
-  onRoundEnd(): void {
+  onPostRound(): void {
     const healing = this.battleHandler?.healing(
       this,
       this.healingPerRound,
@@ -176,7 +176,7 @@ export class HealingOverTimeEffect
     console.log(
       `${this.source.name} heals ${healing} to ${this.target.name} with ${this.spellSource.config.name}`
     );
-    super.onRoundEnd();
+    super.onPostRound();
   }
 }
 
@@ -239,13 +239,13 @@ export class CompositeEffect extends BaseEffect {
     });
   }
 
-  onRoundStart(): void {
+  onPreRound(): void {
     this.childEffects.forEach((effect) => {
-      effect.onRoundStart?.();
+      effect.onPreRound?.();
     });
   }
 
-  onRoundEnd(): void {
+  onPostRound(): void {
     this.duration--;
     this.updateChildSourcesAndDuration();
 

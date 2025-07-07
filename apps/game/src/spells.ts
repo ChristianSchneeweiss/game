@@ -24,7 +24,7 @@ export abstract class BaseSpell implements Spell {
     this.currentCooldown = 0;
   }
 
-  onRoundEnd(): void {
+  onPostRound(): void {
     if (this.currentCooldown > 0) {
       this.battleManager?.processEvent({
         eventType: "REDUCE_COOLDOWN",

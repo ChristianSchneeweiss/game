@@ -14,13 +14,13 @@ import { EntityFactory } from "./entity-factory";
 
 export const dungeonManager = {
   enterDungeon: async (
-    player: Entity,
+    characters: Entity[],
     key: "dungeon-1",
     db: PostgresJsDatabase
   ) => {
     const dungeon = {
       id: id(),
-      playerTeam: [player],
+      playerTeam: characters,
       round: 0,
       actualEnemies: dungeon1().rollEnemies(),
       key: key,
@@ -32,10 +32,12 @@ export const dungeonManager = {
         key: dungeon.key,
         round: dungeon.round,
       });
-      await tx.insert(TB_dungeonParticipant).values({
-        dungeonId: dungeon.id,
-        playerId: player.id,
-      });
+      for (const character of characters) {
+        await tx.insert(TB_dungeonParticipant).values({
+          dungeonId: dungeon.id,
+          characterId: character.id,
+        });
+      }
       for (const [index, round] of dungeon.actualEnemies.entries()) {
         await tx.insert(TB_dungeonEnemy).values(
           round.map((enemy) => ({
@@ -68,14 +70,18 @@ export const dungeonManager = {
       .where(eq(TB_dungeonEnemy.dungeonId, id));
 
     const enemies = EntityFactory.createEnemyFromDb(enemyData, db);
-    const playerTeam = await EntityFactory.createPlayer(
-      participants[0].playerId,
-      db
-    );
+    const playerTeam = [];
+    for (const participant of participants) {
+      const character = await EntityFactory.createCharacter(
+        participant.characterId,
+        db
+      );
+      playerTeam.push(character);
+    }
 
     return {
       id,
-      playerTeam: [playerTeam],
+      playerTeam,
       round: dungeon.round,
       actualEnemies: enemies,
       key: dungeon.key,

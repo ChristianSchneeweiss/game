@@ -242,6 +242,20 @@ function calculateStatsTimeline(
             }
             break;
           }
+          case "HEALTH_REGEN": {
+            if (entity.id !== event.event.data.entityId) break;
+            const { amount } = event.event.data;
+            stats.health = Math.min(stats.health + amount, entity.maxHealth);
+            stats.deltaHealth += amount;
+            break;
+          }
+          case "MANA_REGEN": {
+            if (entity.id !== event.event.data.entityId) break;
+            const { amount } = event.event.data;
+            stats.mana = Math.min(stats.mana + amount, entity.maxMana);
+            // stats.deltaMana += amount;
+            break;
+          }
         }
 
         return stats;

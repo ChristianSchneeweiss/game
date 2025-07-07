@@ -1,3 +1,4 @@
+import { calculator } from "./calculator";
 import type {
   BattleManager,
   DamageType,
@@ -7,6 +8,7 @@ import type {
   Spell,
   StatModifier,
   Team,
+  TimelineEvent,
 } from "./types";
 
 export class BaseEntity implements Entity {
@@ -45,7 +47,43 @@ export class BaseEntity implements Entity {
     this.spells = [];
   }
 
-  onRoundEnd(): void {
+  onUpkeep(): TimelineEvent[] | null {
+    // mana and health regeneration
+    const healthRegen = this.getStat("vitality") / 2;
+    const realHealthRegen = calculator.calculateRealHealing(
+      this,
+      this,
+      healthRegen
+    );
+    this.applyHealing(realHealthRegen, this);
+
+    const manaRegen = this.getStat("intelligence") / 5;
+    const realManaRegen = calculator.calculateRealHealing(
+      this,
+      this,
+      manaRegen
+    );
+    this.mana = Math.min(this.maxMana, this.mana + realManaRegen);
+
+    return [
+      {
+        eventType: "HEALTH_REGEN",
+        data: {
+          entityId: this.id,
+          amount: realHealthRegen,
+        },
+      },
+      {
+        eventType: "MANA_REGEN",
+        data: {
+          entityId: this.id,
+          amount: realManaRegen,
+        },
+      },
+    ];
+  }
+
+  onPostRound(): void {
     const effects = Array.from(this.activeEffects.values());
     if (effects.length > 0) {
       console.log(
