@@ -135,7 +135,12 @@ export const appRouter = router({
         )
       );
 
-    return dungeons;
+    const uniques = new Map<string, { id: string; key: string }>();
+    for (const dungeon of dungeons) {
+      uniques.set(dungeon.id, dungeon);
+    }
+
+    return Array.from(uniques.values());
   }),
 
   getDungeon: protectedProcedure

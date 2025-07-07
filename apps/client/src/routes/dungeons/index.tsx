@@ -32,7 +32,8 @@ function RouteComponent() {
         {dungeons.map((dungeon) => (
           <li key={dungeon.id}>
             <Link to="/dungeons/$id" params={{ id: dungeon.id }}>
-              {dungeon.key}
+              {dungeon.key}{" "}
+              <span className="text-xs text-gray-500">{dungeon.id}</span>
             </Link>
           </li>
         ))}
