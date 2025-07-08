@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import { BaseEntity } from "../base-entity";
-import { AutoAttackSpell } from "../spells";
+import { AutoAttackSpell } from "../spells/autoattack";
 
 export class Goblin extends BaseEntity {
   constructor() {

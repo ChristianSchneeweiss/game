@@ -1,6 +1,6 @@
 import { BaseEntity } from "@loot-game/game/base-entity";
 import { Goblin } from "@loot-game/game/enemies/goblin";
-import { AutoAttackSpell } from "@loot-game/game/spells";
+import { AutoAttackSpell } from "@loot-game/game/spells/autoattack";
 import { FireballSpell } from "@loot-game/game/spells/fireball";
 import type { Entity } from "@loot-game/game/types";
 import { eq } from "drizzle-orm";

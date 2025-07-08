@@ -5,6 +5,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, type ReactNode } from "react";
 import { useEventTimer } from "./-hooks/event-timer";
+import { SkullIcon } from "lucide-react";
 
 const roundTime = 1500;
 
@@ -96,7 +97,12 @@ function RouteComponent() {
               )}
             >
               <div className={cn("flex justify-between")}>
-                <h3 className="font-bold">{entity.name}</h3>
+                <h3 className="flex items-center gap-2 font-bold">
+                  {entity.name}{" "}
+                  {currentStats.flags.dead && (
+                    <SkullIcon className="h-4 w-4 text-red-500" />
+                  )}
+                </h3>
                 <span
                   className={`text-sm ${entity.team === "TEAM_A" ? "text-blue-600" : "text-red-600"}`}
                 >
@@ -183,6 +189,7 @@ type Stats = {
   cooldowns: Map<string, number>;
   flags: {
     casting: boolean;
+    dead: boolean;
   };
 };
 
@@ -199,6 +206,7 @@ function calculateStatsTimeline(
         // reset stuff as we otherwise carry over the previous events stuff
         stats.deltaHealth = 0;
         stats.flags.casting = false;
+        // dont reset dead flag
 
         switch (event.event.eventType) {
           case "SPELL_CAST": {
@@ -240,6 +248,11 @@ function calculateStatsTimeline(
             if (cooldown) {
               stats.cooldowns.set(spellId, cooldown - amount);
             }
+            break;
+          }
+          case "DEATH": {
+            if (entity.id !== event.event.data.id) break;
+            stats.flags.dead = true;
             break;
           }
           case "HEALTH_REGEN": {
