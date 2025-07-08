@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SpellsIndexRouteImport } from './routes/spells/index'
 import { Route as DungeonsIndexRouteImport } from './routes/dungeons/index'
 import { Route as CharactersIndexRouteImport } from './routes/characters/index'
 import { Route as DungeonsIdRouteImport } from './routes/dungeons/$id'
@@ -19,6 +20,11 @@ import { Route as BattleIdRouteImport } from './routes/battle/$id'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SpellsIndexRoute = SpellsIndexRouteImport.update({
+  id: '/spells/',
+  path: '/spells/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DungeonsIndexRoute = DungeonsIndexRouteImport.update({
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/dungeons/$id': typeof DungeonsIdRoute
   '/characters': typeof CharactersIndexRoute
   '/dungeons': typeof DungeonsIndexRoute
+  '/spells': typeof SpellsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/dungeons/$id': typeof DungeonsIdRoute
   '/characters': typeof CharactersIndexRoute
   '/dungeons': typeof DungeonsIndexRoute
+  '/spells': typeof SpellsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,6 +79,7 @@ export interface FileRoutesById {
   '/dungeons/$id': typeof DungeonsIdRoute
   '/characters/': typeof CharactersIndexRoute
   '/dungeons/': typeof DungeonsIndexRoute
+  '/spells/': typeof SpellsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -81,6 +90,7 @@ export interface FileRouteTypes {
     | '/dungeons/$id'
     | '/characters'
     | '/dungeons'
+    | '/spells'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -89,6 +99,7 @@ export interface FileRouteTypes {
     | '/dungeons/$id'
     | '/characters'
     | '/dungeons'
+    | '/spells'
   id:
     | '__root__'
     | '/'
@@ -97,6 +108,7 @@ export interface FileRouteTypes {
     | '/dungeons/$id'
     | '/characters/'
     | '/dungeons/'
+    | '/spells/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -106,6 +118,7 @@ export interface RootRouteChildren {
   DungeonsIdRoute: typeof DungeonsIdRoute
   CharactersIndexRoute: typeof CharactersIndexRoute
   DungeonsIndexRoute: typeof DungeonsIndexRoute
+  SpellsIndexRoute: typeof SpellsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -115,6 +128,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/spells/': {
+      id: '/spells/'
+      path: '/spells'
+      fullPath: '/spells'
+      preLoaderRoute: typeof SpellsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dungeons/': {
@@ -162,6 +182,7 @@ const rootRouteChildren: RootRouteChildren = {
   DungeonsIdRoute: DungeonsIdRoute,
   CharactersIndexRoute: CharactersIndexRoute,
   DungeonsIndexRoute: DungeonsIndexRoute,
+  SpellsIndexRoute: SpellsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

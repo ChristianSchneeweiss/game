@@ -34,22 +34,24 @@ function RouteComponent() {
         <div className="mt-4">
           <h4 className="mb-2 text-xl">Spells</h4>
           <div className="flex flex-wrap gap-2">
-            {spells.map((spell) => (
-              <div
-                className="flex w-fit items-center gap-2 rounded-md bg-gray-700 px-2 capitalize"
-                key={spell.id}
-              >
-                {spell.type}{" "}
-                <span className="text-xs font-light">{spell.id}</span>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  onClick={() => equipSpell(spell.id)}
+            {spells
+              .filter((spell) => spell.equippedBy === null)
+              .map((spell) => (
+                <div
+                  className="flex w-fit items-center gap-2 rounded-md bg-gray-700 px-2 capitalize"
+                  key={spell.id}
                 >
-                  <Wand2Icon className="h-3 w-3" />
-                </Button>
-              </div>
-            ))}
+                  {spell.type}{" "}
+                  <span className="text-xs font-light">{spell.id}</span>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => equipSpell(spell.id)}
+                  >
+                    <Wand2Icon className="h-3 w-3" />
+                  </Button>
+                </div>
+              ))}
           </div>
         </div>
       )}

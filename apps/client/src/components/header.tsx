@@ -25,6 +25,14 @@ export default function Header() {
             Characters
           </Link>
           <Link
+            to="/spells"
+            activeProps={{
+              className: "font-bold",
+            }}
+          >
+            Spells
+          </Link>
+          <Link
             to="/dungeons"
             activeProps={{
               className: "font-bold",

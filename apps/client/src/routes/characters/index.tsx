@@ -1,4 +1,3 @@
-import { AuthForm } from "@/components/auth-form";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/utils/trpc";
 import { userStore } from "@/utils/user-store";
@@ -6,10 +5,10 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/characters/")({
-  component: HomeComponent,
+  component: CharactersComponent,
 });
 
-function HomeComponent() {
+function CharactersComponent() {
   const { user } = userStore();
   const { mutate: createCharacter } = useMutation(
     trpc.createCharacter.mutationOptions(),
@@ -70,8 +69,6 @@ function HomeComponent() {
             </div>
           </div>
         ))}
-
-      {user ? <p>User is logged in</p> : <AuthForm />}
     </div>
   );
 }
