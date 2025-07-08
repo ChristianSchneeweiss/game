@@ -35,7 +35,6 @@ export const TB_character = pgTable("character", {
 
   name: text("name").notNull(),
   health: integer("health").notNull(),
-  equippedSpells: text("equipped_spells").array().notNull().default([]),
 
   mana: integer("mana").notNull(),
   intelligence: integer("intelligence").notNull(),
@@ -51,6 +50,7 @@ export const TB_spellStats = pgTable("spell_stats", {
     .primaryKey()
     .$defaultFn(() => id()),
   type: text("type").notNull(),
+  equippedBy: text("equipped_by").references(() => TB_character.id),
   userId: text("user_id")
     .notNull()
     .references(() => TB_user.id),

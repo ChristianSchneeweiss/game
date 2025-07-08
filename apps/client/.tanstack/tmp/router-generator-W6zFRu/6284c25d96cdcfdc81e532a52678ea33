@@ -9,13 +9,23 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as CharactersRouteImport } from './routes/characters'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DungeonsIndexRouteImport } from './routes/dungeons/index'
-import { Route as CharactersIndexRouteImport } from './routes/characters/index'
 import { Route as DungeonsIdRouteImport } from './routes/dungeons/$id'
-import { Route as CharactersCharacterIdRouteImport } from './routes/characters/$character-id'
 import { Route as BattleIdRouteImport } from './routes/battle/$id'
 
+const CharactersRoute = CharactersRouteImport.update({
+  id: '/characters',
+  path: '/characters',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -26,19 +36,9 @@ const DungeonsIndexRoute = DungeonsIndexRouteImport.update({
   path: '/dungeons/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CharactersIndexRoute = CharactersIndexRouteImport.update({
-  id: '/characters/',
-  path: '/characters/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const DungeonsIdRoute = DungeonsIdRouteImport.update({
   id: '/dungeons/$id',
   path: '/dungeons/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CharactersCharacterIdRoute = CharactersCharacterIdRouteImport.update({
-  id: '/characters/$character-id',
-  path: '/characters/$character-id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BattleIdRoute = BattleIdRouteImport.update({
@@ -49,67 +49,81 @@ const BattleIdRoute = BattleIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/characters': typeof CharactersRoute
   '/battle/$id': typeof BattleIdRoute
-  '/characters/$character-id': typeof CharactersCharacterIdRoute
   '/dungeons/$id': typeof DungeonsIdRoute
-  '/characters': typeof CharactersIndexRoute
   '/dungeons': typeof DungeonsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/characters': typeof CharactersRoute
   '/battle/$id': typeof BattleIdRoute
-  '/characters/$character-id': typeof CharactersCharacterIdRoute
   '/dungeons/$id': typeof DungeonsIdRoute
-  '/characters': typeof CharactersIndexRoute
   '/dungeons': typeof DungeonsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/characters': typeof CharactersRoute
   '/battle/$id': typeof BattleIdRoute
-  '/characters/$character-id': typeof CharactersCharacterIdRoute
   '/dungeons/$id': typeof DungeonsIdRoute
-  '/characters/': typeof CharactersIndexRoute
   '/dungeons/': typeof DungeonsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/battle/$id'
-    | '/characters/$character-id'
-    | '/dungeons/$id'
+    | '/about'
     | '/characters'
+    | '/battle/$id'
+    | '/dungeons/$id'
     | '/dungeons'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/battle/$id'
-    | '/characters/$character-id'
-    | '/dungeons/$id'
+    | '/about'
     | '/characters'
+    | '/battle/$id'
+    | '/dungeons/$id'
     | '/dungeons'
   id:
     | '__root__'
     | '/'
+    | '/about'
+    | '/characters'
     | '/battle/$id'
-    | '/characters/$character-id'
     | '/dungeons/$id'
-    | '/characters/'
     | '/dungeons/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
+  CharactersRoute: typeof CharactersRoute
   BattleIdRoute: typeof BattleIdRoute
-  CharactersCharacterIdRoute: typeof CharactersCharacterIdRoute
   DungeonsIdRoute: typeof DungeonsIdRoute
-  CharactersIndexRoute: typeof CharactersIndexRoute
   DungeonsIndexRoute: typeof DungeonsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/characters': {
+      id: '/characters'
+      path: '/characters'
+      fullPath: '/characters'
+      preLoaderRoute: typeof CharactersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -124,25 +138,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DungeonsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/characters/': {
-      id: '/characters/'
-      path: '/characters'
-      fullPath: '/characters'
-      preLoaderRoute: typeof CharactersIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/dungeons/$id': {
       id: '/dungeons/$id'
       path: '/dungeons/$id'
       fullPath: '/dungeons/$id'
       preLoaderRoute: typeof DungeonsIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/characters/$character-id': {
-      id: '/characters/$character-id'
-      path: '/characters/$character-id'
-      fullPath: '/characters/$character-id'
-      preLoaderRoute: typeof CharactersCharacterIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/battle/$id': {
@@ -157,10 +157,10 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
+  CharactersRoute: CharactersRoute,
   BattleIdRoute: BattleIdRoute,
-  CharactersCharacterIdRoute: CharactersCharacterIdRoute,
   DungeonsIdRoute: DungeonsIdRoute,
-  CharactersIndexRoute: CharactersIndexRoute,
   DungeonsIndexRoute: DungeonsIndexRoute,
 }
 export const routeTree = rootRouteImport

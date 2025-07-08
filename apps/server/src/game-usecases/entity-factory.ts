@@ -3,7 +3,7 @@ import { Goblin } from "@loot-game/game/enemies/goblin";
 import { AutoAttackSpell } from "@loot-game/game/spells";
 import { FireballSpell } from "@loot-game/game/spells/fireball";
 import type { Entity } from "@loot-game/game/types";
-import { eq, inArray } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { nanoid } from "nanoid";
 import { TB_character, TB_dungeonEnemy, TB_spellStats } from "../db/schema";
@@ -79,12 +79,10 @@ export class EntityFactory {
       throw new Error("Player not found");
     }
 
-    const equippedSpells = character.equippedSpells;
-
     const spells = await db
       .select()
       .from(TB_spellStats)
-      .where(inArray(TB_spellStats.id, equippedSpells));
+      .where(eq(TB_spellStats.equippedBy, id));
 
     const baseEntity = new BaseEntity(
       character.id,

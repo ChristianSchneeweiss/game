@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import { TB_character } from "../db/schema";
+import { TB_character, TB_spellStats } from "../db/schema";
 
 export const createCharacter = async (
   name: string,
@@ -16,7 +16,6 @@ export const createCharacter = async (
     vitality: 10,
     agility: 10,
     strength: 10,
-    equippedSpells: [],
   });
   return character;
 };
@@ -34,11 +33,18 @@ export const equipSpell = async (
 
     if (!character) throw new Error("Character not found");
 
-    // todo check if spell is already equipped and if we own it
+    // todo check if we own the spell
 
     await tx
-      .update(TB_character)
-      .set({ equippedSpells: [...(character.equippedSpells || []), spellId] })
-      .where(eq(TB_character.id, characterId));
+      .update(TB_spellStats)
+      .set({ equippedBy: characterId })
+      .where(eq(TB_spellStats.id, spellId));
   });
+};
+
+export const unequipSpell = async (spellId: string, db: PostgresJsDatabase) => {
+  await db
+    .update(TB_spellStats)
+    .set({ equippedBy: null })
+    .where(eq(TB_spellStats.id, spellId));
 };

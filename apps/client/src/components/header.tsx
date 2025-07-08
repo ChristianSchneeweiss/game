@@ -17,6 +17,14 @@ export default function Header() {
             Home
           </Link>
           <Link
+            to="/characters"
+            activeProps={{
+              className: "font-bold",
+            }}
+          >
+            Characters
+          </Link>
+          <Link
             to="/dungeons"
             activeProps={{
               className: "font-bold",
@@ -24,14 +32,6 @@ export default function Header() {
             activeOptions={{ exact: true }}
           >
             Dungeons
-          </Link>
-          <Link
-            to="/about"
-            activeProps={{
-              className: "font-bold",
-            }}
-          >
-            About
           </Link>
         </div>
         <div className="flex flex-row items-center gap-2">

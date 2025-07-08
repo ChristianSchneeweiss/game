@@ -9,7 +9,11 @@ import {
   TB_user,
 } from "../db/schema";
 import { bmStorage } from "../game-usecases/bm-storage";
-import { createCharacter, equipSpell } from "../game-usecases/character";
+import {
+  createCharacter,
+  equipSpell,
+  unequipSpell,
+} from "../game-usecases/character";
 import { dungeonManager } from "../game-usecases/dungeon-manager";
 import { EntityFactory } from "../game-usecases/entity-factory";
 import { createSpell } from "../game-usecases/spell-factory";
@@ -59,6 +63,14 @@ export const appRouter = router({
     return characters;
   }),
 
+  getCharacter: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const { db } = ctx;
+      const character = await EntityFactory.createCharacter(input.id, db);
+      return character;
+    }),
+
   equipSpell: protectedProcedure
     .input(
       z.object({
@@ -72,6 +84,16 @@ export const appRouter = router({
         throw new Error("No session found");
       }
       await equipSpell(input.characterId, input.spellId, db);
+    }),
+
+  unequipSpell: protectedProcedure
+    .input(z.object({ spellId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { session, db } = ctx;
+      if (!session) {
+        throw new Error("No session found");
+      }
+      await unequipSpell(input.spellId, db);
     }),
 
   createSpell: protectedProcedure
