@@ -1,9 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { queryClient, trpc } from "@/utils/trpc";
-import type { Entity, Spell } from "@loot-game/game/types";
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/dungeons/$id")({
   component: RouteComponent,
@@ -14,15 +12,10 @@ export const Route = createFileRoute("/dungeons/$id")({
   },
 });
 
-type SpellWithCaster = {
-  caster: Entity;
-  spell: Spell;
-};
-
 function RouteComponent() {
   const { id } = Route.useParams();
   const router = useRouter();
-  const { mutate: fightDungeon, data: fightDungeonData } = useMutation(
+  const { mutate: fightDungeon } = useMutation(
     trpc.fightDungeon.mutationOptions({
       onSuccess: (id) => {
         queryClient.invalidateQueries({
@@ -35,31 +28,10 @@ function RouteComponent() {
   const { data: dungeon } = useSuspenseQuery(
     trpc.getDungeon.queryOptions({ id }),
   );
-
-  const playerSpells = useMemo(() => {
-    const spells = new Map<string, SpellWithCaster>();
-    for (const player of dungeon.playerTeam) {
-      for (const spell of player.spells) {
-        spells.set(spell.config.id, { caster: player, spell });
-      }
-    }
-    return spells;
-  }, [dungeon.playerTeam]);
-
-  const enemySpells = useMemo(() => {
-    const spells = new Map<string, SpellWithCaster>();
-    for (const enemy of dungeon.actualEnemies[dungeon.round]) {
-      for (const spell of enemy.spells) {
-        spells.set(spell.config.id, { caster: enemy, spell });
-      }
-    }
-    return spells;
-  }, [dungeon.actualEnemies]);
-
-  const allSpells = useMemo(
-    () => new Map<string, SpellWithCaster>([...playerSpells, ...enemySpells]),
-    [playerSpells, enemySpells],
+  const { data: battles } = useSuspenseQuery(
+    trpc.getDungeonBattles.queryOptions({ id }),
   );
+  console.log(battles);
 
   return (
     <div className="container flex flex-col justify-center space-y-3 p-6">
@@ -114,6 +86,26 @@ function RouteComponent() {
       <Button onClick={() => fightDungeon({ id })} className="w-40">
         Fight Dungeon 1
       </Button>
+      <div className="mt-8">
+        <h3 className="mb-2 text-lg font-semibold">Battle History</h3>
+        <ul className="space-y-2">
+          {battles.map((battle, i) => (
+            <Link
+              to="/battle/$id"
+              params={{ id: battle.battleId }}
+              key={battle.id}
+              className="flex items-center justify-between rounded bg-slate-200 px-4 py-2 dark:bg-slate-700"
+            >
+              <span className="font-mono text-sm text-slate-600 dark:text-slate-300">
+                Battle {i + 1}
+              </span>
+              <span className="ml-2 truncate text-xs text-slate-500 dark:text-slate-400">
+                {battle.battleId}
+              </span>
+            </Link>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }

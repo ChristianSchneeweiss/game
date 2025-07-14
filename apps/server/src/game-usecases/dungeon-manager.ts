@@ -61,6 +61,15 @@ export const dungeonManager = {
     // todo store in db
     return dungeon;
   },
+
+  getDungeonBattles: async (id: string, db: PostgresJsDatabase) => {
+    const battles = await db
+      .select()
+      .from(TB_dungeonBattle)
+      .where(eq(TB_dungeonBattle.dungeonId, id));
+    return battles;
+  },
+
   getDungeon: async (id: string, db: PostgresJsDatabase) => {
     const [dungeon] = await db
       .select()
