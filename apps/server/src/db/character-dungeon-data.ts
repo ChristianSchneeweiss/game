@@ -1,6 +1,12 @@
-import { inBetweenCharacterData } from "@loot-game/game/dungeons/types";
+// import { inBetweenCharacterData } from "@loot-game/game/dungeons/types"; // this breaks drizzle migrations
 import { customType } from "drizzle-orm/pg-core";
 import z from "zod";
+
+const inBetweenCharacterData = z.object({
+  characterId: z.string(),
+  health: z.number(),
+  mana: z.number(),
+});
 
 export const COL_characterDungeonDataSchema = z.array(inBetweenCharacterData);
 

@@ -12,7 +12,7 @@ function RouteComponent() {
     trpc.getMySpells.queryOptions(),
   );
   const { mutateAsync: unequipSpell } = useMutation(
-    trpc.unequipSpell.mutationOptions({
+    trpc.character.unequipSpell.mutationOptions({
       onSuccess: () => {
         refetchSpells();
       },

@@ -3,17 +3,16 @@ import { BM } from "@loot-game/game/battle";
 import { dungeon1 } from "@loot-game/game/dungeons/dungeon1";
 import type { DungeonData } from "@loot-game/game/dungeons/types";
 import type { Entity } from "@loot-game/game/types";
-import { xpNeededForLevelUp } from "@loot-game/game/xp-curve";
 import { eq } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import {
   id,
-  TB_character,
   TB_dungeonBattle,
   TB_dungeonData,
   TB_dungeonEnemy,
   TB_dungeonParticipant,
 } from "../db/schema";
+import { handleXpReceived } from "./character";
 import { EntityFactory } from "./entity-factory";
 
 export const dungeonManager = {
@@ -139,42 +138,23 @@ export const dungeonManager = {
       }
     }
 
-    const characters = dungeon.playerTeam;
-    for (const character of characters) {
-      if (!character.isDead()) {
-        if (!(character instanceof Character)) {
-          throw new Error("Character is not a Character");
-        }
-
-        const newXp = character.xp + totalXp;
-        const xpNeeded = xpNeededForLevelUp(character.level);
-        if (newXp >= xpNeeded) {
-          const newLevel = character.level + 1;
-          await db
-            .update(TB_character)
-            .set({
-              level: newLevel,
-              xp: newXp - xpNeeded,
-            })
-            .where(eq(TB_character.id, character.id));
-        } else {
-          await db
-            .update(TB_character)
-            .set({
-              xp: newXp,
-            })
-            .where(eq(TB_character.id, character.id));
+    await db.transaction(async (tx) => {
+      const characters = dungeon.playerTeam;
+      for (const character of characters) {
+        if (!character.isDead()) {
+          if (!(character instanceof Character)) {
+            throw new Error("Character is not a Character");
+          }
+          await handleXpReceived(character, totalXp, tx);
         }
       }
-    }
 
-    await db.insert(TB_dungeonBattle).values({
-      dungeonId: id,
-      battleId: bm.battleId,
-      round: dungeon.round,
-    });
+      await tx.insert(TB_dungeonBattle).values({
+        dungeonId: id,
+        battleId: bm.battleId,
+        round: dungeon.round,
+      });
 
-    await db.transaction(async (tx) => {
       const winningTeam = bm.getWinningTeam();
       if (winningTeam === "TEAM_A") {
         dungeon.round++;

@@ -97,7 +97,8 @@ export class EntityFactory {
         strength: character.strength,
       },
       character.xp,
-      character.level
+      character.level,
+      character.statPointsAvailable
     );
     baseEntity.spells = spells.map((spell) => {
       switch (spell.type) {

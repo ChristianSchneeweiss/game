@@ -7,7 +7,7 @@ export const Route = createFileRoute("/dungeons/$id")({
   component: RouteComponent,
   beforeLoad: async ({ params }) => {
     await queryClient.prefetchQuery(
-      trpc.getDungeon.queryOptions({ id: params.id }),
+      trpc.dungeon.getDungeon.queryOptions({ id: params.id }),
     );
   },
 });
@@ -16,20 +16,20 @@ function RouteComponent() {
   const { id } = Route.useParams();
   const router = useRouter();
   const { mutate: fightDungeon } = useMutation(
-    trpc.fightDungeon.mutationOptions({
+    trpc.dungeon.fightDungeon.mutationOptions({
       onSuccess: (id) => {
         queryClient.invalidateQueries({
-          queryKey: trpc.getDungeon.queryKey({ id }),
+          queryKey: trpc.dungeon.getDungeon.queryKey({ id }),
         });
         router.navigate({ to: "/battle/$id", params: { id } });
       },
     }),
   );
   const { data: dungeon } = useSuspenseQuery(
-    trpc.getDungeon.queryOptions({ id }),
+    trpc.dungeon.getDungeon.queryOptions({ id }),
   );
   const { data: battles } = useSuspenseQuery(
-    trpc.getDungeonBattles.queryOptions({ id }),
+    trpc.dungeon.getDungeonBattles.queryOptions({ id }),
   );
   console.log(battles);
 

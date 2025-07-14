@@ -11,10 +11,10 @@ export const Route = createFileRoute("/characters/")({
 function CharactersComponent() {
   const { user } = userStore();
   const { mutate: createCharacter } = useMutation(
-    trpc.createCharacter.mutationOptions(),
+    trpc.character.createCharacter.mutationOptions(),
   );
   const { data: characters, refetch: refetchCharacters } = useQuery(
-    trpc.getCharacters.queryOptions(undefined, {
+    trpc.character.getCharacters.queryOptions(undefined, {
       enabled: !!user,
     }),
   );

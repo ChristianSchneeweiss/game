@@ -11,9 +11,11 @@ export const Route = createFileRoute("/dungeons/")({
 function RouteComponent() {
   const router = useRouter();
 
-  const { data: dungeons } = useSuspenseQuery(trpc.allDungeons.queryOptions());
+  const { data: dungeons } = useSuspenseQuery(
+    trpc.dungeon.allDungeons.queryOptions(),
+  );
   const { mutate: enterDungeon } = useMutation(
-    trpc.enterDungeon.mutationOptions({
+    trpc.dungeon.enterDungeon.mutationOptions({
       onSuccess: (data) => {
         router.navigate({ to: "/dungeons/$id", params: { id: data.id } });
       },

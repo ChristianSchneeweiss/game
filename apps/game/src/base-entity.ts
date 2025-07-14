@@ -177,7 +177,8 @@ export class Character extends BaseEntity {
     maxMana: number,
     baseAttributes: EntityAttributes,
     public xp: number,
-    public level: number
+    public level: number,
+    public statPointsAvailable: number
   ) {
     super(id, name, team, maxHealth, maxMana, baseAttributes);
   }
