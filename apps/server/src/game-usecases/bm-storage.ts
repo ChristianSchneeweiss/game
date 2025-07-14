@@ -5,7 +5,7 @@ import { Redis } from "@upstash/redis/cloudflare";
 import { produce } from "immer";
 import { deserialize, stringify, type SuperJSONResult } from "superjson";
 import { z } from "zod";
-import { id } from "../db/schema";
+import { COL_characterDungeonDataSchema } from "../db/character-dungeon-data";
 
 const client = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL!,
@@ -13,6 +13,7 @@ const client = new Redis({
 });
 
 const storageSchema = z.object({
+  startEntityData: COL_characterDungeonDataSchema,
   timelineEvents: z.array(timelineEventSchema),
   participants: z.array(z.any()), // TODO
 });
@@ -20,7 +21,6 @@ type StorageSchema = z.infer<typeof storageSchema>;
 
 export const bmStorage = {
   save: async (bm: BM) => {
-    const battleId = id(16);
     const entities = produce(bm.entities, (draft) => {
       draft.forEach((ent) => {
         ent.battleManager = undefined;
@@ -28,13 +28,19 @@ export const bmStorage = {
       });
     });
     await client.set(
-      `battle:${battleId}`,
+      `battle:${bm.battleId}`,
       stringify({
+        startEntityData: bm.startEntityData
+          .filter((ent) => ent.team === "TEAM_A")
+          .map((ent) => ({
+            characterId: ent.id,
+            health: ent.health,
+            mana: ent.mana,
+          })),
         timelineEvents: bm.events,
         participants: entities as BaseEntity[],
       } satisfies StorageSchema)
     );
-    return battleId;
   },
   get: async (id: string) => {
     const timeline = await client.get(`battle:${id}`);

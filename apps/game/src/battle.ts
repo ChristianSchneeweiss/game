@@ -1,3 +1,5 @@
+import _ from "lodash";
+import { nanoid } from "nanoid";
 import { Handler } from "./calculator";
 import type {
   BattleHandler,
@@ -12,12 +14,14 @@ import type {
 } from "./types";
 
 export class BM implements BattleManager, RoundLifecycleHooks {
+  startEntityData: Entity[] = [];
   entities: Entity[];
   deadEntities: Map<string, Entity>;
   rounds: BattleRound[];
   handler: BattleHandler;
   lifeCycleHooks: RoundLifecycleHooks[];
   events: TimelineEventFull[] = [];
+  battleId: string;
 
   constructor(entities: Entity[]) {
     this.deadEntities = new Map();
@@ -28,6 +32,7 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     for (const entity of entities) {
       this.join(entity);
     }
+    this.battleId = nanoid(20);
   }
 
   join(entity: Entity): void {
@@ -173,6 +178,8 @@ export class BM implements BattleManager, RoundLifecycleHooks {
   }
 
   fight() {
+    this.startEntityData = _.cloneDeep(this.entities);
+
     while (!this.isGameOver()) {
       this.onPreRound();
       console.log(`\n`, this.getCurrentRound());

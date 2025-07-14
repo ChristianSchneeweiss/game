@@ -1,3 +1,4 @@
+import z from "zod";
 import type { BM } from "../battle";
 import type { Entity } from "../types";
 
@@ -24,3 +25,11 @@ export type DungeonConfig = {
   availableEnemies: AvailableEnemies[];
   rollEnemies: () => Entity[][];
 };
+
+export const inBetweenCharacterData = z.object({
+  characterId: z.string(),
+  health: z.number(),
+  mana: z.number(),
+});
+
+export type InBetweenCharacterData = z.infer<typeof inBetweenCharacterData>;

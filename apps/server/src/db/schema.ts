@@ -8,6 +8,7 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core";
 import { customAlphabet } from "nanoid";
+import { COL_characterDungeonData } from "./character-dungeon-data";
 
 export const id = customAlphabet("1234567890abcdefghijklmnopqrstuvwxyz", 12);
 
@@ -66,6 +67,9 @@ export const TB_dungeonData = pgTable("dungeon_data", {
   key: text("key").notNull(),
   round: integer("round").notNull().default(0),
   cleared: boolean("cleared").notNull().default(false),
+  characterData: COL_characterDungeonData("character_data")
+    .notNull()
+    .default([]),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 
@@ -90,6 +94,18 @@ export const TB_dungeonEnemy = pgTable("dungeon_enemy", {
     .references(() => TB_dungeonData.id),
   enemyKey: text("enemy_key").notNull(),
   inRound: integer("in_round").notNull(),
+});
+
+export const TB_dungeonBattle = pgTable("dungeon_battle", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => id()),
+  dungeonId: text("dungeon_id")
+    .notNull()
+    .references(() => TB_dungeonData.id),
+  battleId: text("battle_id").notNull(),
+  round: integer("round").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 
 export const TB_timeline = pgTable("timeline", {

@@ -176,15 +176,14 @@ export const appRouter = router({
   fightDungeon: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const { session, db } = ctx;
+      const { db } = ctx;
       const bm = await dungeonManager.fightRound(input.id, db);
 
-      const battleId = await bmStorage.save(bm);
-      return battleId;
+      await bmStorage.save(bm);
+      return bm.battleId;
     }),
 
   getBattle: publicProcedure.input(z.string()).query(async ({ input, ctx }) => {
-    const { db } = ctx;
     const timeline = await bmStorage.get(input);
     return timeline;
   }),

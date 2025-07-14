@@ -1,11 +1,12 @@
 import { cn } from "@/lib/utils";
 import { trpc } from "@/utils/trpc";
+import type { InBetweenCharacterData } from "@loot-game/game/dungeons/types";
 import type { Entity, Spell, TimelineEventFull } from "@loot-game/game/types";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { SkullIcon } from "lucide-react";
 import { useMemo, type ReactNode } from "react";
 import { useEventTimer } from "./-hooks/event-timer";
-import { SkullIcon } from "lucide-react";
 
 const roundTime = 1500;
 
@@ -18,7 +19,7 @@ function RouteComponent() {
   const { data } = useSuspenseQuery(
     trpc.getBattle.queryOptions(id, { staleTime: Infinity }),
   );
-  const { timelineEvents, participants } = data;
+  const { timelineEvents, participants, startEntityData } = data;
   const { visibleEvents } = useEventTimer(timelineEvents, roundTime);
 
   const spellMap = useMemo(() => createSpellMap(participants), [participants]);
@@ -56,6 +57,7 @@ function RouteComponent() {
   const statsTimeline = useMemo(
     () =>
       calculateStatsTimeline(
+        startEntityData,
         participants,
         timelineEvents,
         visibleEvents,
@@ -63,7 +65,6 @@ function RouteComponent() {
       ),
     [participants, timelineEvents, visibleEvents, spellMap],
   );
-  console.log(statsTimeline);
 
   return (
     <div className="p-4">
@@ -194,6 +195,7 @@ type Stats = {
 };
 
 function calculateStatsTimeline(
+  startEntityData: InBetweenCharacterData[],
   participants: Entity[],
   timelineEvents: TimelineEventFull[],
   visible: number,
@@ -274,11 +276,16 @@ function calculateStatsTimeline(
         return stats;
       },
       {
-        health: entity.maxHealth,
-        mana: entity.maxMana,
+        health:
+          startEntityData.find((e) => e.characterId === entity.id)?.health ??
+          entity.maxHealth,
+        mana:
+          startEntityData.find((e) => e.characterId === entity.id)?.mana ??
+          entity.maxMana,
         cooldowns: new Map(),
         flags: {
           casting: false,
+          dead: false,
         },
       } as Stats,
     );

@@ -3,17 +3,18 @@ import { BM } from "@loot-game/game/battle";
 import { dungeon1 } from "@loot-game/game/dungeons/dungeon1";
 import type { DungeonData } from "@loot-game/game/dungeons/types";
 import type { Entity } from "@loot-game/game/types";
+import { xpNeededForLevelUp } from "@loot-game/game/xp-curve";
 import { eq } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import {
   id,
   TB_character,
+  TB_dungeonBattle,
   TB_dungeonData,
   TB_dungeonEnemy,
   TB_dungeonParticipant,
 } from "../db/schema";
 import { EntityFactory } from "./entity-factory";
-import { xpNeededForLevelUp } from "@loot-game/game/xp-curve";
 
 export const dungeonManager = {
   enterDungeon: async (
@@ -34,6 +35,11 @@ export const dungeonManager = {
         id: dungeon.id,
         key: dungeon.key,
         round: dungeon.round,
+        characterData: characters.map((character) => ({
+          characterId: character.id,
+          health: character.health,
+          mana: character.mana,
+        })),
       });
       for (const character of characters) {
         await tx.insert(TB_dungeonParticipant).values({
@@ -79,6 +85,14 @@ export const dungeonManager = {
         participant.characterId,
         db
       );
+      const characterData = dungeon.characterData.find(
+        (c) => c.characterId === character.id
+      );
+      if (!characterData) {
+        throw new Error("Character data not found");
+      }
+      character.health = characterData.health;
+      character.mana = characterData.mana;
       playerTeam.push(character);
     }
 
@@ -145,14 +159,36 @@ export const dungeonManager = {
       }
     }
 
-    // todo check if player team won or lost
-    dungeon.round++;
+    await db.insert(TB_dungeonBattle).values({
+      dungeonId: id,
+      battleId: bm.battleId,
+      round: dungeon.round,
+    });
 
     await db.transaction(async (tx) => {
+      const winningTeam = bm.getWinningTeam();
+      if (winningTeam === "TEAM_A") {
+        dungeon.round++;
+      }
+
       await tx
         .update(TB_dungeonData)
         .set({
           round: dungeon.round,
+          characterData: characters.map((character) => {
+            const characterFromBattle = bm
+              .getTeam("TEAM_A")
+              .find((c) => c.id === character.id);
+            if (!characterFromBattle) {
+              throw new Error("Character not found");
+            }
+
+            return {
+              characterId: character.id,
+              health: characterFromBattle.health,
+              mana: characterFromBattle.mana,
+            };
+          }),
         })
         .where(eq(TB_dungeonData.id, id));
 
@@ -164,8 +200,6 @@ export const dungeonManager = {
           .set({ cleared: true })
           .where(eq(TB_dungeonData.id, id));
       }
-
-      // todo save round results
     });
 
     return bm;
