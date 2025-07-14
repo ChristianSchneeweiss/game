@@ -42,6 +42,9 @@ export const TB_character = pgTable("character", {
   agility: integer("agility").notNull(),
   strength: integer("strength").notNull(),
 
+  xp: integer("xp").notNull().default(0),
+  level: integer("level").notNull().default(1),
+
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 

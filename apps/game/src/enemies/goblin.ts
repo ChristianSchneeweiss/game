@@ -1,15 +1,24 @@
 import { nanoid } from "nanoid";
-import { BaseEntity } from "../base-entity";
+import { Enemy } from "../base-entity";
 import { AutoAttackSpell } from "../spells/autoattack";
 
-export class Goblin extends BaseEntity {
+export class Goblin extends Enemy {
   constructor() {
-    super(`goblin_${nanoid()}`, "Goblin", "TEAM_B", 20, 0, {
-      intelligence: 1,
-      vitality: 1,
-      agility: 1,
-      strength: 2,
-    });
+    super(
+      `goblin_${nanoid()}`,
+      "Goblin",
+      "TEAM_B",
+      20,
+      0,
+      {
+        intelligence: 1,
+        vitality: 1,
+        agility: 1,
+        strength: 2,
+      },
+      10
+    );
+
     this.spells = [new AutoAttackSpell(nanoid())];
   }
 }

@@ -1,3 +1,4 @@
+import { Character, Enemy } from "@loot-game/game/base-entity";
 import { BM } from "@loot-game/game/battle";
 import { dungeon1 } from "@loot-game/game/dungeons/dungeon1";
 import type { DungeonData } from "@loot-game/game/dungeons/types";
@@ -6,11 +7,13 @@ import { eq } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import {
   id,
+  TB_character,
   TB_dungeonData,
   TB_dungeonEnemy,
   TB_dungeonParticipant,
 } from "../db/schema";
 import { EntityFactory } from "./entity-factory";
+import { xpNeededForLevelUp } from "@loot-game/game/xp-curve";
 
 export const dungeonManager = {
   enterDungeon: async (
@@ -87,6 +90,7 @@ export const dungeonManager = {
       key: dungeon.key,
     } as DungeonData;
   },
+
   fightRound: async (id: string, db: PostgresJsDatabase) => {
     const dungeon = await dungeonManager.getDungeon(id, db);
     const bm = new BM(dungeon.playerTeam);
@@ -99,6 +103,49 @@ export const dungeonManager = {
     }
     bm.fight();
 
+    let totalXp = 0;
+    for (const event of bm.events) {
+      if (event.event.eventType === "DEATH") {
+        const enemyId = event.event.data.id;
+        const enemy = dungeon.actualEnemies[dungeon.round].find(
+          (e) => e.id === enemyId
+        );
+        if (enemy instanceof Enemy) {
+          totalXp += enemy.xp;
+        }
+      }
+    }
+
+    const characters = dungeon.playerTeam;
+    for (const character of characters) {
+      if (!character.isDead()) {
+        if (!(character instanceof Character)) {
+          throw new Error("Character is not a Character");
+        }
+
+        const newXp = character.xp + totalXp;
+        const xpNeeded = xpNeededForLevelUp(character.level);
+        if (newXp >= xpNeeded) {
+          const newLevel = character.level + 1;
+          await db
+            .update(TB_character)
+            .set({
+              level: newLevel,
+              xp: newXp - xpNeeded,
+            })
+            .where(eq(TB_character.id, character.id));
+        } else {
+          await db
+            .update(TB_character)
+            .set({
+              xp: newXp,
+            })
+            .where(eq(TB_character.id, character.id));
+        }
+      }
+    }
+
+    // todo check if player team won or lost
     dungeon.round++;
 
     await db.transaction(async (tx) => {

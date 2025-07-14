@@ -1,8 +1,8 @@
-import { BaseEntity } from "@loot-game/game/base-entity";
+import { BaseEntity, Character } from "@loot-game/game/base-entity";
 import { Goblin } from "@loot-game/game/enemies/goblin";
 import { AutoAttackSpell } from "@loot-game/game/spells/autoattack";
 import { FireballSpell } from "@loot-game/game/spells/fireball";
-import type { Entity } from "@loot-game/game/types";
+import { type Entity } from "@loot-game/game/types";
 import { eq } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { nanoid } from "nanoid";
@@ -52,25 +52,25 @@ export class EntityFactory {
   static async createCharactersFromUser(
     userId: string,
     db: PostgresJsDatabase
-  ): Promise<Entity[]> {
-    const characters = await db
+  ): Promise<Character[]> {
+    const charactersDb = await db
       .select()
       .from(TB_character)
       .where(eq(TB_character.userId, userId));
-    if (characters.length === 0) {
+    if (charactersDb.length === 0) {
       throw new Error("No characters found");
     }
-    const entities: Entity[] = [];
-    for (const character of characters) {
-      entities.push(await this.createCharacter(character.id, db));
+    const characters: Character[] = [];
+    for (const character of charactersDb) {
+      characters.push(await this.createCharacter(character.id, db));
     }
-    return entities;
+    return characters;
   }
 
   static async createCharacter(
     id: string,
     db: PostgresJsDatabase
-  ): Promise<Entity> {
+  ): Promise<Character> {
     const [character] = await db
       .select()
       .from(TB_character)
@@ -84,7 +84,7 @@ export class EntityFactory {
       .from(TB_spellStats)
       .where(eq(TB_spellStats.equippedBy, id));
 
-    const baseEntity = new BaseEntity(
+    const baseEntity = new Character(
       character.id,
       character.name,
       "TEAM_A",
@@ -95,7 +95,9 @@ export class EntityFactory {
         vitality: character.vitality,
         agility: character.agility,
         strength: character.strength,
-      }
+      },
+      character.xp,
+      character.level
     );
     baseEntity.spells = spells.map((spell) => {
       switch (spell.type) {

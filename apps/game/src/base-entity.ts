@@ -153,3 +153,32 @@ export class BaseEntity implements Entity {
     return { spell, targets };
   }
 }
+
+export class Enemy extends BaseEntity {
+  constructor(
+    id: string,
+    name: string,
+    team: Team,
+    maxHealth: number,
+    maxMana: number,
+    baseAttributes: EntityAttributes,
+    public xp: number
+  ) {
+    super(id, name, team, maxHealth, maxMana, baseAttributes);
+  }
+}
+
+export class Character extends BaseEntity {
+  constructor(
+    id: string,
+    name: string,
+    team: Team,
+    maxHealth: number,
+    maxMana: number,
+    baseAttributes: EntityAttributes,
+    public xp: number,
+    public level: number
+  ) {
+    super(id, name, team, maxHealth, maxMana, baseAttributes);
+  }
+}
