@@ -8,7 +8,22 @@
   },
   "assets": {
     "directory": "./dist",
-    "binding": "ASSETS",
     "not_found_handling": "single-page-application",
   },
+  "kv_namespaces": [
+    {
+      "binding": "GAME",
+      "id": "92b8173ae64b4c4a937337e4fd7f094d",
+      "experimental_remote": true,
+    },
+  ],
+  "hyperdrive": [
+    {
+      "binding": "HYPERDRIVE",
+      "id": "054e377122474cb3a4df0e68a723c540",
+
+      // Optional. Can be used to connect to a local database for local development with `wrangler dev`
+      "localConnectionString": "postgresql://postgres.kjessuwnxfshthjdbprg:iEGQsMBeJqAvsG7C@aws-0-eu-central-1.pooler.supabase.com:5432/postgres",
+    },
+  ],
 }

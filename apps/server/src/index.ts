@@ -6,8 +6,9 @@ import { envSchema } from "./env";
 import { createContext } from "./lib/context";
 import { appRouter } from "./routers/index";
 
-type Bindings = {
-  FOO: string;
+export type Bindings = {
+  GAME: KVNamespace;
+  HYPERDRIVE: Hyperdrive;
 };
 
 const app = new Hono<{
@@ -24,12 +25,16 @@ app.use(
     // @ts-ignore
     router: appRouter,
     createContext: ({ req }, c) => {
-      return createContext({ req, env: envSchema.parse(process.env) });
+      return createContext({
+        req,
+        env: envSchema.parse(process.env),
+        cfEnv: c.env,
+      });
     },
   })
 );
 
-app.get("/healthCheck", (c) => {
+app.get("/api/healthCheck", async (c) => {
   return c.text("OK");
 });
 

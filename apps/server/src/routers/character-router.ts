@@ -27,7 +27,6 @@ export const characterRouter = router({
       session.id,
       db
     );
-
     return characters;
   }),
 

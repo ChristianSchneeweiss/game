@@ -60,10 +60,9 @@ export class EntityFactory {
     if (charactersDb.length === 0) {
       throw new Error("No characters found");
     }
-    const characters: Character[] = [];
-    for (const character of charactersDb) {
-      characters.push(await this.createCharacter(character.id, db));
-    }
+    const characters: Character[] = await Promise.all(
+      charactersDb.map((character) => this.createCharacter(character.id, db))
+    );
     return characters;
   }
 
@@ -71,18 +70,19 @@ export class EntityFactory {
     id: string,
     db: PostgresJsDatabase
   ): Promise<Character> {
-    const [character] = await db
-      .select()
+    const rows = await db
+      .select({
+        character: TB_character,
+        spellStats: TB_spellStats,
+      })
       .from(TB_character)
+      .leftJoin(TB_spellStats, eq(TB_spellStats.equippedBy, TB_character.id))
       .where(eq(TB_character.id, id));
-    if (!character) {
+    if (rows.length === 0) {
       throw new Error("Player not found");
     }
-
-    const spells = await db
-      .select()
-      .from(TB_spellStats)
-      .where(eq(TB_spellStats.equippedBy, id));
+    const character = rows[0].character;
+    const spells = rows.map((row) => row.spellStats);
 
     const baseEntity = new Character(
       character.id,
@@ -100,14 +100,16 @@ export class EntityFactory {
       character.level,
       character.statPointsAvailable
     );
-    baseEntity.spells = spells.map((spell) => {
-      switch (spell.type) {
-        case "fireball":
-          return new FireballSpell(spell.id);
-        default:
-          throw new Error(`Unknown spell type: ${spell.type}`);
-      }
-    });
+    baseEntity.spells = spells
+      .filter((spell) => spell !== null)
+      .map((spell) => {
+        switch (spell.type) {
+          case "fireball":
+            return new FireballSpell(spell.id);
+          default:
+            throw new Error(`Unknown spell type: ${spell.type}`);
+        }
+      });
 
     // todo not sure about this. maybe we should have it as a proper spell in TB_spellStats
     baseEntity.spells.push(new AutoAttackSpell(baseEntity.id));

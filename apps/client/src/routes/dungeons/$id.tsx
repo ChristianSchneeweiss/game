@@ -6,7 +6,7 @@ import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 export const Route = createFileRoute("/dungeons/$id")({
   component: RouteComponent,
   beforeLoad: async ({ params }) => {
-    await queryClient.prefetchQuery(
+    await queryClient.ensureQueryData(
       trpc.dungeon.getDungeon.queryOptions({ id: params.id }),
     );
   },

@@ -1,16 +1,10 @@
 import { BaseEntity } from "@loot-game/game/base-entity";
 import type { BM } from "@loot-game/game/battle";
 import { timelineEventSchema, type Entity } from "@loot-game/game/types";
-import { Redis } from "@upstash/redis/cloudflare";
 import { produce } from "immer";
-import { deserialize, stringify, type SuperJSONResult } from "superjson";
+import { parse, stringify } from "superjson";
 import { z } from "zod";
 import { COL_characterDungeonDataSchema } from "../db/character-dungeon-data";
-
-const client = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL!,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-});
 
 const storageSchema = z.object({
   startEntityData: COL_characterDungeonDataSchema,
@@ -20,14 +14,14 @@ const storageSchema = z.object({
 type StorageSchema = z.infer<typeof storageSchema>;
 
 export const bmStorage = {
-  save: async (bm: BM) => {
+  save: async (bm: BM, kv: KVNamespace) => {
     const entities = produce(bm.entities, (draft) => {
       draft.forEach((ent) => {
         ent.battleManager = undefined;
         ent.spells.forEach((spells) => (spells.battleManager = undefined));
       });
     });
-    await client.set(
+    await kv.put(
       `battle:${bm.battleId}`,
       stringify({
         startEntityData: bm.startEntityData
@@ -42,10 +36,10 @@ export const bmStorage = {
       } satisfies StorageSchema)
     );
   },
-  get: async (id: string) => {
-    const timeline = await client.get(`battle:${id}`);
+  get: async (id: string, kv: KVNamespace) => {
+    const timeline = await kv.get(`battle:${id}`);
     if (!timeline) throw new Error("battle does not exist");
-    const serialized = deserialize(timeline as SuperJSONResult);
+    const serialized = parse(timeline);
 
     const x = storageSchema.safeParse(serialized);
     if (!x.success) throw new Error(x.error.message);

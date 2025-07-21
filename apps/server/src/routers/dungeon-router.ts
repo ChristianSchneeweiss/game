@@ -103,7 +103,7 @@ export const dungeonRouter = router({
       const { db } = ctx;
       const bm = await dungeonManager.fightRound(input.id, db);
 
-      await bmStorage.save(bm);
+      await bmStorage.save(bm, ctx.cfEnv.GAME);
       return bm.battleId;
     }),
 });

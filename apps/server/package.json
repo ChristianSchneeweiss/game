@@ -4,16 +4,16 @@
   "packageManager": "bun@1.2.18",
   "type": "module",
   "scripts": {
-    "dev": "bun run --watch src/index.ts",
+    "dev": "bunx wrangler dev --port 3000",
     "start": "bun run src/index.ts",
-    "deploy": "bunx wrangler deploy"
+    "deploy": "bunx wrangler deploy",
+    "wrangler": "wrangler"
   },
   "dependencies": {
     "@hono/trpc-server": "^0.4.0",
     "@loot-game/game": "workspace:*",
     "@supabase/supabase-js": "^2.50.3",
     "@trpc/server": "^11.4.3",
-    "@upstash/redis": "^1.35.1",
     "drizzle-orm": "^0.44.2",
     "hono": "^4.8.4",
     "immer": "^10.1.1",

@@ -1,15 +1,18 @@
 import { TRPCError } from "@trpc/server";
 import { drizzle } from "drizzle-orm/postgres-js";
 import type z from "zod";
+import type { Bindings } from "..";
 import type { envSchema } from "../env";
 import { createSB } from "../supabase";
 
 export async function createContext({
   req,
   env,
+  cfEnv,
 }: {
   req: Request;
   env: z.infer<typeof envSchema>;
+  cfEnv: Bindings;
 }) {
   const sb = createSB(env.SUPABASE_URL, env.SUPABASE_KEY);
 
@@ -20,7 +23,7 @@ export async function createContext({
     });
   }
 
-  const db = drizzle(env.DATABASE_URL);
+  const db = drizzle(cfEnv.HYPERDRIVE.connectionString);
 
   if (!db) {
     throw new TRPCError({
@@ -34,6 +37,7 @@ export async function createContext({
     supabase: sb,
     db,
     env,
+    cfEnv,
   };
 
   const bearerToken = req.headers.get("authorization")?.split("Bearer ").pop();
