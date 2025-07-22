@@ -1,10 +1,10 @@
 import { QueryCache, QueryClient } from "@tanstack/react-query";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
-import type { AppRouter } from "../../../server/src/routers";
 import { toast } from "sonner";
-import { userStore } from "./user-store";
 import { SuperJSON } from "superjson";
+import type { AppRouter } from "../../../server/src/routers";
+import { userStore } from "./user-store";
 
 export const queryClient = new QueryClient({
   queryCache: new QueryCache({
@@ -24,7 +24,7 @@ export const queryClient = new QueryClient({
 export const trpcClient = createTRPCClient<AppRouter>({
   links: [
     httpBatchLink({
-      url: import.meta.env.VITE_API_URL,
+      url: "/trpc",
       transformer: SuperJSON,
       fetch: async (url, options) => {
         const user = userStore.getState().user;
