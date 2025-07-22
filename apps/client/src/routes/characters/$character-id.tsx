@@ -3,6 +3,7 @@ import { trpc } from "@/utils/trpc";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Wand2Icon } from "lucide-react";
+import { toast } from "sonner";
 import { CharacterCard } from "./-components/character-card";
 
 export const Route = createFileRoute("/characters/$character-id")({
@@ -17,8 +18,13 @@ function RouteComponent() {
   const { data: spells, refetch: refetchSpells } = useQuery(
     trpc.getMySpells.queryOptions(),
   );
-  const { mutateAsync: _equipSpell } = useMutation(
-    trpc.character.equipSpell.mutationOptions(),
+  const { mutateAsync: equipSpell } = useMutation(
+    trpc.character.equipSpell.mutationOptions({
+      onSuccess: () => {
+        refetchCharacter();
+        refetchSpells();
+      },
+    }),
   );
   const { mutateAsync: _addLowHpActionHook } = useMutation(
     trpc.character.addLowHpActionHook.mutationOptions({
@@ -27,12 +33,6 @@ function RouteComponent() {
       },
     }),
   );
-
-  const equipSpell = async (spellId: string) => {
-    await _equipSpell({ characterId, spellId });
-    refetchCharacter();
-    refetchSpells();
-  };
 
   return (
     <div className="m-6">
@@ -53,7 +53,9 @@ function RouteComponent() {
                   <Button
                     size="icon"
                     variant="ghost"
-                    onClick={() => equipSpell(spell.id)}
+                    onClick={() =>
+                      equipSpell({ characterId, spellId: spell.id })
+                    }
                   >
                     <Wand2Icon className="h-3 w-3" />
                   </Button>
@@ -65,13 +67,20 @@ function RouteComponent() {
       <div className="mt-4">
         <h4 className="mb-2 text-xl">Add Low HP Action Hook</h4>
         <Button
-          onClick={() =>
-            _addLowHpActionHook({
+          onClick={() => {
+            const singleHeal = character?.spells?.find(
+              (s) => s.config.type === "single-heal",
+            );
+            if (!singleHeal) {
+              toast.error("No single heal spell found");
+              return;
+            }
+            return _addLowHpActionHook({
               characterId,
-              hpPercentage: 0.5,
-              spellId: character?.spells[0]?.config.id!,
-            })
-          }
+              hpPercentage: 0.95,
+              spellId: singleHeal.config.id,
+            });
+          }}
         >
           Add Hook
         </Button>

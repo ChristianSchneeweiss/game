@@ -199,8 +199,8 @@ export class BM implements BattleManager, RoundLifecycleHooks {
         this.processTurn(caster, (round) => {
           const prioAction = caster.actionSelectionHooks
             .sort((a, b) => a.priority - b.priority)
-            .find((hook) => hook.condition())
-            ?.actionSelection();
+            .find((hook) => hook.condition(caster, this))
+            ?.actionSelection(caster, this);
 
           const { spell, targets } = prioAction ?? caster.getAction();
           if (targets.length > 0 || spell.config.targetType === "NO_TARGET") {

@@ -2,12 +2,18 @@ import { BaseEntity, Character } from "@loot-game/game/base-entity";
 import { Goblin } from "@loot-game/game/enemies/goblin";
 import { AutoAttackSpell } from "@loot-game/game/spells/autoattack";
 import { FireballSpell } from "@loot-game/game/spells/fireball";
+import { SingleHealSpell } from "@loot-game/game/spells/Single-Heal";
 import { ActionHooksFactory } from "@loot-game/game/trigger-hooks/Action-Hooks-Factory";
 import { type ActionSelectionHook, type Entity } from "@loot-game/game/types";
 import { eq } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { nanoid } from "nanoid";
-import { TB_character, TB_dungeonEnemy, TB_spellStats } from "../db/schema";
+import {
+  TB_actionSelectionHook,
+  TB_character,
+  TB_dungeonEnemy,
+  TB_spellStats,
+} from "../db/schema";
 
 export class EntityFactory {
   static createEnemy(): Entity {
@@ -75,15 +81,24 @@ export class EntityFactory {
       .select({
         character: TB_character,
         spellStats: TB_spellStats,
+        actionSelectionHooks: TB_actionSelectionHook,
       })
       .from(TB_character)
       .leftJoin(TB_spellStats, eq(TB_spellStats.equippedBy, TB_character.id))
+      .leftJoin(
+        TB_actionSelectionHook,
+        eq(TB_actionSelectionHook.characterId, TB_character.id)
+      )
       .where(eq(TB_character.id, id));
+
     if (rows.length === 0) {
       throw new Error("Player not found");
     }
     const character = rows[0].character;
     const spells = rows.map((row) => row.spellStats);
+    const actionSelectionHooks = rows
+      .map((row) => row.actionSelectionHooks)
+      .filter((hook) => hook !== null);
 
     const baseEntity = new Character(
       character.id,
@@ -107,6 +122,8 @@ export class EntityFactory {
         switch (spell.type) {
           case "fireball":
             return new FireballSpell(spell.id);
+          case "single-heal":
+            return new SingleHealSpell(spell.id);
           default:
             throw new Error(`Unknown spell type: ${spell.type}`);
         }
@@ -117,9 +134,7 @@ export class EntityFactory {
 
     baseEntity.actionSelectionHooks = ActionHooksFactory.createActionHooks(
       [baseEntity],
-      character.actionSelectionHooks as ReturnType<
-        ActionSelectionHook["serialize"]
-      >[]
+      actionSelectionHooks
     );
     return baseEntity;
   }

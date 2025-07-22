@@ -4,13 +4,13 @@ import {
   MindControlEffect,
   ShieldEffect,
 } from "./effect";
+import type { SpellCastEvent } from "./timeline-events";
 import type {
   BattleManager,
   DamageType,
   Effect,
   Entity,
   Spell,
-  SpellCastEvent,
   SpellConfig,
 } from "./types";
 
@@ -179,7 +179,7 @@ export class DamageSpell extends BaseSpell {
 }
 
 export class HealingSpell extends BaseSpell {
-  private healAmount: number;
+  protected healAmount: number;
 
   constructor(config: SpellConfig, healAmount: number) {
     super(config);
@@ -212,10 +212,8 @@ export class HealingSpell extends BaseSpell {
     };
   }
 
-  private calculateHealing(caster: Entity): number {
-    return Math.round(
-      this.healAmount * (1 + caster.getStat("intelligence") * 0.05)
-    );
+  protected calculateHealing(caster: Entity): number {
+    return this.healAmount;
   }
 }
 

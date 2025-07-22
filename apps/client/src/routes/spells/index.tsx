@@ -29,9 +29,14 @@ function RouteComponent() {
   return (
     <div className="m-6">
       <div className="space-y-4">
-        <Button onClick={() => createSpell({ type: "fireball" })}>
-          Create Fireball
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={() => createSpell({ type: "fireball" })}>
+            Create Fireball
+          </Button>
+          <Button onClick={() => createSpell({ type: "single-heal" })}>
+            Create Single Heal
+          </Button>
+        </div>
         <h2 className="text-2xl font-bold">My Spells</h2>
         <div className="grid gap-3">
           {spells &&

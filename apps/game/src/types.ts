@@ -119,13 +119,17 @@ export interface Spell
 }
 
 export interface ActionSelectionHook {
+  id: string;
   name: string;
   priority: number;
 
-  condition: (self: Entity) => boolean;
-  actionSelection: (self: Entity) => ReturnType<Entity["getAction"]> | null;
+  condition: (self: Entity, battleManager: BattleManager) => boolean;
+  actionSelection: (
+    self: Entity,
+    battleManager: BattleManager
+  ) => ReturnType<Entity["getAction"]> | null;
 
-  serialize(): { name: string; priority: number; data: unknown };
+  serialize(): unknown;
 }
 
 export interface SpellConfig {

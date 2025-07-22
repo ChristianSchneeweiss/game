@@ -1,4 +1,9 @@
-import type { ActionSelectionHook, Entity, Spell } from "../types";
+import type {
+  ActionSelectionHook,
+  BattleManager,
+  Entity,
+  Spell,
+} from "../types";
 
 export class LowHpActionSelectionHook implements ActionSelectionHook {
   static name = "LowHpActionSelectionHook";
@@ -6,27 +11,33 @@ export class LowHpActionSelectionHook implements ActionSelectionHook {
   name = LowHpActionSelectionHook.name;
 
   constructor(
+    public id: string,
     public spell: Spell,
     public hpPercentage: number,
     public priority: number
   ) {}
 
-  condition(self: Entity): boolean {
-    return self.health / self.maxHealth < this.hpPercentage;
+  condition(self: Entity, battleManager: BattleManager): boolean {
+    if (!this.spell.canCast(self)) {
+      return false;
+    }
+
+    const myTeam = battleManager.getTeam(self.team);
+    const percentageHps = myTeam.map((e) => e.health / e.maxHealth);
+    return percentageHps.some((p) => p < this.hpPercentage);
   }
 
-  actionSelection(self: Entity): ReturnType<Entity["getAction"]> | null {
+  actionSelection(
+    self: Entity,
+    battleManager: BattleManager
+  ): ReturnType<Entity["getAction"]> | null {
     return { spell: this.spell, targets: [] };
   }
 
-  serialize(): { name: string; priority: number; data: unknown } {
+  serialize(): unknown {
     return {
-      name: this.name,
-      priority: this.priority,
-      data: {
-        spellId: this.spell.config.id,
-        hpPercentage: this.hpPercentage,
-      },
+      spellId: this.spell.config.id,
+      hpPercentage: this.hpPercentage,
     };
   }
 }

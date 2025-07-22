@@ -1,7 +1,7 @@
 import { LowHpActionSelectionHook } from "@loot-game/game/trigger-hooks/Low-Hp-THook";
 import { eq } from "drizzle-orm";
 import z from "zod";
-import { id, TB_character } from "../db/schema";
+import { id, TB_actionSelectionHook } from "../db/schema";
 import {
   applyStatIncrease,
   createCharacter,
@@ -93,20 +93,29 @@ export const characterRouter = router({
       if (!spell) {
         throw new Error("Spell not found");
       }
+      const hookId = id();
       const hook = new LowHpActionSelectionHook(
-        character,
+        hookId,
         spell,
         input.hpPercentage,
         input.priority
       );
-      character.actionSelectionHooks.push(hook);
-      const serializedHook = character.actionSelectionHooks.map((h) =>
-        h.serialize()
-      );
 
+      await db.insert(TB_actionSelectionHook).values({
+        id: hookId,
+        characterId: input.characterId,
+        name: hook.name,
+        priority: hook.priority,
+        data: hook.serialize(),
+      });
+    }),
+
+  removeActionHook: protectedProcedure
+    .input(z.object({ hookId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { db } = ctx;
       await db
-        .update(TB_character)
-        .set({ actionSelectionHooks: serializedHook })
-        .where(eq(TB_character.id, input.characterId));
+        .delete(TB_actionSelectionHook)
+        .where(eq(TB_actionSelectionHook.id, input.hookId));
     }),
 });

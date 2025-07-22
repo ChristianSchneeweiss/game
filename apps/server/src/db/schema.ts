@@ -43,14 +43,27 @@ export const TB_character = pgTable("character", {
   agility: integer("agility").notNull(),
   strength: integer("strength").notNull(),
 
-  actionSelectionHooks: json("action_selection_hooks").notNull().default([]),
-
   xp: integer("xp").notNull().default(0),
   level: integer("level").notNull().default(1),
   statPointsAvailable: integer("stat_points_available").notNull().default(0),
 
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
+
+export const TB_actionSelectionHook = pgTable("action_selection_hook", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => id()),
+  characterId: text("character_id")
+    .notNull()
+    .references(() => TB_character.id),
+  name: text("name").notNull(),
+  priority: integer("priority").notNull(),
+  data: json("data").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+});
+
+export type TB_actionSelectionHook = typeof TB_actionSelectionHook.$inferSelect;
 
 export const TB_spellStats = pgTable("spell_stats", {
   id: text("id")

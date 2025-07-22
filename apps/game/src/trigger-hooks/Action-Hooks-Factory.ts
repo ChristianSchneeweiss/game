@@ -5,11 +5,16 @@ import { LowHpActionSelectionHook } from "./Low-Hp-THook";
 export class ActionHooksFactory {
   static createActionHooks(
     entities: Entity[],
-    data: ReturnType<ActionSelectionHook["serialize"]>[]
+    data: {
+      id: string;
+      name: string;
+      priority: number;
+      data: unknown;
+    }[]
   ): ActionSelectionHook[] {
     return data.map((hook) => {
       switch (hook.name) {
-        case "LowHpActionSelectionHook":
+        case LowHpActionSelectionHook.name:
           const schema = z.object({
             spellId: z.string(),
             hpPercentage: z.number(),
@@ -22,6 +27,7 @@ export class ActionHooksFactory {
             throw new Error(`Spell not found: ${data.spellId}`);
           }
           return new LowHpActionSelectionHook(
+            hook.id,
             spell,
             data.hpPercentage,
             hook.priority
