@@ -2,15 +2,17 @@ import _ from "lodash";
 import { nanoid } from "nanoid";
 import { Handler } from "./calculator";
 import type {
+  SpellCastEvent,
+  TimelineEvent,
+  TimelineEventFull,
+} from "./timeline-events";
+import type {
   BattleHandler,
   BattleManager,
   BattleRound,
   Entity,
   RoundLifecycleHooks,
-  SpellCastEvent,
   Team,
-  TimelineEvent,
-  TimelineEventFull,
 } from "./types";
 
 export class BM implements BattleManager, RoundLifecycleHooks {
@@ -195,7 +197,12 @@ export class BM implements BattleManager, RoundLifecycleHooks {
         }
 
         this.processTurn(caster, (round) => {
-          const { spell, targets } = caster.getAction();
+          const prioAction = caster.actionSelectionHooks
+            .sort((a, b) => a.priority - b.priority)
+            .find((hook) => hook.condition())
+            ?.actionSelection();
+
+          const { spell, targets } = prioAction ?? caster.getAction();
           if (targets.length > 0 || spell.config.targetType === "NO_TARGET") {
             const targetIds = targets.length > 0 ? [targets[0]!.id] : [];
             const result = this.castSpell(caster, spell.config.id, targetIds);

@@ -1,4 +1,4 @@
-import type { EventTypes } from "@loot-game/game/types";
+import type { EventTypes } from "@loot-game/game/timeline-events";
 import {
   boolean,
   integer,
@@ -42,6 +42,8 @@ export const TB_character = pgTable("character", {
   vitality: integer("vitality").notNull(),
   agility: integer("agility").notNull(),
   strength: integer("strength").notNull(),
+
+  actionSelectionHooks: json("action_selection_hooks").notNull().default([]),
 
   xp: integer("xp").notNull().default(0),
   level: integer("level").notNull().default(1),

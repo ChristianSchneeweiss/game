@@ -1,5 +1,7 @@
 import { calculator } from "./calculator";
+import type { TimelineEvent } from "./timeline-events";
 import type {
+  ActionSelectionHook,
   BattleManager,
   DamageType,
   Effect,
@@ -8,7 +10,6 @@ import type {
   Spell,
   StatModifier,
   Team,
-  TimelineEvent,
 } from "./types";
 
 export class BaseEntity implements Entity {
@@ -24,6 +25,7 @@ export class BaseEntity implements Entity {
   statModifiers: StatModifier[];
   spells: Spell[];
   battleManager?: BattleManager;
+  actionSelectionHooks: ActionSelectionHook[];
 
   constructor(
     id: string,
@@ -45,6 +47,7 @@ export class BaseEntity implements Entity {
     this.activeEffects = [];
     this.statModifiers = [];
     this.spells = [];
+    this.actionSelectionHooks = [];
   }
 
   onUpkeep(): TimelineEvent[] | null {

@@ -2,7 +2,8 @@ import { BaseEntity, Character } from "@loot-game/game/base-entity";
 import { Goblin } from "@loot-game/game/enemies/goblin";
 import { AutoAttackSpell } from "@loot-game/game/spells/autoattack";
 import { FireballSpell } from "@loot-game/game/spells/fireball";
-import { type Entity } from "@loot-game/game/types";
+import { ActionHooksFactory } from "@loot-game/game/trigger-hooks/Action-Hooks-Factory";
+import { type ActionSelectionHook, type Entity } from "@loot-game/game/types";
 import { eq } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { nanoid } from "nanoid";
@@ -113,6 +114,13 @@ export class EntityFactory {
 
     // todo not sure about this. maybe we should have it as a proper spell in TB_spellStats
     baseEntity.spells.push(new AutoAttackSpell(baseEntity.id));
+
+    baseEntity.actionSelectionHooks = ActionHooksFactory.createActionHooks(
+      [baseEntity],
+      character.actionSelectionHooks as ReturnType<
+        ActionSelectionHook["serialize"]
+      >[]
+    );
     return baseEntity;
   }
 }

@@ -20,6 +20,13 @@ function RouteComponent() {
   const { mutateAsync: _equipSpell } = useMutation(
     trpc.character.equipSpell.mutationOptions(),
   );
+  const { mutateAsync: _addLowHpActionHook } = useMutation(
+    trpc.character.addLowHpActionHook.mutationOptions({
+      onSuccess: () => {
+        refetchCharacter();
+      },
+    }),
+  );
 
   const equipSpell = async (spellId: string) => {
     await _equipSpell({ characterId, spellId });
@@ -55,6 +62,20 @@ function RouteComponent() {
           </div>
         </div>
       )}
+      <div className="mt-4">
+        <h4 className="mb-2 text-xl">Add Low HP Action Hook</h4>
+        <Button
+          onClick={() =>
+            _addLowHpActionHook({
+              characterId,
+              hpPercentage: 0.5,
+              spellId: character?.spells[0]?.config.id!,
+            })
+          }
+        >
+          Add Hook
+        </Button>
+      </div>
     </div>
   );
 }
