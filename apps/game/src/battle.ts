@@ -26,6 +26,7 @@ export class BM implements BattleManager, RoundLifecycleHooks {
   events: TimelineEventFull[] = [];
   battleId: string;
   rng: seedrandom.PRNG;
+  currentInRound: number = 0;
 
   constructor(entities: Entity[]) {
     this.deadEntities = new Map();
@@ -54,6 +55,12 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     });
   }
 
+  start() {
+    if (this.rounds.length > 0) return;
+    this.startEntityData = _.cloneDeep(this.entities);
+    this.onPreRound();
+  }
+
   onPreRound(): void {
     const round: BattleRound = {
       round: this.rounds.length,
@@ -61,12 +68,15 @@ export class BM implements BattleManager, RoundLifecycleHooks {
         .sort((a, b) => b.getStat("agility") - a.getStat("agility"))
         .map((e) => e.id),
     };
+    this.currentInRound = 0;
 
     this.rounds.push(round);
 
     this.lifeCycleHooks.forEach((hook) => {
       hook.onPreRound?.();
     });
+
+    this.preTurn();
   }
 
   onPostRound(): void {
@@ -186,9 +196,56 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     return spell.cast(caster, targets);
   }
 
-  fight() {
-    this.startEntityData = _.cloneDeep(this.entities);
+  castNextSpell(
+    entityId: string,
+    spellId: string,
+    targetIds: string[]
+  ): SpellCastEvent | null {
+    const currentRound = this.getCurrentRound();
+    if (currentRound.order[this.currentInRound] !== entityId) {
+      throw new Error("Entity is not the next in round");
+    }
 
+    const entity = this.getEntityById(entityId);
+    if (!entity) {
+      return null;
+    }
+    const event = this.castSpell(entity, spellId, targetIds);
+    if (event) {
+      this.processEvent(event);
+    }
+
+    return event;
+  }
+
+  preTurn() {
+    const currentEntity = this.getEntityById(
+      this.getCurrentRound().order[this.currentInRound]!
+    );
+    if (!currentEntity) {
+      throw new Error("No current entity found");
+    }
+    const upkeepEvents = currentEntity.onUpkeep?.();
+    if (upkeepEvents) {
+      upkeepEvents.forEach((event) => this.processEvent(event));
+    }
+  }
+
+  postTurn() {
+    const currentEntity = this.getEntityById(
+      this.getCurrentRound().order[this.currentInRound]!
+    );
+    if (!currentEntity) {
+      throw new Error("No current entity found");
+    }
+    const endStepEvents = currentEntity.onEndStep?.();
+    if (endStepEvents) {
+      endStepEvents.forEach((event) => this.processEvent(event));
+    }
+    this.currentInRound++;
+  }
+
+  fight() {
     while (!this.isGameOver()) {
       this.onPreRound();
       console.log(`\n`, this.getCurrentRound());

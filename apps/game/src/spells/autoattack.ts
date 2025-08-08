@@ -1,5 +1,6 @@
 import { BaseSpell } from "../spells";
-import type { BattleManager, Entity, SpellCastEvent } from "../types";
+import type { SpellCastEvent } from "../timeline-events";
+import type { BattleManager, Entity } from "../types";
 
 export class AutoAttackSpell extends BaseSpell {
   constructor(id: string) {
@@ -24,6 +25,9 @@ export class AutoAttackSpell extends BaseSpell {
     if (!target) {
       return null;
     }
+    console.log("caster", caster);
+    console.log("target", target);
+    console.log("roll", roll);
     const damage = battleManager.handler.damage(
       this,
       0.75 * roll,
@@ -31,6 +35,7 @@ export class AutoAttackSpell extends BaseSpell {
       caster,
       target
     );
+    console.log("damage", damage);
 
     return {
       damageApplied: new Map([[target.id, damage]]),

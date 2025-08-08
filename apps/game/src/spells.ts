@@ -78,7 +78,10 @@ export abstract class BaseSpell implements Spell {
   }
 
   cast(caster: Entity, targets: Entity[]): SpellCastEvent | null {
+    console.log("casting spell", this.config.id);
+    console.log("battleManager", this.battleManager);
     if (!this.battleManager) throw new Error("Battle manager not set");
+    console.log("can cast", this.canCast(caster));
     if (!this.canCast(caster)) {
       return null;
     }

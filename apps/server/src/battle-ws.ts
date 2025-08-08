@@ -1,11 +1,39 @@
+import type { BaseEntity } from "@loot-game/game/base-entity";
 import { BM } from "@loot-game/game/battle";
+import type { TimelineEventFull } from "@loot-game/game/timeline-events";
+import type { BattleRound } from "@loot-game/game/types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { DurableObject } from "cloudflare:workers";
-import { eq } from "drizzle-orm";
 import { drizzle, PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import { TB_user } from "./db/schema";
+import { produce } from "immer";
+import z from "zod";
 import { EntityFactory } from "./game-usecases/entity-factory";
 import { createSB } from "./supabase";
+
+export const messageSchema = z.object({
+  type: z.literal("castSpell"),
+  data: z.object({
+    entityId: z.string(),
+    spellId: z.string(),
+    targetIds: z.array(z.string()),
+  }),
+});
+
+export type ResponseMessage =
+  | {
+      type: "state";
+      data: {
+        events: TimelineEventFull[];
+        round: BattleRound;
+        currentInRound: number;
+      };
+    }
+  | {
+      type: "entities";
+      data: {
+        entities: BaseEntity[];
+      };
+    };
 
 export class BattleWebsocket extends DurableObject {
   sessions: Map<WebSocket, { [key: string]: string }>;
@@ -63,7 +91,9 @@ export class BattleWebsocket extends DurableObject {
     this.db = drizzle(connectionString);
     this.sb = createSB(supabaseUrl, supabaseKey);
 
-    await this.setupBm();
+    if (!this.bm) {
+      await this.setupBm();
+    }
   }
 
   async fetch(request: Request): Promise<Response> {
@@ -84,6 +114,22 @@ export class BattleWebsocket extends DurableObject {
 
     this.ctx.acceptWebSocket(server);
 
+    const entities = produce(this.bm.entities, (draft) => {
+      draft.forEach((ent) => {
+        ent.battleManager = undefined;
+        ent.spells.forEach((spells) => (spells.battleManager = undefined));
+      });
+    });
+
+    server.send(
+      JSON.stringify({
+        type: "entities",
+        data: { entities: entities as BaseEntity[] },
+      } satisfies ResponseMessage)
+    );
+
+    this.sendState(server);
+
     return new Response(null, {
       status: 101,
       webSocket: client,
@@ -91,16 +137,55 @@ export class BattleWebsocket extends DurableObject {
   }
 
   async webSocketMessage(ws: WebSocket, message: ArrayBuffer | string) {
-    const session = this.sessions.get(ws)!;
-    const [user] = await this.db
-      .select()
-      .from(TB_user)
-      .where(eq(TB_user.id, session.id));
+    const parsed = messageSchema.safeParse(JSON.parse(message as string));
+    if (!parsed.success) {
+      throw new Error("Invalid message");
+    }
+    // super weird this has to be done. somehow they lose the battle manager reference
+    this.bm.entities.forEach((c) => {
+      c.battleManager = this.bm;
+      c.spells.forEach((s) => {
+        s.battleManager = this.bm;
+      });
+    });
+    switch (parsed.data.type) {
+      case "castSpell":
+        this.processSpellCast(
+          parsed.data.data.entityId,
+          parsed.data.data.spellId,
+          parsed.data.data.targetIds
+        );
+        break;
+      default:
+        throw new Error("Invalid message");
+    }
 
+    this.bm.start();
+    this.sendState(ws);
+  }
+
+  private async processSpellCast(
+    entityId: string,
+    spellId: string,
+    targetIds: string[]
+  ) {
+    this.bm.castNextSpell(entityId, spellId, targetIds);
+    this.bm.postTurn();
+    // process pre turn of next entity
+    this.bm.preTurn();
+  }
+
+  private async sendState(ws: WebSocket) {
     const events = this.bm.events;
-    ws.send(JSON.stringify(events));
-    this.bm.onPreRound();
-    ws.send(JSON.stringify(this.bm.getCurrentRound()));
+    const state: ResponseMessage = {
+      type: "state",
+      data: {
+        events,
+        round: this.bm.getCurrentRound(),
+        currentInRound: this.bm.currentInRound,
+      },
+    } satisfies ResponseMessage;
+    ws.send(JSON.stringify(state));
   }
 
   async webSocketClose(

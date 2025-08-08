@@ -3,6 +3,11 @@ import { userStore } from "@/utils/user-store";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
+import type z from "zod";
+import type {
+  messageSchema,
+  ResponseMessage,
+} from "../../../server/src/battle-ws";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
@@ -14,14 +19,23 @@ function RouteComponent() {
     `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/api/battle/test?access_token=${accessToken}`,
     {
       onMessage: (event) => {
-        console.log("message", event.data);
+        const response = JSON.parse(event.data) as ResponseMessage;
+        console.log("data", response.data);
       },
     },
   );
 
   useEffect(() => {
     if (readyState === ReadyState.OPEN) {
-      sendMessage("hello from client");
+      const msg = {
+        type: "castSpell",
+        data: {
+          entityId: "e91c0w6lphxo",
+          spellId: "e91c0w6lphxo",
+          targetIds: ["goblin"],
+        },
+      } satisfies z.infer<typeof messageSchema>;
+      sendMessage(JSON.stringify(msg));
     }
   }, [readyState]);
 

@@ -17,7 +17,6 @@ export const dungeonRouter = router({
       session.id,
       db
     );
-    console.log("characters", characters.length);
     const dungeon = await dungeonManager.enterDungeon(
       characters,
       "dungeon-1",
