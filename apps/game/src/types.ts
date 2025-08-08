@@ -150,6 +150,7 @@ export interface BattleManager {
   lifeCycleHooks: RoundLifecycleHooks[];
   events: TimelineEventFull[];
 
+  getRNG(): number;
   getTeam(team: Team): Entity[];
   getAliveEntities(): Entity[];
   getEntityById(id: string): Entity | undefined;

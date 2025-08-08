@@ -21,6 +21,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/trpc/, ""),
       },
+      "/api": {
+        target: "http://localhost:3000",
+        changeOrigin: true,
+        ws: true,
+      },
     },
   },
 });

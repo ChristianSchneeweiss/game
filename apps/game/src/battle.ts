@@ -1,5 +1,6 @@
 import _ from "lodash";
 import { nanoid } from "nanoid";
+import seedrandom from "seedrandom";
 import { Handler } from "./calculator";
 import type {
   SpellCastEvent,
@@ -24,6 +25,7 @@ export class BM implements BattleManager, RoundLifecycleHooks {
   lifeCycleHooks: RoundLifecycleHooks[];
   events: TimelineEventFull[] = [];
   battleId: string;
+  rng: seedrandom.PRNG;
 
   constructor(entities: Entity[]) {
     this.deadEntities = new Map();
@@ -35,6 +37,11 @@ export class BM implements BattleManager, RoundLifecycleHooks {
       this.join(entity);
     }
     this.battleId = nanoid(20);
+    this.rng = seedrandom(this.battleId);
+  }
+
+  getRNG(): number {
+    return this.rng();
   }
 
   join(entity: Entity): void {
