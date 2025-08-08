@@ -6,6 +6,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { DurableObject } from "cloudflare:workers";
 import { drizzle, PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { produce } from "immer";
+import SuperJSON from "superjson";
 import z from "zod";
 import { EntityFactory } from "./game-usecases/entity-factory";
 import { createSB } from "./supabase";
@@ -19,14 +20,16 @@ export const messageSchema = z.object({
   }),
 });
 
+export type BattleState = {
+  events: TimelineEventFull[];
+  round: BattleRound;
+  currentInRound: number;
+};
+
 export type ResponseMessage =
   | {
       type: "state";
-      data: {
-        events: TimelineEventFull[];
-        round: BattleRound;
-        currentInRound: number;
-      };
+      data: BattleState;
     }
   | {
       type: "entities";
@@ -71,7 +74,11 @@ export class BattleWebsocket extends DurableObject {
       "0e451e99-8bdc-421d-917d-cc92877a015b",
       this.db
     );
-    this.bm = new BM(characters);
+    const battleId = await this.ctx.storage.get("battleId");
+    if (!battleId) {
+      throw new Error("No battleId");
+    }
+    this.bm = new BM(characters, battleId as string);
     const enemy = EntityFactory.createEnemyFromKey("goblin", this.db);
     this.bm.join(enemy);
   }
@@ -122,13 +129,14 @@ export class BattleWebsocket extends DurableObject {
     });
 
     server.send(
-      JSON.stringify({
+      SuperJSON.stringify({
         type: "entities",
         data: { entities: entities as BaseEntity[] },
       } satisfies ResponseMessage)
     );
 
-    this.sendState(server);
+    this.bm.start();
+    await this.sendState(server);
 
     return new Response(null, {
       status: 101,
@@ -137,7 +145,7 @@ export class BattleWebsocket extends DurableObject {
   }
 
   async webSocketMessage(ws: WebSocket, message: ArrayBuffer | string) {
-    const parsed = messageSchema.safeParse(JSON.parse(message as string));
+    const parsed = messageSchema.safeParse(SuperJSON.parse(message as string));
     if (!parsed.success) {
       throw new Error("Invalid message");
     }
@@ -161,7 +169,7 @@ export class BattleWebsocket extends DurableObject {
     }
 
     this.bm.start();
-    this.sendState(ws);
+    await this.sendState(ws);
   }
 
   private async processSpellCast(
@@ -177,6 +185,7 @@ export class BattleWebsocket extends DurableObject {
 
   private async sendState(ws: WebSocket) {
     const events = this.bm.events;
+    console.log(events);
     const state: ResponseMessage = {
       type: "state",
       data: {
@@ -185,7 +194,7 @@ export class BattleWebsocket extends DurableObject {
         currentInRound: this.bm.currentInRound,
       },
     } satisfies ResponseMessage;
-    ws.send(JSON.stringify(state));
+    ws.send(SuperJSON.stringify(state));
   }
 
   async webSocketClose(

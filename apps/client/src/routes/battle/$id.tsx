@@ -1,12 +1,19 @@
 import { cn } from "@/lib/utils";
-import { trpc } from "@/utils/trpc";
+import { userStore } from "@/utils/user-store";
 import type { InBetweenCharacterData } from "@loot-game/game/dungeons/types";
-import type { Entity, Spell, TimelineEventFull } from "@loot-game/game/types";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import type { TimelineEventFull } from "@loot-game/game/timeline-events";
+import type { Entity, Spell } from "@loot-game/game/types";
 import { createFileRoute } from "@tanstack/react-router";
 import { SkullIcon } from "lucide-react";
-import { useMemo, type ReactNode } from "react";
-import { useEventTimer } from "./-hooks/event-timer";
+import { useCallback, useMemo, useState, type ReactNode } from "react";
+import useWebSocket, { ReadyState } from "react-use-websocket";
+import SuperJSON from "superjson";
+import type z from "zod";
+import type {
+  BattleState,
+  ResponseMessage,
+  messageSchema,
+} from "../../../../server/src/battle-ws";
 
 const roundTime = 1500;
 
@@ -16,18 +23,59 @@ export const Route = createFileRoute("/battle/$id")({
 
 function RouteComponent() {
   const { id } = Route.useParams();
-  const { data } = useSuspenseQuery(
-    trpc.getBattle.queryOptions(id, { staleTime: Infinity }),
+  const [participants, setParticipants] = useState<Entity[]>([]);
+  const [battleState, setBattleState] = useState<BattleState>();
+
+  const castSpell = useCallback(
+    (spellId: string, targetIds: string[]) => {
+      if (!battleState) return;
+      const activeEntity = battleState.round.order[battleState.currentInRound];
+
+      sendMessage(
+        SuperJSON.stringify({
+          type: "castSpell",
+          data: { entityId: activeEntity, spellId, targetIds },
+        } satisfies z.infer<typeof messageSchema>),
+      );
+    },
+    [battleState],
   );
-  const { timelineEvents, participants, startEntityData } = data;
-  const { visibleEvents } = useEventTimer(timelineEvents, roundTime);
+
+  const accessToken = userStore((s) => s.user?.access_token);
+  const { sendMessage, lastMessage, readyState } = useWebSocket(
+    `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/api/battle/${id}?access_token=${accessToken}`,
+    {
+      onMessage: (event) => {
+        const response = SuperJSON.parse(event.data) as ResponseMessage;
+        switch (response.type) {
+          case "entities":
+            setParticipants(response.data.entities);
+            break;
+          case "state":
+            setBattleState(response.data);
+            break;
+        }
+      },
+    },
+  );
+
+  // const { data } = useSuspenseQuery(
+  //   trpc.getBattle.queryOptions(id, { staleTime: Infinity }),
+  // );
+  // const { timelineEvents, participants, startEntityData } = data;
+  const visibleEvents = battleState?.events.length ?? 0;
+  const startEntityData = participants.map((p) => ({
+    characterId: p.id,
+    health: p.maxHealth,
+    mana: p.maxMana,
+  }));
 
   const spellMap = useMemo(() => createSpellMap(participants), [participants]);
 
   const timelineEventsNode = useMemo(() => {
     const events: ReactNode[] = [];
 
-    timelineEvents.forEach((event, index) => {
+    battleState?.events.forEach((event, index) => {
       //   if (index === 0 || event.round !== timelineEvents[index - 1].round) {
       //     events.push(
       //       <div key={`round-${event.round}`} className="my-6 flex items-center">
@@ -52,19 +100,19 @@ function RouteComponent() {
     });
 
     return events;
-  }, [timelineEvents]);
+  }, [lastMessage]);
 
-  const statsTimeline = useMemo(
-    () =>
-      calculateStatsTimeline(
-        startEntityData,
-        participants,
-        timelineEvents,
-        visibleEvents,
-        spellMap,
-      ),
-    [participants, timelineEvents, visibleEvents, spellMap],
-  );
+  const statsTimeline = useMemo(() => {
+    return calculateStatsTimeline(
+      startEntityData,
+      participants,
+      battleState?.events ?? [],
+      visibleEvents,
+      spellMap,
+    );
+  }, [participants, battleState, visibleEvents, spellMap]);
+
+  if (readyState !== ReadyState.OPEN) return <p>Connecting...</p>;
 
   return (
     <div className="p-4">
@@ -72,9 +120,13 @@ function RouteComponent() {
 
       <div className="mb-6 grid grid-cols-2 gap-4">
         {participants.map((entity) => {
+          if (!battleState) return null;
           // Calculate current health and mana based on processed events
           const currentStats = statsTimeline.get(entity.id)!;
+          const activeEntity =
+            battleState.round.order[battleState.currentInRound];
 
+          const myTurn = activeEntity === entity.id;
           // Ensure health doesn't go below 0 or above max
           const displayHealth = Math.max(
             0,
@@ -86,6 +138,7 @@ function RouteComponent() {
           const maxMana = entity.maxMana;
           const displayMana = Math.max(0, Math.min(currentStats.mana, maxMana));
           const manaPercent = (displayMana / maxMana) * 100;
+          const enemy = participants.find((p) => p.team === "TEAM_B");
 
           return (
             <div
@@ -95,6 +148,7 @@ function RouteComponent() {
                 currentStats.flags.casting && "border-blue-400",
                 currentStats.deltaHealth > 0 && "border-green-400",
                 currentStats.deltaHealth < 0 && "border-red-400",
+                myTurn && "border-yellow-400",
               )}
             >
               <div className={cn("flex justify-between")}>
@@ -160,6 +214,7 @@ function RouteComponent() {
                     <div
                       key={spell.config.id}
                       className="flex justify-between text-sm"
+                      onClick={() => castSpell(spell.config.id, [enemy!.id])}
                     >
                       <span>{spell.config.name}</span>
                       {cooldown ? (

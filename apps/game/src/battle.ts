@@ -28,7 +28,7 @@ export class BM implements BattleManager, RoundLifecycleHooks {
   rng: seedrandom.PRNG;
   currentInRound: number = 0;
 
-  constructor(entities: Entity[]) {
+  constructor(entities: Entity[], battleId: string = nanoid(20)) {
     this.deadEntities = new Map();
     this.rounds = [];
     this.handler = new Handler(this);
@@ -37,7 +37,7 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     for (const entity of entities) {
       this.join(entity);
     }
-    this.battleId = nanoid(20);
+    this.battleId = battleId;
     this.rng = seedrandom(this.battleId);
   }
 
