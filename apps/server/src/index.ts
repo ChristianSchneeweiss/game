@@ -57,7 +57,8 @@ app.get("/api/battle/:id", async (c) => {
   await stub.setup(
     c.env.HYPERDRIVE.connectionString,
     env.SUPABASE_URL,
-    env.SUPABASE_KEY
+    env.SUPABASE_KEY,
+    battleId
   );
 
   return stub.fetch(c.req.raw);

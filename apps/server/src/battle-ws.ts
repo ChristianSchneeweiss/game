@@ -1,19 +1,21 @@
+import { BM } from "@loot-game/game/battle";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { DurableObject } from "cloudflare:workers";
 import { eq } from "drizzle-orm";
 import { drizzle, PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { TB_user } from "./db/schema";
+import { EntityFactory } from "./game-usecases/entity-factory";
 import { createSB } from "./supabase";
 
 export class BattleWebsocket extends DurableObject {
   sessions: Map<WebSocket, { [key: string]: string }>;
   db: PostgresJsDatabase<any> = undefined!;
   sb: SupabaseClient = undefined!;
+  bm: BM = undefined!;
 
   constructor(ctx: DurableObjectState, env: Env) {
     super(ctx, env);
     this.sessions = new Map();
-
     this.ctx.getWebSockets().forEach((ws) => {
       let attachment = ws.deserializeAttachment();
       if (attachment) {
@@ -22,15 +24,46 @@ export class BattleWebsocket extends DurableObject {
         this.sessions.set(ws, { ...attachment });
       }
     });
+
+    this.ctx.blockConcurrencyWhile(async () => {
+      const connectionString = await this.ctx.storage.get("connectionString");
+      const supabaseUrl = await this.ctx.storage.get("supabaseUrl");
+      const supabaseKey = await this.ctx.storage.get("supabaseKey");
+      const battleId = await this.ctx.storage.get("battleId");
+      if (!connectionString || !supabaseUrl || !supabaseKey || !battleId)
+        return;
+      this.db = drizzle(connectionString as string);
+      this.sb = createSB(supabaseUrl as string, supabaseKey as string);
+      this.setupBm(); // not sure why this doesnt work here with await
+    });
+  }
+
+  private async setupBm() {
+    const characters = await EntityFactory.createCharactersFromUser(
+      "0e451e99-8bdc-421d-917d-cc92877a015b",
+      this.db
+    );
+    this.bm = new BM(characters);
+    const enemy = EntityFactory.createEnemyFromKey("goblin", this.db);
+    this.bm.join(enemy);
   }
 
   async setup(
     connectionString: string,
     supabaseUrl: string,
-    supabaseKey: string
+    supabaseKey: string,
+    battleId: string
   ) {
+    this.ctx.storage.put({
+      connectionString,
+      supabaseUrl,
+      supabaseKey,
+      battleId,
+    });
     this.db = drizzle(connectionString);
     this.sb = createSB(supabaseUrl, supabaseKey);
+
+    await this.setupBm();
   }
 
   async fetch(request: Request): Promise<Response> {
@@ -64,7 +97,10 @@ export class BattleWebsocket extends DurableObject {
       .from(TB_user)
       .where(eq(TB_user.id, session.id));
 
-    ws.send(JSON.stringify(user));
+    const events = this.bm.events;
+    ws.send(JSON.stringify(events));
+    this.bm.onPreRound();
+    ws.send(JSON.stringify(this.bm.getCurrentRound()));
   }
 
   async webSocketClose(

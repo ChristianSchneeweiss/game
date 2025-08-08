@@ -26,5 +26,11 @@ function RouteComponent() {
   }, [readyState]);
 
   const { user } = userStore();
-  return <div>{user ? <p>User is logged in</p> : <AuthForm />}</div>;
+  if (!user) return <AuthForm />;
+  if (readyState !== ReadyState.OPEN) return <p>Connecting...</p>;
+  return (
+    <div>
+      <p>User is logged in</p>
+    </div>
+  );
 }
