@@ -6,12 +6,13 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { DurableObject } from "cloudflare:workers";
 import { drizzle, PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { produce } from "immer";
+import { nanoid } from "nanoid";
 import SuperJSON from "superjson";
 import z from "zod";
 import { EntityFactory } from "./game-usecases/entity-factory";
 import { createSB } from "./supabase";
 
-export const messageSchema = z.object({
+const castSpellSchema = z.object({
   type: z.literal("castSpell"),
   data: z.object({
     entityId: z.string(),
@@ -19,6 +20,16 @@ export const messageSchema = z.object({
     targetIds: z.array(z.string()),
   }),
 });
+
+const getTargetsSchema = z.object({
+  type: z.literal("getTargets"),
+  data: z.object({
+    entityId: z.string(),
+    spellId: z.string(),
+  }),
+});
+
+export const messageSchema = z.union([castSpellSchema, getTargetsSchema]);
 
 export type BattleState = {
   events: TimelineEventFull[];
@@ -35,6 +46,18 @@ export type ResponseMessage =
       type: "entities";
       data: {
         entities: BaseEntity[];
+      };
+    }
+  | {
+      type: "targets";
+      data: {
+        targets: string[];
+      };
+    }
+  | {
+      type: "finished";
+      data: {
+        winner: "TEAM_A" | "TEAM_B";
       };
     };
 
@@ -79,8 +102,13 @@ export class BattleWebsocket extends DurableObject {
       throw new Error("No battleId");
     }
     this.bm = new BM(characters, battleId as string);
-    const enemy = EntityFactory.createEnemyFromKey("goblin", this.db);
-    this.bm.join(enemy);
+    for (let i = 0; i < 3; i++) {
+      const enemy = EntityFactory.createEnemyFromKey(
+        `goblin_${nanoid()}`,
+        this.db
+      );
+      this.bm.join(enemy);
+    }
   }
 
   async setup(
@@ -164,12 +192,33 @@ export class BattleWebsocket extends DurableObject {
           parsed.data.data.targetIds
         );
         break;
+      case "getTargets":
+        this.processGetTargets(
+          parsed.data.data.entityId,
+          parsed.data.data.spellId,
+          ws
+        );
+        break;
       default:
         throw new Error("Invalid message");
     }
 
-    this.bm.start();
+    this.bm.start(); // kinda weird
     await this.sendState(ws);
+
+    if (this.bm.isGameOver()) {
+      const winner = this.bm.getWinningTeam();
+      const ws = this.ctx.getWebSockets();
+      ws.forEach((w) => {
+        w.send(SuperJSON.stringify({ type: "finished", data: { winner } }));
+      });
+
+      // maybe also store the winner in the db
+
+      this.ctx.getWebSockets().forEach((w) => {
+        w.close(1000, "Game over");
+      });
+    }
   }
 
   private async processSpellCast(
@@ -181,6 +230,49 @@ export class BattleWebsocket extends DurableObject {
     this.bm.postTurn();
     // process pre turn of next entity
     this.bm.preTurn();
+    while (true) {
+      const nextEntity = this.bm.getEntityById(
+        this.bm.getCurrentRound().order[this.bm.currentInRound]
+      );
+      if (!nextEntity) {
+        throw new Error("No next entity found");
+      }
+      console.log("nextEntity", nextEntity.name);
+      // if the next entity is a bot, cast the spell
+      if (nextEntity.isBot) {
+        const action = nextEntity.getAction();
+        this.bm.castNextSpell(nextEntity.id, action.spell.config.id, [
+          action.targets.map((t) => t.id)[0],
+        ]);
+        this.bm.postTurn();
+        this.bm.preTurn();
+      } else {
+        break;
+      }
+    }
+  }
+
+  private async processGetTargets(
+    entityId: string,
+    spellId: string,
+    ws: WebSocket
+  ) {
+    const entity = this.bm.getEntityById(entityId);
+    if (!entity) {
+      throw new Error("Entity not found");
+    }
+    const spell = entity.spells.find((s) => s.config.id === spellId);
+    if (!spell) {
+      throw new Error("Spell not found");
+    }
+    const targets = spell.getValidTargets(entity);
+
+    ws.send(
+      SuperJSON.stringify({
+        type: "targets",
+        data: { targets: targets?.map((t) => t.id) ?? [] },
+      } satisfies ResponseMessage)
+    );
   }
 
   private async sendState(ws: WebSocket) {

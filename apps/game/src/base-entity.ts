@@ -26,6 +26,7 @@ export class BaseEntity implements Entity {
   spells: Spell[];
   battleManager?: BattleManager;
   actionSelectionHooks: ActionSelectionHook[];
+  isBot = true;
 
   constructor(
     id: string,
@@ -184,5 +185,6 @@ export class Character extends BaseEntity {
     public statPointsAvailable: number
   ) {
     super(id, name, team, maxHealth, maxMana, baseAttributes);
+    this.isBot = false;
   }
 }

@@ -1,22 +1,22 @@
 import { useEffect } from "react";
 
-import type { TimelineEventFull } from "@loot-game/game/types";
 import { useState } from "react";
 
 export const useEventTimer = (
-  timelineEvents: TimelineEventFull[],
+  currentEventCounter: number,
+  allEvents: number,
   roundTime: number,
 ) => {
-  const [visibleEvents, setVisibleEvents] = useState(0);
+  const [visibleEvents, setVisibleEvents] = useState(currentEventCounter);
 
   useEffect(() => {
-    if (visibleEvents < timelineEvents.length) {
+    if (visibleEvents < allEvents) {
       const timer = setTimeout(() => {
         setVisibleEvents((prev) => prev + 1);
       }, roundTime);
       return () => clearTimeout(timer);
     }
-  }, [visibleEvents, timelineEvents.length]);
+  }, [visibleEvents, allEvents, currentEventCounter]);
 
   return { visibleEvents };
 };

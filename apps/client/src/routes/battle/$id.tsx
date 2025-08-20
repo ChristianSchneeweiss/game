@@ -4,7 +4,7 @@ import type { InBetweenCharacterData } from "@loot-game/game/dungeons/types";
 import type { TimelineEventFull } from "@loot-game/game/timeline-events";
 import type { Entity, Spell } from "@loot-game/game/types";
 import { createFileRoute } from "@tanstack/react-router";
-import { SkullIcon } from "lucide-react";
+import { BotIcon, SkullIcon } from "lucide-react";
 import { useCallback, useMemo, useState, type ReactNode } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import SuperJSON from "superjson";
@@ -14,8 +14,9 @@ import type {
   ResponseMessage,
   messageSchema,
 } from "../../../../server/src/battle-ws";
+import { useEventTimer } from "./-hooks/event-timer";
 
-const roundTime = 1500;
+const roundTime = 1000;
 
 export const Route = createFileRoute("/battle/$id")({
   component: RouteComponent,
@@ -25,9 +26,13 @@ function RouteComponent() {
   const { id } = Route.useParams();
   const [participants, setParticipants] = useState<Entity[]>([]);
   const [battleState, setBattleState] = useState<BattleState>();
+  const [currentEventCounter, setCurrentEvents] = useState<number>(0);
+  const [targets, setTargets] = useState<string[] | null>(null);
+  const [activeSpell, setActiveSpell] = useState<string | null>(null);
 
   const castSpell = useCallback(
     (spellId: string, targetIds: string[]) => {
+      if (!targets) return;
       if (!battleState) return;
       const activeEntity = battleState.round.order[battleState.currentInRound];
 
@@ -37,9 +42,37 @@ function RouteComponent() {
           data: { entityId: activeEntity, spellId, targetIds },
         } satisfies z.infer<typeof messageSchema>),
       );
+      setTargets(null);
+      setActiveSpell(null);
     },
     [battleState],
   );
+
+  const getTargets = useCallback(
+    (spellId: string) => {
+      if (!battleState) return;
+      const activeEntity = battleState.round.order[battleState.currentInRound];
+      setActiveSpell(spellId);
+
+      sendMessage(
+        SuperJSON.stringify({
+          type: "getTargets",
+          data: { entityId: activeEntity, spellId },
+        } satisfies z.infer<typeof messageSchema>),
+      );
+    },
+    [battleState],
+  );
+
+  const { visibleEvents } = useEventTimer(
+    currentEventCounter,
+    battleState?.events.length ?? 0,
+    roundTime,
+  );
+  const isLive = visibleEvents === battleState?.events.length;
+
+  console.log(visibleEvents, currentEventCounter, battleState?.events.length);
+  console.log("targets", targets);
 
   const accessToken = userStore((s) => s.user?.access_token);
   const { sendMessage, lastMessage, readyState } = useWebSocket(
@@ -52,7 +85,14 @@ function RouteComponent() {
             setParticipants(response.data.entities);
             break;
           case "state":
+            setCurrentEvents(battleState?.events.length ?? 0);
             setBattleState(response.data);
+            break;
+          case "targets":
+            setTargets(response.data.targets);
+            break;
+          case "finished":
+            alert(response.data.winner);
             break;
         }
       },
@@ -63,7 +103,6 @@ function RouteComponent() {
   //   trpc.getBattle.queryOptions(id, { staleTime: Infinity }),
   // );
   // const { timelineEvents, participants, startEntityData } = data;
-  const visibleEvents = battleState?.events.length ?? 0;
   const startEntityData = participants.map((p) => ({
     characterId: p.id,
     health: p.maxHealth,
@@ -138,7 +177,10 @@ function RouteComponent() {
           const maxMana = entity.maxMana;
           const displayMana = Math.max(0, Math.min(currentStats.mana, maxMana));
           const manaPercent = (displayMana / maxMana) * 100;
-          const enemy = participants.find((p) => p.team === "TEAM_B");
+          const enemy = participants.find(
+            (p) => p.team === "TEAM_B" && p.health > 0,
+          );
+          const isTarget = targets?.includes(entity.id);
 
           return (
             <div
@@ -148,12 +190,22 @@ function RouteComponent() {
                 currentStats.flags.casting && "border-blue-400",
                 currentStats.deltaHealth > 0 && "border-green-400",
                 currentStats.deltaHealth < 0 && "border-red-400",
-                myTurn && "border-yellow-400",
+                myTurn && isLive && "scale-105 border-yellow-400",
               )}
             >
               <div className={cn("flex justify-between")}>
-                <h3 className="flex items-center gap-2 font-bold">
-                  {entity.name}{" "}
+                <h3
+                  className={cn(
+                    "flex items-center gap-2 font-bold",
+                    isTarget && activeSpell && "cursor-pointer text-blue-400",
+                  )}
+                  onClick={() => {
+                    if (isTarget && activeSpell) {
+                      castSpell(activeSpell, [entity.id]);
+                    }
+                  }}
+                >
+                  {entity.name} {entity.isBot && <BotIcon />}{" "}
                   {currentStats.flags.dead && (
                     <SkullIcon className="h-4 w-4 text-red-500" />
                   )}
@@ -210,13 +262,32 @@ function RouteComponent() {
               <div className="mt-2">
                 {entity.spells.map((spell) => {
                   const cooldown = currentStats.cooldowns.get(spell.config.id);
+                  const isReady = cooldown === 0 || !cooldown;
+
                   return (
                     <div
                       key={spell.config.id}
                       className="flex justify-between text-sm"
-                      onClick={() => castSpell(spell.config.id, [enemy!.id])}
+                      onClick={() => {
+                        if (!myTurn) return;
+                        if (!isReady) return;
+
+                        if (targets || activeSpell) {
+                          setTargets(null);
+                          setActiveSpell(null);
+                        } else {
+                          getTargets(spell.config.id);
+                        }
+                      }}
                     >
-                      <span>{spell.config.name}</span>
+                      <span
+                        className={cn(
+                          isReady && myTurn && "cursor-pointer",
+                          activeSpell === spell.config.id && "text-blue-400",
+                        )}
+                      >
+                        {spell.config.name}
+                      </span>
                       {cooldown ? (
                         <span className="text-orange-500">{cooldown}</span>
                       ) : (
@@ -284,7 +355,6 @@ function calculateStatsTimeline(
 
             if (entity.spells.some((s) => s.config.id === spellId)) {
               const { spell } = spellMap.get(spellId)!;
-              console.log(entity.id, spellId, spell.config.manaCost);
               stats.mana = Math.max(0, stats.mana - spell.config.manaCost);
 
               stats.flags.casting = true;

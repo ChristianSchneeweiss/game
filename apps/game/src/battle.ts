@@ -172,7 +172,14 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     if (!currentRound) {
       throw new Error("No current round");
     }
-    return currentRound;
+    // filter out dead entities
+    const realRound = {
+      ...currentRound,
+      order: currentRound.order.filter(
+        (id) => !this.getEntityById(id)?.isDead()
+      ),
+    };
+    return realRound;
   }
 
   castSpell(
@@ -193,6 +200,7 @@ export class BM implements BattleManager, RoundLifecycleHooks {
       return null;
     }
 
+    console.log("casting spell", spellId, targets);
     return spell.cast(caster, targets);
   }
 
@@ -243,6 +251,12 @@ export class BM implements BattleManager, RoundLifecycleHooks {
       endStepEvents.forEach((event) => this.processEvent(event));
     }
     this.currentInRound++;
+
+    // if we've gone through all the entities in the round, start a new round
+    if (this.currentInRound >= this.getCurrentRound().order.length) {
+      this.onPostRound();
+      this.onPreRound();
+    }
   }
 
   fight() {

@@ -92,6 +92,7 @@ export interface Entity
   statModifiers: StatModifier[];
   spells: Spell[];
   battleManager?: BattleManager;
+  isBot: boolean;
 
   actionSelectionHooks: ActionSelectionHook[];
 
