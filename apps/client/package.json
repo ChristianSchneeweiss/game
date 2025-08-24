@@ -4,9 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "typecheck": "tsc --noEmit",
-    "dev": "vite --port=3001",
-    "build": "vite build --emptyOutDir --outDir ../server/dist",
+    "dev": "doppler run -- vite --port=3001",
+    "build": "doppler run -c prd -- vite build --emptyOutDir --outDir ../server/dist",
     "serve": "vite preview",
     "start": "vite"
   },
