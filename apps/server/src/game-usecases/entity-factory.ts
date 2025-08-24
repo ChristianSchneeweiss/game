@@ -1,10 +1,10 @@
-import { BaseEntity, Character } from "@loot-game/game/base-entity";
+import { BaseEntity, Character, Enemy } from "@loot-game/game/base-entity";
 import { Goblin } from "@loot-game/game/enemies/goblin";
 import { AutoAttackSpell } from "@loot-game/game/spells/autoattack";
 import { FireballSpell } from "@loot-game/game/spells/fireball";
 import { SingleHealSpell } from "@loot-game/game/spells/Single-Heal";
 import { ActionHooksFactory } from "@loot-game/game/trigger-hooks/Action-Hooks-Factory";
-import { type ActionSelectionHook, type Entity } from "@loot-game/game/types";
+import { type Entity } from "@loot-game/game/types";
 import { eq } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { nanoid } from "nanoid";
@@ -30,7 +30,7 @@ export class EntityFactory {
     return baseEntity;
   }
 
-  static createEnemyFromKey(key: string, db: PostgresJsDatabase): Entity {
+  static createEnemyFromKey(key: string, db: PostgresJsDatabase): Enemy {
     const type = key.split("_")[0];
     switch (type) {
       case "goblin":
@@ -64,6 +64,7 @@ export class EntityFactory {
       .select()
       .from(TB_character)
       .where(eq(TB_character.userId, userId));
+
     if (charactersDb.length === 0) {
       throw new Error("No characters found");
     }

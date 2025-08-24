@@ -1,22 +1,19 @@
 import { clerkMiddleware, getAuth } from "@hono/clerk-auth";
 import { trpcServer } from "@hono/trpc-server";
+import { drizzle } from "drizzle-orm/postgres-js";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
-import type { BattleWebsocket } from "./battle-ws";
+import { nanoid } from "nanoid";
 import { envSchema } from "./env";
+import { EntityFactory } from "./game-usecases/entity-factory";
+import { SyncFactory } from "./game-usecases/sync-factory";
 import { createContext } from "./lib/context";
 import { appRouter } from "./routers/index";
 export { BattleWebsocket } from "./battle-ws";
 
-export type Bindings = {
-  GAME: KVNamespace;
-  HYPERDRIVE: Hyperdrive;
-  BATTLE_WEBSOCKET: DurableObjectNamespace<BattleWebsocket>;
-};
-
 const app = new Hono<{
-  Bindings: Bindings;
+  Bindings: Env;
 }>();
 
 app.use(logger());
@@ -54,16 +51,37 @@ app.get("/api/battle/:id", async (c) => {
 
   const env = envSchema.parse(process.env);
 
-  await stub.setup(
-    c.env.HYPERDRIVE.connectionString,
-    env.CLERK_SECRET_KEY,
-    battleId
-  );
+  console.log("before setup in index");
+  console.log("env.CLERK_SECRET_KEY", env.CLERK_SECRET_KEY);
+  console.log("battleId", battleId);
+  console.log("DATABASE_URL", env.DATABASE_URL);
+
   const userId = getAuth(c)?.userId;
 
   if (!userId) {
     return c.json({ error: "No user id" }, 401);
   }
+  const db = drizzle(c.env.HYPERDRIVE.connectionString);
+
+  const characters = await EntityFactory.createCharactersFromUser(userId, db);
+
+  const syncFactory = new SyncFactory(c.env);
+  const goblin = EntityFactory.createEnemyFromKey(`goblin_${nanoid()}`, db);
+
+  for (const character of characters) {
+    await syncFactory.addCharacterToSync(character, battleId);
+  }
+  await syncFactory.addEnemyToSync(goblin, battleId);
+
+  await syncFactory.addConfigToSync(
+    {
+      characters: characters.map((character) => character.id),
+      enemies: [goblin.id],
+    },
+    battleId
+  );
+
+  await stub.setup(env.CLERK_SECRET_KEY, battleId);
 
   const url = new URL(c.req.raw.url);
   url.searchParams.set("userId", userId);

@@ -31,6 +31,10 @@
       "id": "92b8173ae64b4c4a937337e4fd7f094d",
       "experimental_remote": true,
     },
+    {
+      "binding": "GAME_DO_SYNC",
+      "id": "fbffd148f64644b78df28f540e470e1d",
+    },
   ],
   "hyperdrive": [
     {

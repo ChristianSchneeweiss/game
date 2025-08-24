@@ -4,13 +4,11 @@ import { BM } from "@loot-game/game/battle";
 import type { TimelineEventFull } from "@loot-game/game/timeline-events";
 import type { BattleRound } from "@loot-game/game/types";
 import { DurableObject } from "cloudflare:workers";
-import { drizzle, PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { produce } from "immer";
-import { nanoid } from "nanoid";
 import SuperJSON from "superjson";
 import z from "zod";
-import { EntityFactory } from "./game-usecases/entity-factory";
 import { createClerk } from "./clerk";
+import { SyncFactory } from "./game-usecases/sync-factory";
 
 const castSpellSchema = z.object({
   type: z.literal("castSpell"),
@@ -63,12 +61,14 @@ export type ResponseMessage =
 
 export class BattleWebsocket extends DurableObject {
   sessions: Map<WebSocket, { [key: string]: string }>;
-  db: PostgresJsDatabase<any> = undefined!;
   clerk: ClerkClient = undefined!;
   bm: BM = undefined!;
+  env: Env;
+  battleId: string = undefined!;
 
   constructor(ctx: DurableObjectState, env: Env) {
     super(ctx, env);
+    this.env = env;
     this.sessions = new Map();
     this.ctx.getWebSockets().forEach((ws) => {
       let attachment = ws.deserializeAttachment();
@@ -80,47 +80,34 @@ export class BattleWebsocket extends DurableObject {
     });
 
     this.ctx.blockConcurrencyWhile(async () => {
-      const connectionString = await this.ctx.storage.get("connectionString");
       const clerkSecretKey = await this.ctx.storage.get("clerkSecretKey");
       const battleId = await this.ctx.storage.get("battleId");
-      if (!connectionString || !clerkSecretKey || !battleId) return;
-      this.db = drizzle(connectionString as string);
+      if (!clerkSecretKey || !battleId) return;
+      this.battleId = battleId as string;
       this.clerk = createClerk(clerkSecretKey as string);
-      this.setupBm(); // not sure why this doesnt work here with await
+      await this.setupBm(); // not sure why this doesnt work here with await
     });
   }
 
   private async setupBm() {
-    const characters = await EntityFactory.createCharactersFromUser(
-      "0e451e99-8bdc-421d-917d-cc92877a015b",
-      this.db
-    );
-    const battleId = await this.ctx.storage.get("battleId");
-    if (!battleId) {
-      throw new Error("No battleId");
-    }
-    this.bm = new BM(characters, battleId as string);
-    for (let i = 0; i < 3; i++) {
-      const enemy = EntityFactory.createEnemyFromKey(
-        `goblin_${nanoid()}`,
-        this.db
-      );
+    if (this.bm) return;
+    const userId = "user_31jfw5cC2LnsggJb9u98h1KtqFr";
+    const syncFactory = new SyncFactory(this.env);
+    const { characters, enemies } = await syncFactory.getAll(this.battleId);
+
+    this.bm = new BM(characters, this.battleId);
+    for (const enemy of enemies) {
       this.bm.join(enemy);
     }
   }
 
-  async setup(
-    connectionString: string,
-    clerkSecretKey: string,
-    battleId: string
-  ) {
+  async setup(clerkSecretKey: string, battleId: string) {
     this.ctx.storage.put({
-      connectionString,
       clerkSecretKey,
       battleId,
     });
-    this.db = drizzle(connectionString);
     this.clerk = createClerk(clerkSecretKey);
+    this.battleId = battleId;
 
     if (!this.bm) {
       await this.setupBm();
