@@ -164,7 +164,7 @@ export class BattleWebsocket extends DurableObject {
     );
 
     this.bm.start();
-    await this.sendState(server);
+    await this.sendState();
 
     return new Response(null, {
       status: 101,
@@ -204,7 +204,7 @@ export class BattleWebsocket extends DurableObject {
     }
 
     this.bm.start(); // kinda weird
-    await this.sendState(ws);
+    await this.sendState();
 
     if (this.bm.isGameOver()) {
       const winner = this.bm.getWinningTeam();
@@ -215,9 +215,9 @@ export class BattleWebsocket extends DurableObject {
 
       // maybe also store the winner in the db
 
-      this.ctx.getWebSockets().forEach((w) => {
-        w.close(1000, "Game over");
-      });
+      //   this.ctx.getWebSockets().forEach((w) => {
+      //     w.close(1000, "Game over");
+      //   });
     }
   }
 
@@ -275,7 +275,7 @@ export class BattleWebsocket extends DurableObject {
     );
   }
 
-  private async sendState(ws: WebSocket) {
+  private async sendState() {
     const events = this.bm.events;
     console.log(events);
     const state: ResponseMessage = {
@@ -286,7 +286,9 @@ export class BattleWebsocket extends DurableObject {
         currentInRound: this.bm.currentInRound,
       },
     } satisfies ResponseMessage;
-    ws.send(SuperJSON.stringify(state));
+    this.ctx.getWebSockets().forEach((ws) => {
+      ws.send(SuperJSON.stringify(state));
+    });
   }
 
   async webSocketClose(
