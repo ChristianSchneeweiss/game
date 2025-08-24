@@ -24,7 +24,7 @@ export const appRouter = router({
       .insert(TB_user)
       .values({
         id: session.id,
-        email: session.email,
+        email: session.primaryEmailAddress?.emailAddress,
       })
       .onConflictDoNothing();
 

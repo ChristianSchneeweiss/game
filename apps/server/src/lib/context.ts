@@ -1,25 +1,29 @@
+import type { getAuth } from "@hono/clerk-auth";
 import { TRPCError } from "@trpc/server";
+import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import type z from "zod";
 import type { Bindings } from "..";
+import { TB_user } from "../db/schema";
 import type { envSchema } from "../env";
-import { createSB } from "../supabase";
+import { createClerk } from "../clerk";
 
 export async function createContext({
   req,
   env,
   cfEnv,
+  auth,
 }: {
   req: Request;
   env: z.infer<typeof envSchema>;
   cfEnv: Bindings;
+  auth: ReturnType<typeof getAuth>;
 }) {
-  const sb = createSB(env.SUPABASE_URL, env.SUPABASE_KEY);
-
-  if (!sb) {
+  const clerk = createClerk(env.CLERK_SECRET_KEY);
+  if (!clerk) {
     throw new TRPCError({
       code: "INTERNAL_SERVER_ERROR",
-      message: "Failed to create supabase client",
+      message: "Failed to create clerk client",
     });
   }
 
@@ -34,21 +38,30 @@ export async function createContext({
 
   const context = {
     session: null,
-    supabase: sb,
+    clerk: clerk,
     db,
     env,
     cfEnv,
   };
+  if (!auth?.userId) return context;
 
-  const bearerToken = req.headers.get("authorization")?.split("Bearer ").pop();
-  if (!bearerToken) {
-    return context;
+  const user = await clerk.users.getUser(auth.userId);
+
+  // this is kinda bad because we do it a lot
+  const [dbUser] = await db
+    .select()
+    .from(TB_user)
+    .where(eq(TB_user.id, auth.userId));
+  if (!dbUser) {
+    await db.insert(TB_user).values({
+      id: auth.userId,
+      email: user.emailAddresses[0].emailAddress,
+    });
   }
 
-  const user = await sb.auth.getUser(bearerToken);
   return {
     ...context,
-    session: user.data.user,
+    session: user,
   };
 }
 

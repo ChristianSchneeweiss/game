@@ -1,8 +1,8 @@
+import type { ClerkClient } from "@clerk/backend";
 import type { BaseEntity } from "@loot-game/game/base-entity";
 import { BM } from "@loot-game/game/battle";
 import type { TimelineEventFull } from "@loot-game/game/timeline-events";
 import type { BattleRound } from "@loot-game/game/types";
-import type { SupabaseClient } from "@supabase/supabase-js";
 import { DurableObject } from "cloudflare:workers";
 import { drizzle, PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { produce } from "immer";
@@ -10,7 +10,7 @@ import { nanoid } from "nanoid";
 import SuperJSON from "superjson";
 import z from "zod";
 import { EntityFactory } from "./game-usecases/entity-factory";
-import { createSB } from "./supabase";
+import { createClerk } from "./clerk";
 
 const castSpellSchema = z.object({
   type: z.literal("castSpell"),
@@ -64,7 +64,7 @@ export type ResponseMessage =
 export class BattleWebsocket extends DurableObject {
   sessions: Map<WebSocket, { [key: string]: string }>;
   db: PostgresJsDatabase<any> = undefined!;
-  sb: SupabaseClient = undefined!;
+  clerk: ClerkClient = undefined!;
   bm: BM = undefined!;
 
   constructor(ctx: DurableObjectState, env: Env) {
@@ -81,13 +81,11 @@ export class BattleWebsocket extends DurableObject {
 
     this.ctx.blockConcurrencyWhile(async () => {
       const connectionString = await this.ctx.storage.get("connectionString");
-      const supabaseUrl = await this.ctx.storage.get("supabaseUrl");
-      const supabaseKey = await this.ctx.storage.get("supabaseKey");
+      const clerkSecretKey = await this.ctx.storage.get("clerkSecretKey");
       const battleId = await this.ctx.storage.get("battleId");
-      if (!connectionString || !supabaseUrl || !supabaseKey || !battleId)
-        return;
+      if (!connectionString || !clerkSecretKey || !battleId) return;
       this.db = drizzle(connectionString as string);
-      this.sb = createSB(supabaseUrl as string, supabaseKey as string);
+      this.clerk = createClerk(clerkSecretKey as string);
       this.setupBm(); // not sure why this doesnt work here with await
     });
   }
@@ -113,18 +111,16 @@ export class BattleWebsocket extends DurableObject {
 
   async setup(
     connectionString: string,
-    supabaseUrl: string,
-    supabaseKey: string,
+    clerkSecretKey: string,
     battleId: string
   ) {
     this.ctx.storage.put({
       connectionString,
-      supabaseUrl,
-      supabaseKey,
+      clerkSecretKey,
       battleId,
     });
     this.db = drizzle(connectionString);
-    this.sb = createSB(supabaseUrl, supabaseKey);
+    this.clerk = createClerk(clerkSecretKey);
 
     if (!this.bm) {
       await this.setupBm();
@@ -132,20 +128,15 @@ export class BattleWebsocket extends DurableObject {
   }
 
   async fetch(request: Request): Promise<Response> {
-    const url = new URL(request.url);
-    const accessToken = url.searchParams.get("access_token");
-    if (!accessToken) {
-      throw new Error("No access token");
-    }
-
     const webSocketPair = new WebSocketPair();
+    const url = new URL(request.url);
+    const userId = url.searchParams.get("userId");
     const [client, server] = Object.values(webSocketPair);
-    const user = await this.sb.auth.getUser(accessToken);
-    if (!user.data.user) {
-      throw new Error("No user found");
+    if (!userId) {
+      throw new Error("No userId");
     }
-
-    this.sessions.set(server, { id: user.data.user.id });
+    const user = await this.clerk.users.getUser(userId);
+    this.sessions.set(server, { id: user.id });
 
     this.ctx.acceptWebSocket(server);
 

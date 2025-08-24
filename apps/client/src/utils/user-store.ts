@@ -4,7 +4,6 @@ import { queryClient } from "./trpc";
 type User = {
   id: string;
   email?: string;
-  access_token: string;
 };
 
 type State = {

@@ -10,6 +10,5 @@
     "dev:server": "bun run --filter @loot-game/server dev",
     "build:client": "bun run --filter @loot-game/client build",
     "deploy": "bun run --filter @loot-game/client build && bun run --filter @loot-game/server deploy"
-  },
-  "dependencies": {}
+  }
 }

@@ -1,5 +1,4 @@
 import { cn } from "@/lib/utils";
-import { userStore } from "@/utils/user-store";
 import type { InBetweenCharacterData } from "@loot-game/game/dungeons/types";
 import type { TimelineEventFull } from "@loot-game/game/timeline-events";
 import type { Entity, Spell } from "@loot-game/game/types";
@@ -74,9 +73,8 @@ function RouteComponent() {
   console.log(visibleEvents, currentEventCounter, battleState?.events.length);
   console.log("targets", targets);
 
-  const accessToken = userStore((s) => s.user?.access_token);
   const { sendMessage, lastMessage, readyState } = useWebSocket(
-    `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/api/battle/${id}?access_token=${accessToken}`,
+    `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/api/battle/${id}`,
     {
       onMessage: (event) => {
         const response = SuperJSON.parse(event.data) as ResponseMessage;
