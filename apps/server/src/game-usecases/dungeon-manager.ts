@@ -2,7 +2,6 @@ import { Character, Enemy } from "@loot-game/game/base-entity";
 import { BM } from "@loot-game/game/battle";
 import { dungeon1 } from "@loot-game/game/dungeons/dungeon1";
 import type { DungeonData } from "@loot-game/game/dungeons/types";
-import type { Entity } from "@loot-game/game/types";
 import { eq } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import {
@@ -17,7 +16,7 @@ import { EntityFactory } from "./entity-factory";
 
 export const dungeonManager = {
   enterDungeon: async (
-    characters: Entity[],
+    characters: Character[],
     key: "dungeon-1",
     db: PostgresJsDatabase
   ) => {
@@ -87,7 +86,7 @@ export const dungeonManager = {
       .where(eq(TB_dungeonEnemy.dungeonId, id));
 
     const enemies = EntityFactory.createEnemyFromDb(enemyData, db);
-    const playerTeam = [];
+    const playerTeam: Character[] = [];
     for (const participant of participants) {
       const character = await EntityFactory.createCharacter(
         participant.characterId,

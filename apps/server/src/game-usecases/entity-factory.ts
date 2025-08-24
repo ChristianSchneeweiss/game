@@ -45,8 +45,8 @@ export class EntityFactory {
   static createEnemyFromDb(
     enemies: (typeof TB_dungeonEnemy.$inferSelect)[],
     db: PostgresJsDatabase
-  ): Entity[][] {
-    const entitiesByRound: Entity[][] = [];
+  ): Enemy[][] {
+    const entitiesByRound: Enemy[][] = [];
     for (const enemy of enemies) {
       const entity = this.createEnemyFromKey(enemy.enemyKey, db);
       const current = entitiesByRound[enemy.inRound] || [];

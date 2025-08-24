@@ -3,10 +3,9 @@ import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import type z from "zod";
-import type { Bindings } from "..";
+import { createClerk } from "../clerk";
 import { TB_user } from "../db/schema";
 import type { envSchema } from "../env";
-import { createClerk } from "../clerk";
 
 export async function createContext({
   req,
@@ -16,7 +15,7 @@ export async function createContext({
 }: {
   req: Request;
   env: z.infer<typeof envSchema>;
-  cfEnv: Bindings;
+  cfEnv: Env;
   auth: ReturnType<typeof getAuth>;
 }) {
   const clerk = createClerk(env.CLERK_SECRET_KEY);

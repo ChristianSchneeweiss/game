@@ -1,13 +1,14 @@
 import { and, eq } from "drizzle-orm";
 import z from "zod";
 import {
+  id,
   TB_character,
   TB_dungeonData,
   TB_dungeonParticipant,
 } from "../db/schema";
-import { bmStorage } from "../game-usecases/bm-storage";
 import { dungeonManager } from "../game-usecases/dungeon-manager";
 import { EntityFactory } from "../game-usecases/entity-factory";
+import { SyncFactory } from "../game-usecases/sync-factory";
 import { protectedProcedure, router } from "../lib/trpc";
 
 export const dungeonRouter = router({
@@ -100,9 +101,25 @@ export const dungeonRouter = router({
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { db } = ctx;
-      const bm = await dungeonManager.fightRound(input.id, db);
+      const syncFactory = new SyncFactory(ctx.cfEnv);
+      const dungeon = await dungeonManager.getDungeon(input.id, db);
+      const battleId = id();
+      await syncFactory.addConfigToSync(
+        {
+          characters: dungeon.playerTeam.map((character) => character.id),
+          enemies: dungeon.actualEnemies[dungeon.round].map(
+            (enemy) => enemy.id
+          ),
+        },
+        battleId
+      );
+      for (const enemy of dungeon.actualEnemies[dungeon.round]) {
+        await syncFactory.addEnemyToSync(enemy, battleId);
+      }
+      for (const character of dungeon.playerTeam) {
+        await syncFactory.addCharacterToSync(character, battleId);
+      }
 
-      await bmStorage.save(bm, ctx.cfEnv.GAME);
-      return bm.battleId;
+      return battleId;
     }),
 });

@@ -1,13 +1,9 @@
 import { clerkMiddleware, getAuth } from "@hono/clerk-auth";
 import { trpcServer } from "@hono/trpc-server";
-import { drizzle } from "drizzle-orm/postgres-js";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
-import { nanoid } from "nanoid";
 import { envSchema } from "./env";
-import { EntityFactory } from "./game-usecases/entity-factory";
-import { SyncFactory } from "./game-usecases/sync-factory";
 import { createContext } from "./lib/context";
 import { appRouter } from "./routers/index";
 export { BattleWebsocket } from "./battle-ws";
@@ -61,25 +57,6 @@ app.get("/api/battle/:id", async (c) => {
   if (!userId) {
     return c.json({ error: "No user id" }, 401);
   }
-  const db = drizzle(c.env.HYPERDRIVE.connectionString);
-
-  const characters = await EntityFactory.createCharactersFromUser(userId, db);
-
-  const syncFactory = new SyncFactory(c.env);
-  const goblin = EntityFactory.createEnemyFromKey(`goblin_${nanoid()}`, db);
-
-  for (const character of characters) {
-    await syncFactory.addCharacterToSync(character, battleId);
-  }
-  await syncFactory.addEnemyToSync(goblin, battleId);
-
-  await syncFactory.addConfigToSync(
-    {
-      characters: characters.map((character) => character.id),
-      enemies: [goblin.id],
-    },
-    battleId
-  );
 
   await stub.setup(env.CLERK_SECRET_KEY, battleId);
 

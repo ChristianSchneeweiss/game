@@ -1,4 +1,5 @@
 import z from "zod";
+import type { Character, Enemy } from "../base-entity";
 import type { BM } from "../battle";
 import type { Entity } from "../types";
 
@@ -13,9 +14,9 @@ export type AvailableEnemies = {
 export type DungeonData = {
   id: string;
   key: string;
-  playerTeam: Entity[];
+  playerTeam: Character[];
   round: number;
-  actualEnemies: Entity[][];
+  actualEnemies: Enemy[][];
 };
 
 export type DungeonConfig = {
