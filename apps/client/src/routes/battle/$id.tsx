@@ -3,10 +3,11 @@ import { trpcClient } from "@/utils/trpc";
 import type { InBetweenCharacterData } from "@loot-game/game/dungeons/types";
 import type { TimelineEventFull } from "@loot-game/game/timeline-events";
 import type { Entity, Spell } from "@loot-game/game/types";
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
 import { BotIcon, SkullIcon } from "lucide-react";
 import { useCallback, useMemo, useState, type ReactNode } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
+import { toast } from "sonner";
 import SuperJSON from "superjson";
 import type z from "zod";
 import type {
@@ -85,6 +86,8 @@ function RouteComponent() {
   console.log(visibleEvents, currentEventCounter, battleState?.events.length);
   console.log("targets", targets);
 
+  const router = useRouter();
+
   const { sendMessage, lastMessage, readyState } = useWebSocket(
     `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/api/battle/${id}`,
     {
@@ -102,7 +105,15 @@ function RouteComponent() {
             setTargets(response.data.targets);
             break;
           case "finished":
-            alert(response.data.winner);
+            const winner = response.data.winner;
+            if (winner === "TEAM_A") {
+              toast.success("You won!");
+            } else {
+              toast.error("You lost!");
+            }
+            setTimeout(() => {
+              router.navigate({ to: "/battle/finished/$id", params: { id } });
+            }, 3000);
             break;
         }
       },

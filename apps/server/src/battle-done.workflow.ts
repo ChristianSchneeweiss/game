@@ -8,6 +8,7 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import z from "zod";
 import { TB_dungeonBattle } from "./db/schema";
 import { dungeonManager } from "./game-usecases/dungeon-manager";
+import { SyncFactory } from "./game-usecases/sync-factory";
 
 export type Params = {
   battleId: string;
@@ -73,6 +74,12 @@ export class BattleDoneWorkflow extends WorkflowEntrypoint<Env, Params> {
         battleResult.winner,
         db
       );
+    });
+
+    await step.do("clean-up-battle", async () => {
+      await this.env.GAME.delete(`${battleId}:result`);
+      const syncFactory = new SyncFactory(this.env);
+      await syncFactory.cleanup(battleId);
     });
 
     console.log("Battle cleared workflow done");

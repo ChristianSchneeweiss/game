@@ -45,14 +45,14 @@ export class SyncFactory {
     });
 
     await this.env.GAME_DO_SYNC.put(
-      `${battleId}:enemy:${enemy.id}`,
+      this.getEnemyKey(battleId, enemy.id),
       JSON.stringify(enemyData)
     );
   }
 
   async createEnemyFromSync(enemyId: string, battleId: string): Promise<Enemy> {
     const kvData = await this.env.GAME_DO_SYNC.get(
-      `${battleId}:enemy:${enemyId}`
+      this.getEnemyKey(battleId, enemyId)
     );
     if (!kvData) throw new Error("No enemyData");
     const enemyData = syncEnemySchema.parse(JSON.parse(kvData));
@@ -84,7 +84,7 @@ export class SyncFactory {
     });
 
     await this.env.GAME_DO_SYNC.put(
-      `${battleId}:character:${character.id}`,
+      this.getCharacterKey(battleId, character.id),
       JSON.stringify(characterData)
     );
 
@@ -96,7 +96,7 @@ export class SyncFactory {
     });
 
     await this.env.GAME_DO_SYNC.put(
-      `${battleId}:spells:${character.id}`,
+      this.getCharacterSpellsKey(battleId, character.id),
       JSON.stringify(spells)
     );
   }
@@ -106,7 +106,7 @@ export class SyncFactory {
     battleId: string
   ): Promise<Character> {
     const kvData = await this.env.GAME_DO_SYNC.get(
-      `${battleId}:character:${characterId}`
+      this.getCharacterKey(battleId, characterId)
     );
     if (!kvData) throw new Error("No characterData");
     const characterData = syncCharacterSchema.parse(JSON.parse(kvData));
@@ -124,7 +124,7 @@ export class SyncFactory {
     console.log("characterData in sync factory", characterData);
 
     const spells = await this.env.GAME_DO_SYNC.get(
-      `${battleId}:spells:${characterId}`
+      this.getCharacterSpellsKey(battleId, characterId)
     );
     if (!spells) throw new Error("No spellsData");
     const spellsData = syncSpellSchema.array().parse(JSON.parse(spells));
@@ -152,7 +152,7 @@ export class SyncFactory {
     battleId: string
   ) {
     await this.env.GAME_DO_SYNC.put(
-      `${battleId}:config`,
+      this.getConfigKey(battleId),
       JSON.stringify(config)
     );
   }
@@ -160,7 +160,7 @@ export class SyncFactory {
   async getConfigFromSync(
     battleId: string
   ): Promise<z.infer<typeof configSchema>> {
-    const kvData = await this.env.GAME_DO_SYNC.get(`${battleId}:config`);
+    const kvData = await this.env.GAME_DO_SYNC.get(this.getConfigKey(battleId));
     if (!kvData) throw new Error("No configData");
     return configSchema.parse(JSON.parse(kvData));
   }
@@ -184,5 +184,39 @@ export class SyncFactory {
       enemies,
       config,
     };
+  }
+
+  async cleanup(battleId: string) {
+    const config = await this.getConfigFromSync(battleId);
+
+    await this.env.GAME_DO_SYNC.delete(this.getConfigKey(battleId));
+
+    for (const enemyId of config.enemies) {
+      await this.env.GAME_DO_SYNC.delete(this.getEnemyKey(battleId, enemyId));
+    }
+    for (const characterId of config.characters) {
+      await this.env.GAME_DO_SYNC.delete(
+        this.getCharacterKey(battleId, characterId)
+      );
+      await this.env.GAME_DO_SYNC.delete(
+        this.getCharacterSpellsKey(battleId, characterId)
+      );
+    }
+  }
+
+  private getConfigKey(battleId: string) {
+    return `${battleId}:config`;
+  }
+
+  private getEnemyKey(battleId: string, enemyId: string) {
+    return `${battleId}:enemy:${enemyId}`;
+  }
+
+  private getCharacterKey(battleId: string, characterId: string) {
+    return `${battleId}:character:${characterId}`;
+  }
+
+  private getCharacterSpellsKey(battleId: string, characterId: string) {
+    return `${battleId}:spells:${characterId}`;
   }
 }
