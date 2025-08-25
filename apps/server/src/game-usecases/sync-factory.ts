@@ -143,7 +143,6 @@ export class SyncFactory {
       }
     });
 
-    character.actionSelectionHooks = [];
     return character;
   }
 

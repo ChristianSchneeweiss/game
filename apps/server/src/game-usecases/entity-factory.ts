@@ -3,17 +3,11 @@ import { Goblin } from "@loot-game/game/enemies/goblin";
 import { AutoAttackSpell } from "@loot-game/game/spells/autoattack";
 import { FireballSpell } from "@loot-game/game/spells/fireball";
 import { SingleHealSpell } from "@loot-game/game/spells/Single-Heal";
-import { ActionHooksFactory } from "@loot-game/game/trigger-hooks/Action-Hooks-Factory";
 import { type Entity } from "@loot-game/game/types";
 import { eq } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { nanoid } from "nanoid";
-import {
-  TB_actionSelectionHook,
-  TB_character,
-  TB_dungeonEnemy,
-  TB_spellStats,
-} from "../db/schema";
+import { TB_character, TB_dungeonEnemy, TB_spellStats } from "../db/schema";
 
 export class EntityFactory {
   static createEnemy(): Entity {
@@ -82,14 +76,9 @@ export class EntityFactory {
       .select({
         character: TB_character,
         spellStats: TB_spellStats,
-        actionSelectionHooks: TB_actionSelectionHook,
       })
       .from(TB_character)
       .leftJoin(TB_spellStats, eq(TB_spellStats.equippedBy, TB_character.id))
-      .leftJoin(
-        TB_actionSelectionHook,
-        eq(TB_actionSelectionHook.characterId, TB_character.id)
-      )
       .where(eq(TB_character.id, id));
 
     if (rows.length === 0) {
@@ -97,9 +86,6 @@ export class EntityFactory {
     }
     const character = rows[0].character;
     const spells = rows.map((row) => row.spellStats);
-    const actionSelectionHooks = rows
-      .map((row) => row.actionSelectionHooks)
-      .filter((hook) => hook !== null);
 
     const baseEntity = new Character(
       character.id,
@@ -133,10 +119,6 @@ export class EntityFactory {
     // todo not sure about this. maybe we should have it as a proper spell in TB_spellStats
     baseEntity.spells.push(new AutoAttackSpell(baseEntity.id));
 
-    baseEntity.actionSelectionHooks = ActionHooksFactory.createActionHooks(
-      [baseEntity],
-      actionSelectionHooks
-    );
     return baseEntity;
   }
 }

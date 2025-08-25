@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { trpc } from "@/utils/trpc";
 import type { Character } from "@loot-game/game/base-entity";
-import type { LowHpActionSelectionHook } from "@loot-game/game/trigger-hooks/Low-Hp-THook";
 import type { EntityAttributes } from "@loot-game/game/types";
 import { xpNeededForLevelUp } from "@loot-game/game/xp-curve";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -29,15 +28,7 @@ export const CharacterCard = ({ character }: { character: Character }) => {
       },
     }),
   );
-  const { mutateAsync: removeActionHook } = useMutation(
-    trpc.character.removeActionHook.mutationOptions({
-      onSuccess: () => {
-        queryClient.invalidateQueries(
-          trpc.character.getCharacter.queryOptions({ id: character.id }),
-        );
-      },
-    }),
-  );
+
   const queryClient = useQueryClient();
   const xpNeeded = xpNeededForLevelUp(character.level);
   const [statToAdd, setStatToAdd] = useState<(keyof EntityAttributes)[]>([]);
@@ -162,45 +153,6 @@ export const CharacterCard = ({ character }: { character: Character }) => {
                 )}
               </div>
             ))}
-          </div>
-        </div>
-        <div className="mt-4">
-          <h4 className="mb-2 text-xl">Action Hooks</h4>
-          <div className="flex flex-col gap-2">
-            {character.actionSelectionHooks.length > 0 ? (
-              character.actionSelectionHooks.map((hook, idx) => (
-                <div
-                  className="flex w-fit items-center gap-2 rounded-md bg-blue-700 px-2"
-                  key={hook.name + idx}
-                >
-                  <span className="font-semibold capitalize">
-                    {hook.name.replace(/ActionSelectionHook$/, "")}
-                  </span>
-                  <span className="text-xs font-light">
-                    Priority: {hook.priority}
-                  </span>
-                  {hook.name === "LowHpActionSelectionHook" && (
-                    <span className="text-xs font-light">
-                      HP &lt;{" "}
-                      {(
-                        (hook as LowHpActionSelectionHook).hpPercentage * 100
-                      ).toFixed(0)}
-                      % cast "
-                      {(hook as LowHpActionSelectionHook).spell.config.name}"
-                    </span>
-                  )}
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    onClick={() => removeActionHook({ hookId: hook.id })}
-                  >
-                    <XIcon className="h-3 w-3" />
-                  </Button>
-                </div>
-              ))
-            ) : (
-              <span className="text-sm text-gray-400">No action hooks</span>
-            )}
           </div>
         </div>
       </CardContent>

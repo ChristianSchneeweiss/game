@@ -94,8 +94,6 @@ export interface Entity
   battleManager?: BattleManager;
   isBot: boolean;
 
-  actionSelectionHooks: ActionSelectionHook[];
-
   // todo: do i need them?
   applyDamage(amount: number, type: DamageType, source: Entity): void;
   applyHealing(amount: number, source: Entity): void;
@@ -117,20 +115,6 @@ export interface Spell
   canCast(caster: Entity): boolean;
   getValidTargets(caster: Entity): Entity[] | null;
   cast(caster: Entity, targets: Entity[]): SpellCastEvent | null;
-}
-
-export interface ActionSelectionHook {
-  id: string;
-  name: string;
-  priority: number;
-
-  condition: (self: Entity, battleManager: BattleManager) => boolean;
-  actionSelection: (
-    self: Entity,
-    battleManager: BattleManager
-  ) => ReturnType<Entity["getAction"]> | null;
-
-  serialize(): unknown;
 }
 
 export interface SpellConfig {

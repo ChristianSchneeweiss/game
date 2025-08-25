@@ -1,7 +1,5 @@
-import { LowHpActionSelectionHook } from "@loot-game/game/trigger-hooks/Low-Hp-THook";
-import { eq } from "drizzle-orm";
 import z from "zod";
-import { id, TB_actionSelectionHook } from "../db/schema";
+import { id } from "../db/schema";
 import {
   applyStatIncrease,
   createCharacter,
@@ -72,50 +70,5 @@ export const characterRouter = router({
       const { db } = ctx;
       // todo we might need a lock here to only allow this once and not make it possible to spam it
       await applyStatIncrease(input.characterId, input.stats, db);
-    }),
-
-  addLowHpActionHook: protectedProcedure
-    .input(
-      z.object({
-        characterId: z.string(),
-        hpPercentage: z.number(),
-        spellId: z.string(),
-        priority: z.number().default(100),
-      })
-    )
-    .mutation(async ({ ctx, input }) => {
-      const { db } = ctx;
-      const character = await EntityFactory.createCharacter(
-        input.characterId,
-        db
-      );
-      const spell = character.spells.find((s) => s.config.id === input.spellId);
-      if (!spell) {
-        throw new Error("Spell not found");
-      }
-      const hookId = id();
-      const hook = new LowHpActionSelectionHook(
-        hookId,
-        spell,
-        input.hpPercentage,
-        input.priority
-      );
-
-      await db.insert(TB_actionSelectionHook).values({
-        id: hookId,
-        characterId: input.characterId,
-        name: hook.name,
-        priority: hook.priority,
-        data: hook.serialize(),
-      });
-    }),
-
-  removeActionHook: protectedProcedure
-    .input(z.object({ hookId: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      const { db } = ctx;
-      await db
-        .delete(TB_actionSelectionHook)
-        .where(eq(TB_actionSelectionHook.id, input.hookId));
     }),
 });
