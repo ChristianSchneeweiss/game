@@ -59,7 +59,7 @@ export class SyncFactory {
     const type = enemyData.id.split("_")[0];
     switch (type) {
       case "goblin":
-        return new Goblin();
+        return new Goblin(enemyId);
       default:
         throw new Error(`Unknown enemy type: ${enemyData.id}`);
     }
@@ -167,6 +167,7 @@ export class SyncFactory {
 
   async getAll(battleId: string) {
     const config = await this.getConfigFromSync(battleId);
+    console.log("config in sync factory", config);
     const characters = await Promise.all(
       config.characters.map((characterId) =>
         this.createCharacterFromSync(characterId, battleId)

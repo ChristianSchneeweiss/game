@@ -1,10 +1,11 @@
-import { BaseEntity } from "@loot-game/game/base-entity";
+import { BaseEntity, Enemy } from "@loot-game/game/base-entity";
 import type { BM } from "@loot-game/game/battle";
 import { timelineEventSchema } from "@loot-game/game/timeline-events";
 import type { Entity } from "@loot-game/game/types";
 import { produce } from "immer";
 import { parse, stringify } from "superjson";
 import { z } from "zod";
+import type { BattleResult } from "../battle-done.workflow";
 import { COL_characterDungeonDataSchema } from "../db/character-dungeon-data";
 
 const storageSchema = z.object({
@@ -35,6 +36,24 @@ export const bmStorage = {
         timelineEvents: bm.events,
         participants: entities as BaseEntity[],
       } satisfies StorageSchema)
+    );
+    await kv.put(
+      `${bm.battleId}:result`,
+      JSON.stringify({
+        winner: bm.getWinningTeam()!,
+        teamA: bm.getTeam("TEAM_A").map((ent) => ({
+          id: ent.id,
+          health: ent.health,
+          mana: ent.mana,
+          dead: ent.isDead(),
+        })),
+        teamB: bm.getTeam("TEAM_B").map((ent) => ({
+          id: ent.id,
+          health: ent.health,
+          dead: ent.isDead(),
+          xpOnKill: ent instanceof Enemy ? ent.xp : 0,
+        })),
+      } satisfies BattleResult)
     );
   },
   get: async (id: string, kv: KVNamespace) => {

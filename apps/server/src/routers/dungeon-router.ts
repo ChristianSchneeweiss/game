@@ -3,6 +3,7 @@ import z from "zod";
 import {
   id,
   TB_character,
+  TB_dungeonBattle,
   TB_dungeonData,
   TB_dungeonParticipant,
 } from "../db/schema";
@@ -104,6 +105,12 @@ export const dungeonRouter = router({
       const syncFactory = new SyncFactory(ctx.cfEnv);
       const dungeon = await dungeonManager.getDungeon(input.id, db);
       const battleId = id();
+      await db.insert(TB_dungeonBattle).values({
+        dungeonId: input.id,
+        battleId: battleId,
+        round: dungeon.round,
+      });
+
       await syncFactory.addConfigToSync(
         {
           characters: dungeon.playerTeam.map((character) => character.id),

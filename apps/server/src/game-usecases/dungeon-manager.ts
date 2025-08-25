@@ -4,6 +4,7 @@ import { dungeon1 } from "@loot-game/game/dungeons/dungeon1";
 import type { DungeonData } from "@loot-game/game/dungeons/types";
 import { eq } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { CharacterData as BattleResultCharacterData } from "../battle-done.workflow";
 import {
   id,
   TB_dungeonBattle,
@@ -191,5 +192,63 @@ export const dungeonManager = {
     });
 
     return bm;
+  },
+
+  handleDungeonCleared: async (
+    dungeonId: string,
+    totalXp: number,
+    characters: BattleResultCharacterData[],
+    winningTeam: "TEAM_A" | "TEAM_B",
+    db: PostgresJsDatabase
+  ) => {
+    await db.transaction(async (tx) => {
+      for (const character of characters) {
+        if (character.dead) {
+          continue;
+        }
+        await handleXpReceived(character.id, totalXp, tx);
+      }
+
+      const [dungeon] = await tx
+        .select()
+        .from(TB_dungeonData)
+        .where(eq(TB_dungeonData.id, dungeonId));
+      if (!dungeon) {
+        throw new Error("Dungeon not found");
+      }
+      if (winningTeam === "TEAM_A") {
+        dungeon.round++;
+      }
+
+      await tx
+        .update(TB_dungeonData)
+        .set({
+          round: dungeon.round,
+          characterData: characters.map((character) => {
+            // const characterFromBattle = bm
+            //   .getTeam("TEAM_A")
+            //   .find((c) => c.id === character.id);
+            // if (!characterFromBattle) {
+            //   throw new Error("Character not found");
+            // }
+
+            return {
+              characterId: character.id,
+              health: character.health,
+              mana: character.mana,
+            };
+          }),
+        })
+        .where(eq(TB_dungeonData.id, dungeonId));
+
+      const config = dungeon1();
+
+      if (dungeon.round >= config.availableEnemies.length) {
+        await tx
+          .update(TB_dungeonData)
+          .set({ cleared: true })
+          .where(eq(TB_dungeonData.id, dungeonId));
+      }
+    });
   },
 };

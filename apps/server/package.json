@@ -8,7 +8,8 @@
     "types": "doppler run --mount .env -- bunx wrangler types",
     "start": "bun run src/index.ts",
     "deploy": "doppler run -c prd --mount .env -- bunx wrangler secret bulk .env && bunx wrangler deploy",
-    "db:push": "doppler run --mount .env -- bunx drizzle-kit push"
+    "db:push": "doppler run --mount .env -- bunx drizzle-kit push",
+    "db:push:prod": "doppler run -c prd --mount .env -- bunx drizzle-kit push"
   },
   "dependencies": {
     "@clerk/backend": "^2.9.4",

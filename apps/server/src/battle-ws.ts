@@ -8,6 +8,7 @@ import { produce } from "immer";
 import SuperJSON from "superjson";
 import z from "zod";
 import { createClerk } from "./clerk";
+import { bmStorage } from "./game-usecases/bm-storage";
 import { SyncFactory } from "./game-usecases/sync-factory";
 
 const castSpellSchema = z.object({
@@ -65,6 +66,7 @@ export class BattleWebsocket extends DurableObject {
   bm: BM = undefined!;
   env: Env;
   battleId: string = undefined!;
+  messages: string[] = [];
 
   constructor(ctx: DurableObjectState, env: Env) {
     super(ctx, env);
@@ -86,6 +88,15 @@ export class BattleWebsocket extends DurableObject {
       this.battleId = battleId as string;
       this.clerk = createClerk(clerkSecretKey as string);
       await this.setupBm(); // not sure why this doesnt work here with await
+      this.bm.start();
+      const messages = await this.ctx.storage.get("messages");
+      if (messages) {
+        const messagesArray = z.array(z.string()).parse(messages);
+        this.messages = messagesArray;
+        for (const message of messagesArray) {
+          await this.handleMessage(message);
+        }
+      }
     });
   }
 
@@ -151,6 +162,14 @@ export class BattleWebsocket extends DurableObject {
   }
 
   async webSocketMessage(ws: WebSocket, message: ArrayBuffer | string) {
+    this.messages.push(message as string);
+    await this.ctx.storage.put({
+      messages: this.messages,
+    });
+    await this.handleMessage(message as string, ws);
+  }
+
+  private async handleMessage(message: string, ws?: WebSocket) {
     const parsed = messageSchema.safeParse(SuperJSON.parse(message as string));
     if (!parsed.success) {
       throw new Error("Invalid message");
@@ -171,6 +190,9 @@ export class BattleWebsocket extends DurableObject {
         );
         break;
       case "getTargets":
+        if (!ws) {
+          return;
+        }
         this.processGetTargets(
           parsed.data.data.entityId,
           parsed.data.data.spellId,
@@ -191,11 +213,10 @@ export class BattleWebsocket extends DurableObject {
         w.send(SuperJSON.stringify({ type: "finished", data: { winner } }));
       });
 
-      // maybe also store the winner in the db
-
-      //   this.ctx.getWebSockets().forEach((w) => {
-      //     w.close(1000, "Game over");
-      //   });
+      await bmStorage.save(this.bm, this.env.GAME);
+      await this.env.BATTLE_DONE_WORKFLOW.create({
+        params: { battleId: this.battleId },
+      });
     }
   }
 
@@ -215,7 +236,6 @@ export class BattleWebsocket extends DurableObject {
       if (!nextEntity) {
         throw new Error("No next entity found");
       }
-      console.log("nextEntity", nextEntity.name);
       // if the next entity is a bot, cast the spell
       if (nextEntity.isBot) {
         const action = nextEntity.getAction();
@@ -255,7 +275,6 @@ export class BattleWebsocket extends DurableObject {
 
   private async sendState() {
     const events = this.bm.events;
-    console.log(events);
     const state: ResponseMessage = {
       type: "state",
       data: {

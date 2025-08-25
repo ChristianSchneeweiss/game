@@ -7,6 +7,7 @@ import { envSchema } from "./env";
 import { createContext } from "./lib/context";
 import { appRouter } from "./routers/index";
 export { BattleWebsocket } from "./battle-ws";
+export { BattleDoneWorkflow } from "./battle-done.workflow";
 
 const app = new Hono<{
   Bindings: Env;

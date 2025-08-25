@@ -1,8 +1,9 @@
 import { cn } from "@/lib/utils";
+import { trpcClient } from "@/utils/trpc";
 import type { InBetweenCharacterData } from "@loot-game/game/dungeons/types";
 import type { TimelineEventFull } from "@loot-game/game/timeline-events";
 import type { Entity, Spell } from "@loot-game/game/types";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { BotIcon, SkullIcon } from "lucide-react";
 import { useCallback, useMemo, useState, type ReactNode } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
@@ -19,6 +20,17 @@ const roundTime = 1000;
 
 export const Route = createFileRoute("/battle/$id")({
   component: RouteComponent,
+  beforeLoad: async ({ params }) => {
+    const { id } = params;
+
+    let data: any;
+    try {
+      data = await trpcClient.getBattle.query(id);
+    } catch (error) {}
+    if (data) {
+      throw redirect({ to: "/battle/finished/$id", params: { id } });
+    }
+  },
 });
 
 function RouteComponent() {

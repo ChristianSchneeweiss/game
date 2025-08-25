@@ -98,10 +98,16 @@ export const applyStatIncrease = async (
 };
 
 export const handleXpReceived = async (
-  character: Character,
+  characterId: string,
   totalXp: number,
   tx: PgTransaction<any, any, any>
 ) => {
+  const [character] = await tx
+    .select()
+    .from(TB_character)
+    .where(eq(TB_character.id, characterId));
+  if (!character) throw new Error("Character not found");
+
   const newXp = character.xp + totalXp;
   const xpNeeded = xpNeededForLevelUp(character.level);
   if (newXp >= xpNeeded) {

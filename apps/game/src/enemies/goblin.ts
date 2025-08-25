@@ -3,9 +3,9 @@ import { Enemy } from "../base-entity";
 import { AutoAttackSpell } from "../spells/autoattack";
 
 export class Goblin extends Enemy {
-  constructor() {
+  constructor(id?: string) {
     super(
-      `goblin_${nanoid()}`,
+      id ?? `goblin_${nanoid()}`,
       "Goblin",
       "TEAM_B",
       20,
