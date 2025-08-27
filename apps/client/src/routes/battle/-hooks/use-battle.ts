@@ -1,0 +1,129 @@
+import type { Entity } from "@loot-game/game/types";
+import { useRouter } from "@tanstack/react-router";
+import { useCallback, useEffect, useState } from "react";
+import useWebSocket from "react-use-websocket";
+import { toast } from "sonner";
+import SuperJSON from "superjson";
+import type z from "zod";
+import type {
+  BattleState,
+  messageSchema,
+  ResponseMessage,
+} from "../../../../../server/src/battle-ws";
+import { useStatsTimeline } from "./use-stats-timeline";
+
+export const useBattle = (id: string) => {
+  const [participants, setParticipants] = useState<Entity[]>([]);
+  const [battleState, setBattleState] = useState<BattleState>();
+  const [currentEventCounter, setCurrentEventCounter] = useState<number>(0);
+  const [targets, setTargets] = useState<string[] | null>(null);
+  const [activeSpell, setActiveSpell] = useState<string | null>(null);
+
+  const events = battleState?.events ?? [];
+
+  const castSpell = useCallback(
+    (spellId: string, targetIds: string[]) => {
+      // no idea why target sometimes just gets nulled out
+      //   if (!targets) return;
+      if (!battleState) return;
+      const activeEntity = battleState.round.order[battleState.currentInRound];
+
+      sendMessage(
+        SuperJSON.stringify({
+          type: "castSpell",
+          data: { entityId: activeEntity, spellId, targetIds },
+        } satisfies z.infer<typeof messageSchema>),
+      );
+      setTargets(null);
+      setActiveSpell(null);
+    },
+    [battleState],
+  );
+
+  const getTargets = useCallback(
+    (spellId: string) => {
+      if (!battleState) return;
+      const activeEntity = battleState.round.order[battleState.currentInRound];
+      setActiveSpell(spellId);
+
+      sendMessage(
+        SuperJSON.stringify({
+          type: "getTargets",
+          data: { entityId: activeEntity, spellId },
+        } satisfies z.infer<typeof messageSchema>),
+      );
+    },
+    [battleState],
+  );
+
+  const { statsTimeline, defaultStats } = useStatsTimeline(
+    events,
+    participants,
+  );
+
+  console.log(events);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (currentEventCounter === events.length) return;
+      setCurrentEventCounter((prev) => prev + 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [currentEventCounter, events.length]);
+
+  const isLive = currentEventCounter === events.length;
+  const router = useRouter();
+
+  const { sendMessage, readyState } = useWebSocket(
+    `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/api/battle/${id}`,
+    {
+      onMessage: (event) => {
+        const response = SuperJSON.parse(event.data) as ResponseMessage;
+        switch (response.type) {
+          case "entities":
+            setParticipants(response.data.entities);
+            break;
+          case "state":
+            setCurrentEventCounter(events.length);
+            // we have a weird where we suddenly get a subset of events instead of all events. no idea why
+            if (response.data.events.length >= events.length) {
+              setBattleState(response.data);
+            }
+            break;
+          case "targets":
+            setTargets(response.data.targets);
+            break;
+          case "finished":
+            const winner = response.data.winner;
+            if (winner === "TEAM_A") {
+              toast.success("You won!");
+            } else {
+              toast.error("You lost!");
+            }
+            setTimeout(() => {
+              router.navigate({ to: "/battle/finished/$id", params: { id } });
+            }, 3000);
+            break;
+        }
+      },
+    },
+  );
+
+  return {
+    participants,
+    battleState,
+    currentEventCounter,
+    targets,
+    activeSpell,
+    statsTimeline,
+    defaultStats,
+    isLive,
+    readyState,
+    castSpell,
+    getTargets,
+    cancelSpell: () => {
+      setTargets(null);
+      setActiveSpell(null);
+    },
+  };
+};
