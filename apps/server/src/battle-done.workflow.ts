@@ -1,3 +1,4 @@
+import type { Enemy } from "@loot-game/game/base-entity";
 import {
   WorkflowEntrypoint,
   WorkflowStep,
@@ -8,6 +9,7 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import z from "zod";
 import { TB_dungeonBattle } from "./db/schema";
 import { dungeonManager } from "./game-usecases/dungeon-manager";
+import { EntityFactory } from "./game-usecases/entity-factory";
 import { SyncFactory } from "./game-usecases/sync-factory";
 
 export type Params = {
@@ -60,12 +62,13 @@ export class BattleDoneWorkflow extends WorkflowEntrypoint<Env, Params> {
       }
 
       const id = dungeonBattle.dungeonId;
-      const totalXp = battleResult.teamB.reduce((acc, enemy) => {
-        if (!enemy.dead) {
-          return acc;
-        }
-        return acc + enemy.xpOnKill;
-      }, 0);
+      const enemies: Enemy[] = [];
+      for (const enemy of battleResult.teamB.filter((e) => e.dead)) {
+        const enemyEntity = EntityFactory.createEnemyFromKey(enemy.id, db);
+        enemies.push(enemyEntity);
+      }
+
+      const totalXp = enemies.reduce((acc, enemy) => acc + enemy.xp, 0);
 
       await dungeonManager.handleDungeonCleared(
         id,

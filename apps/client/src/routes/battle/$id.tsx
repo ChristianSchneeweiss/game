@@ -38,7 +38,7 @@ function RouteComponent() {
   const { id } = Route.useParams();
   const [participants, setParticipants] = useState<Entity[]>([]);
   const [battleState, setBattleState] = useState<BattleState>();
-  const [currentEventCounter, setCurrentEvents] = useState<number>(0);
+  const [currentEventCounter, setCurrentEventCounter] = useState<number>(0);
   const [targets, setTargets] = useState<string[] | null>(null);
   const [activeSpell, setActiveSpell] = useState<string | null>(null);
 
@@ -88,7 +88,7 @@ function RouteComponent() {
 
   const router = useRouter();
 
-  const { sendMessage, lastMessage, readyState } = useWebSocket(
+  const { sendMessage, readyState } = useWebSocket(
     `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/api/battle/${id}`,
     {
       onMessage: (event) => {
@@ -98,7 +98,7 @@ function RouteComponent() {
             setParticipants(response.data.entities);
             break;
           case "state":
-            setCurrentEvents(battleState?.events.length ?? 0);
+            setCurrentEventCounter(battleState?.events.length ?? 0);
             setBattleState(response.data);
             break;
           case "targets":
@@ -160,7 +160,7 @@ function RouteComponent() {
     });
 
     return events;
-  }, [lastMessage]);
+  }, [battleState?.events]);
 
   const statsTimeline = useMemo(() => {
     return calculateStatsTimeline(
