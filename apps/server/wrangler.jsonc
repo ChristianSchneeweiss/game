@@ -43,10 +43,11 @@
       "id": "fbffd148f64644b78df28f540e470e1d",
     },
   ],
+  // Add this to your wrangler.jsonc
   "hyperdrive": [
     {
       "binding": "HYPERDRIVE",
-      "id": "054e377122474cb3a4df0e68a723c540",
+      "id": "41a2c2926f874e0e9c23dcf06517a196",
 
       // Optional. Can be used to connect to a local database for local development with `wrangler dev`
       "localConnectionString": "postgres://postgres:password@0.0.0.0:5432/game",

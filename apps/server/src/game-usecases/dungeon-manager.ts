@@ -110,6 +110,7 @@ export const dungeonManager = {
       round: dungeon.round,
       actualEnemies: enemies,
       key: dungeon.key,
+      cleared: dungeon.cleared,
     } as DungeonData;
   },
 

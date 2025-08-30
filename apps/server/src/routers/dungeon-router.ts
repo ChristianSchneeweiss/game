@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import z from "zod";
 import {
@@ -86,8 +87,7 @@ export const dungeonRouter = router({
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       const { db } = ctx;
-      const dungeon = await dungeonManager.getDungeon(input.id, db);
-      return dungeon;
+      return dungeonManager.getDungeon(input.id, db);
     }),
 
   getDungeonBattles: protectedProcedure
@@ -104,6 +104,14 @@ export const dungeonRouter = router({
       const { db } = ctx;
       const syncFactory = new SyncFactory(ctx.cfEnv);
       const dungeon = await dungeonManager.getDungeon(input.id, db);
+
+      if (dungeon.cleared) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Dungeon is already cleared",
+        });
+      }
+
       const battleId = id();
       await db.insert(TB_dungeonBattle).values({
         dungeonId: input.id,

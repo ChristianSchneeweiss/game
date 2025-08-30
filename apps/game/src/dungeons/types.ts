@@ -17,6 +17,7 @@ export type DungeonData = {
   playerTeam: Character[];
   round: number;
   actualEnemies: Enemy[][];
+  cleared: boolean;
 };
 
 export type DungeonConfig = {
