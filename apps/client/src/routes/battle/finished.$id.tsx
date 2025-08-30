@@ -2,7 +2,7 @@ import { trpc } from "@/utils/trpc";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import SuperJSON from "superjson";
+import { BattleRender } from "./-battle-render";
 import { useStatsTimeline } from "./-hooks/use-stats-timeline";
 
 export const Route = createFileRoute("/battle/finished/$id")({
@@ -37,8 +37,10 @@ function RouteComponent() {
       <p>
         Visible events: {visibleEvents + 1} / {data.timelineEvents.length}
       </p>
-
-      <pre>{JSON.stringify(SuperJSON.serialize(stats), null, 2)}</pre>
+      <div className="flex flex-col gap-4">
+        <BattleRender participants={data.participants} stats={stats} />
+        <pre>{JSON.stringify(data.timelineEvents[visibleEvents], null, 2)}</pre>
+      </div>
     </div>
   );
 }
