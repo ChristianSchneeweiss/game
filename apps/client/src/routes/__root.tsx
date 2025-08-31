@@ -11,7 +11,6 @@ import {
   createRootRouteWithContext,
   useRouterState,
 } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { useEffect } from "react";
 import "../index.css";
 
@@ -45,7 +44,6 @@ function RootComponent() {
         <Outlet />
         <Toaster richColors />
       </ThemeProvider>
-      <TanStackRouterDevtools position="bottom-left" />
       <ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
     </TRPCProvider>
   );

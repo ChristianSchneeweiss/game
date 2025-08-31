@@ -6,6 +6,7 @@ import type {
   Effect,
   Entity,
   EntityAttributes,
+  Loot,
   Spell,
   StatModifier,
   Team,
@@ -163,7 +164,8 @@ export class Enemy extends BaseEntity {
     maxHealth: number,
     maxMana: number,
     baseAttributes: EntityAttributes,
-    public xp: number
+    public xp: number,
+    public loot: Loot
   ) {
     super(id, name, team, maxHealth, maxMana, baseAttributes);
   }

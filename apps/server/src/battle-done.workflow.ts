@@ -68,11 +68,10 @@ export class BattleDoneWorkflow extends WorkflowEntrypoint<Env, Params> {
         enemies.push(enemyEntity);
       }
 
-      const totalXp = enemies.reduce((acc, enemy) => acc + enemy.xp, 0);
-
       await dungeonManager.handleDungeonCleared(
         id,
-        totalXp,
+        battleId,
+        enemies,
         battleResult.teamA,
         battleResult.winner,
         db

@@ -1,3 +1,4 @@
+import z from "zod";
 import type {
   SpellCastEvent,
   TimelineEvent,
@@ -172,3 +173,18 @@ export interface BattleHandler {
     target: Entity
   ): Effect | null;
 }
+
+export interface Loot {
+  items: LootEntity[];
+  gold: number;
+}
+
+export const LootEntitySchema = z.object({
+  type: z.enum(["SPELL"]),
+  dropRate: z.number(),
+  data: z.object({
+    spellType: z.string(),
+  }),
+});
+
+export type LootEntity = z.infer<typeof LootEntitySchema>;

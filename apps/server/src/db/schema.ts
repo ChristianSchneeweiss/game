@@ -1,4 +1,5 @@
 import type { EventTypes } from "@loot-game/game/timeline-events";
+import type { LootEntity } from "@loot-game/game/types";
 import {
   boolean,
   integer,
@@ -118,4 +119,24 @@ export const TB_timeline = pgTable("timeline", {
   round: integer("round").notNull(),
   eventType: text("event_type").$type<EventTypes>().notNull(),
   data: json("data").notNull(), // superjson event data
+});
+
+// const lootEntityType = customType<{ data: LootEntity[]; driverData: string }>({
+//   dataType: () => "json",
+//   toDriver: (value) => JSON.stringify(value),
+//   // in the to driver we need to stringify it. but in the from driver we get it as object already. thats weird. but its works
+//   fromDriver: (value: unknown) => LootEntitySchema.array().parse(value),
+// });
+
+export const TB_loot = pgTable("loot", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => id()),
+  battleId: text("battle_id").notNull(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => TB_user.id),
+  items: json("items").$type<LootEntity[]>().notNull(),
+  gold: integer("gold").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });

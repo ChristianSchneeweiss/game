@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LootRouteImport } from './routes/loot'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SpellsIndexRouteImport } from './routes/spells/index'
 import { Route as DungeonsIndexRouteImport } from './routes/dungeons/index'
@@ -18,6 +19,11 @@ import { Route as CharactersCharacterIdRouteImport } from './routes/characters/$
 import { Route as BattleIdRouteImport } from './routes/battle/$id'
 import { Route as BattleFinishedIdRouteImport } from './routes/battle/finished.$id'
 
+const LootRoute = LootRouteImport.update({
+  id: '/loot',
+  path: '/loot',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -61,6 +67,7 @@ const BattleFinishedIdRoute = BattleFinishedIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/loot': typeof LootRoute
   '/battle/$id': typeof BattleIdRoute
   '/characters/$character-id': typeof CharactersCharacterIdRoute
   '/dungeons/$id': typeof DungeonsIdRoute
@@ -71,6 +78,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/loot': typeof LootRoute
   '/battle/$id': typeof BattleIdRoute
   '/characters/$character-id': typeof CharactersCharacterIdRoute
   '/dungeons/$id': typeof DungeonsIdRoute
@@ -82,6 +90,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/loot': typeof LootRoute
   '/battle/$id': typeof BattleIdRoute
   '/characters/$character-id': typeof CharactersCharacterIdRoute
   '/dungeons/$id': typeof DungeonsIdRoute
@@ -94,6 +103,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/loot'
     | '/battle/$id'
     | '/characters/$character-id'
     | '/dungeons/$id'
@@ -104,6 +114,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/loot'
     | '/battle/$id'
     | '/characters/$character-id'
     | '/dungeons/$id'
@@ -114,6 +125,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/loot'
     | '/battle/$id'
     | '/characters/$character-id'
     | '/dungeons/$id'
@@ -125,6 +137,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  LootRoute: typeof LootRoute
   BattleIdRoute: typeof BattleIdRoute
   CharactersCharacterIdRoute: typeof CharactersCharacterIdRoute
   DungeonsIdRoute: typeof DungeonsIdRoute
@@ -136,6 +149,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/loot': {
+      id: '/loot'
+      path: '/loot'
+      fullPath: '/loot'
+      preLoaderRoute: typeof LootRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -197,6 +217,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  LootRoute: LootRoute,
   BattleIdRoute: BattleIdRoute,
   CharactersCharacterIdRoute: CharactersCharacterIdRoute,
   DungeonsIdRoute: DungeonsIdRoute,

@@ -3,6 +3,7 @@ import { z } from "zod";
 import { TB_spellStats, TB_user } from "../db/schema";
 import { bmStorage } from "../game-usecases/bm-storage";
 import { createCharacter } from "../game-usecases/character";
+import { LootManager } from "../game-usecases/loot-manager";
 import { createSpell } from "../game-usecases/spell-factory";
 import { protectedProcedure, publicProcedure, router } from "../lib/trpc";
 import { characterRouter } from "./character-router";
@@ -64,6 +65,26 @@ export const appRouter = router({
     const timeline = await bmStorage.get(input, ctx.cfEnv.GAME);
     return timeline;
   }),
+
+  getMyLoot: protectedProcedure.query(async ({ ctx }) => {
+    const { session, db } = ctx;
+    if (!session) {
+      throw new Error("No session found");
+    }
+    const lootManager = new LootManager(session.id, db);
+    return lootManager.getLoot();
+  }),
+
+  claimLoot: protectedProcedure
+    .input(z.string())
+    .mutation(async ({ input, ctx }) => {
+      const { session, db } = ctx;
+      if (!session) {
+        throw new Error("No session found");
+      }
+      const lootManager = new LootManager(session.id, db);
+      await lootManager.claim(input);
+    }),
 });
 
 export type AppRouter = typeof appRouter;

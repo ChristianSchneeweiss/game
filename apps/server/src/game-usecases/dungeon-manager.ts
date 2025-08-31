@@ -2,18 +2,23 @@ import { Character, Enemy } from "@loot-game/game/base-entity";
 import { BM } from "@loot-game/game/battle";
 import { dungeon1 } from "@loot-game/game/dungeons/dungeon1";
 import type { DungeonData } from "@loot-game/game/dungeons/types";
-import { eq } from "drizzle-orm";
+import type { LootEntity } from "@loot-game/game/types";
+import { eq, inArray } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import seedrandom from "seedrandom";
 import type { CharacterData as BattleResultCharacterData } from "../battle-done.workflow";
 import {
   id,
+  TB_character,
   TB_dungeonBattle,
   TB_dungeonData,
   TB_dungeonEnemy,
   TB_dungeonParticipant,
+  TB_loot,
 } from "../db/schema";
 import { handleXpReceived } from "./character";
 import { EntityFactory } from "./entity-factory";
+import { LootManager } from "./loot-manager";
 
 export const dungeonManager = {
   enterDungeon: async (
@@ -27,6 +32,7 @@ export const dungeonManager = {
       round: 0,
       actualEnemies: dungeon1().rollEnemies(),
       key: key,
+      cleared: false,
     } satisfies DungeonData;
 
     await db.transaction(async (tx) => {
@@ -197,19 +203,13 @@ export const dungeonManager = {
 
   handleDungeonCleared: async (
     dungeonId: string,
-    totalXp: number,
+    battleId: string,
+    enemies: Enemy[],
     characters: BattleResultCharacterData[],
     winningTeam: "TEAM_A" | "TEAM_B",
     db: PostgresJsDatabase
   ) => {
     await db.transaction(async (tx) => {
-      for (const character of characters) {
-        if (character.dead) {
-          continue;
-        }
-        await handleXpReceived(character.id, totalXp, tx);
-      }
-
       const [dungeon] = await tx
         .select()
         .from(TB_dungeonData)
@@ -217,8 +217,60 @@ export const dungeonManager = {
       if (!dungeon) {
         throw new Error("Dungeon not found");
       }
+
+      // this makes sure the dungeon round is the same as the number of battles
+      const dungeonBattles = await tx
+        .select()
+        .from(TB_dungeonBattle)
+        .where(eq(TB_dungeonBattle.dungeonId, dungeonId));
+      if (!dungeonBattles) {
+        throw new Error("Dungeon battle not found");
+      }
+      // short circuit if we are already at the correct round
+      if (dungeon.round === dungeonBattles.length) {
+        return;
+      }
+
       if (winningTeam === "TEAM_A") {
-        dungeon.round++;
+        dungeon.round = dungeonBattles.length;
+      }
+      const totalXp = enemies.reduce((acc, enemy) => acc + enemy.xp, 0);
+
+      for (const character of characters) {
+        if (character.dead) {
+          continue;
+        }
+        await handleXpReceived(character.id, totalXp, tx);
+      }
+
+      const users = await tx
+        .select({
+          userId: TB_character.userId,
+        })
+        .from(TB_character)
+        .where(
+          inArray(
+            TB_character.id,
+            characters.map((character) => character.id)
+          )
+        );
+      const userIds = new Set(users.map((user) => user.userId));
+
+      for (const userId of userIds) {
+        const lootManager = new LootManager(userId, tx);
+        const droppedLoot: LootEntity[] = [];
+        for (const enemy of enemies) {
+          droppedLoot.push(
+            ...(await lootManager.drop(seedrandom(), enemy.loot))
+          );
+        }
+
+        await tx.insert(TB_loot).values({
+          userId: userId,
+          items: droppedLoot,
+          gold: enemies.reduce((acc, enemy) => acc + enemy.loot.gold, 0),
+          battleId: battleId,
+        });
       }
 
       await tx

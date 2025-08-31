@@ -1,8 +1,17 @@
+import { trpc } from "@/utils/trpc";
 import { UserButton } from "@clerk/clerk-react";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
+import { GiftIcon } from "lucide-react";
 import { ModeToggle } from "./mode-toggle";
+import { Button } from "./ui/button";
 
 export default function Header() {
+  const { data: loot } = useQuery(trpc.getMyLoot.queryOptions());
+  const { mutate: claimLoot } = useMutation(trpc.claimLoot.mutationOptions());
+
+  const lootCount = loot?.length ?? 0;
+
   return (
     <div>
       <div className="flex flex-row items-center justify-between px-2 py-1">
@@ -44,6 +53,13 @@ export default function Header() {
         </div>
         <div className="flex flex-row items-center gap-2">
           <ModeToggle />
+          {lootCount > 0 && (
+            <Link to="/loot">
+              <Button className="flex flex-row items-center gap-2">
+                {lootCount} <GiftIcon />
+              </Button>
+            </Link>
+          )}
           <UserButton />
         </div>
       </div>
