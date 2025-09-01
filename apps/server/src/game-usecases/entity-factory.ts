@@ -2,7 +2,7 @@ import { BaseEntity, Character, Enemy } from "@loot-game/game/base-entity";
 import { Goblin } from "@loot-game/game/enemies/goblin";
 import { AutoAttackSpell } from "@loot-game/game/spells/autoattack";
 import { FireballSpell } from "@loot-game/game/spells/fireball";
-import { SingleHealSpell } from "@loot-game/game/spells/Single-Heal";
+import { SingleHealSpell } from "@loot-game/game/spells/single-heal";
 import { type Entity } from "@loot-game/game/types";
 import { eq } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
