@@ -1,4 +1,4 @@
-import type { Enemy } from "@loot-game/game/base-entity";
+import { EnemyTypeSchema, type Enemy } from "@loot-game/game/base-entity";
 import {
   WorkflowEntrypoint,
   WorkflowStep,
@@ -25,9 +25,9 @@ export const characterDataSchema = z.object({
 
 export const enemyDataSchema = z.object({
   id: z.string(),
+  type: EnemyTypeSchema,
   health: z.number(),
   dead: z.boolean(),
-  xpOnKill: z.number(),
 });
 
 export const battleResultSchema = z.object({
@@ -64,7 +64,7 @@ export class BattleDoneWorkflow extends WorkflowEntrypoint<Env, Params> {
       const id = dungeonBattle.dungeonId;
       const enemies: Enemy[] = [];
       for (const enemy of battleResult.teamB.filter((e) => e.dead)) {
-        const enemyEntity = EntityFactory.createEnemyFromKey(enemy.id, db);
+        const enemyEntity = EntityFactory.createEnemyFromType(enemy.type, db);
         enemies.push(enemyEntity);
       }
 

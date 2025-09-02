@@ -1,3 +1,4 @@
+import type { EnemyType } from "@loot-game/game/base-entity";
 import type { EventTypes } from "@loot-game/game/timeline-events";
 import type { LootEntity } from "@loot-game/game/types";
 import {
@@ -91,10 +92,10 @@ export const TB_dungeonEnemy = pgTable("dungeon_enemy", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => id()),
+  type: text("type").$type<EnemyType>().notNull(),
   dungeonId: text("dungeon_id")
     .notNull()
     .references(() => TB_dungeonData.id),
-  enemyKey: text("enemy_key").notNull(),
   inRound: integer("in_round").notNull(),
 });
 

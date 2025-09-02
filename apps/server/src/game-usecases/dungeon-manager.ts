@@ -55,15 +55,15 @@ export const dungeonManager = {
       for (const [index, round] of dungeon.actualEnemies.entries()) {
         await tx.insert(TB_dungeonEnemy).values(
           round.map((enemy) => ({
+            id: enemy.id,
             dungeonId: dungeon.id,
-            enemyKey: enemy.id,
+            type: enemy.type,
             inRound: index,
           }))
         );
       }
     });
 
-    // todo store in db
     return dungeon;
   },
 

@@ -51,7 +51,7 @@ export const bmStorage = {
           id: ent.id,
           health: ent.health,
           dead: ent.isDead(),
-          xpOnKill: ent instanceof Enemy ? ent.xp : 0,
+          type: ent instanceof Enemy ? ent.type : "goblin", // todo not goblin default
         })),
       } satisfies BattleResult)
     );

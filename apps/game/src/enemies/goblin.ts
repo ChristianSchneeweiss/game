@@ -5,7 +5,8 @@ import { AutoAttackSpell } from "../spells/autoattack";
 export class Goblin extends Enemy {
   constructor(id?: string) {
     super(
-      id ?? `goblin_${nanoid()}`,
+      id ?? `goblin-${nanoid()}`,
+      "goblin",
       "Goblin",
       "TEAM_B",
       20,

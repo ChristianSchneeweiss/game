@@ -6,8 +6,8 @@ import { logger } from "hono/logger";
 import { envSchema } from "./env";
 import { createContext } from "./lib/context";
 import { appRouter } from "./routers/index";
-export { BattleWebsocket } from "./battle-ws";
 export { BattleDoneWorkflow } from "./battle-done.workflow";
+export { BattleWebsocket } from "./battle-ws";
 
 const app = new Hono<{
   Bindings: Env;
@@ -47,11 +47,6 @@ app.get("/api/battle/:id", async (c) => {
   const stub = c.env.BATTLE_WEBSOCKET.get(id);
 
   const env = envSchema.parse(process.env);
-
-  console.log("before setup in index");
-  console.log("env.CLERK_SECRET_KEY", env.CLERK_SECRET_KEY);
-  console.log("battleId", battleId);
-  console.log("DATABASE_URL", env.DATABASE_URL);
 
   const userId = getAuth(c)?.userId;
 

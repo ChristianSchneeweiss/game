@@ -1,4 +1,9 @@
-import { BaseEntity, Character, Enemy } from "@loot-game/game/base-entity";
+import {
+  BaseEntity,
+  Character,
+  Enemy,
+  type EnemyType,
+} from "@loot-game/game/base-entity";
 import { Goblin } from "@loot-game/game/enemies/goblin";
 import { AutoAttackSpell } from "@loot-game/game/spells/autoattack";
 import { FireballSpell } from "@loot-game/game/spells/fireball";
@@ -24,12 +29,10 @@ export class EntityFactory {
     return baseEntity;
   }
 
-  static createEnemyFromKey(key: string, db: PostgresJsDatabase): Enemy {
-    const type = key.split("_")[0];
+  static createEnemyFromType(type: EnemyType, db: PostgresJsDatabase): Enemy {
     switch (type) {
       case "goblin":
         const goblin = new Goblin();
-        goblin.id = key;
         return goblin;
       default:
         throw new Error(`Unknown enemy type: ${type}`);
@@ -42,7 +45,8 @@ export class EntityFactory {
   ): Enemy[][] {
     const entitiesByRound: Enemy[][] = [];
     for (const enemy of enemies) {
-      const entity = this.createEnemyFromKey(enemy.enemyKey, db);
+      const entity = this.createEnemyFromType(enemy.type, db);
+      entity.id = enemy.id;
       const current = entitiesByRound[enemy.inRound] || [];
       entitiesByRound[enemy.inRound] = [...current, entity];
     }

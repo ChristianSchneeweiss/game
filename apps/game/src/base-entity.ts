@@ -1,3 +1,4 @@
+import z from "zod";
 import { calculator } from "./calculator";
 import type { TimelineEvent } from "./timeline-events";
 import type {
@@ -156,9 +157,13 @@ export class BaseEntity implements Entity {
   }
 }
 
+export const EnemyTypeSchema = z.enum(["goblin", "orc", "troll", "dragon"]);
+export type EnemyType = z.infer<typeof EnemyTypeSchema>;
+
 export class Enemy extends BaseEntity {
   constructor(
     id: string,
+    public type: EnemyType,
     name: string,
     team: Team,
     maxHealth: number,
