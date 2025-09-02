@@ -1,4 +1,5 @@
 import { Character, Enemy } from "@loot-game/game/base-entity";
+import { EnemyTypeSchema } from "@loot-game/game/enemies";
 import { Goblin } from "@loot-game/game/enemies/goblin";
 import { AutoAttackSpell } from "@loot-game/game/spells/autoattack";
 import { FireballSpell } from "@loot-game/game/spells/fireball";
@@ -11,6 +12,8 @@ export const syncCharacterSchema = z.object({
   team: z.literal("TEAM_A"),
   health: z.number(),
   mana: z.number(),
+  maxHealth: z.number(),
+  maxMana: z.number(),
   stats: z.object({
     intelligence: z.number(),
     vitality: z.number(),
@@ -24,6 +27,7 @@ export const syncCharacterSchema = z.object({
 
 export const syncEnemySchema = z.object({
   id: z.string(),
+  type: EnemyTypeSchema,
 });
 
 export const syncSpellSchema = z.object({
@@ -40,13 +44,22 @@ export class SyncFactory {
   constructor(private readonly env: Env) {}
 
   async addEnemyToSync(enemy: Enemy, battleId: string) {
-    const enemyData = syncEnemySchema.parse({
-      id: enemy.id,
+    const schema = z.object({
+      id: z.string(),
+      type: EnemyTypeSchema,
     });
+    const enemyData = schema.safeParse({
+      id: enemy.id,
+      type: enemy.type,
+    });
+
+    if (!enemyData.success) {
+      throw new Error(`Invalid enemy data: ${enemyData.error.message}`);
+    }
 
     await this.env.GAME_DO_SYNC.put(
       this.getEnemyKey(battleId, enemy.id),
-      JSON.stringify(enemyData)
+      JSON.stringify(enemyData.data)
     );
   }
 
@@ -56,8 +69,7 @@ export class SyncFactory {
     );
     if (!kvData) throw new Error("No enemyData");
     const enemyData = syncEnemySchema.parse(JSON.parse(kvData));
-    const type = enemyData.id.split("_")[0];
-    switch (type) {
+    switch (enemyData.type) {
       case "goblin":
         return new Goblin(enemyId);
       default:
@@ -72,6 +84,8 @@ export class SyncFactory {
       team: character.team,
       health: character.health,
       mana: character.mana,
+      maxHealth: character.maxHealth,
+      maxMana: character.maxMana,
       stats: {
         intelligence: character.baseAttributes.intelligence,
         vitality: character.baseAttributes.vitality,
@@ -114,21 +128,21 @@ export class SyncFactory {
       characterData.id,
       characterData.name,
       characterData.team,
-      characterData.health,
-      characterData.mana,
+      characterData.maxHealth,
+      characterData.maxMana,
       characterData.stats,
       characterData.xp,
       characterData.level,
       characterData.statPointsAvailable
     );
-    console.log("characterData in sync factory", characterData);
+    character.health = characterData.health;
+    character.mana = characterData.mana;
 
     const spells = await this.env.GAME_DO_SYNC.get(
       this.getCharacterSpellsKey(battleId, characterId)
     );
     if (!spells) throw new Error("No spellsData");
     const spellsData = syncSpellSchema.array().parse(JSON.parse(spells));
-    console.log("spellsData in sync factory", spellsData);
 
     character.spells = spellsData.map((spell) => {
       switch (spell.type) {
@@ -166,7 +180,6 @@ export class SyncFactory {
 
   async getAll(battleId: string) {
     const config = await this.getConfigFromSync(battleId);
-    console.log("config in sync factory", config);
     const characters = await Promise.all(
       config.characters.map((characterId) =>
         this.createCharacterFromSync(characterId, battleId)

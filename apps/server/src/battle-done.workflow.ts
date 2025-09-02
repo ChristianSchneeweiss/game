@@ -1,4 +1,5 @@
-import { EnemyTypeSchema, type Enemy } from "@loot-game/game/base-entity";
+import { type Enemy } from "@loot-game/game/base-entity";
+import { EnemyTypeSchema } from "@loot-game/game/enemies";
 import {
   WorkflowEntrypoint,
   WorkflowStep,

@@ -11,8 +11,8 @@ export const useStatsTimeline = (
   const defaultStartEntityData = useMemo(() => {
     return participants.map((p) => ({
       characterId: p.id,
-      health: p.maxHealth,
-      mana: p.maxMana,
+      health: p.health,
+      mana: p.mana,
     }));
   }, [participants]);
 

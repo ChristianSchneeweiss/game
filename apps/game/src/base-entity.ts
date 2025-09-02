@@ -1,5 +1,5 @@
-import z from "zod";
 import { calculator } from "./calculator";
+import type { EnemyType } from "./enemies";
 import type { TimelineEvent } from "./timeline-events";
 import type {
   BattleManager,
@@ -156,9 +156,6 @@ export class BaseEntity implements Entity {
     return { spell, targets };
   }
 }
-
-export const EnemyTypeSchema = z.enum(["goblin", "orc", "troll", "dragon"]);
-export type EnemyType = z.infer<typeof EnemyTypeSchema>;
 
 export class Enemy extends BaseEntity {
   constructor(

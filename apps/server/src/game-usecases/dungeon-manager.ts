@@ -1,5 +1,4 @@
 import { Character, Enemy } from "@loot-game/game/base-entity";
-import { BM } from "@loot-game/game/battle";
 import { dungeon1 } from "@loot-game/game/dungeons/dungeon1";
 import type { DungeonData } from "@loot-game/game/dungeons/types";
 import type { LootEntity } from "@loot-game/game/types";
@@ -118,87 +117,6 @@ export const dungeonManager = {
       key: dungeon.key,
       cleared: dungeon.cleared,
     } as DungeonData;
-  },
-
-  fightRound: async (id: string, db: PostgresJsDatabase) => {
-    const dungeon = await dungeonManager.getDungeon(id, db);
-    const bm = new BM(dungeon.playerTeam);
-    const enemies = dungeon.actualEnemies[dungeon.round];
-    if (!enemies) {
-      throw new Error("No enemies found");
-    }
-    for (const enemy of enemies) {
-      bm.join(enemy);
-    }
-    bm.fight();
-
-    let totalXp = 0;
-    for (const event of bm.events) {
-      if (event.event.eventType === "DEATH") {
-        const enemyId = event.event.data.id;
-        const enemy = dungeon.actualEnemies[dungeon.round].find(
-          (e) => e.id === enemyId
-        );
-        if (enemy instanceof Enemy) {
-          totalXp += enemy.xp;
-        }
-      }
-    }
-
-    await db.transaction(async (tx) => {
-      const characters = dungeon.playerTeam;
-      for (const character of characters) {
-        if (!character.isDead()) {
-          if (!(character instanceof Character)) {
-            throw new Error("Character is not a Character");
-          }
-          await handleXpReceived(character, totalXp, tx);
-        }
-      }
-
-      await tx.insert(TB_dungeonBattle).values({
-        dungeonId: id,
-        battleId: bm.battleId,
-        round: dungeon.round,
-      });
-
-      const winningTeam = bm.getWinningTeam();
-      if (winningTeam === "TEAM_A") {
-        dungeon.round++;
-      }
-
-      await tx
-        .update(TB_dungeonData)
-        .set({
-          round: dungeon.round,
-          characterData: characters.map((character) => {
-            const characterFromBattle = bm
-              .getTeam("TEAM_A")
-              .find((c) => c.id === character.id);
-            if (!characterFromBattle) {
-              throw new Error("Character not found");
-            }
-
-            return {
-              characterId: character.id,
-              health: characterFromBattle.health,
-              mana: characterFromBattle.mana,
-            };
-          }),
-        })
-        .where(eq(TB_dungeonData.id, id));
-
-      const config = dungeon1();
-
-      if (dungeon.round >= config.availableEnemies.length) {
-        await tx
-          .update(TB_dungeonData)
-          .set({ cleared: true })
-          .where(eq(TB_dungeonData.id, id));
-      }
-    });
-
-    return bm;
   },
 
   handleDungeonCleared: async (

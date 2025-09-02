@@ -119,6 +119,7 @@ export const dungeonRouter = router({
         round: dungeon.round,
       });
 
+      console.log("dungeon in dungeon router", dungeon);
       await syncFactory.addConfigToSync(
         {
           characters: dungeon.playerTeam.map((character) => character.id),
@@ -128,12 +129,15 @@ export const dungeonRouter = router({
         },
         battleId
       );
+      console.log("added config to sync");
       for (const enemy of dungeon.actualEnemies[dungeon.round]) {
         await syncFactory.addEnemyToSync(enemy, battleId);
       }
+      console.log("added enemies to sync");
       for (const character of dungeon.playerTeam) {
         await syncFactory.addCharacterToSync(character, battleId);
       }
+      console.log("added characters to sync");
 
       return battleId;
     }),
