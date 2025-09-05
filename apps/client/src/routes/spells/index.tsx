@@ -36,6 +36,12 @@ function RouteComponent() {
           <Button onClick={() => createSpell({ type: "single-heal" })}>
             Create Single Heal
           </Button>
+          <Button onClick={() => createSpell({ type: "crude-strike" })}>
+            Create Crude Strike
+          </Button>
+          <Button onClick={() => createSpell({ type: "festering-blow" })}>
+            Create Festering Blow
+          </Button>
         </div>
         <h2 className="text-2xl font-bold">My Spells</h2>
         <div className="grid gap-3">

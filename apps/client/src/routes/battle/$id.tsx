@@ -24,7 +24,10 @@ function RouteComponent() {
   const {
     participants,
     battleState,
-    targets,
+    validTargets,
+    enemies,
+    allies,
+    chosenTargets,
     activeSpell,
     statsTimeline,
     defaultStats,
@@ -32,6 +35,7 @@ function RouteComponent() {
     isLive,
     readyState,
     castSpell,
+    setChosenTargets,
     getTargets,
     cancelSpell,
   } = useBattle(id);
@@ -51,12 +55,14 @@ function RouteComponent() {
         participants={participants}
         stats={stats}
         battleState={battleState}
-        targets={targets ?? undefined}
+        validTargets={validTargets ?? undefined}
         activeSpell={activeSpell ?? undefined}
         castSpell={castSpell}
         cancelSpell={cancelSpell}
         getTargets={getTargets}
         isLive={isLive}
+        chosenTargets={chosenTargets}
+        setChosenTargets={setChosenTargets}
       />
     </div>
   );

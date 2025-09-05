@@ -1,6 +1,7 @@
 {
   "name": "game",
   "main": "src/index.ts",
+  "account_id": "68a5cb10147676146b1c8b101fb41901",
   "compatibility_date": "2025-04-01",
   "compatibility_flags": ["nodejs_compat"],
   "observability": {

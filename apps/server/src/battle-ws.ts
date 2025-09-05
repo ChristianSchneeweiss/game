@@ -51,6 +51,8 @@ export type ResponseMessage =
       type: "targets";
       data: {
         targets: string[];
+        enemies: number;
+        allies: number;
       };
     }
   | {
@@ -265,10 +267,33 @@ export class BattleWebsocket extends DurableObject {
     }
     const targets = spell.getValidTargets(entity);
 
+    let enemies = 0;
+    let allies = 0;
+    if (spell.config.targetType === "ALL_ENEMIES") {
+      enemies = this.bm
+        .getAliveEntities()
+        .filter((e) => e.team === "TEAM_B").length;
+    }
+    if (spell.config.targetType === "ALL_ALLIES") {
+      allies = this.bm
+        .getAliveEntities()
+        .filter((e) => e.team === "TEAM_A").length;
+    }
+    if (spell.config.targetType === "SINGLE_ENEMY") {
+      enemies = 1;
+    }
+    if (spell.config.targetType === "SINGLE_ALLY") {
+      allies = 1;
+    }
+
     ws.send(
       SuperJSON.stringify({
         type: "targets",
-        data: { targets: targets?.map((t) => t.id) ?? [] },
+        data: {
+          targets: targets?.map((t) => t.id) ?? [],
+          enemies,
+          allies,
+        },
       } satisfies ResponseMessage)
     );
   }

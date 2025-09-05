@@ -72,6 +72,7 @@ export type Stats = {
   mana: number;
   deltaHealth: number;
   cooldowns: Map<string, number>;
+  roll?: number;
   flags: {
     casting: boolean;
     dead: boolean;
@@ -92,12 +93,13 @@ function calculateStatsTimeline(
         // reset stuff as we otherwise carry over the previous events stuff
         stats.deltaHealth = 0;
         stats.flags.casting = false;
+        stats.roll = undefined;
         // dont reset dead flag
 
         switch (event.event.eventType) {
           case "SPELL_CAST": {
             const spellId = event.event.data.spellId;
-            const { damageApplied, healingApplied } = event.event.data;
+            const { damageApplied, healingApplied, roll } = event.event.data;
 
             if (damageApplied && damageApplied.has(entity.id)) {
               const damage = damageApplied.get(entity.id) || 0;
@@ -116,6 +118,7 @@ function calculateStatsTimeline(
               stats.mana = Math.max(0, stats.mana - spell.config.manaCost);
 
               stats.flags.casting = true;
+              stats.roll = roll;
 
               // if the spell has a cooldown of 0 we leave it. otherwise we add 1
               // to make sure its working the same as the server

@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import type { Entity } from "@loot-game/game/types";
-import { BotIcon, SkullIcon } from "lucide-react";
+import { BotIcon, CheckIcon, SkullIcon } from "lucide-react";
 import type { BattleState } from "../../../../server/src/battle-ws";
 import type { Stats } from "./-hooks/use-stats-timeline";
 
@@ -8,7 +8,9 @@ type Params = {
   participants: Entity[];
   stats: Map<string, Stats>;
   battleState?: BattleState;
-  targets?: string[];
+  validTargets?: string[];
+  chosenTargets?: string[];
+  setChosenTargets?: (targets: string[]) => void;
   activeSpell?: string;
   castSpell?: (spellId: string, targetIds: string[]) => void;
   cancelSpell?: () => void;
@@ -20,9 +22,10 @@ export const BattleRender = ({
   participants,
   battleState,
   stats,
-  targets,
+  validTargets,
   activeSpell,
-  castSpell,
+  chosenTargets,
+  setChosenTargets,
   cancelSpell,
   getTargets,
   isLive,
@@ -55,8 +58,9 @@ export const BattleRender = ({
           );
           const manaPercent = (displayMana / maxMana) * 100;
 
-          const isTarget = targets?.includes(entity.id);
-          console.log("targest", targets);
+          const isValidTarget = validTargets?.includes(entity.id);
+          console.log("targest", validTargets);
+          const isChosenTarget = chosenTargets?.includes(entity.id);
 
           return (
             <div
@@ -73,16 +77,37 @@ export const BattleRender = ({
                 <h3
                   className={cn(
                     "flex items-center gap-2 font-bold",
-                    isTarget && activeSpell && "cursor-pointer text-blue-400",
+                    isValidTarget &&
+                      activeSpell &&
+                      "cursor-pointer text-blue-400",
                   )}
                   onClick={() => {
-                    console.log("isTarget", isTarget, activeSpell);
-                    if (isTarget && activeSpell) {
-                      castSpell?.(activeSpell, [entity.id]);
+                    console.log("isTarget", isValidTarget, activeSpell);
+                    if (isValidTarget && activeSpell) {
+                      if (isChosenTarget) {
+                        setChosenTargets?.([
+                          ...(chosenTargets ?? []).filter(
+                            (t) => t !== entity.id,
+                          ),
+                        ]);
+                      } else {
+                        setChosenTargets?.([
+                          ...(chosenTargets ?? []),
+                          entity.id,
+                        ]);
+                      }
                     }
                   }}
                 >
                   {entity.name} {entity.isBot && <BotIcon />}{" "}
+                  {isChosenTarget && (
+                    <CheckIcon className="h-4 w-4 text-green-500" />
+                  )}
+                  {currentStats?.roll ? (
+                    <span className="text-sm text-gray-500">
+                      {currentStats.roll}
+                    </span>
+                  ) : null}
                   {currentStats?.flags.dead && (
                     <SkullIcon className="h-4 w-4 text-red-500" />
                   )}
@@ -149,7 +174,7 @@ export const BattleRender = ({
                         if (!myTurn) return;
                         if (!isReady) return;
 
-                        if (targets || activeSpell) {
+                        if (validTargets || activeSpell) {
                           cancelSpell?.();
                         } else {
                           getTargets?.(spell.config.id);

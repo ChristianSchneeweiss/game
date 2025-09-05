@@ -6,6 +6,8 @@ import {
 } from "@loot-game/game/base-entity";
 import { Goblin } from "@loot-game/game/enemies/goblin";
 import { AutoAttackSpell } from "@loot-game/game/spells/autoattack";
+import { CrudeStrikeSpell } from "@loot-game/game/spells/crude-strike";
+import { FesteringBlowSpell } from "@loot-game/game/spells/festering-blow";
 import { FireballSpell } from "@loot-game/game/spells/fireball";
 import { SingleHealSpell } from "@loot-game/game/spells/single-heal";
 import { type Entity } from "@loot-game/game/types";
@@ -115,6 +117,10 @@ export class EntityFactory {
             return new FireballSpell(spell.id);
           case "single-heal":
             return new SingleHealSpell(spell.id);
+          case "crude-strike":
+            return new CrudeStrikeSpell(spell.id);
+          case "festering-blow":
+            return new FesteringBlowSpell(spell.id);
           default:
             throw new Error(`Unknown spell type: ${spell.type}`);
         }

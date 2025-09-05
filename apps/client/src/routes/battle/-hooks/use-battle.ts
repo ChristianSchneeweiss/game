@@ -16,10 +16,23 @@ export const useBattle = (id: string) => {
   const [participants, setParticipants] = useState<Entity[]>([]);
   const [battleState, setBattleState] = useState<BattleState>();
   const [currentEventCounter, setCurrentEventCounter] = useState<number>(0);
-  const [targets, setTargets] = useState<string[] | null>(null);
+  const [validTargets, setValidTargets] = useState<string[] | null>(null);
+  const [enemies, setEnemies] = useState<number | undefined>(undefined);
+  const [allies, setAllies] = useState<number | undefined>(undefined);
+  const [chosenTargets, setChosenTargets] = useState<string[]>([]);
   const [activeSpell, setActiveSpell] = useState<string | null>(null);
 
   const events = battleState?.events ?? [];
+
+  useEffect(() => {
+    if (!battleState) return;
+    if (!activeSpell) return;
+    if (enemies === undefined || allies === undefined) return;
+    console.log("chosenTargets", chosenTargets, enemies, allies);
+    if (chosenTargets.length === enemies + allies) {
+      castSpell(activeSpell, chosenTargets);
+    }
+  }, [battleState, chosenTargets, enemies, allies, activeSpell]);
 
   const castSpell = useCallback(
     (spellId: string, targetIds: string[]) => {
@@ -34,8 +47,11 @@ export const useBattle = (id: string) => {
           data: { entityId: activeEntity, spellId, targetIds },
         } satisfies z.infer<typeof messageSchema>),
       );
-      setTargets(null);
+      setValidTargets(null);
       setActiveSpell(null);
+      setChosenTargets([]);
+      setEnemies(undefined);
+      setAllies(undefined);
     },
     [battleState],
   );
@@ -45,6 +61,9 @@ export const useBattle = (id: string) => {
       if (!battleState) return;
       const activeEntity = battleState.round.order[battleState.currentInRound];
       setActiveSpell(spellId);
+      setChosenTargets([]);
+      setEnemies(undefined);
+      setAllies(undefined);
 
       sendMessage(
         SuperJSON.stringify({
@@ -91,7 +110,10 @@ export const useBattle = (id: string) => {
             }
             break;
           case "targets":
-            setTargets(response.data.targets);
+            console.log("chosenTargets", response.data);
+            setValidTargets(response.data.targets);
+            setEnemies(response.data.enemies);
+            setAllies(response.data.allies);
             break;
           case "finished":
             const winner = response.data.winner;
@@ -113,7 +135,10 @@ export const useBattle = (id: string) => {
     participants,
     battleState,
     currentEventCounter,
-    targets,
+    validTargets,
+    chosenTargets,
+    enemies,
+    allies,
     activeSpell,
     statsTimeline,
     defaultStats,
@@ -121,8 +146,12 @@ export const useBattle = (id: string) => {
     readyState,
     castSpell,
     getTargets,
+    setChosenTargets,
     cancelSpell: () => {
-      setTargets(null);
+      setValidTargets(null);
+      setChosenTargets([]);
+      setEnemies(undefined);
+      setAllies(undefined);
       setActiveSpell(null);
     },
   };
