@@ -145,7 +145,7 @@ export interface BattleManager {
 
 export interface BattleRound {
   round: number;
-  order: string[];
+  orderQueue: string[];
 }
 
 export interface BattleHandler {

@@ -39,7 +39,7 @@ export const useBattle = (id: string) => {
       // no idea why target sometimes just gets nulled out
       //   if (!targets) return;
       if (!battleState) return;
-      const activeEntity = battleState.round.order[battleState.currentInRound];
+      const activeEntity = battleState.round.orderQueue[0];
 
       sendMessage(
         SuperJSON.stringify({
@@ -59,7 +59,7 @@ export const useBattle = (id: string) => {
   const getTargets = useCallback(
     (spellId: string) => {
       if (!battleState) return;
-      const activeEntity = battleState.round.order[battleState.currentInRound];
+      const activeEntity = battleState.round.orderQueue[0];
       setActiveSpell(spellId);
       setChosenTargets([]);
       setEnemies(undefined);

@@ -33,7 +33,6 @@ export const messageSchema = z.union([castSpellSchema, getTargetsSchema]);
 export type BattleState = {
   events: TimelineEventFull[];
   round: BattleRound;
-  currentInRound: number;
 };
 
 export type ResponseMessage =
@@ -239,7 +238,7 @@ export class BattleWebsocket extends DurableObject {
 
   private async processBotTurn() {
     const nextEntity = this.bm.getEntityById(
-      this.bm.getCurrentRound().order[this.bm.currentInRound]
+      this.bm.getCurrentRound().orderQueue[0]
     );
     if (!nextEntity) {
       return false;
@@ -308,7 +307,6 @@ export class BattleWebsocket extends DurableObject {
       data: {
         events,
         round: this.bm.getCurrentRound(),
-        currentInRound: this.bm.currentInRound,
       },
     } satisfies ResponseMessage;
     this.ctx.getWebSockets().forEach((ws) => {

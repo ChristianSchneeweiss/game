@@ -26,7 +26,6 @@ export class BM implements BattleManager, RoundLifecycleHooks {
   events: TimelineEventFull[] = [];
   battleId: string;
   rng: seedrandom.PRNG;
-  currentInRound: number = 0;
 
   constructor(entities: Entity[], battleId: string = nanoid(20)) {
     this.deadEntities = new Map();
@@ -64,11 +63,10 @@ export class BM implements BattleManager, RoundLifecycleHooks {
   onPreRound(): void {
     const round: BattleRound = {
       round: this.rounds.length,
-      order: this.getAliveEntities()
+      orderQueue: this.getAliveEntities()
         .sort((a, b) => b.getStat("agility") - a.getStat("agility"))
         .map((e) => e.id),
     };
-    this.currentInRound = 0;
 
     this.rounds.push(round);
 
@@ -123,14 +121,9 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     });
     console.log(`${entity.name} has died`);
 
-    // update the current round by removing the entity from the order and decrementing the currentInRound
-    const currentRound = this.getCurrentRound();
-    const newCurrentRound = {
-      ...currentRound,
-      order: currentRound.order.filter((id) => id !== entity.id),
-    };
-    this.rounds[this.rounds.length - 1] = newCurrentRound;
-    // this.currentInRound = Math.max(0, this.currentInRound - 1);
+    // on death we remove the entity from the order queue. so they dont act anymore
+    this.getCurrentRound().orderQueue =
+      this.getCurrentRound().orderQueue.filter((id) => id !== entity.id);
   }
 
   isGameOver(): boolean {
@@ -222,7 +215,7 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     targetIds: string[]
   ): SpellCastEvent | null {
     const currentRound = this.getCurrentRound();
-    if (currentRound.order[this.currentInRound] !== entityId) {
+    if (currentRound.orderQueue[0] !== entityId) {
       throw new Error("Entity is not the next in round");
     }
 
@@ -239,9 +232,12 @@ export class BM implements BattleManager, RoundLifecycleHooks {
   }
 
   preTurn() {
-    const currentEntity = this.getEntityById(
-      this.getCurrentRound().order[this.currentInRound]!
-    );
+    // we just **read** from the queue here
+    const currentEntityId = this.getCurrentRound().orderQueue[0];
+    if (!currentEntityId) {
+      return;
+    }
+    const currentEntity = this.getEntityById(currentEntityId);
     if (!currentEntity) {
       return;
     }
@@ -252,9 +248,12 @@ export class BM implements BattleManager, RoundLifecycleHooks {
   }
 
   postTurn() {
-    const currentEntity = this.getEntityById(
-      this.getCurrentRound().order[this.currentInRound]!
-    );
+    // we remove from the queue here
+    const currentEntityId = this.getCurrentRound().orderQueue.shift();
+    if (!currentEntityId) {
+      return;
+    }
+    const currentEntity = this.getEntityById(currentEntityId);
     if (!currentEntity) {
       return;
     }
@@ -262,46 +261,45 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     if (endStepEvents) {
       endStepEvents.forEach((event) => this.processEvent(event));
     }
-    this.currentInRound++;
 
     // if we've gone through all the entities in the round, start a new round
-    if (this.currentInRound >= this.getCurrentRound().order.length) {
+    if (this.getCurrentRound().orderQueue.length === 0) {
       this.onPostRound();
       this.onPreRound();
     }
   }
 
-  fight() {
-    while (!this.isGameOver()) {
-      this.onPreRound();
-      console.log(`\n`, this.getCurrentRound());
+  // fight() {
+  //   while (!this.isGameOver()) {
+  //     this.onPreRound();
+  //     console.log(`\n`, this.getCurrentRound());
 
-      while (this.getCurrentRound().order.length > 0) {
-        const casterId = this.getCurrentRound().order.shift();
-        if (!casterId) {
-          throw new Error("No caster found");
-        }
-        const caster = this.getEntityById(casterId);
-        if (!caster) {
-          throw new Error(`Caster ${casterId} not found`);
-        }
+  //     while (this.getCurrentRound().orderQueue.length > 0) {
+  //       const casterId = this.getCurrentRound().orderQueue.shift();
+  //       if (!casterId) {
+  //         throw new Error("No caster found");
+  //       }
+  //       const caster = this.getEntityById(casterId);
+  //       if (!caster) {
+  //         throw new Error(`Caster ${casterId} not found`);
+  //       }
 
-        this.processTurn(caster, (round) => {
-          const { spell, targets } = caster.getAction();
-          if (targets.length > 0 || spell.config.targetType === "NO_TARGET") {
-            const targetIds = targets.length > 0 ? [targets[0]!.id] : [];
-            const result = this.castSpell(caster, spell.config.id, targetIds);
+  //       this.processTurn(caster, (round) => {
+  //         const { spell, targets } = caster.getAction();
+  //         if (targets.length > 0 || spell.config.targetType === "NO_TARGET") {
+  //           const targetIds = targets.length > 0 ? [targets[0]!.id] : [];
+  //           const result = this.castSpell(caster, spell.config.id, targetIds);
 
-            if (result) {
-              this.processEvent(result);
-            }
-          }
-        });
-      }
+  //           if (result) {
+  //             this.processEvent(result);
+  //           }
+  //         }
+  //       });
+  //     }
 
-      this.onPostRound();
-    }
-    const winner = this.getWinningTeam();
-    console.log(`Game over! ${winner} wins!`);
-  }
+  //     this.onPostRound();
+  //   }
+  //   const winner = this.getWinningTeam();
+  //   console.log(`Game over! ${winner} wins!`);
+  // }
 }

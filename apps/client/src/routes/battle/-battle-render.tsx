@@ -39,8 +39,7 @@ export const BattleRender = ({
           // Calculate current health and mana based on processed events
           const currentStats = stats.get(entity.id)!;
           console.log("currentStats", currentStats, entity.id);
-          const activeEntity =
-            battleState?.round.order[battleState.currentInRound];
+          const activeEntity = battleState?.round.orderQueue[0];
 
           const myTurn = activeEntity === entity.id;
           // Ensure health doesn't go below 0 or above max

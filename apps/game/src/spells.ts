@@ -425,12 +425,12 @@ export class TimeWarpSpell extends BaseSpell {
       return null;
     }
 
-    const targetIndex = currentRound.order.indexOf(target.id);
+    const targetIndex = currentRound.orderQueue.indexOf(target.id);
     if (targetIndex === -1) {
       return null;
     }
 
-    currentRound.order.splice(targetIndex, 0, target.id);
+    currentRound.orderQueue.splice(targetIndex, 0, target.id);
 
     return {
       roll,
