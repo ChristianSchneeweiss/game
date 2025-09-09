@@ -188,7 +188,7 @@ export class BattleWebsocket extends DurableObject {
     });
     switch (parsed.data.type) {
       case "castSpell":
-        this.processSpellCast(
+        await this.processSpellCast(
           parsed.data.data.entityId,
           parsed.data.data.spellId,
           parsed.data.data.targetIds
@@ -198,7 +198,7 @@ export class BattleWebsocket extends DurableObject {
         if (!ws) {
           return;
         }
-        this.processGetTargets(
+        await this.processGetTargets(
           parsed.data.data.entityId,
           parsed.data.data.spellId,
           ws
@@ -242,7 +242,7 @@ export class BattleWebsocket extends DurableObject {
       this.bm.getCurrentRound().order[this.bm.currentInRound]
     );
     if (!nextEntity) {
-      throw new Error("No next entity found");
+      return false;
     }
 
     if (!nextEntity.isBot) {

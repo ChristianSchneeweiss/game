@@ -6,8 +6,9 @@ import { VitalStrikeSpell } from "../spells/vital-strike";
 
 export class GhoulKnightIvern extends Enemy {
   constructor(id?: string) {
+    const realId = id ?? `ghoul-knight-ivern-${nanoid()}`;
     super({
-      id: id ?? `ghoul-knight-ivern-${nanoid()}`,
+      id: realId,
       type: "ghoul-knight-ivern",
       name: "Ghoul Knight Ivern",
       team: "TEAM_B",
@@ -27,9 +28,9 @@ export class GhoulKnightIvern extends Enemy {
     });
 
     this.spells = [
-      new VitalStrikeSpell(nanoid()),
-      new FesteringBlowSpell(nanoid()),
-      new AutoAttackSpell(nanoid()),
+      new VitalStrikeSpell(`vital-strike-${realId}`),
+      new FesteringBlowSpell(`festering-blow-${realId}`),
+      new AutoAttackSpell(`autoattack-${realId}`),
     ];
   }
 }

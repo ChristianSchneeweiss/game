@@ -4,8 +4,9 @@ import { CrudeStrikeSpell } from "../spells/crude-strike";
 
 export class SkeletonGrunt extends Enemy {
   constructor(id?: string) {
+    const realId = id ?? `skeleton-grunt-${nanoid()}`;
     super({
-      id: id ?? `skeleton-grunt-${nanoid()}`,
+      id: realId,
       type: "skeleton-grunt",
       name: "Skeleton Grunt",
       team: "TEAM_B",
@@ -24,6 +25,6 @@ export class SkeletonGrunt extends Enemy {
       },
     });
 
-    this.spells = [new CrudeStrikeSpell(nanoid())];
+    this.spells = [new CrudeStrikeSpell(`crude-strike-${realId}`)];
   }
 }

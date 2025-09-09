@@ -5,8 +5,9 @@ import { FesteringBlowSpell } from "../spells/festering-blow";
 
 export class RottingCorpse extends Enemy {
   constructor(id?: string) {
+    const realId = id ?? `rotting-corpse-${nanoid()}`;
     super({
-      id: id ?? `rotting-corpse-${nanoid()}`,
+      id: realId,
       type: "rotting-corpse",
       name: "Rotting Corpse",
       team: "TEAM_B",
@@ -26,8 +27,8 @@ export class RottingCorpse extends Enemy {
     });
 
     this.spells = [
-      new FesteringBlowSpell(nanoid()),
-      new AutoAttackSpell(nanoid()),
+      new FesteringBlowSpell(`festering-blow-${realId}`),
+      new AutoAttackSpell(`autoattack-${realId}`),
     ];
   }
 }

@@ -5,8 +5,9 @@ import { CinderWispSpell } from "../spells/cinder-wisp";
 
 export class WispOfRegret extends Enemy {
   constructor(id?: string) {
+    const realId = id ?? `wisp-of-regret-${nanoid()}`;
     super({
-      id: id ?? `wisp-of-regret-${nanoid()}`,
+      id: realId,
       type: "wisp-of-regret",
       name: "Wisp of Regret",
       team: "TEAM_B",
@@ -26,8 +27,8 @@ export class WispOfRegret extends Enemy {
     });
 
     this.spells = [
-      new CinderWispSpell(nanoid()),
-      new AutoAttackSpell(nanoid()),
+      new CinderWispSpell(`cinder-wisp-${realId}`),
+      new AutoAttackSpell(`autoattack-${realId}`),
     ];
   }
 }

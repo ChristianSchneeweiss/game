@@ -17,6 +17,7 @@ export const useStatsTimeline = (
   }, [participants]);
 
   const spellMap = useMemo(() => createSpellMap(participants), [participants]);
+  console.log("spellMap", spellMap);
 
   const defaultStats = useMemo(() => {
     return calculateStatsTimeline(

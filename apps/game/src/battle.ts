@@ -130,7 +130,7 @@ export class BM implements BattleManager, RoundLifecycleHooks {
       order: currentRound.order.filter((id) => id !== entity.id),
     };
     this.rounds[this.rounds.length - 1] = newCurrentRound;
-    this.currentInRound = this.currentInRound - 1;
+    // this.currentInRound = Math.max(0, this.currentInRound - 1);
   }
 
   isGameOver(): boolean {
@@ -243,7 +243,7 @@ export class BM implements BattleManager, RoundLifecycleHooks {
       this.getCurrentRound().order[this.currentInRound]!
     );
     if (!currentEntity) {
-      throw new Error("No current entity found");
+      return;
     }
     const upkeepEvents = currentEntity.onUpkeep?.();
     if (upkeepEvents) {
@@ -256,7 +256,7 @@ export class BM implements BattleManager, RoundLifecycleHooks {
       this.getCurrentRound().order[this.currentInRound]!
     );
     if (!currentEntity) {
-      throw new Error("No current entity found");
+      return;
     }
     const endStepEvents = currentEntity.onEndStep?.();
     if (endStepEvents) {
