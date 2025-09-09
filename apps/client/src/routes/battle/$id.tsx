@@ -38,6 +38,9 @@ function RouteComponent() {
     setChosenTargets,
     getTargets,
     cancelSpell,
+    characterAttributes,
+    getCharacterAttributes,
+    resetCharacterAttributes,
   } = useBattle(id);
 
   const stats =
@@ -63,6 +66,9 @@ function RouteComponent() {
         isLive={isLive}
         chosenTargets={chosenTargets}
         setChosenTargets={setChosenTargets}
+        characterAttributes={characterAttributes}
+        getCharacterAttributes={getCharacterAttributes}
+        resetCharacterAttributes={resetCharacterAttributes}
       />
     </div>
   );

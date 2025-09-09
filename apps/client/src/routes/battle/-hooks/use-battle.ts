@@ -1,4 +1,4 @@
-import type { Entity } from "@loot-game/game/types";
+import type { Entity, EntityAttributes } from "@loot-game/game/types";
 import { useRouter } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import useWebSocket from "react-use-websocket";
@@ -21,6 +21,8 @@ export const useBattle = (id: string) => {
   const [allies, setAllies] = useState<number | undefined>(undefined);
   const [chosenTargets, setChosenTargets] = useState<string[]>([]);
   const [activeSpell, setActiveSpell] = useState<string | null>(null);
+  const [characterAttributes, setCharacterAttributes] =
+    useState<EntityAttributes>();
 
   const events = battleState?.events ?? [];
 
@@ -69,6 +71,19 @@ export const useBattle = (id: string) => {
         SuperJSON.stringify({
           type: "getTargets",
           data: { entityId: activeEntity, spellId },
+        } satisfies z.infer<typeof messageSchema>),
+      );
+    },
+    [battleState],
+  );
+
+  const getCharacterAttributes = useCallback(
+    (characterId: string) => {
+      if (!battleState) return;
+      sendMessage(
+        SuperJSON.stringify({
+          type: "getCharacterAttributes",
+          data: { characterId },
         } satisfies z.infer<typeof messageSchema>),
       );
     },
@@ -126,6 +141,9 @@ export const useBattle = (id: string) => {
               router.navigate({ to: "/battle/finished/$id", params: { id } });
             }, 3000);
             break;
+          case "characterAttributes":
+            setCharacterAttributes(response.data.attributes);
+            break;
         }
       },
     },
@@ -144,9 +162,14 @@ export const useBattle = (id: string) => {
     defaultStats,
     isLive,
     readyState,
+    characterAttributes,
     castSpell,
     getTargets,
     setChosenTargets,
+    getCharacterAttributes,
+    resetCharacterAttributes: () => {
+      setCharacterAttributes(undefined);
+    },
     cancelSpell: () => {
       setValidTargets(null);
       setChosenTargets([]);

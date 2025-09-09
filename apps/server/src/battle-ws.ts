@@ -2,7 +2,7 @@ import type { ClerkClient } from "@clerk/backend";
 import type { BaseEntity } from "@loot-game/game/base-entity";
 import { BM } from "@loot-game/game/battle";
 import type { TimelineEventFull } from "@loot-game/game/timeline-events";
-import type { BattleRound } from "@loot-game/game/types";
+import type { BattleRound, EntityAttributes } from "@loot-game/game/types";
 import { DurableObject } from "cloudflare:workers";
 import { produce } from "immer";
 import SuperJSON from "superjson";
@@ -28,7 +28,18 @@ const getTargetsSchema = z.object({
   }),
 });
 
-export const messageSchema = z.union([castSpellSchema, getTargetsSchema]);
+const getCharacterAttributesSchema = z.object({
+  type: z.literal("getCharacterAttributes"),
+  data: z.object({
+    characterId: z.string(),
+  }),
+});
+
+export const messageSchema = z.union([
+  castSpellSchema,
+  getTargetsSchema,
+  getCharacterAttributesSchema,
+]);
 
 export type BattleState = {
   events: TimelineEventFull[];
@@ -58,6 +69,12 @@ export type ResponseMessage =
       type: "finished";
       data: {
         winner: "TEAM_A" | "TEAM_B";
+      };
+    }
+  | {
+      type: "characterAttributes";
+      data: {
+        attributes: EntityAttributes;
       };
     };
 
@@ -203,6 +220,15 @@ export class BattleWebsocket extends DurableObject {
           ws
         );
         break;
+      case "getCharacterAttributes":
+        if (!ws) {
+          return;
+        }
+        await this.processGetCharacterAttributes(
+          parsed.data.data.characterId,
+          ws
+        );
+        break;
       default:
         throw new Error("Invalid message");
     }
@@ -296,6 +322,28 @@ export class BattleWebsocket extends DurableObject {
           enemies,
           allies,
         },
+      } satisfies ResponseMessage)
+    );
+  }
+
+  private async processGetCharacterAttributes(
+    characterId: string,
+    ws: WebSocket
+  ) {
+    const character = this.bm.getEntityById(characterId);
+    if (!character) {
+      throw new Error("Character not found");
+    }
+    const attributes = {
+      strength: character.getStat("strength"),
+      intelligence: character.getStat("intelligence"),
+      vitality: character.getStat("vitality"),
+      agility: character.getStat("agility"),
+    } satisfies EntityAttributes;
+    ws.send(
+      SuperJSON.stringify({
+        type: "characterAttributes",
+        data: { attributes },
       } satisfies ResponseMessage)
     );
   }

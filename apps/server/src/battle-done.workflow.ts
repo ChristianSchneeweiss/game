@@ -65,7 +65,7 @@ export class BattleDoneWorkflow extends WorkflowEntrypoint<Env, Params> {
       const id = dungeonBattle.dungeonId;
       const enemies: Enemy[] = [];
       for (const enemy of battleResult.teamB.filter((e) => e.dead)) {
-        const enemyEntity = EntityFactory.createEnemyFromType(enemy.type, db);
+        const enemyEntity = EntityFactory.createEnemyFromType(enemy.type);
         enemies.push(enemyEntity);
       }
 

@@ -1,6 +1,12 @@
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 import { cn } from "@/lib/utils";
-import type { Entity } from "@loot-game/game/types";
+import type { Entity, EntityAttributes } from "@loot-game/game/types";
 import { BotIcon, CheckIcon, SkullIcon } from "lucide-react";
+import { useState } from "react";
 import type { BattleState } from "../../../../server/src/battle-ws";
 import type { Stats } from "./-hooks/use-stats-timeline";
 
@@ -16,6 +22,10 @@ type Params = {
   cancelSpell?: () => void;
   getTargets?: (spellId: string) => void;
   isLive?: boolean;
+
+  characterAttributes?: EntityAttributes;
+  getCharacterAttributes?: (characterId: string) => void;
+  resetCharacterAttributes?: () => void;
 };
 
 export const BattleRender = ({
@@ -29,11 +39,27 @@ export const BattleRender = ({
   cancelSpell,
   getTargets,
   isLive,
+  characterAttributes,
+  getCharacterAttributes,
+  resetCharacterAttributes,
 }: Params) => {
+  const [hoverCharacterOpen, _setHoverCharacterOpen] = useState<string | null>(
+    null,
+  );
+
   return (
     <div className="p-4">
       <div className="mb-6 grid grid-cols-2 gap-4">
         {participants.map((entity) => {
+          const setHoverCharacterOpen = (open: boolean | undefined) => {
+            _setHoverCharacterOpen(open ? entity.id : null);
+            if (open) {
+              getCharacterAttributes?.(entity.id);
+            } else {
+              resetCharacterAttributes?.();
+            }
+          };
+
           console.log("entity", entity);
           console.log("battleState", battleState);
           // Calculate current health and mana based on processed events
@@ -73,44 +99,67 @@ export const BattleRender = ({
               )}
             >
               <div className={cn("flex justify-between")}>
-                <h3
-                  className={cn(
-                    "flex items-center gap-2 font-bold",
-                    isValidTarget &&
-                      activeSpell &&
-                      "cursor-pointer text-blue-400",
-                  )}
-                  onClick={() => {
-                    console.log("isTarget", isValidTarget, activeSpell);
-                    if (isValidTarget && activeSpell) {
-                      if (isChosenTarget) {
-                        setChosenTargets?.([
-                          ...(chosenTargets ?? []).filter(
-                            (t) => t !== entity.id,
-                          ),
-                        ]);
-                      } else {
-                        setChosenTargets?.([
-                          ...(chosenTargets ?? []),
-                          entity.id,
-                        ]);
-                      }
-                    }
-                  }}
+                <HoverCard
+                  open={hoverCharacterOpen === entity.id}
+                  onOpenChange={setHoverCharacterOpen}
                 >
-                  {entity.name} {entity.isBot && <BotIcon />}{" "}
-                  {isChosenTarget && (
-                    <CheckIcon className="h-4 w-4 text-green-500" />
+                  <HoverCardTrigger asChild>
+                    <h3
+                      className={cn(
+                        "flex items-center gap-2 font-bold",
+                        isValidTarget &&
+                          activeSpell &&
+                          "cursor-pointer text-blue-400",
+                      )}
+                      onClick={() => {
+                        console.log("isTarget", isValidTarget, activeSpell);
+                        if (isValidTarget && activeSpell) {
+                          if (isChosenTarget) {
+                            setChosenTargets?.([
+                              ...(chosenTargets ?? []).filter(
+                                (t) => t !== entity.id,
+                              ),
+                            ]);
+                          } else {
+                            setChosenTargets?.([
+                              ...(chosenTargets ?? []),
+                              entity.id,
+                            ]);
+                          }
+                        }
+                      }}
+                    >
+                      {entity.name} {entity.isBot && <BotIcon />}{" "}
+                      {isChosenTarget && (
+                        <CheckIcon className="h-4 w-4 text-green-500" />
+                      )}
+                      {currentStats?.roll ? (
+                        <span className="text-sm text-gray-500">
+                          {currentStats.roll}
+                        </span>
+                      ) : null}
+                      {currentStats?.flags.dead && (
+                        <SkullIcon className="h-4 w-4 text-red-500" />
+                      )}
+                    </h3>
+                  </HoverCardTrigger>
+                  {characterAttributes && (
+                    <HoverCardContent>
+                      <div className="space-y-1 text-xs">
+                        {Object.entries(characterAttributes).map(
+                          ([key, value]) => (
+                            <div key={key} className="flex justify-between">
+                              <span className="font-mono text-gray-500">
+                                {key}
+                              </span>
+                              <span className="font-mono">{String(value)}</span>
+                            </div>
+                          ),
+                        )}
+                      </div>
+                    </HoverCardContent>
                   )}
-                  {currentStats?.roll ? (
-                    <span className="text-sm text-gray-500">
-                      {currentStats.roll}
-                    </span>
-                  ) : null}
-                  {currentStats?.flags.dead && (
-                    <SkullIcon className="h-4 w-4 text-red-500" />
-                  )}
-                </h3>
+                </HoverCard>
                 <span
                   className={`text-sm ${entity.team === "TEAM_A" ? "text-blue-600" : "text-red-600"}`}
                 >
@@ -151,6 +200,19 @@ export const BattleRender = ({
                   <span>Mana</span>
                   <span>
                     {displayMana}/{maxMana}
+                    {currentStats.deltaMana !== 0 && (
+                      <span
+                        className={cn(
+                          currentStats.deltaMana > 0
+                            ? "text-blue-500"
+                            : "text-orange-500",
+                        )}
+                      >
+                        {currentStats.deltaMana > 0
+                          ? `+${currentStats.deltaMana}`
+                          : currentStats.deltaMana}
+                      </span>
+                    )}
                   </span>
                 </div>
                 <div className="h-2 w-full rounded-full bg-gray-200">

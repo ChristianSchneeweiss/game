@@ -17,7 +17,6 @@ export const useStatsTimeline = (
   }, [participants]);
 
   const spellMap = useMemo(() => createSpellMap(participants), [participants]);
-  console.log("spellMap", spellMap);
 
   const defaultStats = useMemo(() => {
     return calculateStatsTimeline(
@@ -72,11 +71,13 @@ export type Stats = {
   health: number;
   mana: number;
   deltaHealth: number;
+  deltaMana: number;
   cooldowns: Map<string, number>;
   roll?: number;
   flags: {
     casting: boolean;
     dead: boolean;
+    effects: Array<string>;
   };
 };
 
@@ -93,14 +94,18 @@ function calculateStatsTimeline(
       (stats, event) => {
         // reset stuff as we otherwise carry over the previous events stuff
         stats.deltaHealth = 0;
-        stats.flags.casting = false;
+        stats.deltaMana = 0;
         stats.roll = undefined;
+
+        stats.flags.casting = false;
+        stats.flags.effects = [];
         // dont reset dead flag
 
         switch (event.event.eventType) {
           case "SPELL_CAST": {
             const spellId = event.event.data.spellId;
-            const { damageApplied, healingApplied, roll } = event.event.data;
+            const { damageApplied, healingApplied, roll, effectsApplied } =
+              event.event.data;
 
             if (damageApplied && damageApplied.has(entity.id)) {
               const damage = damageApplied.get(entity.id) || 0;
@@ -110,13 +115,27 @@ function calculateStatsTimeline(
 
             if (healingApplied && healingApplied.has(entity.id)) {
               const healing = healingApplied.get(entity.id) || 0;
-              stats.health += healing;
-              stats.deltaHealth += healing;
+              stats.health += Math.min(
+                healing,
+                entity.maxHealth - stats.health,
+              );
+              stats.deltaHealth += Math.min(
+                healing,
+                entity.maxHealth - stats.health,
+              );
+            }
+
+            if (effectsApplied && effectsApplied.has(entity.id)) {
+              const effect = effectsApplied.get(entity.id);
+              if (effect) {
+                stats.flags.effects.push(effect);
+              }
             }
 
             if (entity.spells.some((s) => s.config.id === spellId)) {
               const { spell } = spellMap.get(spellId)!;
               stats.mana = Math.max(0, stats.mana - spell.config.manaCost);
+              stats.deltaMana -= spell.config.manaCost;
 
               stats.flags.casting = true;
               stats.roll = roll;
@@ -155,7 +174,7 @@ function calculateStatsTimeline(
             if (entity.id !== event.event.data.entityId) break;
             const { amount } = event.event.data;
             stats.mana = Math.min(stats.mana + amount, entity.maxMana);
-            // stats.deltaMana += amount;
+            stats.deltaMana += amount;
             break;
           }
         }
@@ -169,10 +188,13 @@ function calculateStatsTimeline(
         mana:
           startEntityData.find((e) => e.characterId === entity.id)?.mana ??
           entity.maxMana,
+        deltaHealth: 0,
+        deltaMana: 0,
         cooldowns: new Map(),
         flags: {
           casting: false,
           dead: false,
+          effects: [],
         },
       } as Stats,
     );
