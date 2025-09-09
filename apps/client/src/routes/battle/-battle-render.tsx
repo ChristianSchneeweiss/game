@@ -23,7 +23,7 @@ type Params = {
   getTargets?: (spellId: string) => void;
   isLive?: boolean;
 
-  characterAttributes?: EntityAttributes;
+  characterAttributes?: Map<string, EntityAttributes>;
   getCharacterAttributes?: (characterId: string) => void;
   resetCharacterAttributes?: () => void;
 };
@@ -86,6 +86,7 @@ export const BattleRender = ({
           const isValidTarget = validTargets?.includes(entity.id);
           console.log("targest", validTargets);
           const isChosenTarget = chosenTargets?.includes(entity.id);
+          const entityAttributes = characterAttributes?.get(entity.id);
 
           return (
             <div
@@ -143,10 +144,10 @@ export const BattleRender = ({
                       )}
                     </h3>
                   </HoverCardTrigger>
-                  {characterAttributes && (
+                  {entityAttributes && (
                     <HoverCardContent>
                       <div className="space-y-1 text-xs">
-                        {Object.entries(characterAttributes).map(
+                        {Object.entries(entityAttributes).map(
                           ([key, value]) => (
                             <div key={key} className="flex justify-between">
                               <span className="font-mono text-gray-500">

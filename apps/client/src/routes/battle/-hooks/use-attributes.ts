@@ -1,5 +1,5 @@
 import type { TinyEmitter } from "@/utils/tiny-emitter";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import type { EntityAttributes } from "@loot-game/game/types";
 import { useEffect, useState } from "react";
 import SuperJSON from "superjson";
 import type {
@@ -11,61 +11,37 @@ export const useAttributes = (
   sendMessage: (message: string) => void,
   wsEvents: TinyEmitter<ResponseMessage>,
 ) => {
-  const queryClient = useQueryClient();
-  const [characterId, setCharacterId] = useState<string | null>(null);
+  const [attributes, setAttributes] = useState<Map<string, EntityAttributes>>(
+    new Map(),
+  );
 
   useEffect(() => {
-    if (!wsEvents || !characterId) return;
+    if (!wsEvents) return;
 
-    const listener = (response: ResponseMessage) => {
+    return wsEvents.on((response: ResponseMessage) => {
       if (response.type === "characterAttributes") {
-        queryClient.setQueryData(
-          ["attributes", characterId],
-          response.data.attributes,
-        );
+        setAttributes((prev) => {
+          prev.set(response.data.entityId, response.data.attributes);
+          return prev;
+        });
       }
-    };
+    });
+  }, [wsEvents]);
 
-    wsEvents.on(listener);
-    return () => {
-      wsEvents.off(listener);
-    };
-  }, [wsEvents, characterId]);
-
-  const { data } = useQuery({
-    queryKey: ["attributes", characterId],
-    staleTime: 5000,
-    queryFn: async () => {
-      sendMessage(
-        SuperJSON.stringify({
-          type: "getCharacterAttributes",
-          data: { characterId: characterId! },
-        } satisfies BattleMessage),
-      );
-
-      // Wait until the query data is set by the onmessage handler
-      await new Promise<void>((resolve) => {
-        const check = () => {
-          if (queryClient.getQueryData(["attributes", characterId])) {
-            resolve();
-          } else {
-            setTimeout(check, 20);
-          }
-        };
-        check();
-      });
-
-      return queryClient.getQueryData(["attributes", characterId]);
-    },
-    enabled: !!characterId,
-  });
+  const getCharacterAttributes = (characterId: string) => {
+    sendMessage(
+      SuperJSON.stringify({
+        type: "getCharacterAttributes",
+        data: { characterId: characterId! },
+      } satisfies BattleMessage),
+    );
+  };
 
   return {
-    characterAttributes: data,
-    getCharacterAttributes: setCharacterId,
+    characterAttributes: attributes,
+    getCharacterAttributes,
     resetCharacterAttributes: () => {
-      setCharacterId(null);
-      queryClient.invalidateQueries({ queryKey: ["attributes", characterId] });
+      setAttributes(new Map());
     },
   };
 };

@@ -77,6 +77,7 @@ export type ResponseMessage =
       type: "characterAttributes";
       data: {
         attributes: EntityAttributes;
+        entityId: string;
       };
     };
 
@@ -345,7 +346,7 @@ export class BattleWebsocket extends DurableObject {
     ws.send(
       SuperJSON.stringify({
         type: "characterAttributes",
-        data: { attributes },
+        data: { attributes, entityId: characterId },
       } satisfies ResponseMessage)
     );
   }
