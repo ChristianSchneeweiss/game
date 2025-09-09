@@ -41,6 +41,8 @@ function RouteComponent() {
     characterAttributes,
     getCharacterAttributes,
     resetCharacterAttributes,
+    spellDescription,
+    getSpellDescription,
   } = useBattle(id);
 
   const stats =
@@ -69,6 +71,8 @@ function RouteComponent() {
         characterAttributes={characterAttributes}
         getCharacterAttributes={getCharacterAttributes}
         resetCharacterAttributes={resetCharacterAttributes}
+        spellDescription={spellDescription}
+        getSpellDescription={getSpellDescription}
       />
     </div>
   );

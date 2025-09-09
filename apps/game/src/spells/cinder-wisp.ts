@@ -30,4 +30,11 @@ export class CinderWispSpell extends DamageSpell {
     const intBonus = caster.getStat("intelligence") * 0.5;
     return rolled + intBonus;
   }
+
+  description(caster: Entity): string {
+    const min = this.calculateRawDamage(caster, caster, 0);
+    const max = this.calculateRawDamage(caster, caster, 20);
+
+    return `A cinder wisp spell that damages a single enemy for ${min}-${max} damage.`;
+  }
 }

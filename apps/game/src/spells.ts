@@ -86,6 +86,10 @@ export abstract class BaseSpell implements Spell {
     };
   }
 
+  description(caster: Entity): string {
+    return this.config.description;
+  }
+
   protected abstract _cast(
     caster: Entity,
     targets: Entity[],
@@ -204,7 +208,7 @@ export class HealingSpell extends BaseSpell {
     const healingDone = new Map<string, number>();
 
     targets.forEach((target) => {
-      const scaledHealing = this.calculateHealing(caster);
+      const scaledHealing = this.calculateHealing(caster, roll);
       const realHealing = battleManager.handler.healing(
         this,
         scaledHealing,
@@ -221,7 +225,7 @@ export class HealingSpell extends BaseSpell {
     };
   }
 
-  protected calculateHealing(caster: Entity): number {
+  protected calculateHealing(caster: Entity, roll: number): number {
     return this.healAmount;
   }
 }

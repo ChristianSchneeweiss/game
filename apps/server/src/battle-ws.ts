@@ -35,10 +35,18 @@ const getCharacterAttributesSchema = z.object({
   }),
 });
 
+const getSpellDescriptionSchema = z.object({
+  type: z.literal("getSpellDescription"),
+  data: z.object({
+    spellId: z.string(),
+  }),
+});
+
 const messageSchema = z.union([
   castSpellSchema,
   getTargetsSchema,
   getCharacterAttributesSchema,
+  getSpellDescriptionSchema,
 ]);
 
 export type BattleMessage = z.infer<typeof messageSchema>;
@@ -77,6 +85,14 @@ export type ResponseMessage =
       type: "characterAttributes";
       data: {
         attributes: EntityAttributes;
+        entityId: string;
+      };
+    }
+  | {
+      type: "spellDescription";
+      data: {
+        description: string;
+        spellId: string;
         entityId: string;
       };
     };
@@ -212,6 +228,22 @@ export class BattleWebsocket extends DurableObject {
           parsed.data.data.spellId,
           parsed.data.data.targetIds
         );
+
+        this.bm.start(); // kinda weird
+        await this.sendState();
+
+        if (this.bm.isGameOver()) {
+          const winner = this.bm.getWinningTeam();
+          const ws = this.ctx.getWebSockets();
+          ws.forEach((w) => {
+            w.send(SuperJSON.stringify({ type: "finished", data: { winner } }));
+          });
+
+          await bmStorage.save(this.bm, this.env.GAME);
+          await this.env.BATTLE_DONE_WORKFLOW.create({
+            params: { battleId: this.battleId },
+          });
+        }
         break;
       case "getTargets":
         if (!ws) {
@@ -232,24 +264,14 @@ export class BattleWebsocket extends DurableObject {
           ws
         );
         break;
+      case "getSpellDescription":
+        if (!ws) {
+          return;
+        }
+        await this.processGetSpellDescription(parsed.data.data.spellId, ws);
+        break;
       default:
         throw new Error("Invalid message");
-    }
-
-    this.bm.start(); // kinda weird
-    await this.sendState();
-
-    if (this.bm.isGameOver()) {
-      const winner = this.bm.getWinningTeam();
-      const ws = this.ctx.getWebSockets();
-      ws.forEach((w) => {
-        w.send(SuperJSON.stringify({ type: "finished", data: { winner } }));
-      });
-
-      await bmStorage.save(this.bm, this.env.GAME);
-      await this.env.BATTLE_DONE_WORKFLOW.create({
-        params: { battleId: this.battleId },
-      });
     }
   }
 
@@ -347,6 +369,26 @@ export class BattleWebsocket extends DurableObject {
       SuperJSON.stringify({
         type: "characterAttributes",
         data: { attributes, entityId: characterId },
+      } satisfies ResponseMessage)
+    );
+  }
+
+  private async processGetSpellDescription(spellId: string, ws: WebSocket) {
+    const caster = this.bm.entities.find((e) =>
+      e.spells.some((s) => s.config.id === spellId)
+    );
+    if (!caster) {
+      throw new Error("Caster not found");
+    }
+    const spell = caster?.spells.find((s) => s.config.id === spellId);
+    if (!spell) {
+      throw new Error("Spell not found");
+    }
+    const description = spell.description(caster);
+    ws.send(
+      SuperJSON.stringify({
+        type: "spellDescription",
+        data: { description, spellId, entityId: caster.id },
       } satisfies ResponseMessage)
     );
   }

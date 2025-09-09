@@ -112,6 +112,7 @@ export interface Spell
   canCast(caster: Entity): boolean;
   getValidTargets(caster: Entity): Entity[] | null;
   cast(caster: Entity, targets: Entity[]): SpellCastEvent | null;
+  description(caster: Entity): string;
 }
 
 export interface SpellConfig {

@@ -11,6 +11,7 @@ import type {
   ResponseMessage,
 } from "../../../../../server/src/battle-ws";
 import { useAttributes } from "./use-attributes";
+import { useSpellDescription } from "./use-spell-description";
 import { useStatsTimeline } from "./use-stats-timeline";
 
 const wsEvents = new TinyEmitter<ResponseMessage>();
@@ -140,6 +141,11 @@ export const useBattle = (id: string) => {
     resetCharacterAttributes,
   } = useAttributes(sendMessage, wsEvents);
 
+  const { spellDescription, getSpellDescription } = useSpellDescription(
+    sendMessage,
+    wsEvents,
+  );
+
   return {
     participants,
     battleState,
@@ -159,6 +165,9 @@ export const useBattle = (id: string) => {
     setChosenTargets,
     getCharacterAttributes,
     resetCharacterAttributes,
+
+    spellDescription,
+    getSpellDescription,
 
     cancelSpell: () => {
       setValidTargets(null);

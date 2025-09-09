@@ -40,4 +40,11 @@ export class AutoAttackSpell extends BaseSpell {
       totalDamage: damage,
     };
   }
+
+  description(caster: Entity): string {
+    const min = 0;
+    const max = 15;
+
+    return `A auto-attack spell that damages the nearest enemy for ${min}-${max} damage.`;
+  }
 }

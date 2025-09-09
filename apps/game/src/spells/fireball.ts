@@ -18,6 +18,13 @@ export class FireballSpell extends DamageSpell {
     );
   }
 
+  description(caster: Entity): string {
+    const min = this.calculateRawDamage(caster, caster, 0);
+    const max = this.calculateRawDamage(caster, caster, 20);
+
+    return `A fireball spell that damages a single enemy for ${min}-${max} damage.`;
+  }
+
   protected calculateRawDamage(
     caster: Entity,
     target: Entity,

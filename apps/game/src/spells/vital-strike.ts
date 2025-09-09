@@ -45,4 +45,11 @@ export class VitalStrikeSpell extends DamageSpell {
       healingApplied: new Map([[caster.id, healing]]),
     };
   }
+
+  description(caster: Entity): string {
+    const min = this.calculateRawDamage(caster, caster, 0);
+    const max = this.calculateRawDamage(caster, caster, 20);
+
+    return `A vital strike spell that damages a single enemy for ${min}-${max} damage. And heals the caster for 50% of the damage dealt.`;
+  }
 }

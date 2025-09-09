@@ -31,6 +31,7 @@ export class CrudeStrikeSpell extends BaseSpell {
     const min = 6;
     const max = 10;
     const damage = Math.round(minMaxRoll(min, max, roll));
+
     const dexEffect = new StatModifierEffect(
       this,
       "DEBUFF",
@@ -70,5 +71,12 @@ export class CrudeStrikeSpell extends BaseSpell {
         ? new Map([[target.id, realEffect.effectType]])
         : undefined,
     };
+  }
+
+  description(caster: Entity): string {
+    const min = 6;
+    const max = 10;
+
+    return `A crude strike spell that damages a single enemy for ${min}-${max} damage. And reduces the enemy's agility by 10%.`;
   }
 }

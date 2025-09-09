@@ -26,6 +26,9 @@ type Params = {
   characterAttributes?: Map<string, EntityAttributes>;
   getCharacterAttributes?: (characterId: string) => void;
   resetCharacterAttributes?: () => void;
+
+  spellDescription?: Map<string, string>;
+  getSpellDescription?: (spellId: string) => void;
 };
 
 export const BattleRender = ({
@@ -42,10 +45,13 @@ export const BattleRender = ({
   characterAttributes,
   getCharacterAttributes,
   resetCharacterAttributes,
+  spellDescription,
+  getSpellDescription,
 }: Params) => {
   const [hoverCharacterOpen, _setHoverCharacterOpen] = useState<string | null>(
     null,
   );
+  const [hoverSpellOpen, _setHoverSpellOpen] = useState<string | null>(null);
 
   return (
     <div className="p-4">
@@ -60,11 +66,8 @@ export const BattleRender = ({
             }
           };
 
-          console.log("entity", entity);
-          console.log("battleState", battleState);
           // Calculate current health and mana based on processed events
           const currentStats = stats.get(entity.id)!;
-          console.log("currentStats", currentStats, entity.id);
           const activeEntity = battleState?.round.orderQueue[0];
 
           const myTurn = activeEntity === entity.id;
@@ -84,7 +87,6 @@ export const BattleRender = ({
           const manaPercent = (displayMana / maxMana) * 100;
 
           const isValidTarget = validTargets?.includes(entity.id);
-          console.log("targest", validTargets);
           const isChosenTarget = chosenTargets?.includes(entity.id);
           const entityAttributes = characterAttributes?.get(entity.id);
 
@@ -113,7 +115,6 @@ export const BattleRender = ({
                           "cursor-pointer text-blue-400",
                       )}
                       onClick={() => {
-                        console.log("isTarget", isValidTarget, activeSpell);
                         if (isValidTarget && activeSpell) {
                           if (isChosenTarget) {
                             setChosenTargets?.([
@@ -225,38 +226,61 @@ export const BattleRender = ({
               </div>
               <div className="mt-2">
                 {entity.spells.map((spell) => {
+                  const setHoverSpellOpen = (open: boolean | undefined) => {
+                    _setHoverSpellOpen(open ? spell.config.id : null);
+                    if (open) {
+                      getSpellDescription?.(spell.config.id);
+                    } else {
+                      _setHoverSpellOpen(null);
+                    }
+                  };
+
                   const cooldown = currentStats.cooldowns.get(spell.config.id);
                   const isReady = cooldown === 0 || !cooldown;
+                  const desc = spellDescription?.get(spell.config.id);
 
                   return (
-                    <div
+                    <HoverCard
+                      open={hoverSpellOpen === spell.config.id}
+                      onOpenChange={setHoverSpellOpen}
                       key={spell.config.id}
-                      className="flex justify-between text-sm"
-                      onClick={() => {
-                        if (!myTurn) return;
-                        if (!isReady) return;
-
-                        if (validTargets || activeSpell) {
-                          cancelSpell?.();
-                        } else {
-                          getTargets?.(spell.config.id);
-                        }
-                      }}
                     >
-                      <span
-                        className={cn(
-                          isReady && myTurn && "cursor-pointer",
-                          activeSpell === spell.config.id && "text-blue-400",
-                        )}
-                      >
-                        {spell.config.name}
-                      </span>
-                      {cooldown ? (
-                        <span className="text-orange-500">{cooldown}</span>
-                      ) : (
-                        <span className="text-green-500">Ready</span>
+                      <HoverCardTrigger asChild>
+                        <div
+                          className="flex justify-between text-sm"
+                          onClick={() => {
+                            if (!myTurn) return;
+                            if (!isReady) return;
+
+                            if (validTargets || activeSpell) {
+                              cancelSpell?.();
+                            } else {
+                              getTargets?.(spell.config.id);
+                            }
+                          }}
+                        >
+                          <span
+                            className={cn(
+                              isReady && myTurn && "cursor-pointer",
+                              activeSpell === spell.config.id &&
+                                "text-blue-400",
+                            )}
+                          >
+                            {spell.config.name}
+                          </span>
+                          {cooldown ? (
+                            <span className="text-orange-500">{cooldown}</span>
+                          ) : (
+                            <span className="text-green-500">Ready</span>
+                          )}
+                        </div>
+                      </HoverCardTrigger>
+                      {desc && (
+                        <HoverCardContent className="p-3">
+                          <p className="text-xs text-gray-300">{desc}</p>
+                        </HoverCardContent>
                       )}
-                    </div>
+                    </HoverCard>
                   );
                 })}
               </div>
