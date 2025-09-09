@@ -122,6 +122,15 @@ export class BM implements BattleManager, RoundLifecycleHooks {
       data: { id: entity.id },
     });
     console.log(`${entity.name} has died`);
+
+    // update the current round by removing the entity from the order and decrementing the currentInRound
+    const currentRound = this.getCurrentRound();
+    const newCurrentRound = {
+      ...currentRound,
+      order: currentRound.order.filter((id) => id !== entity.id),
+    };
+    this.rounds[this.rounds.length - 1] = newCurrentRound;
+    this.currentInRound = this.currentInRound - 1;
   }
 
   isGameOver(): boolean {
@@ -170,14 +179,7 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     if (!currentRound) {
       throw new Error("No current round");
     }
-    // filter out dead entities
-    const realRound = {
-      ...currentRound,
-      order: currentRound.order.filter(
-        (id) => !this.getEntityById(id)?.isDead()
-      ),
-    };
-    return realRound;
+    return currentRound;
   }
 
   castSpell(
@@ -194,12 +196,24 @@ export class BM implements BattleManager, RoundLifecycleHooks {
       .map((id) => this.getEntityById(id))
       .filter((e): e is Entity => e !== undefined);
 
-    if (targets.length === 0 && spell.config.targetType !== "NO_TARGET") {
+    if (
+      targets.length === 0 &&
+      spell.config.targetType.enemies === 0 &&
+      spell.config.targetType.allies === 0
+    ) {
       return null;
     }
 
     console.log("casting spell", spellId, targets);
-    return spell.cast(caster, targets);
+    const myTeam = caster.team;
+    const targetEnemies = targets
+      .filter((t) => t.team !== myTeam)
+      .slice(0, spell.config.targetType.enemies);
+    const targetAllies = targets
+      .filter((t) => t.team === myTeam)
+      .slice(0, spell.config.targetType.allies);
+    const allTargets = [...targetEnemies, ...targetAllies];
+    return spell.cast(caster, allTargets);
   }
 
   castNextSpell(

@@ -57,10 +57,10 @@ export abstract class BaseSpell implements Spell {
     let targets: Entity[] = [];
 
     if (this.config.targetType.enemies > 0) {
-      targets = enemies.slice(0, this.config.targetType.enemies);
+      targets = enemies;
     }
     if (this.config.targetType.allies > 0) {
-      targets = allies.slice(0, this.config.targetType.allies);
+      targets = [...targets, ...allies];
     }
 
     return targets;

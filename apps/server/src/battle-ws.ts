@@ -89,7 +89,7 @@ export class BattleWebsocket extends DurableObject {
       if (!clerkSecretKey || !battleId) return;
       this.battleId = battleId as string;
       this.clerk = createClerk(clerkSecretKey as string);
-      await this.setupBm(); // not sure why this doesnt work here with await
+      await this.setupBm();
       this.bm.start();
       const messages = await this.ctx.storage.get("messages");
       if (messages) {
@@ -112,6 +112,8 @@ export class BattleWebsocket extends DurableObject {
     for (const enemy of enemies) {
       this.bm.join(enemy);
     }
+    this.bm.start();
+    while (await this.processBotTurn()) {}
   }
 
   async setup(clerkSecretKey: string, battleId: string) {
@@ -140,7 +142,8 @@ export class BattleWebsocket extends DurableObject {
 
     this.ctx.acceptWebSocket(server);
 
-    const entities = produce(this.bm.entities, (draft) => {
+    // we want to send the start entitites as the client is also doing all the hp, mp, ... processing
+    const startEntities = produce(this.bm.startEntityData, (draft) => {
       draft.forEach((ent) => {
         ent.battleManager = undefined;
         ent.spells.forEach((spells) => (spells.battleManager = undefined));
@@ -150,7 +153,7 @@ export class BattleWebsocket extends DurableObject {
     server.send(
       SuperJSON.stringify({
         type: "entities",
-        data: { entities: entities as BaseEntity[] },
+        data: { entities: startEntities as BaseEntity[] },
       } satisfies ResponseMessage)
     );
 
@@ -231,25 +234,31 @@ export class BattleWebsocket extends DurableObject {
     this.bm.postTurn();
     // process pre turn of next entity
     this.bm.preTurn();
-    while (true) {
-      const nextEntity = this.bm.getEntityById(
-        this.bm.getCurrentRound().order[this.bm.currentInRound]
-      );
-      if (!nextEntity) {
-        throw new Error("No next entity found");
-      }
-      // if the next entity is a bot, cast the spell
-      if (nextEntity.isBot) {
-        const action = nextEntity.getAction();
-        this.bm.castNextSpell(nextEntity.id, action.spell.config.id, [
-          action.targets.map((t) => t.id)[0],
-        ]);
-        this.bm.postTurn();
-        this.bm.preTurn();
-      } else {
-        break;
-      }
+    while (await this.processBotTurn()) {}
+  }
+
+  private async processBotTurn() {
+    const nextEntity = this.bm.getEntityById(
+      this.bm.getCurrentRound().order[this.bm.currentInRound]
+    );
+    if (!nextEntity) {
+      throw new Error("No next entity found");
     }
+
+    if (!nextEntity.isBot) {
+      return false;
+    }
+
+    // if the next entity is a bot, cast the spell
+    const action = nextEntity.getAction();
+    this.bm.castNextSpell(
+      nextEntity.id,
+      action.spell.config.id,
+      action.targets.map((t) => t.id)
+    );
+    this.bm.postTurn();
+    this.bm.preTurn();
+    return true;
   }
 
   private async processGetTargets(
