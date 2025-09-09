@@ -11,7 +11,7 @@ export class SingleHealSpell extends HealingSpell {
         description: "A single heal spell that heals a single target.",
         manaCost: 10,
         cooldown: 2,
-        targetType: "SINGLE_ALLY",
+        targetType: { allies: 1, enemies: 0 },
       },
       20
     );

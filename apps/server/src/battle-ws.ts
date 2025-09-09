@@ -267,23 +267,17 @@ export class BattleWebsocket extends DurableObject {
     }
     const targets = spell.getValidTargets(entity);
 
-    let enemies = 0;
-    let allies = 0;
-    if (spell.config.targetType === "ALL_ENEMIES") {
+    let enemies = spell.config.targetType.enemies;
+    let allies = spell.config.targetType.allies;
+    if (spell.config.targetType.enemies === Infinity) {
       enemies = this.bm
         .getAliveEntities()
         .filter((e) => e.team === "TEAM_B").length;
     }
-    if (spell.config.targetType === "ALL_ALLIES") {
+    if (spell.config.targetType.allies === Infinity) {
       allies = this.bm
         .getAliveEntities()
         .filter((e) => e.team === "TEAM_A").length;
-    }
-    if (spell.config.targetType === "SINGLE_ENEMY") {
-      enemies = 1;
-    }
-    if (spell.config.targetType === "SINGLE_ALLY") {
-      allies = 1;
     }
 
     ws.send(

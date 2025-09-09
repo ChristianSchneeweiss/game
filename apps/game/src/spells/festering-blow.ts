@@ -12,7 +12,7 @@ export class FesteringBlowSpell extends DamageSpell {
         description: "A festering blow spell that damages all enemies.",
         manaCost: 0,
         cooldown: 1,
-        targetType: "ALL_ENEMIES",
+        targetType: { enemies: Infinity, allies: 0 },
       },
       0,
       "PHYSICAL"

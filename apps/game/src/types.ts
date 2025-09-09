@@ -29,15 +29,10 @@ export type EffectType =
 
 export type ModifierOperation = "ADD" | "MULTIPLY";
 
-export type TargetType =
-  | "SELF"
-  | "SINGLE_ALLY"
-  | "SINGLE_ENEMY"
-  | "ALL_ALLIES"
-  | "ALL_ENEMIES"
-  | "DEAD_ALLY"
-  | "AREA"
-  | "NO_TARGET";
+export type TargetType = {
+  enemies: number;
+  allies: number;
+};
 
 export interface StatModifier {
   id: string;

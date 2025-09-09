@@ -11,7 +11,7 @@ export class FireballSpell extends DamageSpell {
         description: "A fireball spell that damages a single enemy.",
         manaCost: 10,
         cooldown: 2,
-        targetType: "SINGLE_ENEMY",
+        targetType: { enemies: 1, allies: 0 },
       },
       20,
       "FIRE"

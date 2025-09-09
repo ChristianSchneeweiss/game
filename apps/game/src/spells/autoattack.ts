@@ -11,7 +11,7 @@ export class AutoAttackSpell extends BaseSpell {
       description: "Automatically attacks the nearest enemy.",
       manaCost: 0,
       cooldown: 0,
-      targetType: "SINGLE_ENEMY",
+      targetType: { enemies: 1, allies: 0 },
     });
   }
 

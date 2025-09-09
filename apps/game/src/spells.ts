@@ -48,33 +48,22 @@ export abstract class BaseSpell implements Spell {
   getValidTargets(caster: Entity): Entity[] {
     if (!this.battleManager) throw new Error("Battle manager not set");
     const allEntities = this.battleManager.getAliveEntities();
+    const enemies = allEntities.filter(
+      (e) => e.team !== caster.team && !e.isDead()
+    );
+    const allies = this.battleManager
+      .getTeam(caster.team)
+      .filter((e) => !e.isDead());
+    let targets: Entity[] = [];
 
-    switch (this.config.targetType) {
-      case "SELF":
-        return [caster];
-      case "SINGLE_ALLY":
-        return this.battleManager
-          .getTeam(caster.team)
-          .filter((e) => !e.isDead());
-      case "SINGLE_ENEMY":
-        return allEntities.filter((e) => e.team !== caster.team && !e.isDead());
-      case "ALL_ALLIES":
-        return this.battleManager
-          .getTeam(caster.team)
-          .filter((e) => !e.isDead());
-      case "ALL_ENEMIES":
-        return allEntities.filter((e) => e.team !== caster.team && !e.isDead());
-      case "DEAD_ALLY":
-        return Array.from(this.battleManager.deadEntities.values()).filter(
-          (e) => e.team === caster.team
-        );
-      case "NO_TARGET":
-        return [];
-      case "AREA":
-        return [];
-      default:
-        return [];
+    if (this.config.targetType.enemies > 0) {
+      targets = enemies.slice(0, this.config.targetType.enemies);
     }
+    if (this.config.targetType.allies > 0) {
+      targets = allies.slice(0, this.config.targetType.allies);
+    }
+
+    return targets;
   }
 
   cast(caster: Entity, targets: Entity[]): SpellCastEvent | null {
@@ -105,7 +94,8 @@ export abstract class BaseSpell implements Spell {
   ): SpellCastEvent["data"] | null;
 
   protected validateTargets(caster: Entity, targets: Entity[]): boolean {
-    if (this.config.targetType === "NO_TARGET") return true;
+    const { enemies, allies } = this.config.targetType;
+    if (enemies === 0 && allies === 0) return true;
     if (targets.length === 0) return false;
 
     const validTargets = this.getValidTargets(caster);

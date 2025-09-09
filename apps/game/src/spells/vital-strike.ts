@@ -13,7 +13,7 @@ export class VitalStrikeSpell extends DamageSpell {
         description: "A vital strike spell that damages all enemies.",
         manaCost: 0,
         cooldown: 2,
-        targetType: "SINGLE_ENEMY",
+        targetType: { enemies: 1, allies: 0 },
       },
       0,
       "PHYSICAL"

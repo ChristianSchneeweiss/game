@@ -12,7 +12,7 @@ export class CinderWispSpell extends DamageSpell {
         description: "A cinder wisp spell that damages all enemies.",
         manaCost: 10,
         cooldown: 1,
-        targetType: "SINGLE_ENEMY",
+        targetType: { enemies: 1, allies: 0 },
       },
       0,
       "FIRE"
