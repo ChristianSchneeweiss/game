@@ -1,3 +1,4 @@
+import type { TinyEmitter } from "@/utils/tiny-emitter";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import SuperJSON from "superjson";
@@ -7,15 +8,17 @@ import type {
   ResponseMessage,
 } from "../../../../../server/src/battle-ws";
 
-export const useAttributes = (ws: WebSocket) => {
+export const useAttributes = (
+  sendMessage: (message: string) => void,
+  wsEvents: TinyEmitter<ResponseMessage>,
+) => {
   const queryClient = useQueryClient();
   const [characterId, setCharacterId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!ws || !characterId) return;
+    if (!wsEvents || !characterId) return;
 
-    const listener = (event: MessageEvent) => {
-      const response = SuperJSON.parse(event.data) as ResponseMessage;
+    const listener = (response: ResponseMessage) => {
       if (response.type === "characterAttributes") {
         queryClient.setQueryData(
           ["attributes", characterId],
@@ -24,17 +27,17 @@ export const useAttributes = (ws: WebSocket) => {
       }
     };
 
-    ws.onmessage = listener;
+    wsEvents.on(listener);
     return () => {
-      ws.onmessage = null;
+      wsEvents.off(listener);
     };
-  }, [ws, characterId]);
+  }, [wsEvents, characterId]);
 
   const { data } = useQuery({
     queryKey: ["attributes", characterId],
     staleTime: 5000,
     queryFn: async () => {
-      ws.send(
+      sendMessage(
         SuperJSON.stringify({
           type: "getCharacterAttributes",
           data: { characterId: characterId! },

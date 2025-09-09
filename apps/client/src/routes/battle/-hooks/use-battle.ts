@@ -1,3 +1,4 @@
+import { TinyEmitter } from "@/utils/tiny-emitter";
 import type { Entity } from "@loot-game/game/types";
 import { useRouter } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
@@ -12,6 +13,8 @@ import type {
 } from "../../../../../server/src/battle-ws";
 import { useAttributes } from "./use-attributes";
 import { useStatsTimeline } from "./use-stats-timeline";
+
+const wsEvents = new TinyEmitter<ResponseMessage>();
 
 export const useBattle = (id: string) => {
   const [participants, setParticipants] = useState<Entity[]>([]);
@@ -94,11 +97,12 @@ export const useBattle = (id: string) => {
   const isLive = currentEventCounter === events.length;
   const router = useRouter();
 
-  const { sendMessage, readyState, getWebSocket } = useWebSocket(
+  const { sendMessage, readyState, lastMessage } = useWebSocket(
     `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/api/battle/${id}`,
     {
       onMessage: (event) => {
         const response = SuperJSON.parse(event.data) as ResponseMessage;
+        wsEvents.emit(response);
         switch (response.type) {
           case "entities":
             setParticipants(response.data.entities);
@@ -111,7 +115,6 @@ export const useBattle = (id: string) => {
             }
             break;
           case "targets":
-            console.log("chosenTargets", response.data);
             setValidTargets(response.data.targets);
             setEnemies(response.data.enemies);
             setAllies(response.data.allies);
@@ -125,7 +128,7 @@ export const useBattle = (id: string) => {
             }
             setTimeout(() => {
               router.navigate({ to: "/battle/finished/$id", params: { id } });
-            }, 3000);
+            }, 5000);
             break;
         }
       },
@@ -136,7 +139,7 @@ export const useBattle = (id: string) => {
     characterAttributes,
     getCharacterAttributes,
     resetCharacterAttributes,
-  } = useAttributes(getWebSocket()! as WebSocket);
+  } = useAttributes(sendMessage, wsEvents);
 
   return {
     participants,
