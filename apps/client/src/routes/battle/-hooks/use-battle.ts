@@ -1,4 +1,4 @@
-import type { Entity, EntityAttributes } from "@loot-game/game/types";
+import type { Entity } from "@loot-game/game/types";
 import { useRouter } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import useWebSocket from "react-use-websocket";
@@ -10,6 +10,7 @@ import type {
   messageSchema,
   ResponseMessage,
 } from "../../../../../server/src/battle-ws";
+import { useAttributes } from "./use-attributes";
 import { useStatsTimeline } from "./use-stats-timeline";
 
 export const useBattle = (id: string) => {
@@ -21,8 +22,6 @@ export const useBattle = (id: string) => {
   const [allies, setAllies] = useState<number | undefined>(undefined);
   const [chosenTargets, setChosenTargets] = useState<string[]>([]);
   const [activeSpell, setActiveSpell] = useState<string | null>(null);
-  const [characterAttributes, setCharacterAttributes] =
-    useState<EntityAttributes>();
 
   const events = battleState?.events ?? [];
 
@@ -77,19 +76,6 @@ export const useBattle = (id: string) => {
     [battleState],
   );
 
-  const getCharacterAttributes = useCallback(
-    (characterId: string) => {
-      if (!battleState) return;
-      sendMessage(
-        SuperJSON.stringify({
-          type: "getCharacterAttributes",
-          data: { characterId },
-        } satisfies z.infer<typeof messageSchema>),
-      );
-    },
-    [battleState],
-  );
-
   const { statsTimeline, defaultStats } = useStatsTimeline(
     events,
     participants,
@@ -108,7 +94,7 @@ export const useBattle = (id: string) => {
   const isLive = currentEventCounter === events.length;
   const router = useRouter();
 
-  const { sendMessage, readyState } = useWebSocket(
+  const { sendMessage, readyState, getWebSocket } = useWebSocket(
     `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/api/battle/${id}`,
     {
       onMessage: (event) => {
@@ -141,13 +127,16 @@ export const useBattle = (id: string) => {
               router.navigate({ to: "/battle/finished/$id", params: { id } });
             }, 3000);
             break;
-          case "characterAttributes":
-            setCharacterAttributes(response.data.attributes);
-            break;
         }
       },
     },
   );
+
+  const {
+    characterAttributes,
+    getCharacterAttributes,
+    resetCharacterAttributes,
+  } = useAttributes(getWebSocket()! as WebSocket);
 
   return {
     participants,
@@ -167,9 +156,8 @@ export const useBattle = (id: string) => {
     getTargets,
     setChosenTargets,
     getCharacterAttributes,
-    resetCharacterAttributes: () => {
-      setCharacterAttributes(undefined);
-    },
+    resetCharacterAttributes,
+
     cancelSpell: () => {
       setValidTargets(null);
       setChosenTargets([]);
