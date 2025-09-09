@@ -2,9 +2,8 @@ import type { TinyEmitter } from "@/utils/tiny-emitter";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import SuperJSON from "superjson";
-import type z from "zod";
 import type {
-  messageSchema,
+  BattleMessage,
   ResponseMessage,
 } from "../../../../../server/src/battle-ws";
 
@@ -41,7 +40,7 @@ export const useAttributes = (
         SuperJSON.stringify({
           type: "getCharacterAttributes",
           data: { characterId: characterId! },
-        } satisfies z.infer<typeof messageSchema>),
+        } satisfies BattleMessage),
       );
 
       // Wait until the query data is set by the onmessage handler

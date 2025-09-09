@@ -5,10 +5,9 @@ import { useCallback, useEffect, useState } from "react";
 import useWebSocket from "react-use-websocket";
 import { toast } from "sonner";
 import SuperJSON from "superjson";
-import type z from "zod";
 import type {
+  BattleMessage,
   BattleState,
-  messageSchema,
   ResponseMessage,
 } from "../../../../../server/src/battle-ws";
 import { useAttributes } from "./use-attributes";
@@ -49,7 +48,7 @@ export const useBattle = (id: string) => {
         SuperJSON.stringify({
           type: "castSpell",
           data: { entityId: activeEntity, spellId, targetIds },
-        } satisfies z.infer<typeof messageSchema>),
+        } satisfies BattleMessage),
       );
       setValidTargets(null);
       setActiveSpell(null);
@@ -73,7 +72,7 @@ export const useBattle = (id: string) => {
         SuperJSON.stringify({
           type: "getTargets",
           data: { entityId: activeEntity, spellId },
-        } satisfies z.infer<typeof messageSchema>),
+        } satisfies BattleMessage),
       );
     },
     [battleState],
@@ -97,7 +96,7 @@ export const useBattle = (id: string) => {
   const isLive = currentEventCounter === events.length;
   const router = useRouter();
 
-  const { sendMessage, readyState, lastMessage } = useWebSocket(
+  const { sendMessage, readyState } = useWebSocket(
     `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/api/battle/${id}`,
     {
       onMessage: (event) => {

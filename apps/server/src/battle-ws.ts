@@ -35,11 +35,13 @@ const getCharacterAttributesSchema = z.object({
   }),
 });
 
-export const messageSchema = z.union([
+const messageSchema = z.union([
   castSpellSchema,
   getTargetsSchema,
   getCharacterAttributesSchema,
 ]);
+
+export type BattleMessage = z.infer<typeof messageSchema>;
 
 export type BattleState = {
   events: TimelineEventFull[];
