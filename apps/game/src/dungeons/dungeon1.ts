@@ -7,25 +7,8 @@ export const dungeon1 = () =>
     name: "Dungeon 1",
     description: "This is the first dungeon",
     availableEnemies: [
-      [
-        {
-          enemy: new Goblin(),
-        },
-        {
-          enemy: new Goblin(),
-        },
-      ],
-      [
-        {
-          enemy: new Goblin(),
-        },
-        {
-          enemy: new Goblin(),
-        },
-        {
-          enemy: new Goblin(),
-        },
-      ],
+      ["goblin", "goblin"],
+      ["goblin", "goblin", "goblin"],
     ],
     rollEnemies: () => {
       return [

@@ -1,4 +1,5 @@
 import z from "zod";
+import { SpellTypeSchema, type SpellType } from "./spell-types";
 import type {
   SpellCastEvent,
   TimelineEvent,
@@ -120,7 +121,7 @@ export interface Spell
 
 export interface SpellConfig {
   id: string;
-  type: string;
+  type: SpellType;
   name: string;
   description: string;
   manaCost: number;
@@ -183,7 +184,7 @@ export const LootEntitySchema = z.object({
   type: z.enum(["SPELL"]),
   dropRate: z.number(),
   data: z.object({
-    spellType: z.string(),
+    spellType: SpellTypeSchema,
   }),
 });
 

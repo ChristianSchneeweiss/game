@@ -1,4 +1,5 @@
-import type { EnemyType } from "@loot-game/game/base-entity";
+import type { EnemyType } from "@loot-game/game/enemies";
+import type { SpellType } from "@loot-game/game/spell-types";
 import type { EventTypes } from "@loot-game/game/timeline-events";
 import type { LootEntity } from "@loot-game/game/types";
 import {
@@ -56,7 +57,7 @@ export const TB_spellStats = pgTable("spell_stats", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => id()),
-  type: text("type").notNull(),
+  type: text("type").$type<SpellType>().notNull(),
   equippedBy: text("equipped_by").references(() => TB_character.id),
   userId: text("user_id")
     .notNull()

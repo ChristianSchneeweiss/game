@@ -33,8 +33,13 @@ function RouteComponent() {
   return (
     <div className="container flex flex-col justify-center space-y-3 p-6">
       <h1>Dungeons</h1>
-      <Button onClick={() => enterDungeon()} className="w-40">
+      <Button onClick={() => enterDungeon({ key: "dungeon1" })}>
         Enter Dungeon 1
+      </Button>
+      <Button
+        onClick={() => enterDungeon({ key: "crypt-of-forgotten-echoes" })}
+      >
+        Enter Crypt of Forgotten Echoes
       </Button>
       <div className="mt-6">
         <h2 className="mb-2 flex items-center gap-2 text-lg font-bold">

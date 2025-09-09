@@ -1,12 +1,9 @@
 import { Character, Enemy } from "@loot-game/game/base-entity";
 import { EnemyTypeSchema } from "@loot-game/game/enemies";
-import { Goblin } from "@loot-game/game/enemies/goblin";
-import { AutoAttackSpell } from "@loot-game/game/spells/autoattack";
-import { CrudeStrikeSpell } from "@loot-game/game/spells/crude-strike";
-import { FesteringBlowSpell } from "@loot-game/game/spells/festering-blow";
-import { FireballSpell } from "@loot-game/game/spells/fireball";
-import { SingleHealSpell } from "@loot-game/game/spells/single-heal";
+import { SpellTypeSchema } from "@loot-game/game/spell-types";
 import { z } from "zod";
+import { createEnemyFromType } from "./enemy-factory";
+import { createSpellFromType } from "./spell-factory";
 
 export const syncCharacterSchema = z.object({
   id: z.string(),
@@ -34,7 +31,7 @@ export const syncEnemySchema = z.object({
 
 export const syncSpellSchema = z.object({
   id: z.string(),
-  type: z.string(),
+  type: SpellTypeSchema,
 });
 
 export const configSchema = z.object({
@@ -71,12 +68,7 @@ export class SyncFactory {
     );
     if (!kvData) throw new Error("No enemyData");
     const enemyData = syncEnemySchema.parse(JSON.parse(kvData));
-    switch (enemyData.type) {
-      case "goblin":
-        return new Goblin(enemyId);
-      default:
-        throw new Error(`Unknown enemy type: ${enemyData.id}`);
-    }
+    return createEnemyFromType(enemyData.type, enemyId);
   }
 
   async addCharacterToSync(character: Character, battleId: string) {
@@ -146,22 +138,9 @@ export class SyncFactory {
     if (!spells) throw new Error("No spellsData");
     const spellsData = syncSpellSchema.array().parse(JSON.parse(spells));
 
-    character.spells = spellsData.map((spell) => {
-      switch (spell.type) {
-        case "fireball":
-          return new FireballSpell(spell.id);
-        case "single-heal":
-          return new SingleHealSpell(spell.id);
-        case "crude-strike":
-          return new CrudeStrikeSpell(spell.id);
-        case "festering-blow":
-          return new FesteringBlowSpell(spell.id);
-        case "autoattack":
-          return new AutoAttackSpell(character.id);
-        default:
-          throw new Error(`Unknown spell type: ${spell.type}`);
-      }
-    });
+    character.spells = spellsData.map((spell) =>
+      createSpellFromType(spell.id, spell.type)
+    );
 
     return character;
   }

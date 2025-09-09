@@ -1,4 +1,6 @@
 import { Character, Enemy } from "@loot-game/game/base-entity";
+import { cryptOfForgottenEchoes } from "@loot-game/game/dungeons/crypt-of-forgotten-echoes";
+import { DungeonKeySchema } from "@loot-game/game/dungeons/dungeon-keys";
 import { dungeon1 } from "@loot-game/game/dungeons/dungeon1";
 import type { DungeonData } from "@loot-game/game/dungeons/types";
 import type { LootEntity } from "@loot-game/game/types";
@@ -22,14 +24,15 @@ import { LootManager } from "./loot-manager";
 export const dungeonManager = {
   enterDungeon: async (
     characters: Character[],
-    key: "dungeon-1",
+    key: string,
     db: PostgresJsDatabase
   ) => {
+    const config = dungeonManager.getDungeonConfig(key);
     const dungeon = {
       id: id(),
       playerTeam: characters,
       round: 0,
-      actualEnemies: dungeon1().rollEnemies(),
+      actualEnemies: config.rollEnemies(),
       key: key,
       cleared: false,
     } satisfies DungeonData;
@@ -212,7 +215,7 @@ export const dungeonManager = {
         })
         .where(eq(TB_dungeonData.id, dungeonId));
 
-      const config = dungeon1();
+      const config = dungeonManager.getDungeonConfig(dungeon.key);
 
       if (dungeon.round >= config.availableEnemies.length) {
         await tx
@@ -221,5 +224,17 @@ export const dungeonManager = {
           .where(eq(TB_dungeonData.id, dungeonId));
       }
     });
+  },
+
+  getDungeonConfig: (key: string) => {
+    const dungeonKey = DungeonKeySchema.safeParse(key);
+    if (!dungeonKey.success) {
+      throw new Error("Invalid dungeon key");
+    }
+    if (dungeonKey.data === "dungeon1") {
+      return dungeon1();
+    } else if (dungeonKey.data === "crypt-of-forgotten-echoes") {
+      return cryptOfForgottenEchoes();
+    }
   },
 };

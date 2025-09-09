@@ -1,3 +1,4 @@
+import { SpellTypeSchema } from "@loot-game/game/spell-types";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { TB_spellStats, TB_user } from "../db/schema";
@@ -38,7 +39,7 @@ export const appRouter = router({
   createSpell: protectedProcedure
     .input(
       z.object({
-        type: z.string(),
+        type: SpellTypeSchema,
       })
     )
     .mutation(async ({ ctx, input }) => {

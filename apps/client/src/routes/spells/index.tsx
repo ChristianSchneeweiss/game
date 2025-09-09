@@ -42,6 +42,12 @@ function RouteComponent() {
           <Button onClick={() => createSpell({ type: "festering-blow" })}>
             Create Festering Blow
           </Button>
+          <Button onClick={() => createSpell({ type: "cinder-wisp" })}>
+            Cinder Wisp
+          </Button>
+          <Button onClick={() => createSpell({ type: "vital-strike" })}>
+            Vital Strike
+          </Button>
         </div>
         <h2 className="text-2xl font-bold">My Spells</h2>
         <div className="grid gap-3">

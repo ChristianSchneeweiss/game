@@ -161,7 +161,16 @@ export class DamageSpell extends BaseSpell {
       .values()
       .reduce((acc, curr) => acc + curr, 0);
 
+    const hookResult = this.realDamageHook(
+      battleManager,
+      caster,
+      targets,
+      roll,
+      totalDamage
+    );
+
     return {
+      ...hookResult,
       roll,
       spellId: this.config.id,
       totalDamage,
@@ -175,6 +184,16 @@ export class DamageSpell extends BaseSpell {
     roll: number
   ): number {
     return this.damageAmount;
+  }
+
+  protected realDamageHook(
+    battleManager: BattleManager,
+    caster: Entity,
+    targets: Entity[],
+    roll: number,
+    damage: number
+  ): Partial<SpellCastEvent["data"]> | null {
+    return null;
   }
 }
 

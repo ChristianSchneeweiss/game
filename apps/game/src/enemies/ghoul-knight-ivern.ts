@@ -1,0 +1,35 @@
+import { nanoid } from "nanoid";
+import { Enemy } from "../base-entity";
+import { AutoAttackSpell } from "../spells/autoattack";
+import { FesteringBlowSpell } from "../spells/festering-blow";
+import { VitalStrikeSpell } from "../spells/vital-strike";
+
+export class GhoulKnightIvern extends Enemy {
+  constructor(id?: string) {
+    super({
+      id: id ?? `ghoul-knight-ivern-${nanoid()}`,
+      type: "ghoul-knight-ivern",
+      name: "Ghoul Knight Ivern",
+      team: "TEAM_B",
+      maxHealth: 150,
+      maxMana: 20,
+      baseAttributes: {
+        intelligence: 6,
+        vitality: 14,
+        agility: 10,
+        strength: 16,
+      },
+      xp: 50,
+      loot: {
+        items: [],
+        gold: 40,
+      },
+    });
+
+    this.spells = [
+      new VitalStrikeSpell(nanoid()),
+      new FesteringBlowSpell(nanoid()),
+      new AutoAttackSpell(nanoid()),
+    ];
+  }
+}

@@ -1,20 +1,14 @@
-import {
-  BaseEntity,
-  Character,
-  Enemy,
-  type EnemyType,
-} from "@loot-game/game/base-entity";
-import { Goblin } from "@loot-game/game/enemies/goblin";
+import { BaseEntity, Character, Enemy } from "@loot-game/game/base-entity";
+import type { EnemyType } from "@loot-game/game/enemies";
 import { AutoAttackSpell } from "@loot-game/game/spells/autoattack";
-import { CrudeStrikeSpell } from "@loot-game/game/spells/crude-strike";
-import { FesteringBlowSpell } from "@loot-game/game/spells/festering-blow";
 import { FireballSpell } from "@loot-game/game/spells/fireball";
-import { SingleHealSpell } from "@loot-game/game/spells/single-heal";
 import { type Entity } from "@loot-game/game/types";
 import { eq } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { nanoid } from "nanoid";
 import { TB_character, TB_dungeonEnemy, TB_spellStats } from "../db/schema";
+import { createEnemyFromType } from "./enemy-factory";
+import { createSpellFromType } from "./spell-factory";
 
 export class EntityFactory {
   static createEnemy(): Entity {
@@ -31,23 +25,16 @@ export class EntityFactory {
     return baseEntity;
   }
 
-  static createEnemyFromType(type: EnemyType, db: PostgresJsDatabase): Enemy {
-    switch (type) {
-      case "goblin":
-        const goblin = new Goblin();
-        return goblin;
-      default:
-        throw new Error(`Unknown enemy type: ${type}`);
-    }
+  static createEnemyFromType(type: EnemyType): Enemy {
+    return createEnemyFromType(type);
   }
 
   static createEnemyFromDb(
-    enemies: (typeof TB_dungeonEnemy.$inferSelect)[],
-    db: PostgresJsDatabase
+    enemies: (typeof TB_dungeonEnemy.$inferSelect)[]
   ): Enemy[][] {
     const entitiesByRound: Enemy[][] = [];
     for (const enemy of enemies) {
-      const entity = this.createEnemyFromType(enemy.type, db);
+      const entity = this.createEnemyFromType(enemy.type);
       entity.id = enemy.id;
       const current = entitiesByRound[enemy.inRound] || [];
       entitiesByRound[enemy.inRound] = [...current, entity];
@@ -111,20 +98,7 @@ export class EntityFactory {
     );
     baseEntity.spells = spells
       .filter((spell) => spell !== null)
-      .map((spell) => {
-        switch (spell.type) {
-          case "fireball":
-            return new FireballSpell(spell.id);
-          case "single-heal":
-            return new SingleHealSpell(spell.id);
-          case "crude-strike":
-            return new CrudeStrikeSpell(spell.id);
-          case "festering-blow":
-            return new FesteringBlowSpell(spell.id);
-          default:
-            throw new Error(`Unknown spell type: ${spell.type}`);
-        }
-      });
+      .map((spell) => createSpellFromType(spell.id, spell.type));
 
     // todo not sure about this. maybe we should have it as a proper spell in TB_spellStats
     baseEntity.spells.push(new AutoAttackSpell(baseEntity.id));

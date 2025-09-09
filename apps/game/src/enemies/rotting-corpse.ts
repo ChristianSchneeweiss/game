@@ -1,0 +1,33 @@
+import { nanoid } from "nanoid";
+import { Enemy } from "../base-entity";
+import { AutoAttackSpell } from "../spells/autoattack";
+import { FesteringBlowSpell } from "../spells/festering-blow";
+
+export class RottingCorpse extends Enemy {
+  constructor(id?: string) {
+    super({
+      id: id ?? `rotting-corpse-${nanoid()}`,
+      type: "rotting-corpse",
+      name: "Rotting Corpse",
+      team: "TEAM_B",
+      maxHealth: 60,
+      maxMana: 0,
+      baseAttributes: {
+        intelligence: 2,
+        vitality: 12,
+        agility: 6,
+        strength: 14,
+      },
+      xp: 20,
+      loot: {
+        items: [],
+        gold: 20,
+      },
+    });
+
+    this.spells = [
+      new FesteringBlowSpell(nanoid()),
+      new AutoAttackSpell(nanoid()),
+    ];
+  }
+}

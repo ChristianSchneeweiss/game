@@ -1,3 +1,4 @@
+import { DungeonKeySchema } from "@loot-game/game/dungeons/dungeon-keys";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import z from "zod";
@@ -14,19 +15,21 @@ import { SyncFactory } from "../game-usecases/sync-factory";
 import { protectedProcedure, router } from "../lib/trpc";
 
 export const dungeonRouter = router({
-  enterDungeon: protectedProcedure.mutation(async ({ ctx }) => {
-    const { session, db } = ctx;
-    const characters = await EntityFactory.createCharactersFromUser(
-      session.id,
-      db
-    );
-    const dungeon = await dungeonManager.enterDungeon(
-      characters,
-      "dungeon-1",
-      db
-    );
-    return dungeon;
-  }),
+  enterDungeon: protectedProcedure
+    .input(z.object({ key: DungeonKeySchema }))
+    .mutation(async ({ ctx, input }) => {
+      const { session, db } = ctx;
+      const characters = await EntityFactory.createCharactersFromUser(
+        session.id,
+        db
+      );
+      const dungeon = await dungeonManager.enterDungeon(
+        characters,
+        input.key,
+        db
+      );
+      return dungeon;
+    }),
 
   activeDungeons: protectedProcedure.query(async ({ ctx }) => {
     const { session, db } = ctx;
@@ -75,7 +78,10 @@ export const dungeonRouter = router({
       )
       .where(and(eq(TB_character.userId, session.id)));
 
-    const uniques = new Map<string, { id: string; key: string }>();
+    const uniques = new Map<
+      string,
+      { id: string; key: string; cleared: boolean }
+    >();
     for (const dungeon of dungeons) {
       uniques.set(dungeon.id, dungeon);
     }
