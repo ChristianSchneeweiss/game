@@ -41,7 +41,7 @@ export class AutoAttackSpell extends BaseSpell {
     };
   }
 
-  description(caster: Entity): string {
+  protected textDescription(caster: Entity): string {
     const min = 0;
     const max = 15;
 

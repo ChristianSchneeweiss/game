@@ -102,6 +102,13 @@ export interface Entity
   getAction(): { spell: Spell; targets: Entity[] };
 }
 
+export interface SpellDescription {
+  text: string;
+  targetType: TargetType;
+  cooldown: number;
+  manaCost: number;
+}
+
 export interface Spell
   extends Pick<RoundLifecycleHooks, "onPreRound" | "onPostRound">,
     TurnLifecycleHooks {
@@ -112,7 +119,7 @@ export interface Spell
   canCast(caster: Entity): boolean;
   getValidTargets(caster: Entity): Entity[] | null;
   cast(caster: Entity, targets: Entity[]): SpellCastEvent | null;
-  description(caster: Entity): string;
+  description(caster: Entity): SpellDescription;
 }
 
 export interface SpellConfig {

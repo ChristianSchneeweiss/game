@@ -1,4 +1,5 @@
 import type { TinyEmitter } from "@/utils/tiny-emitter";
+import type { SpellDescription } from "@loot-game/game/types";
 import { useEffect, useState } from "react";
 import SuperJSON from "superjson";
 import type {
@@ -10,7 +11,9 @@ export const useSpellDescription = (
   sendMessage: (message: string) => void,
   wsEvents: TinyEmitter<ResponseMessage>,
 ) => {
-  const [attributes, setAttributes] = useState<Map<string, string>>(new Map());
+  const [attributes, setAttributes] = useState<Map<string, SpellDescription>>(
+    new Map(),
+  );
 
   useEffect(() => {
     if (!wsEvents) return;

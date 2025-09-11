@@ -4,7 +4,11 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { cn } from "@/lib/utils";
-import type { Entity, EntityAttributes } from "@loot-game/game/types";
+import type {
+  Entity,
+  EntityAttributes,
+  SpellDescription,
+} from "@loot-game/game/types";
 import { BotIcon, CheckIcon, SkullIcon } from "lucide-react";
 import { useState } from "react";
 import type { BattleState } from "../../../../server/src/battle-ws";
@@ -27,7 +31,7 @@ type Params = {
   getCharacterAttributes?: (characterId: string) => void;
   resetCharacterAttributes?: () => void;
 
-  spellDescription?: Map<string, string>;
+  spellDescription?: Map<string, SpellDescription>;
   getSpellDescription?: (spellId: string) => void;
 };
 
@@ -276,8 +280,48 @@ export const BattleRender = ({
                         </div>
                       </HoverCardTrigger>
                       {desc && (
-                        <HoverCardContent className="p-3">
-                          <p className="text-xs text-gray-300">{desc}</p>
+                        <HoverCardContent className="min-w-[260px] rounded-lg border p-4 shadow-2xl">
+                          <div className="mb-2 flex flex-col gap-2">
+                            <span className="text-sm drop-shadow">
+                              {desc.text}
+                            </span>
+                            <div className="mt-1 flex gap-4">
+                              {desc?.manaCost !== undefined && (
+                                <span className="flex items-center gap-1 rounded bg-blue-900/40 px-2 py-0.5 text-xs font-medium text-blue-300">
+                                  <svg
+                                    width="14"
+                                    height="14"
+                                    className="inline"
+                                    viewBox="0 0 20 20"
+                                    fill="currentColor"
+                                  >
+                                    <circle cx="10" cy="10" r="8" />
+                                  </svg>
+                                  Mana: {desc.manaCost}
+                                </span>
+                              )}
+                              {desc?.cooldown !== undefined && (
+                                <span className="flex items-center gap-1 rounded bg-orange-900/40 px-2 py-0.5 text-xs font-medium text-orange-300">
+                                  <svg
+                                    width="14"
+                                    height="14"
+                                    className="inline"
+                                    viewBox="0 0 20 20"
+                                    fill="currentColor"
+                                  >
+                                    <rect
+                                      x="4"
+                                      y="8"
+                                      width="12"
+                                      height="4"
+                                      rx="2"
+                                    />
+                                  </svg>
+                                  CD: {desc.cooldown}
+                                </span>
+                              )}
+                            </div>
+                          </div>
                         </HoverCardContent>
                       )}
                     </HoverCard>

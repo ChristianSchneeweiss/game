@@ -86,9 +86,16 @@ export abstract class BaseSpell implements Spell {
     };
   }
 
-  description(caster: Entity): string {
-    return this.config.description;
+  description(caster: Entity) {
+    return {
+      text: this.textDescription(caster),
+      targetType: this.config.targetType,
+      cooldown: this.config.cooldown,
+      manaCost: this.config.manaCost,
+    };
   }
+
+  protected abstract textDescription(caster: Entity): string;
 
   protected abstract _cast(
     caster: Entity,
@@ -189,6 +196,10 @@ export class DamageSpell extends BaseSpell {
   ): Partial<SpellCastEvent["data"]> | null {
     return null;
   }
+
+  protected textDescription(caster: Entity): string {
+    return this.config.description;
+  }
 }
 
 export class HealingSpell extends BaseSpell {
@@ -227,6 +238,10 @@ export class HealingSpell extends BaseSpell {
 
   protected calculateHealing(caster: Entity, roll: number): number {
     return this.healAmount;
+  }
+
+  protected textDescription(caster: Entity): string {
+    return this.config.description;
   }
 }
 
@@ -276,6 +291,10 @@ export class ApplyStatusSpell extends BaseSpell {
       spellId: this.config.id,
     };
   }
+
+  protected textDescription(caster: Entity): string {
+    return this.config.description;
+  }
 }
 
 export class DotSpell extends ApplyStatusSpell {
@@ -297,6 +316,10 @@ export class DotSpell extends ApplyStatusSpell {
           damageType
         )
     );
+  }
+
+  protected textDescription(caster: Entity): string {
+    return this.config.description;
   }
 }
 

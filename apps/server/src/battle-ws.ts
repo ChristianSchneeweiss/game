@@ -2,7 +2,11 @@ import type { ClerkClient } from "@clerk/backend";
 import type { BaseEntity } from "@loot-game/game/base-entity";
 import { BM } from "@loot-game/game/battle";
 import type { TimelineEventFull } from "@loot-game/game/timeline-events";
-import type { BattleRound, EntityAttributes } from "@loot-game/game/types";
+import type {
+  BattleRound,
+  EntityAttributes,
+  SpellDescription,
+} from "@loot-game/game/types";
 import { DurableObject } from "cloudflare:workers";
 import { produce } from "immer";
 import SuperJSON from "superjson";
@@ -91,7 +95,7 @@ export type ResponseMessage =
   | {
       type: "spellDescription";
       data: {
-        description: string;
+        description: SpellDescription;
         spellId: string;
         entityId: string;
       };

@@ -31,7 +31,7 @@ export class SingleHealSpell extends HealingSpell {
     return targets;
   }
 
-  description(caster: Entity): string {
+  protected textDescription(caster: Entity): string {
     const min = this.calculateHealing(caster, 0);
     const max = this.calculateHealing(caster, 20);
 

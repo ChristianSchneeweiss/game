@@ -31,7 +31,7 @@ export class CinderWispSpell extends DamageSpell {
     return rolled + intBonus;
   }
 
-  description(caster: Entity): string {
+  protected textDescription(caster: Entity): string {
     const min = this.calculateRawDamage(caster, caster, 0);
     const max = this.calculateRawDamage(caster, caster, 20);
 

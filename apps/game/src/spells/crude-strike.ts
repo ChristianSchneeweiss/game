@@ -73,7 +73,7 @@ export class CrudeStrikeSpell extends BaseSpell {
     };
   }
 
-  description(caster: Entity): string {
+  protected textDescription(caster: Entity): string {
     const min = 6;
     const max = 10;
 
