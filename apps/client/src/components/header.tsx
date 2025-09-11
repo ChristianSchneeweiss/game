@@ -7,7 +7,12 @@ import { ModeToggle } from "./mode-toggle";
 import { Button } from "./ui/button";
 
 export default function Header() {
-  const { data: loot } = useQuery(trpc.getMyLoot.queryOptions());
+  const { data: loot } = useQuery(
+    trpc.getMyLoot.queryOptions(undefined, {
+      staleTime: 10_000,
+      refetchInterval: 10_000,
+    }),
+  );
   const { mutate: claimLoot } = useMutation(trpc.claimLoot.mutationOptions());
 
   const lootCount = loot?.length ?? 0;

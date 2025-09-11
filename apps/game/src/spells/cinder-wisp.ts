@@ -16,7 +16,8 @@ export class CinderWispSpell extends DamageSpell {
       new DamageModule("FIRE", {
         min: 6,
         max: 12,
-        attributeScaling: ({ caster }) => caster.getStat("intelligence") * 0.5,
+        attributeScaling: ({ caster }) =>
+          caster.getAttribute("intelligence") * 0.5,
       })
     );
   }

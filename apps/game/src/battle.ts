@@ -64,7 +64,7 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     const round: BattleRound = {
       round: this.rounds.length,
       orderQueue: this.getAliveEntities()
-        .sort((a, b) => b.getStat("agility") - a.getStat("agility"))
+        .sort((a, b) => b.getAttribute("agility") - a.getAttribute("agility"))
         .map((e) => e.id),
     };
 

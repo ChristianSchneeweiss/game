@@ -52,7 +52,8 @@ export class BaseEntity implements Entity {
 
   onUpkeep(): TimelineEvent[] | null {
     // mana and health regeneration
-    const healthRegen = this.getStat("vitality") / 2;
+    // TODO make health regen better
+    const healthRegen = this.isBot ? 2 : this.getAttribute("vitality") / 2;
     const realHealthRegen = calculator.calculateRealHealing(
       this,
       this,
@@ -60,7 +61,7 @@ export class BaseEntity implements Entity {
     );
     this.applyHealing(realHealthRegen, this);
 
-    const manaRegen = this.getStat("intelligence") / 5;
+    const manaRegen = this.getAttribute("intelligence") / 5;
     const realManaRegen = calculator.calculateRealHealing(
       this,
       this,
@@ -121,7 +122,7 @@ export class BaseEntity implements Entity {
     return this.health <= 0;
   }
 
-  getStat(attribute: keyof EntityAttributes): number {
+  getAttribute(attribute: keyof EntityAttributes): number {
     let value = this.baseAttributes[attribute];
 
     this.statModifiers.forEach((mod) => {

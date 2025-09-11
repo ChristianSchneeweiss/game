@@ -364,10 +364,10 @@ export class BattleWebsocket extends DurableObject {
       throw new Error("Character not found");
     }
     const attributes = {
-      strength: character.getStat("strength"),
-      intelligence: character.getStat("intelligence"),
-      vitality: character.getStat("vitality"),
-      agility: character.getStat("agility"),
+      strength: character.getAttribute("strength"),
+      intelligence: character.getAttribute("intelligence"),
+      vitality: character.getAttribute("vitality"),
+      agility: character.getAttribute("agility"),
     } satisfies EntityAttributes;
     ws.send(
       SuperJSON.stringify({

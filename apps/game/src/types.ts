@@ -98,7 +98,7 @@ export interface Entity
   removeEffect(effect: Effect): void;
 
   isDead(): boolean;
-  getStat(attribute: keyof EntityAttributes): number;
+  getAttribute(attribute: keyof EntityAttributes): number;
   getAction(): { spell: Spell; targets: Entity[] };
 }
 

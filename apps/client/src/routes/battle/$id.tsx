@@ -53,9 +53,7 @@ function RouteComponent() {
   if (readyState !== ReadyState.OPEN) return <p>Connecting to battle...</p>;
 
   return (
-    <div className="p-4">
-      <h1 className="mb-4 text-2xl font-bold">Battle Timeline</h1>
-
+    <div className="p-2">
       <BattleRender
         participants={participants}
         stats={stats}

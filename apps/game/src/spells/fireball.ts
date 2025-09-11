@@ -16,7 +16,8 @@ export class FireballSpell extends DamageSpell {
       new DamageModule("FIRE", {
         min: 0,
         max: 20,
-        attributeScaling: ({ caster }) => caster.getStat("intelligence") * 0.1,
+        attributeScaling: ({ caster }) =>
+          caster.getAttribute("intelligence") * 0.1,
       })
     );
   }

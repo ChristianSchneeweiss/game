@@ -1,4 +1,3 @@
-import type { Character } from "@loot-game/game/base-entity";
 import type { EntityAttributes } from "@loot-game/game/types";
 import {
   statPointsReceived,
@@ -27,6 +26,28 @@ export const createCharacter = async (
   return character;
 };
 
+export const renameCharacter = async (
+  userId: string,
+  characterId: string,
+  name: string,
+  db: PostgresJsDatabase
+) => {
+  await db.transaction(async (tx) => {
+    const [character] = await tx
+      .select()
+      .from(TB_character)
+      .where(eq(TB_character.id, characterId));
+
+    if (!character) throw new Error("Character not found");
+    if (character.userId !== userId) throw new Error("Not your character");
+
+    await tx
+      .update(TB_character)
+      .set({ name })
+      .where(eq(TB_character.id, characterId));
+  });
+};
+
 export const equipSpell = async (
   characterId: string,
   spellId: string,
@@ -41,6 +62,12 @@ export const equipSpell = async (
     if (!character) throw new Error("Character not found");
 
     // todo check if we own the spell
+    const equippedSpells = await tx
+      .select()
+      .from(TB_spellStats)
+      .where(eq(TB_spellStats.equippedBy, characterId));
+    if (equippedSpells.length >= 4)
+      throw new Error("Already equipped 4 spells");
 
     await tx
       .update(TB_spellStats)

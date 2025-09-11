@@ -4,6 +4,7 @@ import {
   applyStatIncrease,
   createCharacter,
   equipSpell,
+  renameCharacter,
   unequipSpell,
 } from "../game-usecases/character";
 import { EntityFactory } from "../game-usecases/entity-factory";
@@ -55,6 +56,13 @@ export const characterRouter = router({
     .mutation(async ({ ctx, input }) => {
       const { db } = ctx;
       await unequipSpell(input.spellId, db);
+    }),
+
+  renameCharacter: protectedProcedure
+    .input(z.object({ characterId: z.string(), name: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { db } = ctx;
+      await renameCharacter(ctx.session.id, input.characterId, input.name, db);
     }),
 
   applyStatIncrease: protectedProcedure

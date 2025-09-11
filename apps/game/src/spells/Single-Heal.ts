@@ -17,7 +17,8 @@ export class SingleHealSpell extends HealingSpell {
       new HealModule({
         min: 5,
         max: 10,
-        attributeScaling: ({ caster }) => caster.getStat("intelligence") * 0.05,
+        attributeScaling: ({ caster }) =>
+          caster.getAttribute("intelligence") * 0.05,
       })
     );
   }
