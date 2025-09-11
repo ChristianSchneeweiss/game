@@ -132,6 +132,8 @@ export interface SpellConfig {
   targetType: TargetType;
 }
 
+export interface SpellModule {}
+
 export interface BattleManager {
   entities: Entity[];
   deadEntities: Map<string, Entity>;

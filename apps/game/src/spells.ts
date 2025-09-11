@@ -4,6 +4,8 @@ import {
   MindControlEffect,
   ShieldEffect,
 } from "./effect";
+import type { DamageModule } from "./modules/damage.module";
+import type { HealModule } from "./modules/heal.module";
 import type { SpellCastEvent } from "./timeline-events";
 import type {
   BattleManager,
@@ -125,17 +127,11 @@ export abstract class BaseSpell implements Spell {
 }
 
 export class DamageSpell extends BaseSpell {
-  protected damageAmount: number;
-  protected damageType: DamageType;
+  protected damageModule: DamageModule;
 
-  constructor(
-    config: SpellConfig,
-    damageAmount: number,
-    damageType: DamageType
-  ) {
+  constructor(config: SpellConfig, damageModule: DamageModule) {
     super(config);
-    this.damageAmount = damageAmount;
-    this.damageType = damageType;
+    this.damageModule = damageModule;
   }
 
   protected _cast(
@@ -144,70 +140,36 @@ export class DamageSpell extends BaseSpell {
     battleManager: BattleManager,
     roll: number
   ): SpellCastEvent["data"] | null {
-    const damageDealt = new Map<string, number>();
-
-    targets.forEach((target) => {
-      const damage = Math.floor(this.calculateRawDamage(caster, target, roll));
-      const realDamage = battleManager.handler.damage(
-        this,
-        damage,
-        this.damageType,
-        caster,
-        target
-      );
-      damageDealt.set(target.id, realDamage);
-    });
-
-    const totalDamage = damageDealt
-      .values()
-      .reduce((acc, curr) => acc + curr, 0);
-
-    const hookResult = this.realDamageHook(
-      battleManager,
+    const { damageApplied, totalDamage } = this.damageModule.applyRawDamage(
       caster,
       targets,
       roll,
-      totalDamage
+      battleManager,
+      this
     );
 
     return {
-      ...hookResult,
       roll,
       spellId: this.config.id,
       totalDamage,
-      damageApplied: damageDealt,
+      damageApplied,
     };
   }
 
-  protected calculateRawDamage(
-    caster: Entity,
-    target: Entity,
-    roll: number
-  ): number {
-    return this.damageAmount;
-  }
-
-  protected realDamageHook(
-    battleManager: BattleManager,
-    caster: Entity,
-    targets: Entity[],
-    roll: number,
-    damage: number
-  ): Partial<SpellCastEvent["data"]> | null {
-    return null;
-  }
-
   protected textDescription(caster: Entity): string {
-    return this.config.description;
+    const min = this.damageModule.getRawDamage(caster, [], 0);
+    const max = this.damageModule.getRawDamage(caster, [], 20);
+
+    return `A spell that damages for ${min}-${max} damage.`;
   }
 }
 
 export class HealingSpell extends BaseSpell {
-  protected healAmount: number;
+  protected healModule: HealModule;
 
-  constructor(config: SpellConfig, healAmount: number) {
+  constructor(config: SpellConfig, healModule: HealModule) {
     super(config);
-    this.healAmount = healAmount;
+    this.healModule = healModule;
   }
 
   protected _cast(
@@ -216,32 +178,26 @@ export class HealingSpell extends BaseSpell {
     battleManager: BattleManager,
     roll: number
   ): SpellCastEvent["data"] | null {
-    const healingDone = new Map<string, number>();
-
-    targets.forEach((target) => {
-      const scaledHealing = this.calculateHealing(caster, roll);
-      const realHealing = battleManager.handler.healing(
-        this,
-        scaledHealing,
-        caster,
-        target
-      );
-      healingDone.set(target.id, realHealing);
-    });
+    const { healingApplied, totalHeal } = this.healModule.applyRawHeal(
+      caster,
+      targets,
+      roll,
+      battleManager,
+      this
+    );
 
     return {
-      healingApplied: healingDone,
+      healingApplied,
       roll,
       spellId: this.config.id,
     };
   }
 
-  protected calculateHealing(caster: Entity, roll: number): number {
-    return this.healAmount;
-  }
-
   protected textDescription(caster: Entity): string {
-    return this.config.description;
+    const min = this.healModule.getRawHeal(caster, [], 0);
+    const max = this.healModule.getRawHeal(caster, [], 20);
+
+    return `A spell that heals for ${min}-${max} healing.`;
   }
 }
 

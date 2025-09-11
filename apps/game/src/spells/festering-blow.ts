@@ -1,4 +1,4 @@
-import { minMaxRoll } from "../min-max-roll";
+import { DamageModule } from "../modules/damage.module";
 import { DamageSpell } from "../spells";
 import type { Entity } from "../types";
 
@@ -14,26 +14,16 @@ export class FesteringBlowSpell extends DamageSpell {
         cooldown: 1,
         targetType: { enemies: Infinity, allies: 0 },
       },
-      0,
-      "PHYSICAL"
+      new DamageModule("PHYSICAL", {
+        min: 5,
+        max: 8,
+      })
     );
   }
 
-  protected calculateRawDamage(
-    caster: Entity,
-    target: Entity,
-    roll: number
-  ): number {
-    const min = 5;
-    const max = 8;
-    const rolled = Math.round(minMaxRoll(min, max, roll));
-    console.log(`Festering Blow rolled ${rolled}`);
-    return rolled;
-  }
-
   protected textDescription(caster: Entity): string {
-    const min = this.calculateRawDamage(caster, caster, 0);
-    const max = this.calculateRawDamage(caster, caster, 20);
+    const min = this.damageModule.getRawDamage(caster, [], 0);
+    const max = this.damageModule.getRawDamage(caster, [], 20);
 
     return `A festering blow spell that damages all enemies for ${min}-${max} damage.`;
   }

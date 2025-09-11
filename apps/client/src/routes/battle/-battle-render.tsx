@@ -9,7 +9,12 @@ import type {
   EntityAttributes,
   SpellDescription,
 } from "@loot-game/game/types";
-import { BotIcon, CheckIcon, SkullIcon } from "lucide-react";
+import {
+  BotIcon,
+  CheckIcon,
+  CircleQuestionMarkIcon,
+  SkullIcon,
+} from "lucide-react";
 import { useState } from "react";
 import type { BattleState } from "../../../../server/src/battle-ws";
 import type { Stats } from "./-hooks/use-stats-timeline";
@@ -106,66 +111,72 @@ export const BattleRender = ({
               )}
             >
               <div className={cn("flex justify-between")}>
-                <HoverCard
-                  open={hoverCharacterOpen === entity.id}
-                  onOpenChange={setHoverCharacterOpen}
-                >
-                  <HoverCardTrigger asChild>
-                    <h3
-                      className={cn(
-                        "flex items-center gap-2 font-bold",
-                        isValidTarget &&
-                          activeSpell &&
-                          "cursor-pointer text-blue-400",
-                      )}
-                      onClick={() => {
-                        if (isValidTarget && activeSpell) {
-                          if (isChosenTarget) {
-                            setChosenTargets?.([
-                              ...(chosenTargets ?? []).filter(
-                                (t) => t !== entity.id,
-                              ),
-                            ]);
-                          } else {
-                            setChosenTargets?.([
-                              ...(chosenTargets ?? []),
-                              entity.id,
-                            ]);
-                          }
-                        }
-                      }}
-                    >
-                      {entity.name} {entity.isBot && <BotIcon />}{" "}
-                      {isChosenTarget && (
-                        <CheckIcon className="h-4 w-4 text-green-500" />
-                      )}
-                      {currentStats?.roll ? (
-                        <span className="text-sm text-gray-500">
-                          {currentStats.roll}
-                        </span>
-                      ) : null}
-                      {currentStats?.flags.dead && (
-                        <SkullIcon className="h-4 w-4 text-red-500" />
-                      )}
-                    </h3>
-                  </HoverCardTrigger>
-                  {entityAttributes && (
-                    <HoverCardContent>
-                      <div className="space-y-1 text-xs">
-                        {Object.entries(entityAttributes).map(
-                          ([key, value]) => (
-                            <div key={key} className="flex justify-between">
-                              <span className="font-mono text-gray-500">
-                                {key}
-                              </span>
-                              <span className="font-mono">{String(value)}</span>
-                            </div>
-                          ),
-                        )}
-                      </div>
-                    </HoverCardContent>
+                <h3
+                  className={cn(
+                    "flex items-center gap-2 font-bold",
+                    isValidTarget &&
+                      activeSpell &&
+                      "cursor-pointer text-blue-400",
                   )}
-                </HoverCard>
+                  onClick={() => {
+                    if (isValidTarget && activeSpell) {
+                      if (isChosenTarget) {
+                        setChosenTargets?.([
+                          ...(chosenTargets ?? []).filter(
+                            (t) => t !== entity.id,
+                          ),
+                        ]);
+                      } else {
+                        setChosenTargets?.([
+                          ...(chosenTargets ?? []),
+                          entity.id,
+                        ]);
+                      }
+                    }
+                  }}
+                >
+                  {entity.name} {entity.isBot && <BotIcon />}{" "}
+                  {isChosenTarget && (
+                    <CheckIcon className="h-4 w-4 text-green-500" />
+                  )}
+                  {currentStats?.roll ? (
+                    <span className="text-sm text-gray-500">
+                      {currentStats.roll}
+                    </span>
+                  ) : null}
+                  {currentStats?.flags.dead && (
+                    <SkullIcon className="h-4 w-4 text-red-500" />
+                  )}
+                  <HoverCard
+                    open={hoverCharacterOpen === entity.id}
+                    onOpenChange={setHoverCharacterOpen}
+                    openDelay={1000}
+                    closeDelay={20}
+                  >
+                    <HoverCardTrigger asChild>
+                      <CircleQuestionMarkIcon className="size-4 cursor-help" />
+                    </HoverCardTrigger>
+                    {entityAttributes && (
+                      <HoverCardContent>
+                        <div className="space-y-1 text-xs">
+                          {Object.entries(entityAttributes).map(
+                            ([key, value]) => (
+                              <div key={key} className="flex justify-between">
+                                <span className="font-mono text-gray-500">
+                                  {key}
+                                </span>
+                                <span className="font-mono">
+                                  {String(value)}
+                                </span>
+                              </div>
+                            ),
+                          )}
+                        </div>
+                      </HoverCardContent>
+                    )}
+                  </HoverCard>
+                </h3>
+
                 <span
                   className={`text-sm ${entity.team === "TEAM_A" ? "text-blue-600" : "text-red-600"}`}
                 >
@@ -244,87 +255,122 @@ export const BattleRender = ({
                   const desc = spellDescription?.get(spell.config.id);
 
                   return (
-                    <HoverCard
-                      open={hoverSpellOpen === spell.config.id}
-                      onOpenChange={setHoverSpellOpen}
-                      key={spell.config.id}
-                    >
-                      <HoverCardTrigger asChild>
-                        <div
-                          className="flex justify-between text-sm"
-                          onClick={() => {
-                            if (!myTurn) return;
-                            if (!isReady) return;
+                    <div
+                      className="flex justify-between text-sm"
+                      onClick={() => {
+                        if (!myTurn) return;
+                        if (!isReady) return;
 
-                            if (validTargets || activeSpell) {
-                              cancelSpell?.();
-                            } else {
-                              getTargets?.(spell.config.id);
-                            }
-                          }}
+                        if (validTargets || activeSpell) {
+                          cancelSpell?.();
+                        } else {
+                          getTargets?.(spell.config.id);
+                        }
+                      }}
+                    >
+                      <p
+                        className={cn(
+                          "flex items-center gap-2",
+                          isReady && myTurn && "cursor-pointer",
+                          activeSpell === spell.config.id && "text-blue-400",
+                        )}
+                      >
+                        {spell.config.name}
+                        <HoverCard
+                          open={hoverSpellOpen === spell.config.id}
+                          onOpenChange={setHoverSpellOpen}
+                          key={spell.config.id}
+                          openDelay={1000}
+                          closeDelay={20}
                         >
-                          <span
-                            className={cn(
-                              isReady && myTurn && "cursor-pointer",
-                              activeSpell === spell.config.id &&
-                                "text-blue-400",
-                            )}
-                          >
-                            {spell.config.name}
-                          </span>
-                          {cooldown ? (
-                            <span className="text-orange-500">{cooldown}</span>
-                          ) : (
-                            <span className="text-green-500">Ready</span>
+                          <HoverCardTrigger asChild>
+                            <CircleQuestionMarkIcon className="inline-block size-3 cursor-help" />
+                          </HoverCardTrigger>
+                          {desc && (
+                            <HoverCardContent className="min-w-[360px] rounded-lg border p-4 shadow-2xl">
+                              <div className="mb-2 flex flex-col gap-2">
+                                <span className="text-sm drop-shadow">
+                                  {desc.text}
+                                </span>
+                                <div className="mt-1 flex gap-4">
+                                  {desc?.manaCost !== undefined && (
+                                    <span className="flex items-center gap-1 rounded bg-blue-900/40 px-2 py-0.5 text-xs font-medium text-blue-300">
+                                      <svg
+                                        width="14"
+                                        height="14"
+                                        className="inline"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
+                                      >
+                                        <circle cx="10" cy="10" r="8" />
+                                      </svg>
+                                      Mana: {desc.manaCost}
+                                    </span>
+                                  )}
+                                  {desc?.cooldown !== undefined && (
+                                    <span className="flex items-center gap-1 rounded bg-orange-900/40 px-2 py-0.5 text-xs font-medium text-orange-300">
+                                      <svg
+                                        width="14"
+                                        height="14"
+                                        className="inline"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
+                                      >
+                                        <rect
+                                          x="4"
+                                          y="8"
+                                          width="12"
+                                          height="4"
+                                          rx="2"
+                                        />
+                                      </svg>
+                                      CD: {desc.cooldown}
+                                    </span>
+                                  )}
+                                  {desc?.targetType && (
+                                    <span className="flex items-center gap-1 rounded bg-purple-900/40 px-2 py-0.5 text-xs font-medium text-purple-300">
+                                      <svg
+                                        width="14"
+                                        height="14"
+                                        className="inline"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
+                                      >
+                                        <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 2a6 6 0 110 12A6 6 0 0110 4zm0 2a4 4 0 100 8 4 4 0 000-8z" />
+                                      </svg>
+                                      <span>
+                                        Target:
+                                        <ul className="inline pl-2">
+                                          {desc.targetType.enemies > 0 && (
+                                            <li>
+                                              Enemies: {desc.targetType.enemies}
+                                            </li>
+                                          )}
+                                          {desc.targetType.allies > 0 && (
+                                            <li>
+                                              Allies: {desc.targetType.allies}
+                                            </li>
+                                          )}
+                                          {desc.targetType.enemies === 0 &&
+                                            desc.targetType.allies === 0 && (
+                                              <li>None</li>
+                                            )}
+                                        </ul>
+                                      </span>
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </HoverCardContent>
                           )}
-                        </div>
-                      </HoverCardTrigger>
-                      {desc && (
-                        <HoverCardContent className="min-w-[260px] rounded-lg border p-4 shadow-2xl">
-                          <div className="mb-2 flex flex-col gap-2">
-                            <span className="text-sm drop-shadow">
-                              {desc.text}
-                            </span>
-                            <div className="mt-1 flex gap-4">
-                              {desc?.manaCost !== undefined && (
-                                <span className="flex items-center gap-1 rounded bg-blue-900/40 px-2 py-0.5 text-xs font-medium text-blue-300">
-                                  <svg
-                                    width="14"
-                                    height="14"
-                                    className="inline"
-                                    viewBox="0 0 20 20"
-                                    fill="currentColor"
-                                  >
-                                    <circle cx="10" cy="10" r="8" />
-                                  </svg>
-                                  Mana: {desc.manaCost}
-                                </span>
-                              )}
-                              {desc?.cooldown !== undefined && (
-                                <span className="flex items-center gap-1 rounded bg-orange-900/40 px-2 py-0.5 text-xs font-medium text-orange-300">
-                                  <svg
-                                    width="14"
-                                    height="14"
-                                    className="inline"
-                                    viewBox="0 0 20 20"
-                                    fill="currentColor"
-                                  >
-                                    <rect
-                                      x="4"
-                                      y="8"
-                                      width="12"
-                                      height="4"
-                                      rx="2"
-                                    />
-                                  </svg>
-                                  CD: {desc.cooldown}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </HoverCardContent>
+                        </HoverCard>
+                      </p>
+                      {cooldown ? (
+                        <span className="text-orange-500">{cooldown}</span>
+                      ) : (
+                        <span className="text-green-500">Ready</span>
                       )}
-                    </HoverCard>
+                    </div>
                   );
                 })}
               </div>

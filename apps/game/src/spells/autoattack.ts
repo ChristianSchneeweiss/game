@@ -1,3 +1,4 @@
+import { DamageModule } from "../modules/damage.module";
 import { BaseSpell } from "../spells";
 import type { SpellCastEvent } from "../timeline-events";
 import type { BattleManager, Entity } from "../types";
@@ -21,23 +22,23 @@ export class AutoAttackSpell extends BaseSpell {
     battleManager: BattleManager,
     roll: number
   ): SpellCastEvent["data"] | null {
-    const target = targets[0];
-    if (!target) {
-      return null;
-    }
-    const damage = battleManager.handler.damage(
-      this,
-      0.75 * roll,
-      "PHYSICAL",
+    const damageModule = new DamageModule("PHYSICAL", {
+      min: 0,
+      max: 15,
+    });
+    const { damageApplied, totalDamage } = damageModule.applyRawDamage(
       caster,
-      target
+      targets,
+      roll,
+      battleManager,
+      this
     );
 
     return {
-      damageApplied: new Map([[target.id, damage]]),
+      damageApplied,
       roll,
       spellId: this.config.id,
-      totalDamage: damage,
+      totalDamage,
     };
   }
 

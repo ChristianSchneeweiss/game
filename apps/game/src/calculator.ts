@@ -3,9 +3,9 @@ import type {
   BattleManager,
   DamageType,
   Effect,
+  Entity,
   Spell,
 } from "./types";
-import type { Entity } from "./types";
 
 export class calculator {
   /**

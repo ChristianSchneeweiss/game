@@ -1,6 +1,5 @@
-import { minMaxRoll } from "../min-max-roll";
+import { DamageModule } from "../modules/damage.module";
 import { DamageSpell } from "../spells";
-import type { Entity } from "../types";
 
 export class CinderWispSpell extends DamageSpell {
   constructor(id: string) {
@@ -9,32 +8,23 @@ export class CinderWispSpell extends DamageSpell {
         id,
         type: "cinder-wisp",
         name: "Cinder Wisp",
-        description: "A cinder wisp spell that damages all enemies.",
+        description: "A cinder wisp spell that damages enemies.",
         manaCost: 10,
         cooldown: 1,
         targetType: { enemies: 1, allies: 0 },
       },
-      0,
-      "FIRE"
+      new DamageModule("FIRE", {
+        min: 6,
+        max: 12,
+        attributeScaling: ({ caster }) => caster.getStat("intelligence") * 0.5,
+      })
     );
   }
 
-  protected calculateRawDamage(
-    caster: Entity,
-    target: Entity,
-    roll: number
-  ): number {
-    const min = 6;
-    const max = 12;
-    const rolled = Math.round(minMaxRoll(min, max, roll));
-    const intBonus = caster.getStat("intelligence") * 0.5;
-    return rolled + intBonus;
-  }
+  // protected textDescription(caster: Entity): string {
+  //   const min = this.damageModule.getRawDamage(caster, [], 0);
+  //   const max = this.damageModule.getRawDamage(caster, [], 20);
 
-  protected textDescription(caster: Entity): string {
-    const min = this.calculateRawDamage(caster, caster, 0);
-    const max = this.calculateRawDamage(caster, caster, 20);
-
-    return `A cinder wisp spell that damages a single enemy for ${min}-${max} damage.`;
-  }
+  //   return `A cinder wisp spell that damages a single enemy for ${min}-${max} damage.`;
+  // }
 }

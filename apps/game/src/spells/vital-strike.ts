@@ -1,54 +1,63 @@
-import { minMaxRoll } from "../min-max-roll";
-import { DamageSpell } from "../spells";
+import { DamageModule } from "../modules/damage.module";
+import { HealModule } from "../modules/heal.module";
+import { BaseSpell } from "../spells";
 import type { SpellCastEvent } from "../timeline-events";
 import type { BattleManager, Entity } from "../types";
 
-export class VitalStrikeSpell extends DamageSpell {
+export class VitalStrikeSpell extends BaseSpell {
+  protected damageModule: DamageModule;
+
   constructor(id: string) {
-    super(
-      {
-        id,
-        type: "vital-strike",
-        name: "Vital Strike",
-        description: "A vital strike spell that damages all enemies.",
-        manaCost: 0,
-        cooldown: 2,
-        targetType: { enemies: 1, allies: 0 },
-      },
-      0,
-      "PHYSICAL"
-    );
+    super({
+      id,
+      type: "vital-strike",
+      name: "Vital Strike",
+      description: "A vital strike spell that damages all enemies.",
+      manaCost: 0,
+      cooldown: 2,
+      targetType: { enemies: 1, allies: 0 },
+    });
+    this.damageModule = new DamageModule("PHYSICAL", {
+      min: 10,
+      max: 16,
+      attributeScaling: ({ caster }) => caster.getStat("strength") * 0.25,
+    });
   }
 
-  protected calculateRawDamage(
-    caster: Entity,
-    target: Entity,
-    roll: number
-  ): number {
-    const min = 10;
-    const max = 16;
-    const rolled = Math.round(minMaxRoll(min, max, roll));
-    const intBonus = caster.getStat("strength") * 0.25;
-    return rolled + intBonus;
-  }
-
-  protected realDamageHook(
-    battleManager: BattleManager,
+  protected _cast(
     caster: Entity,
     targets: Entity[],
-    roll: number,
-    damage: number
-  ): Partial<SpellCastEvent["data"]> | null {
-    const healing = Math.floor(damage * 0.5);
-    battleManager.handler.healing(this, healing, caster, caster);
+    battleManager: BattleManager,
+    roll: number
+  ): SpellCastEvent["data"] | null {
+    const { damageApplied, totalDamage } = this.damageModule.applyRawDamage(
+      caster,
+      targets,
+      roll,
+      battleManager,
+      this
+    );
+
+    const healModule = new HealModule(undefined, () => totalDamage * 0.5);
+    const { healingApplied } = healModule.applyRawHeal(
+      caster,
+      [caster],
+      roll,
+      battleManager,
+      this
+    );
+
     return {
-      healingApplied: new Map([[caster.id, healing]]),
+      healingApplied,
+      damageApplied,
+      roll,
+      spellId: this.config.id,
     };
   }
 
   protected textDescription(caster: Entity): string {
-    const min = this.calculateRawDamage(caster, caster, 0);
-    const max = this.calculateRawDamage(caster, caster, 20);
+    const min = this.damageModule.getRawDamage(caster, [], 0);
+    const max = this.damageModule.getRawDamage(caster, [], 20);
 
     return `A vital strike spell that damages a single enemy for ${min}-${max} damage. And heals the caster for 50% of the damage dealt.`;
   }
