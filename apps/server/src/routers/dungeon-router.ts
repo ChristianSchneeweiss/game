@@ -66,6 +66,8 @@ export const dungeonRouter = router({
         id: TB_dungeonData.id,
         key: TB_dungeonData.key,
         cleared: TB_dungeonData.cleared,
+        round: TB_dungeonData.round,
+        createdAt: TB_dungeonData.createdAt,
       })
       .from(TB_dungeonData)
       .innerJoin(
@@ -80,10 +82,22 @@ export const dungeonRouter = router({
 
     const uniques = new Map<
       string,
-      { id: string; key: string; cleared: boolean }
+      {
+        id: string;
+        key: string;
+        cleared: boolean;
+        round: number;
+        createdAt: Date;
+      }
     >();
     for (const dungeon of dungeons) {
-      uniques.set(dungeon.id, dungeon);
+      uniques.set(dungeon.id, {
+        id: dungeon.id,
+        key: dungeon.key,
+        cleared: dungeon.cleared,
+        round: dungeon.round,
+        createdAt: dungeon.createdAt ?? new Date(),
+      });
     }
 
     return Array.from(uniques.values());

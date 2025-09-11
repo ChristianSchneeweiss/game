@@ -2,7 +2,12 @@ import { Button } from "@/components/ui/button";
 import { trpc } from "@/utils/trpc";
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import { CheckCircle, Clock, Hash, MapPin, Play, Sword } from "lucide-react";
 import { useMemo } from "react";
+
+dayjs.extend(relativeTime);
 
 export const Route = createFileRoute("/dungeons/")({
   component: RouteComponent,
@@ -31,79 +36,199 @@ function RouteComponent() {
   }, [dungeons]);
 
   return (
-    <div className="container flex flex-col justify-center space-y-3 p-6">
-      <h1>Dungeons</h1>
-      <Button onClick={() => enterDungeon({ key: "dungeon1" })}>
-        Enter Dungeon 1
-      </Button>
-      <Button
-        onClick={() => enterDungeon({ key: "crypt-of-forgotten-echoes" })}
-      >
-        Enter Crypt of Forgotten Echoes
-      </Button>
-      <div className="mt-6">
-        <h2 className="mb-2 flex items-center gap-2 text-lg font-bold">
-          <span className="inline-block h-2 w-2 rounded-full bg-green-500" />
-          Active Dungeons
-        </h2>
-        <ul className="grid grid-cols-1 gap-4 md:grid-cols-2">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
+      {/* Header Section */}
+      <div className="mb-8 text-center">
+        <h1 className="mb-2 bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-4xl font-bold text-transparent">
+          🏰 DUNGEON REALM 🏰
+        </h1>
+        <div className="mx-auto h-1 w-32 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500"></div>
+      </div>
+
+      <div className="mx-auto max-w-6xl">
+        {/* Enter Dungeons Section */}
+        <div className="mb-8">
+          <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-blue-300">
+            <Sword className="h-6 w-6" />
+            ENTER NEW DUNGEONS
+          </h2>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <Button
+              onClick={() => enterDungeon({ key: "dungeon1" })}
+              className="bg-gradient-to-r from-red-600 to-red-500 px-6 py-4 text-lg font-bold text-white shadow-2xl transition-all duration-300 hover:scale-105 hover:from-red-500 hover:to-red-400"
+            >
+              <Play className="mr-2 h-5 w-5" />
+              Enter Dungeon 1
+            </Button>
+            <Button
+              onClick={() => enterDungeon({ key: "crypt-of-forgotten-echoes" })}
+              className="bg-gradient-to-r from-purple-600 to-purple-500 px-6 py-4 text-lg font-bold text-white shadow-2xl transition-all duration-300 hover:scale-105 hover:from-purple-500 hover:to-purple-400"
+            >
+              <Play className="mr-2 h-5 w-5" />
+              Enter Crypt of Forgotten Echoes
+            </Button>
+          </div>
+        </div>
+
+        {/* Active Dungeons Section */}
+        <div className="mb-8">
+          <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-green-300">
+            <MapPin className="h-6 w-6" />
+            ACTIVE DUNGEONS
+          </h2>
           {activeDungeons.length === 0 ? (
-            <li className="col-span-full text-gray-500 italic">
-              No active dungeons
-            </li>
+            <div className="text-center">
+              <div className="mx-auto mb-6 flex h-32 w-32 items-center justify-center rounded-full bg-gradient-to-br from-slate-800 to-slate-900">
+                <span className="text-6xl">🗺️</span>
+              </div>
+              <h3 className="mb-2 text-2xl font-bold text-white">
+                No Active Dungeons
+              </h3>
+              <p className="text-gray-400">
+                Enter a dungeon to begin your adventure!
+              </p>
+            </div>
           ) : (
-            activeDungeons.map((dungeon) => (
-              <li key={dungeon.id}>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              {activeDungeons.map((dungeon) => (
                 <Link
+                  key={dungeon.id}
                   to="/dungeons/$id"
                   params={{ id: dungeon.id }}
-                  className="group block rounded-lg border border-slate-300 bg-gradient-to-br from-slate-100 to-slate-200 p-4 shadow transition hover:shadow-lg dark:border-slate-700 dark:from-slate-800 dark:to-slate-700"
+                  className="group relative rounded-xl border-2 bg-gradient-to-br from-slate-800/90 to-slate-900/90 p-6 shadow-2xl backdrop-blur-sm transition-all duration-300 hover:scale-105"
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="text-lg font-semibold transition group-hover:text-blue-600 dark:group-hover:text-blue-400">
-                      {dungeon.key}
-                    </span>
-                    <span className="ml-2 rounded bg-slate-300 px-2 py-0.5 font-mono text-xs text-gray-600 dark:bg-slate-800 dark:text-gray-400">
-                      {dungeon.id.slice(0, 8)}...
-                    </span>
+                  {/* Dungeon Header */}
+                  <div className="mb-4 flex items-center gap-3">
+                    <span className="text-3xl">🏰</span>
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold text-white capitalize">
+                        {dungeon.key.replace("-", " ")}
+                      </h3>
+                      <div className="flex items-center gap-2">
+                        <span className="rounded-full bg-gradient-to-r from-green-400 to-green-500 px-3 py-1 text-sm font-bold text-black">
+                          IN PROGRESS
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                    In Progress
+
+                  {/* Dungeon Status */}
+                  <div className="mb-4">
+                    <div className="rounded-lg border border-green-600 bg-green-800/30 p-3">
+                      <div className="flex items-center gap-2 text-sm">
+                        <span className="text-green-300">⚔️</span>
+                        <span className="font-bold text-green-300">
+                          ADVENTURE AWAITS
+                        </span>
+                      </div>
+                      <div className="text-sm text-green-200">
+                        Continue your quest
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Dungeon Info */}
+                  <div className="mb-4 flex flex-row gap-4 text-sm text-gray-400">
+                    <div className="flex items-center gap-1">
+                      <Clock className="h-3 w-3" />
+                      <span>Started: {dayjs(dungeon.createdAt).fromNow()}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Hash className="h-3 w-3" />
+                      <span>Round: {dungeon.round + 1}</span>
+                    </div>
+                  </div>
+
+                  {/* Dungeon ID */}
+                  <div className="text-xs text-gray-400">
+                    Dungeon ID: {dungeon.id.slice(0, 8)}...
                   </div>
                 </Link>
-              </li>
-            ))
+              ))}
+            </div>
           )}
-        </ul>
-      </div>
-      <div className="mt-8">
-        <h2 className="mb-2 flex items-center gap-2 text-lg font-bold">
-          <span className="inline-block h-2 w-2 rounded-full bg-gray-400" />
-          Cleared Dungeons
-        </h2>
-        <ul className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        </div>
+
+        {/* Cleared Dungeons Section */}
+        <div className="mb-6">
+          <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-gray-300">
+            <CheckCircle className="h-6 w-6" />
+            CLEARED DUNGEONS
+          </h2>
           {clearedDungeons.length === 0 ? (
-            <li className="col-span-full text-gray-500 italic">
-              No cleared dungeons
-            </li>
+            <div className="text-center">
+              <div className="mx-auto mb-6 flex h-32 w-32 items-center justify-center rounded-full bg-gradient-to-br from-slate-800 to-slate-900">
+                <span className="text-6xl">🏆</span>
+              </div>
+              <h3 className="mb-2 text-2xl font-bold text-white">
+                No Cleared Dungeons
+              </h3>
+              <p className="text-gray-400">
+                Complete dungeons to see them here!
+              </p>
+            </div>
           ) : (
-            clearedDungeons.map((dungeon) => (
-              <Link
-                to="/dungeons/$id"
-                params={{ id: dungeon.id }}
-                key={dungeon.id}
-                className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-900"
-              >
-                <span className="font-semibold text-gray-700 dark:text-gray-200">
-                  {dungeon.key}
-                </span>
-                <span className="ml-2 rounded bg-slate-200 px-2 py-0.5 font-mono text-xs text-gray-400 dark:bg-slate-800">
-                  {dungeon.id.slice(0, 8)}...
-                </span>
-              </Link>
-            ))
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              {clearedDungeons.map((dungeon) => (
+                <Link
+                  key={dungeon.id}
+                  to="/dungeons/$id"
+                  params={{ id: dungeon.id }}
+                  className="group relative rounded-xl border-2 bg-gradient-to-br from-slate-800/90 to-slate-900/90 p-6 shadow-2xl backdrop-blur-sm transition-all duration-300 hover:scale-105"
+                >
+                  {/* Dungeon Header */}
+                  <div className="mb-4 flex items-center gap-3">
+                    <span className="text-3xl">🏆</span>
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold text-white capitalize">
+                        {dungeon.key.replace("-", " ")}
+                      </h3>
+                      <div className="flex items-center gap-2">
+                        <span className="rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 px-3 py-1 text-sm font-bold text-black">
+                          COMPLETED
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Dungeon Status */}
+                  <div className="mb-4">
+                    <div className="rounded-lg border border-yellow-600 bg-yellow-800/30 p-3">
+                      <div className="flex items-center gap-2 text-sm">
+                        <span className="text-yellow-300">🏆</span>
+                        <span className="font-bold text-yellow-300">
+                          VICTORY ACHIEVED
+                        </span>
+                      </div>
+                      <div className="text-sm text-yellow-200">
+                        View your triumph
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Dungeon Info */}
+                  <div className="mb-4 flex flex-row gap-4 text-sm text-gray-400">
+                    <div className="flex items-center gap-1">
+                      <Clock className="h-3 w-3" />
+                      <span>
+                        Completed: {dayjs(dungeon.createdAt).fromNow()}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Hash className="h-3 w-3" />
+                      <span>Final Round: {dungeon.round}</span>
+                    </div>
+                  </div>
+
+                  {/* Dungeon ID */}
+                  <div className="text-xs text-gray-400">
+                    Dungeon ID: {dungeon.id.slice(0, 8)}...
+                  </div>
+                </Link>
+              ))}
+            </div>
           )}
-        </ul>
+        </div>
       </div>
     </div>
   );
