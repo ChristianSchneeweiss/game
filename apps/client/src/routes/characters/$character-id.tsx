@@ -13,10 +13,17 @@ export const Route = createFileRoute("/characters/$character-id")({
 function RouteComponent() {
   const { "character-id": characterId } = Route.useParams();
   const { data: character, refetch: refetchCharacter } = useQuery(
-    trpc.character.getCharacter.queryOptions({ id: characterId }),
+    trpc.character.getCharacter.queryOptions(
+      { id: characterId },
+      {
+        staleTime: 60_000,
+      },
+    ),
   );
   const { data: spells, refetch: refetchSpells } = useQuery(
-    trpc.getMySpells.queryOptions(),
+    trpc.getMySpells.queryOptions(undefined, {
+      staleTime: 60_000,
+    }),
   );
   const { mutateAsync: equipSpell } = useMutation(
     trpc.character.equipSpell.mutationOptions({
