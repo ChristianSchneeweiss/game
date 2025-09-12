@@ -14,6 +14,11 @@ const spellCastEvent = z.object({
 
 export type SpellCastEvent = z.infer<typeof spellCastEvent>;
 
+export type OptionalSpellCastEvent = Omit<
+  SpellCastEvent["data"],
+  "spellId" | "roll"
+> | null;
+
 const deathEvent = z.object({
   eventType: z.literal("DEATH"),
   data: z.object({

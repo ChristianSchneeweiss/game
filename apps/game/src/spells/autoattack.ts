@@ -1,4 +1,4 @@
-import { DamageModule } from "../modules/damage.module";
+import { MinMaxDamageModule } from "../modules/damage.module";
 import { DamageSpell } from "../spells";
 
 export class AutoAttackSpell extends DamageSpell {
@@ -13,7 +13,7 @@ export class AutoAttackSpell extends DamageSpell {
         cooldown: 0,
         targetType: { enemies: 1, allies: 0 },
       },
-      new DamageModule("PHYSICAL", {
+      new MinMaxDamageModule("PHYSICAL", {
         min: 0,
         max: 15,
       })

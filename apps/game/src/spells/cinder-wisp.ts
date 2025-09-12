@@ -1,4 +1,4 @@
-import { DamageModule } from "../modules/damage.module";
+import { MinMaxDamageModule } from "../modules/damage.module";
 import { DamageSpell } from "../spells";
 
 export class CinderWispSpell extends DamageSpell {
@@ -13,7 +13,7 @@ export class CinderWispSpell extends DamageSpell {
         cooldown: 1,
         targetType: { enemies: 1, allies: 0 },
       },
-      new DamageModule("FIRE", {
+      new MinMaxDamageModule("FIRE", {
         min: 6,
         max: 12,
         attributeScaling: ({ caster }) =>

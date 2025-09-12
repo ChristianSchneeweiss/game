@@ -4,9 +4,9 @@ import {
   MindControlEffect,
   ShieldEffect,
 } from "./effect";
-import type { DamageModule } from "./modules/damage.module";
+import type { DamageModule, MinMaxDamageModule } from "./modules/damage.module";
 import type { HealModule } from "./modules/heal.module";
-import type { SpellCastEvent } from "./timeline-events";
+import type { OptionalSpellCastEvent, SpellCastEvent } from "./timeline-events";
 import type {
   BattleManager,
   DamageType,
@@ -84,7 +84,11 @@ export abstract class BaseSpell implements Spell {
     if (!result) return null;
     return {
       eventType: "SPELL_CAST",
-      data: result,
+      data: {
+        ...result,
+        spellId: this.config.id,
+        roll,
+      },
     };
   }
 
@@ -104,7 +108,7 @@ export abstract class BaseSpell implements Spell {
     targets: Entity[],
     battleManager: BattleManager,
     roll: number
-  ): SpellCastEvent["data"] | null;
+  ): OptionalSpellCastEvent;
 
   protected validateTargets(caster: Entity, targets: Entity[]): boolean {
     const { enemies, allies } = this.config.targetType;
@@ -129,7 +133,7 @@ export abstract class BaseSpell implements Spell {
 export class DamageSpell extends BaseSpell {
   protected damageModule: DamageModule;
 
-  constructor(config: SpellConfig, damageModule: DamageModule) {
+  constructor(config: SpellConfig, damageModule: MinMaxDamageModule) {
     super(config);
     this.damageModule = damageModule;
   }
@@ -139,7 +143,7 @@ export class DamageSpell extends BaseSpell {
     targets: Entity[],
     battleManager: BattleManager,
     roll: number
-  ): SpellCastEvent["data"] | null {
+  ) {
     const { damageApplied, totalDamage } = this.damageModule.applyRawDamage(
       caster,
       targets,
@@ -149,8 +153,6 @@ export class DamageSpell extends BaseSpell {
     );
 
     return {
-      roll,
-      spellId: this.config.id,
       totalDamage,
       damageApplied,
     };
@@ -177,7 +179,7 @@ export class HealingSpell extends BaseSpell {
     targets: Entity[],
     battleManager: BattleManager,
     roll: number
-  ): SpellCastEvent["data"] | null {
+  ) {
     const { healingApplied, totalHeal } = this.healModule.applyRawHeal(
       caster,
       targets,
@@ -188,8 +190,6 @@ export class HealingSpell extends BaseSpell {
 
     return {
       healingApplied,
-      roll,
-      spellId: this.config.id,
     };
   }
 

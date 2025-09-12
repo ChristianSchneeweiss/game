@@ -1,7 +1,7 @@
-import { DamageModule } from "../modules/damage.module";
+import { DamageModule, MinMaxDamageModule } from "../modules/damage.module";
 import { HealModule } from "../modules/heal.module";
 import { BaseSpell } from "../spells";
-import type { SpellCastEvent } from "../timeline-events";
+import type { OptionalSpellCastEvent } from "../timeline-events";
 import type { BattleManager, Entity } from "../types";
 
 export class VitalStrikeSpell extends BaseSpell {
@@ -17,7 +17,7 @@ export class VitalStrikeSpell extends BaseSpell {
       cooldown: 2,
       targetType: { enemies: 1, allies: 0 },
     });
-    this.damageModule = new DamageModule("PHYSICAL", {
+    this.damageModule = new MinMaxDamageModule("PHYSICAL", {
       min: 10,
       max: 16,
       attributeScaling: ({ caster }) => caster.getAttribute("strength") * 0.25,
@@ -29,7 +29,7 @@ export class VitalStrikeSpell extends BaseSpell {
     targets: Entity[],
     battleManager: BattleManager,
     roll: number
-  ): SpellCastEvent["data"] | null {
+  ): OptionalSpellCastEvent {
     const { damageApplied, totalDamage } = this.damageModule.applyRawDamage(
       caster,
       targets,
@@ -50,8 +50,6 @@ export class VitalStrikeSpell extends BaseSpell {
     return {
       healingApplied,
       damageApplied,
-      roll,
-      spellId: this.config.id,
     };
   }
 

@@ -1,4 +1,4 @@
-import { DamageModule } from "../modules/damage.module";
+import { MinMaxDamageModule } from "../modules/damage.module";
 import { DamageSpell } from "../spells";
 
 export class FireballSpell extends DamageSpell {
@@ -13,7 +13,7 @@ export class FireballSpell extends DamageSpell {
         cooldown: 2,
         targetType: { enemies: 1, allies: 0 },
       },
-      new DamageModule("FIRE", {
+      new MinMaxDamageModule("FIRE", {
         min: 0,
         max: 20,
         attributeScaling: ({ caster }) =>

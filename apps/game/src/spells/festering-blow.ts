@@ -1,4 +1,4 @@
-import { DamageModule } from "../modules/damage.module";
+import { MinMaxDamageModule } from "../modules/damage.module";
 import { DamageSpell } from "../spells";
 import type { Entity } from "../types";
 
@@ -14,7 +14,7 @@ export class FesteringBlowSpell extends DamageSpell {
         cooldown: 1,
         targetType: { enemies: Infinity, allies: 0 },
       },
-      new DamageModule("PHYSICAL", {
+      new MinMaxDamageModule("PHYSICAL", {
         min: 5,
         max: 8,
       })

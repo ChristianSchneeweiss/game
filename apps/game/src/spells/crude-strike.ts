@@ -1,11 +1,15 @@
 import { nanoid } from "nanoid";
 import { StatModifierEffect } from "../effect";
-import { minMaxRoll } from "../min-max-roll";
+import { DamageModule, MinMaxDamageModule } from "../modules/damage.module";
+import { EffectModule } from "../modules/effect.module";
 import { BaseSpell } from "../spells";
-import type { SpellCastEvent } from "../timeline-events";
+import type { OptionalSpellCastEvent } from "../timeline-events";
 import type { BattleManager, Entity } from "../types";
 
 export class CrudeStrikeSpell extends BaseSpell {
+  damageModule: DamageModule;
+  effectModule: EffectModule;
+
   constructor(id: string) {
     super({
       id,
@@ -16,6 +20,27 @@ export class CrudeStrikeSpell extends BaseSpell {
       cooldown: 0,
       targetType: { enemies: 1, allies: 0 },
     });
+    this.damageModule = new MinMaxDamageModule("PHYSICAL", {
+      min: 6,
+      max: 10,
+    });
+    this.effectModule = new EffectModule(({ caster, targets }) => {
+      return new StatModifierEffect(
+        this,
+        "DEBUFF",
+        1,
+        caster,
+        [
+          {
+            id: nanoid(),
+            attribute: "agility",
+            value: 0.9,
+            operation: "MULTIPLY",
+          },
+        ],
+        targets[0]!
+      );
+    });
   }
 
   protected _cast(
@@ -23,52 +48,33 @@ export class CrudeStrikeSpell extends BaseSpell {
     targets: Entity[],
     battleManager: BattleManager,
     roll: number
-  ): SpellCastEvent["data"] | null {
-    const target = targets[0];
-    if (!target) {
-      return null;
-    }
-    const min = 6;
-    const max = 10;
-    const damage = Math.round(minMaxRoll(min, max, roll));
-
-    const dexEffect = new StatModifierEffect(
-      this,
-      "DEBUFF",
-      1,
+  ): OptionalSpellCastEvent {
+    const { damageApplied, totalDamage } = this.damageModule.applyRawDamage(
       caster,
-      [
-        {
-          id: nanoid(),
-          attribute: "agility",
-          value: 0.9,
-          operation: "MULTIPLY",
-        },
-      ],
-      target
+      targets,
+      roll,
+      battleManager,
+      this
     );
 
-    const realDamage = battleManager.handler.damage(
-      this,
-      damage,
-      "PHYSICAL",
+    const { realEffects } = this.effectModule.applyRawEffect(
       caster,
-      target
-    );
-    const realEffect = battleManager.handler.effect(
-      this,
-      dexEffect,
-      caster,
-      target
+      targets,
+      roll,
+      battleManager,
+      this
     );
 
     return {
-      damageApplied: new Map([[target.id, realDamage]]),
-      roll,
-      spellId: this.config.id,
-      totalDamage: realDamage,
-      effectsApplied: realEffect
-        ? new Map([[target.id, realEffect.effectType]])
+      damageApplied,
+      totalDamage,
+      effectsApplied: realEffects
+        ? new Map(
+            Array.from(realEffects).map((effect) => [
+              effect.target.id,
+              effect.effectType,
+            ])
+          )
         : undefined,
     };
   }
