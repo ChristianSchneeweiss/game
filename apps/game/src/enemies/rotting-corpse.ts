@@ -1,9 +1,9 @@
 import { nanoid } from "nanoid";
-import { Enemy } from "../base-entity";
 import { BasicAttackSpell } from "../spells/basic-attack";
 import { FesteringBlowSpell } from "../spells/festering-blow";
+import { BaseEnemy } from "./base/base.enemy";
 
-export class RottingCorpse extends Enemy {
+export class RottingCorpse extends BaseEnemy {
   constructor(id?: string) {
     const realId = id ?? `rotting-corpse-${nanoid()}`;
     super({

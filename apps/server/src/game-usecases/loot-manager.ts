@@ -1,4 +1,4 @@
-import type { SpellType } from "@loot-game/game/spell-types";
+import type { SpellType } from "@loot-game/game/spells/base/spell-types";
 import type { Loot, LootEntity } from "@loot-game/game/types";
 import { and, eq } from "drizzle-orm";
 import type { PgTransaction } from "drizzle-orm/pg-core";

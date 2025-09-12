@@ -1,6 +1,7 @@
-import { Character, Enemy } from "@loot-game/game/base-entity";
-import { EnemyTypeSchema } from "@loot-game/game/enemies/enemies";
-import { SpellTypeSchema } from "@loot-game/game/spell-types";
+import { Character } from "@loot-game/game/base-entity";
+import type { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
+import { EnemyTypeSchema } from "@loot-game/game/enemies/base/enemy-types";
+import { SpellTypeSchema } from "@loot-game/game/spells/base/spell-types";
 import { z } from "zod";
 import { createEnemyFromType } from "./enemy-factory";
 import { createSpellFromType } from "./spell-factory";
@@ -42,7 +43,7 @@ export const configSchema = z.object({
 export class SyncFactory {
   constructor(private readonly env: Env) {}
 
-  async addEnemyToSync(enemy: Enemy, battleId: string) {
+  async addEnemyToSync(enemy: BaseEnemy, battleId: string) {
     const schema = z.object({
       id: z.string(),
       type: EnemyTypeSchema,
@@ -62,7 +63,10 @@ export class SyncFactory {
     );
   }
 
-  async createEnemyFromSync(enemyId: string, battleId: string): Promise<Enemy> {
+  async createEnemyFromSync(
+    enemyId: string,
+    battleId: string
+  ): Promise<BaseEnemy> {
     const kvData = await this.env.GAME_DO_SYNC.get(
       this.getEnemyKey(battleId, enemyId)
     );

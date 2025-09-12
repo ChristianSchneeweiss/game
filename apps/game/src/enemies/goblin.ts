@@ -1,8 +1,8 @@
 import { nanoid } from "nanoid";
-import { Enemy } from "../base-entity";
-import { AutoAttackSpell } from "../spells/basic-attack";
+import { BasicAttackSpell } from "../spells/basic-attack";
+import { BaseEnemy } from "./base/base.enemy";
 
-export class Goblin extends Enemy {
+export class Goblin extends BaseEnemy {
   constructor(id?: string) {
     const realId = id ?? `goblin-${nanoid()}`;
     super({
@@ -28,6 +28,6 @@ export class Goblin extends Enemy {
       },
     });
 
-    this.spells = [new AutoAttackSpell(`autoattack-${realId}`)];
+    this.spells = [new BasicAttackSpell(`basic-attack-${realId}`)];
   }
 }

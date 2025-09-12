@@ -1,8 +1,9 @@
-import { Character, Enemy } from "@loot-game/game/base-entity";
+import { Character } from "@loot-game/game/base-entity";
 import { cryptOfForgottenEchoes } from "@loot-game/game/dungeons/crypt-of-forgotten-echoes";
 import { DungeonKeySchema } from "@loot-game/game/dungeons/dungeon-keys";
 import { dungeon1 } from "@loot-game/game/dungeons/dungeon1";
 import type { DungeonData } from "@loot-game/game/dungeons/types";
+import type { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
 import type { LootEntity } from "@loot-game/game/types";
 import { eq, inArray } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
@@ -94,7 +95,7 @@ export const dungeonManager = {
       .from(TB_dungeonEnemy)
       .where(eq(TB_dungeonEnemy.dungeonId, id));
 
-    const enemies = EntityFactory.createEnemyFromDb(enemyData, db);
+    const enemies = EntityFactory.createEnemyFromDb(enemyData);
     const playerTeam: Character[] = [];
     for (const participant of participants) {
       const character = await EntityFactory.createCharacter(
@@ -125,7 +126,7 @@ export const dungeonManager = {
   handleDungeonCleared: async (
     dungeonId: string,
     battleId: string,
-    enemies: Enemy[],
+    enemies: BaseEnemy[],
     characters: BattleResultCharacterData[],
     winningTeam: "TEAM_A" | "TEAM_B",
     db: PostgresJsDatabase
@@ -216,7 +217,6 @@ export const dungeonManager = {
         .where(eq(TB_dungeonData.id, dungeonId));
 
       const config = dungeonManager.getDungeonConfig(dungeon.key);
-
       if (dungeon.round >= config.availableEnemies.length) {
         await tx
           .update(TB_dungeonData)
@@ -236,5 +236,6 @@ export const dungeonManager = {
     } else if (dungeonKey.data === "crypt-of-forgotten-echoes") {
       return cryptOfForgottenEchoes();
     }
+    throw new Error("Invalid dungeon key");
   },
 };

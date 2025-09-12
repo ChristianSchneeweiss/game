@@ -120,6 +120,9 @@ export interface Spell
   getValidTargets(caster: Entity): Entity[] | null;
   cast(caster: Entity, targets: Entity[]): SpellCastEvent | null;
   description(caster: Entity): SpellDescription;
+
+  /** allows to override the target type for a spell. So we can have dynamic target types based on stuff */
+  getTargetType(): TargetType;
 }
 
 export interface SpellConfig {

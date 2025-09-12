@@ -1,5 +1,5 @@
-import { type Enemy } from "@loot-game/game/base-entity";
-import { EnemyTypeSchema } from "@loot-game/game/enemies/enemies";
+import type { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
+import { EnemyTypeSchema } from "@loot-game/game/enemies/base/enemy-types";
 import {
   WorkflowEntrypoint,
   WorkflowStep,
@@ -63,7 +63,7 @@ export class BattleDoneWorkflow extends WorkflowEntrypoint<Env, Params> {
       }
 
       const id = dungeonBattle.dungeonId;
-      const enemies: Enemy[] = [];
+      const enemies: BaseEnemy[] = [];
       for (const enemy of battleResult.teamB.filter((e) => e.dead)) {
         const enemyEntity = EntityFactory.createEnemyFromType(enemy.type);
         enemies.push(enemyEntity);

@@ -1,6 +1,6 @@
 import type { ClerkClient } from "@clerk/backend";
 import type { BaseEntity } from "@loot-game/game/base-entity";
-import { BM } from "@loot-game/game/battle";
+import { BM } from "@loot-game/game/bm";
 import type { TimelineEventFull } from "@loot-game/game/timeline-events";
 import type {
   BattleRound,
@@ -330,14 +330,16 @@ export class BattleWebsocket extends DurableObject {
     }
     const targets = spell.getValidTargets(entity);
 
-    let enemies = spell.config.targetType.enemies;
-    let allies = spell.config.targetType.allies;
-    if (spell.config.targetType.enemies === Infinity) {
+    const targetType = spell.getTargetType();
+
+    let enemies = targetType.enemies;
+    let allies = targetType.allies;
+    if (targetType.enemies === Infinity) {
       enemies = this.bm
         .getAliveEntities()
         .filter((e) => e.team === "TEAM_B").length;
     }
-    if (spell.config.targetType.allies === Infinity) {
+    if (targetType.allies === Infinity) {
       allies = this.bm
         .getAliveEntities()
         .filter((e) => e.team === "TEAM_A").length;

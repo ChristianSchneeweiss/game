@@ -1,8 +1,8 @@
 import { nanoid } from "nanoid";
-import { Enemy } from "../base-entity";
 import { CrudeStrikeSpell } from "../spells/crude-strike";
+import { BaseEnemy } from "./base/base.enemy";
 
-export class SkeletonGrunt extends Enemy {
+export class SkeletonGrunt extends BaseEnemy {
   constructor(id?: string) {
     const realId = id ?? `skeleton-grunt-${nanoid()}`;
     super({

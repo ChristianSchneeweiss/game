@@ -1,4 +1,4 @@
-import { SpellTypeSchema } from "@loot-game/game/spell-types";
+import { SpellTypeSchema } from "@loot-game/game/spells/base/spell-types";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { TB_spellStats, TB_user } from "../db/schema";

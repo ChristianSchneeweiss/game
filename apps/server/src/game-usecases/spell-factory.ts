@@ -1,5 +1,5 @@
-import type { SpellType } from "@loot-game/game/spell-types";
-import { AutoAttackSpell } from "@loot-game/game/spells/autoattack";
+import type { SpellType } from "@loot-game/game/spells/base/spell-types";
+import { BasicAttackSpell } from "@loot-game/game/spells/basic-attack";
 import { CinderWispSpell } from "@loot-game/game/spells/cinder-wisp";
 import { CrudeStrikeSpell } from "@loot-game/game/spells/crude-strike";
 import { FesteringBlowSpell } from "@loot-game/game/spells/festering-blow";
@@ -46,8 +46,8 @@ export const createSpellFromType = (id: string, type: SpellType) => {
       return new CinderWispSpell(id);
     case "vital-strike":
       return new VitalStrikeSpell(id);
-    case "autoattack":
-      return new AutoAttackSpell(id);
+    case "basic-attack":
+      return new BasicAttackSpell(id);
     default:
       throw new Error(`Unknown spell type: ${type}`);
   }

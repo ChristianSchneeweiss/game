@@ -10,7 +10,7 @@ import { trpc } from "@/utils/trpc";
 import type { Character } from "@loot-game/game/base-entity";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Edit2Icon, Edit3, Edit3Icon, EditIcon, Loader2 } from "lucide-react";
+import { Edit2Icon, Edit3, Loader2 } from "lucide-react";
 import { useState } from "react";
 
 type Props = {

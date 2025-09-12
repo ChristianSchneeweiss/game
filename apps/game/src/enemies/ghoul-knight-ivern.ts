@@ -1,10 +1,10 @@
 import { nanoid } from "nanoid";
-import { Enemy } from "../base-entity";
+import { BaseEnemy } from "./base/base.enemy";
 import { BasicAttackSpell } from "../spells/basic-attack";
 import { FesteringBlowSpell } from "../spells/festering-blow";
 import { VitalStrikeSpell } from "../spells/vital-strike";
 
-export class GhoulKnightIvern extends Enemy {
+export class GhoulKnightIvern extends BaseEnemy {
   constructor(id?: string) {
     const realId = id ?? `ghoul-knight-ivern-${nanoid()}`;
     super({

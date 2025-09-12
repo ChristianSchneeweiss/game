@@ -1,5 +1,4 @@
 import { calculator } from "./calculator";
-import type { EnemyType } from "./enemies/enemies";
 import type { TimelineEvent } from "./timeline-events";
 import type {
   BattleManager,
@@ -7,7 +6,6 @@ import type {
   Effect,
   Entity,
   EntityAttributes,
-  Loot,
   Spell,
   StatModifier,
   Team,
@@ -155,41 +153,6 @@ export class BaseEntity implements Entity {
     }
 
     return { spell, targets };
-  }
-}
-
-type EnemyParams = {
-  id: string;
-  type: EnemyType;
-  name: string;
-  team: Team;
-  maxHealth: number;
-  maxMana: number;
-  baseAttributes: EntityAttributes;
-  xp: number;
-  loot: Loot;
-};
-
-export class Enemy extends BaseEntity {
-  public type: EnemyType;
-  public xp: number;
-  public loot: Loot;
-
-  constructor({
-    id,
-    type,
-    name,
-    team,
-    maxHealth,
-    maxMana,
-    baseAttributes,
-    xp,
-    loot,
-  }: EnemyParams) {
-    super(id, name, team, maxHealth, maxMana, baseAttributes);
-    this.type = type;
-    this.xp = xp;
-    this.loot = loot;
   }
 }
 

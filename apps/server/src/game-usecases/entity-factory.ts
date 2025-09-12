@@ -1,38 +1,22 @@
-import { BaseEntity, Character, Enemy } from "@loot-game/game/base-entity";
-import type { EnemyType } from "@loot-game/game/enemies/enemies";
-import { AutoAttackSpell } from "@loot-game/game/spells/autoattack";
-import { FireballSpell } from "@loot-game/game/spells/fireball";
-import { type Entity } from "@loot-game/game/types";
+import { Character } from "@loot-game/game/base-entity";
+import type { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
+import type { EnemyType } from "@loot-game/game/enemies/base/enemy-types";
+import { BasicAttackSpell } from "@loot-game/game/spells/basic-attack";
 import { eq } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import { nanoid } from "nanoid";
 import { TB_character, TB_dungeonEnemy, TB_spellStats } from "../db/schema";
 import { createEnemyFromType } from "./enemy-factory";
 import { createSpellFromType } from "./spell-factory";
 
 export class EntityFactory {
-  static createEnemy(): Entity {
-    const baseEntity = new BaseEntity(nanoid(), "Goblin", "TEAM_B", 30, 10, {
-      intelligence: 2,
-      vitality: 2,
-      agility: 2,
-      strength: 2,
-    });
-    baseEntity.spells = [
-      new FireballSpell(nanoid()),
-      new AutoAttackSpell(nanoid()),
-    ];
-    return baseEntity;
-  }
-
-  static createEnemyFromType(type: EnemyType): Enemy {
+  static createEnemyFromType(type: EnemyType): BaseEnemy {
     return createEnemyFromType(type);
   }
 
   static createEnemyFromDb(
     enemies: (typeof TB_dungeonEnemy.$inferSelect)[]
-  ): Enemy[][] {
-    const entitiesByRound: Enemy[][] = [];
+  ): BaseEnemy[][] {
+    const entitiesByRound: BaseEnemy[][] = [];
     for (const enemy of enemies) {
       const entity = this.createEnemyFromType(enemy.type);
       entity.id = enemy.id;
@@ -101,7 +85,7 @@ export class EntityFactory {
       .map((spell) => createSpellFromType(spell.id, spell.type));
 
     // todo not sure about this. maybe we should have it as a proper spell in TB_spellStats
-    baseEntity.spells.push(new AutoAttackSpell(baseEntity.id));
+    baseEntity.spells.push(new BasicAttackSpell(baseEntity.id));
 
     return baseEntity;
   }

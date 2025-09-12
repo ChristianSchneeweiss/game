@@ -1,5 +1,6 @@
-import { BaseEntity, Enemy } from "@loot-game/game/base-entity";
-import type { BM } from "@loot-game/game/battle";
+import { BaseEntity } from "@loot-game/game/base-entity";
+import type { BM } from "@loot-game/game/bm";
+import { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
 import { timelineEventSchema } from "@loot-game/game/timeline-events";
 import type { Entity } from "@loot-game/game/types";
 import { produce } from "immer";
@@ -51,7 +52,7 @@ export const bmStorage = {
           id: ent.id,
           health: ent.health,
           dead: ent.isDead(),
-          type: ent instanceof Enemy ? ent.type : "goblin", // todo not goblin default
+          type: ent instanceof BaseEnemy ? ent.type : "goblin", // todo not goblin default
         })),
       } satisfies BattleResult)
     );

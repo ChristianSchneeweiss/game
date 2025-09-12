@@ -1,9 +1,9 @@
 import { nanoid } from "nanoid";
-import { Enemy } from "../base-entity";
-import { AutoAttackSpell } from "../spells/basic-attack";
+import { BasicAttackSpell } from "../spells/basic-attack";
 import { CinderWispSpell } from "../spells/cinder-wisp";
+import { BaseEnemy } from "./base/base.enemy";
 
-export class WispOfRegret extends Enemy {
+export class WispOfRegret extends BaseEnemy {
   constructor(id?: string) {
     const realId = id ?? `wisp-of-regret-${nanoid()}`;
     super({
@@ -28,7 +28,7 @@ export class WispOfRegret extends Enemy {
 
     this.spells = [
       new CinderWispSpell(`cinder-wisp-${realId}`),
-      new AutoAttackSpell(`autoattack-${realId}`),
+      new BasicAttackSpell(`basic-attack-${realId}`),
     ];
   }
 }

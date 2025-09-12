@@ -2,7 +2,7 @@ import type { EntityAttributes } from "@loot-game/game/types";
 import {
   statPointsReceived,
   xpNeededForLevelUp,
-} from "@loot-game/game/xp-curve";
+} from "@loot-game/game/utils/xp-curve";
 import { eq } from "drizzle-orm";
 import type { PgTransaction } from "drizzle-orm/pg-core";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";

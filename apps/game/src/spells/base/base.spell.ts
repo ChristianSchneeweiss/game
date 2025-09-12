@@ -2,7 +2,13 @@ import type {
   OptionalSpellCastEvent,
   SpellCastEvent,
 } from "../../timeline-events";
-import type { BattleManager, Entity, Spell, SpellConfig } from "../../types";
+import type {
+  BattleManager,
+  Entity,
+  Spell,
+  SpellConfig,
+  TargetType,
+} from "../../types";
 
 export abstract class BaseSpell implements Spell {
   config: SpellConfig;
@@ -46,10 +52,11 @@ export abstract class BaseSpell implements Spell {
       .filter((e) => !e.isDead());
     let targets: Entity[] = [];
 
-    if (this.config.targetType.enemies > 0) {
+    const targetType = this.getTargetType();
+    if (targetType.enemies > 0) {
       targets = enemies;
     }
-    if (this.config.targetType.allies > 0) {
+    if (targetType.allies > 0) {
       targets = [...targets, ...allies];
     }
 
@@ -83,7 +90,7 @@ export abstract class BaseSpell implements Spell {
   description(caster: Entity) {
     return {
       text: this.textDescription(caster),
-      targetType: this.config.targetType,
+      targetType: this.getTargetType(),
       cooldown: this.config.cooldown,
       manaCost: this.config.manaCost,
     };
@@ -99,7 +106,7 @@ export abstract class BaseSpell implements Spell {
   ): OptionalSpellCastEvent;
 
   protected validateTargets(caster: Entity, targets: Entity[]): boolean {
-    const { enemies, allies } = this.config.targetType;
+    const { enemies, allies } = this.getTargetType();
     if (enemies === 0 && allies === 0) return true;
     if (targets.length === 0) return false;
 
@@ -115,5 +122,9 @@ export abstract class BaseSpell implements Spell {
     // one round cooldown
     this.currentCooldown =
       this.config.cooldown === 0 ? 0 : this.config.cooldown + 1;
+  }
+
+  getTargetType(): TargetType {
+    return this.config.targetType;
   }
 }

@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { trpc } from "@/utils/trpc";
 import type { Character } from "@loot-game/game/base-entity";
 import type { EntityAttributes } from "@loot-game/game/types";
-import { xpNeededForLevelUp } from "@loot-game/game/xp-curve";
+import { xpNeededForLevelUp } from "@loot-game/game/utils/xp-curve";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Heart, PlusIcon, Shield, Sparkles, XIcon, Zap } from "lucide-react";
 import { useState } from "react";
@@ -206,7 +206,7 @@ export const CharacterCard = ({ character }: { character: Character }) => {
                   </div>
                 </div>
               </div>
-              {spell.config.type !== "autoattack" && (
+              {spell.config.type !== "basic-attack" && (
                 <Button
                   size="icon"
                   variant="ghost"

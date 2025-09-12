@@ -189,10 +189,11 @@ export class BM implements BattleManager, RoundLifecycleHooks {
       .map((id) => this.getEntityById(id))
       .filter((e): e is Entity => e !== undefined);
 
+    const targetType = spell.getTargetType();
     if (
       targets.length === 0 &&
-      spell.config.targetType.enemies === 0 &&
-      spell.config.targetType.allies === 0
+      targetType.enemies === 0 &&
+      targetType.allies === 0
     ) {
       return null;
     }
@@ -201,10 +202,10 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     const myTeam = caster.team;
     const targetEnemies = targets
       .filter((t) => t.team !== myTeam)
-      .slice(0, spell.config.targetType.enemies);
+      .slice(0, targetType.enemies);
     const targetAllies = targets
       .filter((t) => t.team === myTeam)
-      .slice(0, spell.config.targetType.allies);
+      .slice(0, targetType.allies);
     const allTargets = [...targetEnemies, ...targetAllies];
     return spell.cast(caster, allTargets);
   }
