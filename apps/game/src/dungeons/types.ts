@@ -1,7 +1,7 @@
 import z from "zod";
 import type { Character, Enemy } from "../base-entity";
-import type { BM } from "../battle";
-import type { EnemyType } from "../enemies";
+import type { BM } from "../bm";
+import type { EnemyType } from "../enemies/enemies";
 import type { DungeonKey } from "./dungeon-keys";
 
 export type DungeonRound = {

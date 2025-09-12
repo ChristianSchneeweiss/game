@@ -1,4 +1,4 @@
-import { minMaxRoll } from "../min-max-roll";
+import { minMaxRoll } from "../utils/min-max-roll";
 import type { BattleManager, Entity, Spell, SpellModule } from "../types";
 
 export class HealModule implements SpellModule {

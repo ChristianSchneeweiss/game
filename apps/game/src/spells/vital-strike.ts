@@ -1,8 +1,8 @@
 import { DamageModule, MinMaxDamageModule } from "../modules/damage.module";
 import { HealModule } from "../modules/heal.module";
-import { BaseSpell } from "../spells";
 import type { OptionalSpellCastEvent } from "../timeline-events";
 import type { BattleManager, Entity } from "../types";
+import { BaseSpell } from "./base/base.spell";
 
 export class VitalStrikeSpell extends BaseSpell {
   protected damageModule: DamageModule;

@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const SpellTypeSchema = z.union([
-  z.literal("autoattack"),
+  z.literal("basic-attack"),
   z.literal("fireball"),
   z.literal("single-heal"),
   z.literal("crude-strike"),

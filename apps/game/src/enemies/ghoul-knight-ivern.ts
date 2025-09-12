@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import { Enemy } from "../base-entity";
-import { AutoAttackSpell } from "../spells/autoattack";
+import { BasicAttackSpell } from "../spells/basic-attack";
 import { FesteringBlowSpell } from "../spells/festering-blow";
 import { VitalStrikeSpell } from "../spells/vital-strike";
 
@@ -30,7 +30,7 @@ export class GhoulKnightIvern extends Enemy {
     this.spells = [
       new VitalStrikeSpell(`vital-strike-${realId}`),
       new FesteringBlowSpell(`festering-blow-${realId}`),
-      new AutoAttackSpell(`autoattack-${realId}`),
+      new BasicAttackSpell(`basic-attack-${realId}`),
     ];
   }
 }

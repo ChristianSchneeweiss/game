@@ -1,10 +1,10 @@
 import { nanoid } from "nanoid";
-import { StatModifierEffect } from "../effect";
+import { StatModifierEffect } from "../effect/stat-modifier.effect";
 import { DamageModule, MinMaxDamageModule } from "../modules/damage.module";
 import { EffectModule } from "../modules/effect.module";
-import { BaseSpell } from "../spells";
 import type { OptionalSpellCastEvent } from "../timeline-events";
 import type { BattleManager, Entity } from "../types";
+import { BaseSpell } from "./base/base.spell";
 
 export class CrudeStrikeSpell extends BaseSpell {
   damageModule: DamageModule;

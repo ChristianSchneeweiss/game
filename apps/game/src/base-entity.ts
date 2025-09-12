@@ -1,5 +1,5 @@
 import { calculator } from "./calculator";
-import type { EnemyType } from "./enemies";
+import type { EnemyType } from "./enemies/enemies";
 import type { TimelineEvent } from "./timeline-events";
 import type {
   BattleManager,

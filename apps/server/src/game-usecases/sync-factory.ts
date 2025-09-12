@@ -1,5 +1,5 @@
 import { Character, Enemy } from "@loot-game/game/base-entity";
-import { EnemyTypeSchema } from "@loot-game/game/enemies";
+import { EnemyTypeSchema } from "@loot-game/game/enemies/enemies";
 import { SpellTypeSchema } from "@loot-game/game/spell-types";
 import { z } from "zod";
 import { createEnemyFromType } from "./enemy-factory";

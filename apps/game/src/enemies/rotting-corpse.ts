@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import { Enemy } from "../base-entity";
-import { AutoAttackSpell } from "../spells/autoattack";
+import { BasicAttackSpell } from "../spells/basic-attack";
 import { FesteringBlowSpell } from "../spells/festering-blow";
 
 export class RottingCorpse extends Enemy {
@@ -28,7 +28,7 @@ export class RottingCorpse extends Enemy {
 
     this.spells = [
       new FesteringBlowSpell(`festering-blow-${realId}`),
-      new AutoAttackSpell(`autoattack-${realId}`),
+      new BasicAttackSpell(`basic-attack-${realId}`),
     ];
   }
 }

@@ -1,5 +1,5 @@
 import { MinMaxDamageModule } from "../modules/damage.module";
-import { DamageSpell } from "../spells";
+import { DamageSpell } from "./base/damage.spell";
 
 export class CinderWispSpell extends DamageSpell {
   constructor(id: string) {

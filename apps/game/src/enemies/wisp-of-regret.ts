@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import { Enemy } from "../base-entity";
-import { AutoAttackSpell } from "../spells/autoattack";
+import { AutoAttackSpell } from "../spells/basic-attack";
 import { CinderWispSpell } from "../spells/cinder-wisp";
 
 export class WispOfRegret extends Enemy {

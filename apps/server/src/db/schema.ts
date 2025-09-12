@@ -1,4 +1,4 @@
-import type { EnemyType } from "@loot-game/game/enemies";
+import type { EnemyType } from "@loot-game/game/enemies/enemies";
 import type { SpellType } from "@loot-game/game/spell-types";
 import type { EventTypes } from "@loot-game/game/timeline-events";
 import type { LootEntity } from "@loot-game/game/types";

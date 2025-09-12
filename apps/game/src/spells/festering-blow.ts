@@ -1,6 +1,6 @@
 import { MinMaxDamageModule } from "../modules/damage.module";
-import { DamageSpell } from "../spells";
 import type { Entity } from "../types";
+import { DamageSpell } from "./base/damage.spell";
 
 export class FesteringBlowSpell extends DamageSpell {
   constructor(id: string) {

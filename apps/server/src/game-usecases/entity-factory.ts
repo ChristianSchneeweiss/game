@@ -1,5 +1,5 @@
 import { BaseEntity, Character, Enemy } from "@loot-game/game/base-entity";
-import type { EnemyType } from "@loot-game/game/enemies";
+import type { EnemyType } from "@loot-game/game/enemies/enemies";
 import { AutoAttackSpell } from "@loot-game/game/spells/autoattack";
 import { FireballSpell } from "@loot-game/game/spells/fireball";
 import { type Entity } from "@loot-game/game/types";

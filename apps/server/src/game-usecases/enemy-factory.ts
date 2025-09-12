@@ -1,4 +1,4 @@
-import type { EnemyType } from "@loot-game/game/enemies";
+import type { EnemyType } from "@loot-game/game/enemies/enemies";
 import { GhoulKnightIvern } from "@loot-game/game/enemies/ghoul-knight-ivern";
 import { Goblin } from "@loot-game/game/enemies/goblin";
 import { RottingCorpse } from "@loot-game/game/enemies/rotting-corpse";

@@ -1,5 +1,5 @@
 import z from "zod";
-import { SpellTypeSchema, type SpellType } from "./spell-types";
+import { SpellTypeSchema, type SpellType } from "./spells/base/spell-types";
 import type {
   SpellCastEvent,
   TimelineEvent,
