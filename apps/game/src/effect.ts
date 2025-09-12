@@ -25,7 +25,9 @@ export abstract class BaseEffect implements Effect {
     target: Entity
   ) {
     this.effectType = effectType;
-    this.duration = duration;
+    // we add 1 to the duration to account for the initial round.
+    // as the duration already gets decremented by 1 in the onPostRound method.
+    this.duration = duration + 1;
     this.source = source;
     this.target = target;
     this.spellSource = spellSource;
