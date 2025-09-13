@@ -10,4 +10,8 @@ export class StunEffect extends BaseEffect {
   ) {
     super(spellSource, "STUN", duration, source, target);
   }
+
+  getDescription(): string {
+    return "Can not act this turn";
+  }
 }

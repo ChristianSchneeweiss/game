@@ -98,6 +98,13 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     const round: BattleRound = {
       round: this.rounds.length,
       orderQueue: this.getAliveEntities()
+        // we filter out stun effects as they can not act this turn
+        .filter((e) => {
+          const isStunned = e.activeEffects.some(
+            (ef) => ef.effectType === "STUN"
+          );
+          return !isStunned;
+        })
         .sort((a, b) => b.getAttribute("agility") - a.getAttribute("agility"))
         .map((e) => e.id),
     };
