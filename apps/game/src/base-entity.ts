@@ -1,13 +1,14 @@
 import { calculator } from "./calculator";
 import type { TimelineEvent } from "./timeline-events";
 import type {
-  AllAttributes,
+  AllAttributeKeys,
   AttributeModifier,
   BattleManager,
   DamageType,
   Effect,
   Entity,
   EntityAttributes,
+  SpecialAttributes,
   Spell,
   Team,
 } from "./types";
@@ -21,6 +22,7 @@ export class BaseEntity implements Entity {
   mana: number;
   maxMana: number;
   baseAttributes: EntityAttributes;
+  baseSpecialAttributes: SpecialAttributes;
   activeEffects: Effect[];
   attributeModifiers: AttributeModifier[];
   spells: Spell[];
@@ -47,6 +49,19 @@ export class BaseEntity implements Entity {
     this.activeEffects = [];
     this.attributeModifiers = [];
     this.spells = [];
+    this.baseSpecialAttributes = {
+      lifesteal: 0,
+      omnivamp: 0,
+      armor: 0,
+      magicResistance: 0,
+      affinities: 0,
+      armorPenetration: 0,
+      magicPenetration: 0,
+      healthRegen: 0,
+      manaRegen: 0,
+      blessed: 0,
+      critChance: 0,
+    };
   }
 
   onUpkeep(): TimelineEvent[] | null {
@@ -122,7 +137,7 @@ export class BaseEntity implements Entity {
     return this.health <= 0;
   }
 
-  getAttribute(attribute: AllAttributes): number {
+  getAttribute(attribute: AllAttributeKeys): number {
     let value = this.getBaseValueAttribute(attribute);
 
     this.attributeModifiers.forEach((mod) => {
@@ -140,7 +155,7 @@ export class BaseEntity implements Entity {
     return value;
   }
 
-  protected getBaseValueAttribute(attribute: AllAttributes): number {
+  protected getBaseValueAttribute(attribute: AllAttributeKeys): number {
     switch (attribute) {
       // *** base attributes ***
       case "strength":
@@ -153,28 +168,34 @@ export class BaseEntity implements Entity {
         return this.baseAttributes.agility;
 
       // *** calculated attributes ***
-      case "Lifesteal":
-        return 0.1;
-      case "Omnivamp":
-        return 0.1;
-      case "Armor":
-        return 10;
-      case "Magic Resistance":
-        return 10;
-      case "Affinities???":
-        return 10;
-      case "Armor Penetration":
-        return 5;
-      case "Magic Penetration":
-        return 5;
-      case "Health Regen":
-        return this.isBot ? 2 : this.getAttribute("vitality") / 2;
-      case "Mana Regen":
-        return this.getAttribute("intelligence") / 5;
-      case "Blessed":
-        return 0;
-      case "Crit Chance":
-        return 0.1;
+      case "lifesteal":
+        return this.baseSpecialAttributes.lifesteal;
+      case "omnivamp":
+        return this.baseSpecialAttributes.omnivamp;
+      case "armor":
+        return this.baseSpecialAttributes.armor;
+      case "magicResistance":
+        return this.baseSpecialAttributes.magicResistance;
+      case "affinities":
+        return this.baseSpecialAttributes.affinities;
+      case "armorPenetration":
+        return this.baseSpecialAttributes.armorPenetration;
+      case "magicPenetration":
+        return this.baseSpecialAttributes.magicPenetration;
+      case "healthRegen":
+        return (
+          this.baseSpecialAttributes.healthRegen +
+          (this.isBot ? 2 : this.getAttribute("vitality") / 2)
+        );
+      case "manaRegen":
+        return (
+          this.baseSpecialAttributes.manaRegen +
+          this.getAttribute("intelligence") / 5
+        );
+      case "blessed":
+        return this.baseSpecialAttributes.blessed;
+      case "critChance":
+        return this.baseSpecialAttributes.critChance;
       default:
         return 0;
     }

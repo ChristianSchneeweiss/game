@@ -18,6 +18,9 @@ export class Goblin extends BaseEnemy {
         agility: 1,
         strength: 2,
       },
+      baseSpecialAttributes: {
+        armor: 3,
+      },
       xp: 10,
       loot: {
         items: [

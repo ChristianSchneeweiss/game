@@ -1,7 +1,7 @@
 import type { TinyEmitter } from "@/utils/tiny-emitter";
 import type {
-  CalculatedAttributes,
   EntityAttributes,
+  SpecialAttributes,
 } from "@loot-game/game/types";
 import { useEffect, useState } from "react";
 import SuperJSON from "superjson";
@@ -19,7 +19,7 @@ export const useAttributes = (
       string,
       {
         baseAttributes: EntityAttributes;
-        calculatedAttributes: Record<CalculatedAttributes, number>;
+        specialAttributes: SpecialAttributes;
       }
     >
   >(new Map());

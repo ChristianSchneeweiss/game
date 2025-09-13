@@ -1,5 +1,12 @@
 import { BaseEntity } from "../../base-entity";
-import type { Entity, EntityAttributes, Loot, Spell, Team } from "../../types";
+import type {
+  Entity,
+  EntityAttributes,
+  Loot,
+  SpecialAttributes,
+  Spell,
+  Team,
+} from "../../types";
 import type { EnemyType } from "./enemy-types";
 
 type EnemyParams = {
@@ -10,6 +17,7 @@ type EnemyParams = {
   maxHealth: number;
   maxMana: number;
   baseAttributes: EntityAttributes;
+  baseSpecialAttributes?: Partial<SpecialAttributes>;
   xp: number;
   loot: Loot;
 };
@@ -27,6 +35,7 @@ export class BaseEnemy extends BaseEntity {
     maxHealth,
     maxMana,
     baseAttributes,
+    baseSpecialAttributes,
     xp,
     loot,
   }: EnemyParams) {
@@ -34,6 +43,12 @@ export class BaseEnemy extends BaseEntity {
     this.type = type;
     this.xp = xp;
     this.loot = loot;
+    if (baseSpecialAttributes) {
+      this.baseSpecialAttributes = {
+        ...this.baseSpecialAttributes,
+        ...baseSpecialAttributes,
+      };
+    }
   }
 
   getAction(): { spell: Spell; targets: Entity[] } {

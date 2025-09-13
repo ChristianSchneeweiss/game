@@ -16,20 +16,21 @@ export interface EntityAttributes {
   agility: number;
 }
 
-export type CalculatedAttributes =
-  | "Lifesteal"
-  | "Omnivamp"
-  | "Armor"
-  | "Magic Resistance"
-  | "Affinities???"
-  | "Armor Penetration"
-  | "Magic Penetration"
-  | "Health Regen"
-  | "Mana Regen"
-  | "Blessed"
-  | "Crit Chance";
+export interface SpecialAttributes {
+  lifesteal: number;
+  omnivamp: number;
+  armor: number;
+  magicResistance: number;
+  affinities: number;
+  armorPenetration: number;
+  magicPenetration: number;
+  healthRegen: number;
+  manaRegen: number;
+  blessed: number;
+  critChance: number;
+}
 
-export type AllAttributes = keyof EntityAttributes | CalculatedAttributes;
+export type AllAttributeKeys = keyof EntityAttributes | keyof SpecialAttributes;
 
 export type DamageType = "PHYSICAL" | "MAGICAL";
 
@@ -52,7 +53,7 @@ export type TargetType = {
 
 export interface AttributeModifier {
   id: string;
-  attribute: AllAttributes;
+  attribute: AllAttributeKeys;
   value: number;
   operation: ModifierOperation;
 }
@@ -101,6 +102,7 @@ export interface Entity
   mana: number;
   maxMana: number;
   baseAttributes: EntityAttributes;
+  baseSpecialAttributes: SpecialAttributes;
   activeEffects: Effect[];
   attributeModifiers: AttributeModifier[];
   spells: Spell[];
@@ -114,7 +116,7 @@ export interface Entity
   removeEffect(effect: Effect): void;
 
   isDead(): boolean;
-  getAttribute(attribute: AllAttributes): number;
+  getAttribute(attribute: AllAttributeKeys): number;
 }
 
 export interface SpellDescription {

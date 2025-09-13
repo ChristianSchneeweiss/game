@@ -5,9 +5,9 @@ import {
 } from "@/components/ui/hover-card";
 import { cn } from "@/lib/utils";
 import type {
-  CalculatedAttributes,
   Entity,
   EntityAttributes,
+  SpecialAttributes,
   SpellDescription,
   Team,
 } from "@loot-game/game/types";
@@ -43,7 +43,7 @@ type Params = {
     string,
     {
       baseAttributes: EntityAttributes;
-      calculatedAttributes: Record<CalculatedAttributes, number>;
+      specialAttributes: SpecialAttributes;
     }
   >;
   getCharacterAttributes?: (characterId: string) => void;
@@ -193,16 +193,21 @@ export const BattleRender = ({
                       Calculated Stats
                     </h4>
                     <div className="grid grid-cols-2 gap-3">
-                      {Object.entries(
-                        entityAttributes.calculatedAttributes,
-                      ).map(([key, value]) => (
-                        <div key={key} className="flex justify-between text-xs">
-                          <span className="font-mono text-gray-400">{key}</span>
-                          <span className="font-mono text-white">
-                            {String(value)}
-                          </span>
-                        </div>
-                      ))}
+                      {Object.entries(entityAttributes.specialAttributes).map(
+                        ([key, value]) => (
+                          <div
+                            key={key}
+                            className="flex justify-between text-xs"
+                          >
+                            <span className="font-mono text-gray-400">
+                              {key}
+                            </span>
+                            <span className="font-mono text-white">
+                              {String(value)}
+                            </span>
+                          </div>
+                        ),
+                      )}
                     </div>
                   </div>
                 </HoverCardContent>

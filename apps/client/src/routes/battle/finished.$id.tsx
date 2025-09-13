@@ -4,6 +4,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { BattleRender } from "./-battle-render";
 import { useStatsTimeline } from "./-hooks/use-stats-timeline";
+import { serialize, stringify } from "superjson";
 
 export const Route = createFileRoute("/battle/finished/$id")({
   component: RouteComponent,
@@ -39,7 +40,13 @@ function RouteComponent() {
       </p>
       <div className="flex flex-col gap-4">
         <BattleRender participants={data.participants} stats={stats} />
-        <pre>{JSON.stringify(data.timelineEvents[visibleEvents], null, 2)}</pre>
+        <pre>
+          {JSON.stringify(
+            serialize(data.timelineEvents[visibleEvents - 1]),
+            null,
+            2,
+          )}
+        </pre>
       </div>
     </div>
   );
