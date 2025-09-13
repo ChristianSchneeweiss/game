@@ -98,7 +98,6 @@ export class Handler implements BattleHandler {
     realEffect.battleHandler = this.battleManager.handler;
     this.battleManager.lifeCycleHooks.push(realEffect);
     target.applyEffect(realEffect);
-    realEffect.onApply?.();
     return realEffect;
   }
 }

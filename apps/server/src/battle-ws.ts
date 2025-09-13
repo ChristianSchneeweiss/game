@@ -1,6 +1,7 @@
 import type { ClerkClient } from "@clerk/backend";
 import type { BaseEntity } from "@loot-game/game/base-entity";
 import { BM } from "@loot-game/game/bm";
+import { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
 import type { TimelineEventFull } from "@loot-game/game/timeline-events";
 import type {
   BattleRound,
@@ -304,15 +305,19 @@ export class BattleWebsocket extends DurableObject {
     }
 
     // if the next entity is a bot, cast the spell
-    const action = nextEntity.getAction();
-    this.bm.castNextSpell(
-      nextEntity.id,
-      action.spell.config.id,
-      action.targets.map((t) => t.id)
-    );
-    this.bm.postTurn();
-    this.bm.preTurn();
-    return true;
+    if (nextEntity instanceof BaseEnemy) {
+      const action = nextEntity.getAction();
+      this.bm.castNextSpell(
+        nextEntity.id,
+        action.spell.config.id,
+        action.targets.map((t) => t.id)
+      );
+      this.bm.postTurn();
+      this.bm.preTurn();
+
+      return true;
+    }
+    return false;
   }
 
   private async processGetTargets(

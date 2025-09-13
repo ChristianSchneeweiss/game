@@ -106,6 +106,7 @@ export class BaseEntity implements Entity {
 
   applyEffect(effect: Effect): void {
     this.activeEffects.push(effect);
+    effect.onApply?.();
   }
 
   removeEffect(effect: Effect): void {
@@ -136,23 +137,6 @@ export class BaseEntity implements Entity {
     });
 
     return value;
-  }
-
-  getAction(): { spell: Spell; targets: Entity[] } {
-    if (!this.battleManager) throw new Error("Battle manager not set");
-    const spell = this.spells.find((s) => s.canCast(this));
-    if (!spell) {
-      throw new Error(`No spell found for ${this.name}`);
-    }
-
-    const targets = spell.getValidTargets(this);
-    if (!targets) {
-      throw new Error(
-        `No valid targets found for ${this.name} to cast spell ${spell.config.id}`
-      );
-    }
-
-    return { spell, targets };
   }
 }
 

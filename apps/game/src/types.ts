@@ -99,7 +99,6 @@ export interface Entity
 
   isDead(): boolean;
   getAttribute(attribute: keyof EntityAttributes): number;
-  getAction(): { spell: Spell; targets: Entity[] };
 }
 
 export interface SpellDescription {
