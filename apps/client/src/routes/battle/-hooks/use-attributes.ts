@@ -1,5 +1,8 @@
 import type { TinyEmitter } from "@/utils/tiny-emitter";
-import type { EntityAttributes } from "@loot-game/game/types";
+import type {
+  CalculatedAttributes,
+  EntityAttributes,
+} from "@loot-game/game/types";
 import { useEffect, useState } from "react";
 import SuperJSON from "superjson";
 import type {
@@ -11,9 +14,15 @@ export const useAttributes = (
   sendMessage: (message: string) => void,
   wsEvents: TinyEmitter<ResponseMessage>,
 ) => {
-  const [attributes, setAttributes] = useState<Map<string, EntityAttributes>>(
-    new Map(),
-  );
+  const [attributes, setAttributes] = useState<
+    Map<
+      string,
+      {
+        baseAttributes: EntityAttributes;
+        calculatedAttributes: Record<CalculatedAttributes, number>;
+      }
+    >
+  >(new Map());
 
   useEffect(() => {
     if (!wsEvents) return;
@@ -21,7 +30,7 @@ export const useAttributes = (
     return wsEvents.on((response: ResponseMessage) => {
       if (response.type === "characterAttributes") {
         setAttributes((prev) => {
-          prev.set(response.data.entityId, response.data.attributes);
+          prev.set(response.data.entityId, response.data);
           return prev;
         });
       }

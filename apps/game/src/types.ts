@@ -15,6 +15,21 @@ export interface EntityAttributes {
   agility: number;
 }
 
+export type CalculatedAttributes =
+  | "Lifesteal"
+  | "Omnivamp"
+  | "Armor"
+  | "Magic Resistance"
+  | "Affinities???"
+  | "Armor Penetration"
+  | "Magic Penetration"
+  | "Health Regen"
+  | "Mana Regen"
+  | "Blessed"
+  | "Crit Chance";
+
+export type AllAttributes = keyof EntityAttributes | CalculatedAttributes;
+
 export type DamageType = "PHYSICAL" | "FIRE" | "ICE" | "LIGHTNING" | "POISON";
 
 export type EffectType =
@@ -34,9 +49,9 @@ export type TargetType = {
   allies: number;
 };
 
-export interface StatModifier {
+export interface AttributeModifier {
   id: string;
-  attribute: keyof EntityAttributes;
+  attribute: AllAttributes;
   value: number;
   operation: ModifierOperation;
 }
@@ -86,7 +101,7 @@ export interface Entity
   maxMana: number;
   baseAttributes: EntityAttributes;
   activeEffects: Effect[];
-  statModifiers: StatModifier[];
+  attributeModifiers: AttributeModifier[];
   spells: Spell[];
   battleManager?: BattleManager;
   isBot: boolean;
@@ -98,7 +113,7 @@ export interface Entity
   removeEffect(effect: Effect): void;
 
   isDead(): boolean;
-  getAttribute(attribute: keyof EntityAttributes): number;
+  getAttribute(attribute: AllAttributes): number;
 }
 
 export interface SpellDescription {

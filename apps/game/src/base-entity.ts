@@ -1,13 +1,14 @@
 import { calculator } from "./calculator";
 import type { TimelineEvent } from "./timeline-events";
 import type {
+  AllAttributes,
+  AttributeModifier,
   BattleManager,
   DamageType,
   Effect,
   Entity,
   EntityAttributes,
   Spell,
-  StatModifier,
   Team,
 } from "./types";
 
@@ -21,7 +22,7 @@ export class BaseEntity implements Entity {
   maxMana: number;
   baseAttributes: EntityAttributes;
   activeEffects: Effect[];
-  statModifiers: StatModifier[];
+  attributeModifiers: AttributeModifier[];
   spells: Spell[];
   battleManager?: BattleManager;
   isBot = true;
@@ -44,7 +45,7 @@ export class BaseEntity implements Entity {
     this.baseAttributes = baseAttributes;
 
     this.activeEffects = [];
-    this.statModifiers = [];
+    this.attributeModifiers = [];
     this.spells = [];
   }
 
@@ -121,22 +122,62 @@ export class BaseEntity implements Entity {
     return this.health <= 0;
   }
 
-  getAttribute(attribute: keyof EntityAttributes): number {
-    let value = this.baseAttributes[attribute];
+  getAttribute(attribute: AllAttributes): number {
+    let value = this.getBaseValueAttribute(attribute);
 
-    this.statModifiers.forEach((mod) => {
+    this.attributeModifiers.forEach((mod) => {
       if (mod.attribute === attribute && mod.operation === "ADD") {
         value += mod.value;
       }
     });
 
-    this.statModifiers.forEach((mod) => {
+    this.attributeModifiers.forEach((mod) => {
       if (mod.attribute === attribute && mod.operation === "MULTIPLY") {
         value *= mod.value;
       }
     });
 
     return value;
+  }
+
+  protected getBaseValueAttribute(attribute: AllAttributes): number {
+    switch (attribute) {
+      // *** base attributes ***
+      case "strength":
+        return this.baseAttributes.strength;
+      case "intelligence":
+        return this.baseAttributes.intelligence;
+      case "vitality":
+        return this.baseAttributes.vitality;
+      case "agility":
+        return this.baseAttributes.agility;
+
+      // *** calculated attributes ***
+      case "Lifesteal":
+        return 0.1;
+      case "Omnivamp":
+        return 0.1;
+      case "Armor":
+        return 10;
+      case "Magic Resistance":
+        return 10;
+      case "Affinities???":
+        return 10;
+      case "Armor Penetration":
+        return 5;
+      case "Magic Penetration":
+        return 5;
+      case "Health Regen":
+        return this.isBot ? 2 : this.getAttribute("vitality") / 2;
+      case "Mana Regen":
+        return this.getAttribute("intelligence") / 5;
+      case "Blessed":
+        return 0;
+      case "Crit Chance":
+        return 0.1;
+      default:
+        return 0;
+    }
   }
 }
 

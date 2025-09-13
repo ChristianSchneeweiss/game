@@ -5,6 +5,7 @@ import { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
 import type { TimelineEventFull } from "@loot-game/game/timeline-events";
 import type {
   BattleRound,
+  CalculatedAttributes,
   EntityAttributes,
   SpellDescription,
 } from "@loot-game/game/types";
@@ -89,7 +90,8 @@ export type ResponseMessage =
   | {
       type: "characterAttributes";
       data: {
-        attributes: EntityAttributes;
+        baseAttributes: EntityAttributes;
+        calculatedAttributes: Record<CalculatedAttributes, number>;
         entityId: string;
       };
     }
@@ -370,16 +372,29 @@ export class BattleWebsocket extends DurableObject {
     if (!character) {
       throw new Error("Character not found");
     }
-    const attributes = {
+    const baseAttributes = {
       strength: character.getAttribute("strength"),
       intelligence: character.getAttribute("intelligence"),
       vitality: character.getAttribute("vitality"),
       agility: character.getAttribute("agility"),
     } satisfies EntityAttributes;
+    const calculatedAttributes = {
+      Lifesteal: character.getAttribute("Lifesteal"),
+      Omnivamp: character.getAttribute("Omnivamp"),
+      Armor: character.getAttribute("Armor"),
+      "Magic Resistance": character.getAttribute("Magic Resistance"),
+      "Affinities???": character.getAttribute("Affinities???"),
+      "Armor Penetration": character.getAttribute("Armor Penetration"),
+      "Magic Penetration": character.getAttribute("Magic Penetration"),
+      "Health Regen": character.getAttribute("Health Regen"),
+      "Mana Regen": character.getAttribute("Mana Regen"),
+      Blessed: character.getAttribute("Blessed"),
+      "Crit Chance": character.getAttribute("Crit Chance"),
+    } satisfies Record<CalculatedAttributes, number>;
     ws.send(
       SuperJSON.stringify({
         type: "characterAttributes",
-        data: { attributes, entityId: characterId },
+        data: { baseAttributes, calculatedAttributes, entityId: characterId },
       } satisfies ResponseMessage)
     );
   }
