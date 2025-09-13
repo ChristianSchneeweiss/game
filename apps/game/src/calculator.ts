@@ -31,7 +31,7 @@ export class calculator {
     // todo add modifiers before from source, after from defender, and resistances
     // before dealing damage and before taking damage hook
 
-    const critChance = attacker.getAttribute("Crit Chance");
+    const critChance = attacker.getAttribute("critChance");
     const critRoll = rng();
     const isCrit = critRoll < critChance;
     if (isCrit) {
@@ -40,13 +40,13 @@ export class calculator {
 
     if (damageType === "MAGICAL") {
       const realMR =
-        defender.getAttribute("Magic Resistance") -
-        attacker.getAttribute("Magic Penetration");
+        defender.getAttribute("magicResistance") -
+        attacker.getAttribute("magicPenetration");
       damage = damage - realMR;
     } else {
       const realArmor =
-        defender.getAttribute("Armor") -
-        attacker.getAttribute("Armor Penetration");
+        defender.getAttribute("armor") -
+        attacker.getAttribute("armorPenetration");
       damage = damage - realArmor;
     }
 
@@ -103,7 +103,7 @@ export class Handler implements BattleHandler {
 
     if (target.isDead()) {
       this.battleManager.processEntityDeath(target, {
-        spellId: spell.config.id,
+        spellId: spell.config!.id,
       });
     }
 
@@ -118,14 +118,14 @@ export class Handler implements BattleHandler {
     if (type === "PHYSICAL") {
       healing = this.healing(
         spell,
-        damage * source.getAttribute("Lifesteal"),
+        damage * source.getAttribute("lifesteal"),
         source,
         source
       );
     } else {
       healing = this.healing(
         spell,
-        damage * source.getAttribute("Omnivamp"),
+        damage * source.getAttribute("omnivamp"),
         source,
         source
       );
@@ -146,6 +146,7 @@ export class Handler implements BattleHandler {
     return {
       healingApplied,
       totalHealing: healing,
+      isCrit: false,
     };
   }
 
@@ -170,6 +171,7 @@ export class Handler implements BattleHandler {
     return {
       effectsApplied,
       realEffects: effectsApplied.values(),
+      isCrit: false,
     };
   }
 
@@ -203,6 +205,7 @@ export class Handler implements BattleHandler {
       healingApplied,
       effectsApplied,
       totalDamage: damageApplied.values().reduce((acc, curr) => acc + curr, 0),
+      isCrit: returns.some((r) => r.isCrit),
     };
   }
 }

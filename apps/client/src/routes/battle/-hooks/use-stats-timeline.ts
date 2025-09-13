@@ -76,6 +76,7 @@ export type Stats = {
   roll?: number;
   flags: {
     casting: boolean;
+    isCrit: boolean;
     dead: boolean;
     effects: Array<string>;
   };
@@ -98,14 +99,20 @@ function calculateStatsTimeline(
         stats.roll = undefined;
 
         stats.flags.casting = false;
+        stats.flags.isCrit = false;
         stats.flags.effects = [];
         // dont reset dead flag
 
         switch (event.event.eventType) {
           case "SPELL_CAST": {
             const spellId = event.event.data.spellId;
-            const { damageApplied, healingApplied, roll, effectsApplied } =
-              event.event.data;
+            const {
+              damageApplied,
+              healingApplied,
+              roll,
+              effectsApplied,
+              isCrit,
+            } = event.event.data;
 
             if (damageApplied && damageApplied.has(entity.id)) {
               const damage = damageApplied.get(entity.id) || 0;
@@ -132,12 +139,14 @@ function calculateStatsTimeline(
               }
             }
 
+            // i am the caster
             if (entity.spells.some((s) => s.config.id === spellId)) {
               const { spell } = spellMap.get(spellId)!;
               stats.mana = Math.max(0, stats.mana - spell.config.manaCost);
               stats.deltaMana -= spell.config.manaCost;
 
               stats.flags.casting = true;
+              stats.flags.isCrit = isCrit;
               stats.roll = roll;
 
               // if the spell has a cooldown of 0 we leave it. otherwise we add 1
@@ -193,6 +202,7 @@ function calculateStatsTimeline(
         cooldowns: new Map(),
         flags: {
           casting: false,
+          isCrit: false,
           dead: false,
           effects: [],
         },

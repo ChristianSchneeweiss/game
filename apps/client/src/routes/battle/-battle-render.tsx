@@ -154,6 +154,22 @@ export const BattleRender = ({
             <span className="text-2xl">{team === "TEAM_A" ? "🧙‍♂️" : "👹"}</span>
             {entity.name}
             {entity.isBot && <BotIcon className="h-5 w-5 text-gray-400" />}
+            {currentStats?.flags.isCrit && (
+              <span className="flex animate-pulse items-center gap-1 rounded-lg border-2 border-yellow-300 bg-gradient-to-r from-red-600 via-yellow-400 to-red-600 px-3 py-1 text-base font-extrabold text-white shadow-lg">
+                <svg
+                  className="h-5 w-5 text-yellow-300 drop-shadow"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <polygon
+                    points="12,2 15,10 23,10 17,15 19,23 12,18 5,23 7,15 1,10 9,10"
+                    fill="currentColor"
+                  />
+                </svg>
+                CRIT!
+              </span>
+            )}
             {currentStats?.roll && (
               <span className="rounded bg-slate-700 px-2 py-1 text-sm text-yellow-300">
                 {currentStats.roll}
@@ -166,8 +182,8 @@ export const BattleRender = ({
             <HoverCard
               open={hoverCharacterOpen === entity.id}
               onOpenChange={setHoverCharacterOpen}
-              openDelay={1000}
-              closeDelay={50}
+              openDelay={700}
+              closeDelay={100}
             >
               <HoverCardTrigger asChild>
                 <CircleQuestionMarkIcon className="size-5 cursor-help text-blue-400 hover:text-blue-300" />
@@ -176,7 +192,7 @@ export const BattleRender = ({
                 <HoverCardContent className="w-[400px] border-slate-600 bg-slate-800">
                   <div className="space-y-2 text-sm">
                     <h4 className="mb-2 font-bold text-white">
-                      Character Stats
+                      Character Attributes
                     </h4>
                     {Object.entries(entityAttributes.baseAttributes).map(
                       ([key, value]) => (
@@ -190,7 +206,7 @@ export const BattleRender = ({
                     )}
                     <hr />
                     <h4 className="mb-2 font-bold text-white">
-                      Calculated Stats
+                      Special Attributes
                     </h4>
                     <div className="grid grid-cols-2 gap-3">
                       {Object.entries(entityAttributes.specialAttributes).map(

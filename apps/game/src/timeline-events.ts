@@ -5,6 +5,7 @@ const spellCastEvent = z.object({
   data: z.object({
     spellId: z.string(),
     roll: z.number().int(),
+    isCrit: z.boolean(),
     totalDamage: z.number().int().optional(),
     damageApplied: z.map(z.string(), z.number().int()).optional(),
     healingApplied: z.map(z.string(), z.number().int()).optional(),
