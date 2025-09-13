@@ -49,7 +49,7 @@ export class CrudeStrikeSpell extends BaseSpell {
     battleManager: BattleManager,
     roll: number
   ): OptionalSpellCastEvent {
-    const { damageApplied, totalDamage } = this.damageModule.applyRawDamage(
+    const damage = this.damageModule.applyRawDamage(
       caster,
       targets,
       roll,
@@ -57,7 +57,7 @@ export class CrudeStrikeSpell extends BaseSpell {
       this
     );
 
-    const { realEffects } = this.effectModule.applyRawEffect(
+    const effects = this.effectModule.applyRawEffect(
       caster,
       targets,
       roll,
@@ -65,18 +65,7 @@ export class CrudeStrikeSpell extends BaseSpell {
       this
     );
 
-    return {
-      damageApplied,
-      totalDamage,
-      effectsApplied: realEffects
-        ? new Map(
-            Array.from(realEffects).map((effect) => [
-              effect.target.id,
-              effect.effectType,
-            ])
-          )
-        : undefined,
-    };
+    return battleManager.handler.mergeHandlerReturns([damage, effects]);
   }
 
   protected textDescription(caster: Entity): string {

@@ -1,5 +1,6 @@
+import type { BattleManager, Entity, Spell } from "../types";
 import { minMaxRoll } from "../utils/min-max-roll";
-import type { BattleManager, Entity, Spell, SpellModule } from "../types";
+import type { SpellModule, SpellModuleReturn } from "./types";
 
 export class HealModule implements SpellModule {
   constructor(
@@ -39,27 +40,14 @@ export class HealModule implements SpellModule {
     roll: number,
     battleManager: BattleManager,
     spell: Spell
-  ) {
-    const healDealt = new Map<string, number>();
+  ): SpellModuleReturn {
     const rawHeal = this.getRawHeal(caster, targets, roll);
 
-    targets.forEach((target) => {
+    const heals = targets.map((target) => {
       const heal = Math.floor(rawHeal);
-      const realHeal = battleManager.handler.healing(
-        spell,
-        heal,
-        caster,
-        target
-      );
-      healDealt.set(target.id, realHeal);
+      return battleManager.handler.healing(spell, heal, caster, target);
     });
 
-    const totalHeal = healDealt.values().reduce((acc, curr) => acc + curr, 0);
-
-    return {
-      healingApplied: healDealt,
-      totalHeal,
-      rawHeal,
-    };
+    return battleManager.handler.mergeHandlerReturns(heals);
   }
 }

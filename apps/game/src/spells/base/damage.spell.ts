@@ -16,18 +16,13 @@ export class DamageSpell extends BaseSpell {
     battleManager: BattleManager,
     roll: number
   ) {
-    const { damageApplied, totalDamage } = this.damageModule.applyRawDamage(
+    return this.damageModule.applyRawDamage(
       caster,
       targets,
       roll,
       battleManager,
       this
     );
-
-    return {
-      totalDamage,
-      damageApplied,
-    };
   }
 
   protected textDescription(caster: Entity): string {

@@ -1,9 +1,11 @@
+import type seedrandom from "seedrandom";
 import type {
   BattleHandler,
   BattleManager,
   DamageType,
   Effect,
   Entity,
+  HandlerReturn,
   Spell,
 } from "./types";
 
@@ -20,11 +22,38 @@ export class calculator {
     attacker: Entity,
     defender: Entity,
     damage: number,
-    damageType: DamageType
-  ): number {
+    damageType: DamageType,
+    rng: seedrandom.PRNG
+  ): {
+    damage: number;
+    isCrit: boolean;
+  } {
     // todo add modifiers before from source, after from defender, and resistances
     // before dealing damage and before taking damage hook
-    return Math.round(damage);
+
+    const critChance = attacker.getAttribute("Crit Chance");
+    const critRoll = rng();
+    const isCrit = critRoll < critChance;
+    if (isCrit) {
+      damage = damage * 2;
+    }
+
+    if (damageType === "MAGICAL") {
+      const realMR =
+        defender.getAttribute("Magic Resistance") -
+        attacker.getAttribute("Magic Penetration");
+      damage = damage - realMR;
+    } else {
+      const realArmor =
+        defender.getAttribute("Armor") -
+        attacker.getAttribute("Armor Penetration");
+      damage = damage - realArmor;
+    }
+
+    return {
+      damage: Math.round(Math.max(damage, 0)),
+      isCrit,
+    };
   }
 
   static calculateRealHealing(
@@ -62,15 +91,47 @@ export class Handler implements BattleHandler {
     type: DamageType,
     source: Entity,
     target: Entity
-  ): number {
-    const damage = calculator.calculateRealDamage(source, target, amount, type);
+  ) {
+    const { damage, isCrit } = calculator.calculateRealDamage(
+      source,
+      target,
+      amount,
+      type,
+      this.battleManager.getPRNG()
+    );
     target.applyDamage(damage, type, source);
+
     if (target.isDead()) {
       this.battleManager.processEntityDeath(target, {
         spellId: spell.config.id,
       });
     }
-    return damage;
+
+    const damageApplied = new Map<string, number>().set(target.id, damage);
+    const damageReturn = {
+      damageApplied,
+      totalDamage: damage,
+      isCrit,
+    };
+
+    let healing: HandlerReturn | null = null;
+    if (type === "PHYSICAL") {
+      healing = this.healing(
+        spell,
+        damage * source.getAttribute("Lifesteal"),
+        source,
+        source
+      );
+    } else {
+      healing = this.healing(
+        spell,
+        damage * source.getAttribute("Omnivamp"),
+        source,
+        source
+      );
+    }
+
+    return this.mergeHandlerReturns([damageReturn, healing]);
   }
 
   healing(
@@ -78,10 +139,14 @@ export class Handler implements BattleHandler {
     amount: number,
     source: Entity,
     target: Entity
-  ): number {
+  ) {
     const healing = calculator.calculateRealHealing(source, target, amount);
     target.applyHealing(healing, source);
-    return healing;
+    const healingApplied = new Map<string, number>().set(target.id, healing);
+    return {
+      healingApplied,
+      totalHealing: healing,
+    };
   }
 
   effect(
@@ -89,7 +154,7 @@ export class Handler implements BattleHandler {
     effect: Effect,
     source: Entity,
     target: Entity
-  ): Effect | null {
+  ) {
     const realEffect = calculator.calculateRealEffect(effect);
     if (!realEffect) return null;
     console.log(
@@ -98,6 +163,46 @@ export class Handler implements BattleHandler {
     realEffect.battleHandler = this.battleManager.handler;
     this.battleManager.lifeCycleHooks.push(realEffect);
     target.applyEffect(realEffect);
-    return realEffect;
+    const effectsApplied = new Map<string, string>().set(
+      target.id,
+      realEffect.effectType
+    );
+    return {
+      effectsApplied,
+      realEffects: effectsApplied.values(),
+    };
+  }
+
+  mergeHandlerReturns(returns: HandlerReturn[]): HandlerReturn {
+    const damageApplied = new Map<string, number>();
+    const healingApplied = new Map<string, number>();
+    const effectsApplied = new Map<string, string>();
+    for (const r of returns) {
+      if (r.damageApplied) {
+        for (const [key, value] of r.damageApplied) {
+          const currentValue = damageApplied.get(key) ?? 0;
+          damageApplied.set(key, currentValue + value);
+        }
+      }
+      if (r.healingApplied) {
+        for (const [key, value] of r.healingApplied) {
+          const currentValue = healingApplied.get(key) ?? 0;
+          healingApplied.set(key, currentValue + value);
+        }
+      }
+      // TODO: add effects applied
+      // if (r.effectsApplied) {
+      //   for (const [key, value] of r.effectsApplied) {
+      //     const currentValue = effectsApplied.get(key) ?? 0;
+      //     effectsApplied.set(key, currentValue + value);
+      //   }
+      // }
+    }
+    return {
+      damageApplied,
+      healingApplied,
+      effectsApplied,
+      totalDamage: damageApplied.values().reduce((acc, curr) => acc + curr, 0),
+    };
   }
 }

@@ -44,6 +44,10 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     return this.rng();
   }
 
+  getPRNG(): seedrandom.PRNG {
+    return this.rng;
+  }
+
   join(entity: Entity): void {
     entity.battleManager = this;
     this.lifeCycleHooks.push(entity);

@@ -1,10 +1,5 @@
-import type {
-  BattleManager,
-  Effect,
-  Entity,
-  Spell,
-  SpellModule,
-} from "../types";
+import type { BattleManager, Effect, Entity, Spell } from "../types";
+import type { SpellModule, SpellModuleReturn } from "./types";
 
 export class EffectModule implements SpellModule {
   constructor(
@@ -25,25 +20,15 @@ export class EffectModule implements SpellModule {
     roll: number,
     battleManager: BattleManager,
     spell: Spell
-  ) {
-    const effectApplied = new Map<string, Effect>();
+  ): SpellModuleReturn {
     const effect = this.getRawEffect(caster, targets, roll);
 
-    targets.forEach((target) => {
-      const realEffect = battleManager.handler.effect(
-        spell,
-        effect,
-        caster,
-        target
-      );
-      if (realEffect) {
-        effectApplied.set(target.id, realEffect);
-      }
-    });
+    const effects = targets
+      .map((target) => {
+        return battleManager.handler.effect(spell, effect, caster, target);
+      })
+      .filter((effect) => effect !== null);
 
-    return {
-      effectApplied,
-      realEffects: effectApplied.values(),
-    };
+    return battleManager.handler.mergeHandlerReturns(effects);
   }
 }

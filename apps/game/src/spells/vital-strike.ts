@@ -30,7 +30,7 @@ export class VitalStrikeSpell extends BaseSpell {
     battleManager: BattleManager,
     roll: number
   ): OptionalSpellCastEvent {
-    const { damageApplied, totalDamage } = this.damageModule.applyRawDamage(
+    const damage = this.damageModule.applyRawDamage(
       caster,
       targets,
       roll,
@@ -38,8 +38,11 @@ export class VitalStrikeSpell extends BaseSpell {
       this
     );
 
-    const healModule = new HealModule(undefined, () => totalDamage * 0.5);
-    const { healingApplied } = healModule.applyRawHeal(
+    const healModule = new HealModule(
+      undefined,
+      () => damage.totalDamage ?? 0 * 0.5
+    );
+    const healing = healModule.applyRawHeal(
       caster,
       [caster],
       roll,
@@ -47,10 +50,7 @@ export class VitalStrikeSpell extends BaseSpell {
       this
     );
 
-    return {
-      healingApplied,
-      damageApplied,
-    };
+    return battleManager.handler.mergeHandlerReturns([damage, healing]);
   }
 
   protected textDescription(caster: Entity): string {

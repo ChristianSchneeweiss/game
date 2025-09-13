@@ -1,11 +1,6 @@
+import type { BattleManager, DamageType, Entity, Spell } from "../types";
 import { minMaxRoll } from "../utils/min-max-roll";
-import type {
-  BattleManager,
-  DamageType,
-  Entity,
-  Spell,
-  SpellModule,
-} from "../types";
+import type { SpellModule, SpellModuleReturn } from "./types";
 
 export abstract class DamageModule implements SpellModule {
   public abstract type: DamageType;
@@ -21,31 +16,20 @@ export abstract class DamageModule implements SpellModule {
     roll: number,
     battleManager: BattleManager,
     spell: Spell
-  ) {
-    const damageDealt = new Map<string, number>();
+  ): SpellModuleReturn {
     const rawDamage = this.getRawDamage(caster, targets, roll);
 
-    targets.forEach((target) => {
+    const returns = targets.map((target) => {
       const damage = Math.floor(rawDamage);
-      const realDamage = battleManager.handler.damage(
+      return battleManager.handler.damage(
         spell,
         damage,
         this.type,
         caster,
         target
       );
-      damageDealt.set(target.id, realDamage);
     });
-
-    const totalDamage = damageDealt
-      .values()
-      .reduce((acc, curr) => acc + curr, 0);
-
-    return {
-      damageApplied: damageDealt,
-      totalDamage,
-      rawDamage,
-    };
+    return battleManager.handler.mergeHandlerReturns(returns);
   }
 }
 

@@ -1,3 +1,4 @@
+import type seedrandom from "seedrandom";
 import z from "zod";
 import { SpellTypeSchema, type SpellType } from "./spells/base/spell-types";
 import type {
@@ -30,7 +31,7 @@ export type CalculatedAttributes =
 
 export type AllAttributes = keyof EntityAttributes | CalculatedAttributes;
 
-export type DamageType = "PHYSICAL" | "FIRE" | "ICE" | "LIGHTNING" | "POISON";
+export type DamageType = "PHYSICAL" | "MAGICAL";
 
 export type EffectType =
   | "BUFF"
@@ -149,8 +150,6 @@ export interface SpellConfig {
   targetType: TargetType;
 }
 
-export interface SpellModule {}
-
 export interface BattleManager {
   entities: Entity[];
   deadEntities: Map<string, Entity>;
@@ -160,6 +159,7 @@ export interface BattleManager {
   events: TimelineEventFull[];
 
   getRNG(): number;
+  getPRNG(): seedrandom.PRNG;
   getTeam(team: Team): Entity[];
   getAliveEntities(): Entity[];
   getEntityById(id: string): Entity | undefined;
@@ -175,6 +175,8 @@ export interface BattleRound {
   orderQueue: string[];
 }
 
+export type HandlerReturn = Omit<SpellCastEvent["data"], "roll" | "spellId">;
+
 export interface BattleHandler {
   damage(
     spell: Spell | Effect,
@@ -182,19 +184,21 @@ export interface BattleHandler {
     type: DamageType,
     source: Entity,
     target: Entity
-  ): number;
+  ): HandlerReturn;
   healing(
     spell: Spell | Effect,
     amount: number,
     source: Entity,
     target: Entity
-  ): number;
+  ): HandlerReturn;
   effect(
     spell: Spell | Effect,
     effect: Effect,
     source: Entity,
     target: Entity
-  ): Effect | null;
+  ): HandlerReturn | null;
+
+  mergeHandlerReturns(returns: HandlerReturn[]): HandlerReturn;
 }
 
 export interface Loot {
