@@ -80,14 +80,24 @@ export class BaseEnemy extends BaseEntity {
 
     let targets: Entity[] = [];
     const targetType = spell.getTargetType();
-    for (let i = 0; i < targetType.enemies; i++) {
+
+    // this fixes the edge case where we have infinity as target type for aoe spells
+    const maxEnemies = Math.min(
+      targetType.enemies,
+      this.battleManager.getTeam(this.team).length
+    );
+    const maxAllies = Math.min(
+      targetType.allies,
+      this.battleManager.getTeam(this.team).length
+    );
+    for (let i = 0; i < maxEnemies; i++) {
       const rng = this.battleManager.getRNG();
       const rn = Math.round(rng * (validTargets.length - 1));
       const randomEnemy = validTargets[rn];
       if (!randomEnemy) throw new Error(`No random enemy found ${rn} ${rng}`);
       targets.push(randomEnemy);
     }
-    for (let i = 0; i < targetType.allies; i++) {
+    for (let i = 0; i < maxAllies; i++) {
       const rng = this.battleManager.getRNG();
       const rn = Math.round(rng * (validTargets.length - 1));
       const randomAlly = validTargets[rn];

@@ -1,0 +1,37 @@
+import { StunEffect } from "../effect/stun.effect";
+import { MinMaxDamageModule } from "../modules/damage.module";
+import { EffectModule } from "../modules/effect.module";
+import type { Entity } from "../types";
+import { DamageEffectSpell } from "./base/damage+effect.spell";
+
+export class RootgraspSpell extends DamageEffectSpell {
+  constructor(id: string) {
+    super(
+      {
+        id,
+        type: "rootgrasp",
+        name: "Rootgrasp",
+        manaCost: 15,
+        cooldown: 4,
+        targetType: { enemies: Infinity, allies: 0 },
+      },
+      new MinMaxDamageModule("MAGICAL", {
+        min: 8,
+        max: 14,
+        attributeScaling: ({ caster }) =>
+          caster.getAttribute("intelligence") * 0.3,
+      }),
+      new EffectModule(
+        ({ caster, target }) => new StunEffect(this, 1, caster, target)
+      ),
+      0.4
+    );
+  }
+
+  protected textDescription(caster: Entity): string {
+    const min = this.damageModule.getRawDamage(caster, caster, 0);
+    const max = this.damageModule.getRawDamage(caster, caster, 20);
+
+    return `A rootgrasp spell that damages all enemies for ${min}-${max} magical damage. ${this.effectChance * 100}% chance to stun all enemies for 1 turn.`;
+  }
+}

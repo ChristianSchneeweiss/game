@@ -6,7 +6,7 @@ export abstract class DamageModule implements SpellModule {
   public abstract type: DamageType;
   public abstract getRawDamage(
     caster: Entity,
-    targets: Entity[],
+    target: Entity,
     roll: number
   ): number;
 
@@ -17,10 +17,8 @@ export abstract class DamageModule implements SpellModule {
     battleManager: BattleManager,
     spell: Spell
   ): SpellModuleReturn {
-    const rawDamage = this.getRawDamage(caster, targets, roll);
-
     const returns = targets.map((target) => {
-      const damage = Math.floor(rawDamage);
+      const damage = Math.round(this.getRawDamage(caster, target, roll));
       return battleManager.handler.damage(
         spell,
         damage,
@@ -41,7 +39,7 @@ export class MinMaxDamageModule extends DamageModule {
       max: number;
       attributeScaling?: (params: {
         caster: Entity;
-        targets: Entity[];
+        target: Entity;
         roll: number;
       }) => number;
     }
@@ -49,7 +47,7 @@ export class MinMaxDamageModule extends DamageModule {
     super();
   }
 
-  getRawDamage(caster: Entity, targets: Entity[], roll: number): number {
+  getRawDamage(caster: Entity, target: Entity, roll: number): number {
     if (!this.damageCalc) {
       throw new Error("Damage calculation module is not configured");
     }
@@ -59,7 +57,7 @@ export class MinMaxDamageModule extends DamageModule {
       roll
     );
     const scalingDamage =
-      this.damageCalc.attributeScaling?.({ caster, targets, roll }) ?? 0;
+      this.damageCalc.attributeScaling?.({ caster, target, roll }) ?? 0;
     return baseDamage + scalingDamage;
   }
 }
@@ -69,14 +67,14 @@ export class TotalDamageModule extends DamageModule {
     public type: DamageType,
     public totalDamageCalc: (params: {
       caster: Entity;
-      targets: Entity[];
+      target: Entity;
       roll: number;
     }) => number
   ) {
     super();
   }
 
-  getRawDamage(caster: Entity, targets: Entity[], roll: number): number {
-    return this.totalDamageCalc({ caster, targets, roll });
+  getRawDamage(caster: Entity, target: Entity, roll: number): number {
+    return this.totalDamageCalc({ caster, target, roll });
   }
 }

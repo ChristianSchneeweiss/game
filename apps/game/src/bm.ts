@@ -240,7 +240,11 @@ export class BM implements BattleManager, RoundLifecycleHooks {
       return null;
     }
 
-    console.log("casting spell", spellId, targets);
+    console.log(
+      "casting spell",
+      spellId,
+      targets.map((t) => t.id)
+    );
     const myTeam = caster.team;
     const targetEnemies = targets
       .filter((t) => t.team !== myTeam)

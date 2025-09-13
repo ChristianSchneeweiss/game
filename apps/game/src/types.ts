@@ -149,7 +149,6 @@ export interface SpellConfig {
   id: string;
   type: SpellType;
   name: string;
-  description: string;
   manaCost: number;
   cooldown: number;
   targetType: TargetType;

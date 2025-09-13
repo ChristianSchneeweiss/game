@@ -26,8 +26,8 @@ export class DamageSpell extends BaseSpell {
   }
 
   protected textDescription(caster: Entity): string {
-    const min = this.damageModule.getRawDamage(caster, [], 0);
-    const max = this.damageModule.getRawDamage(caster, [], 20);
+    const min = this.damageModule.getRawDamage(caster, caster, 0);
+    const max = this.damageModule.getRawDamage(caster, caster, 20);
 
     return `A spell that damages for ${min}-${max} damage.`;
   }

@@ -8,12 +8,11 @@ export class FireballSpell extends DamageSpell {
         id,
         type: "fireball",
         name: "Fireball",
-        description: "A fireball spell that damages a single enemy.",
         manaCost: 10,
         cooldown: 2,
         targetType: { enemies: 1, allies: 0 },
       },
-      new MinMaxDamageModule("FIRE", {
+      new MinMaxDamageModule("MAGICAL", {
         min: 0,
         max: 20,
         attributeScaling: ({ caster }) =>

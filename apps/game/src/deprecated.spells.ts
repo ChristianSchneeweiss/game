@@ -1,68 +1,14 @@
 import { DamageOverTimeEffect } from "./effect/dot.effect";
 import { HealingOverTimeEffect } from "./effect/hot.effect";
-import type { DamageModule, MinMaxDamageModule } from "./modules/damage.module";
-import type { HealModule } from "./modules/heal.module";
-import type { OptionalSpellCastEvent, SpellCastEvent } from "./timeline-events";
+import { BaseSpell } from "./spells/base/base.spell";
+import type { SpellCastEvent } from "./timeline-events";
 import type {
   BattleManager,
   DamageType,
   Effect,
   Entity,
-  Spell,
   SpellConfig,
 } from "./types";
-
-export class ApplyStatusSpell extends BaseSpell {
-  private effectFactory: (
-    source: Entity,
-    target: Entity,
-    self: ApplyStatusSpell
-  ) => Effect;
-
-  constructor(
-    config: SpellConfig,
-    effectFactory: (
-      source: Entity,
-      target: Entity,
-      self: ApplyStatusSpell
-    ) => Effect
-  ) {
-    super(config);
-    this.effectFactory = effectFactory;
-  }
-
-  protected _cast(
-    caster: Entity,
-    targets: Entity[],
-    battleManager: BattleManager,
-    roll: number
-  ): SpellCastEvent["data"] | null {
-    const effectsApplied = new Map<string, string>();
-
-    targets.forEach((target) => {
-      const effect = this.effectFactory(caster, target, this);
-      const realEffect = battleManager.handler.effect(
-        this,
-        effect,
-        caster,
-        target
-      );
-      if (realEffect) {
-        effectsApplied.set(target.id, realEffect.effectType);
-      }
-    });
-
-    return {
-      effectsApplied,
-      roll,
-      spellId: this.config.id,
-    };
-  }
-
-  protected textDescription(caster: Entity): string {
-    return this.config.description;
-  }
-}
 
 export class DotSpell extends ApplyStatusSpell {
   constructor(

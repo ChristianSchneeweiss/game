@@ -1,29 +1,28 @@
-import { WeakendEffect } from "../effect/weakend.effect";
+import { StunEffect } from "../effect/stun.effect";
 import { MinMaxDamageModule } from "../modules/damage.module";
 import { EffectModule } from "../modules/effect.module";
 import type { Entity } from "../types";
 import { DamageEffectSpell } from "./base/damage+effect.spell";
 
-export class FesteringBlowSpell extends DamageEffectSpell {
+export class CrushingBlowSpell extends DamageEffectSpell {
   constructor(id: string) {
     super(
       {
         id,
-        type: "festering-blow",
-        name: "Festering Blow",
+        type: "crushing-blow",
+        name: "Crushing Blow",
         manaCost: 0,
-        cooldown: 1,
-        targetType: { enemies: Infinity, allies: 0 },
+        cooldown: 2,
+        targetType: { enemies: 1, allies: 0 },
       },
       new MinMaxDamageModule("PHYSICAL", {
-        min: 5,
-        max: 8,
+        min: 8,
+        max: 12,
       }),
       new EffectModule(
-        ({ caster, target }) =>
-          new WeakendEffect(this, 2, caster, target, 1.1, "MULTIPLY")
+        ({ caster, target }) => new StunEffect(this, 1, caster, target)
       ),
-      0.25
+      0.3
     );
   }
 
@@ -31,6 +30,6 @@ export class FesteringBlowSpell extends DamageEffectSpell {
     const min = this.damageModule.getRawDamage(caster, caster, 0);
     const max = this.damageModule.getRawDamage(caster, caster, 20);
 
-    return `A festering blow spell that damages all enemies for ${min}-${max} damage. And has a ${this.effectChance * 100}% chance to curse all enemies with a 10% increased damage taken.`;
+    return `A crushing blow spell that damages a single enemy for ${min}-${max} damage. And has a ${this.effectChance * 100}% chance to stun the enemy for 1 turn.`;
   }
 }

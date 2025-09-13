@@ -40,7 +40,7 @@ function RouteComponent() {
       </p>
       <pre>
         {JSON.stringify(
-          serialize(data.timelineEvents[visibleEvents - 1]),
+          serialize(data.timelineEvents[visibleEvents - 1]).json,
           null,
           2,
         )}

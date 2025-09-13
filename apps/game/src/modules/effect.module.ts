@@ -5,13 +5,15 @@ export class EffectModule implements SpellModule {
   constructor(
     public effectCalc: (params: {
       caster: Entity;
-      targets: Entity[];
+      target: Entity;
       roll: number;
     }) => Effect
   ) {}
 
-  getRawEffect(caster: Entity, targets: Entity[], roll: number): Effect {
-    return this.effectCalc({ caster, targets, roll });
+  getRawEffect(caster: Entity, target: Entity, roll: number): Effect {
+    let effect: Effect;
+    effect = this.effectCalc({ caster, target, roll });
+    return effect;
   }
 
   applyRawEffect(
@@ -21,10 +23,9 @@ export class EffectModule implements SpellModule {
     battleManager: BattleManager,
     spell: Spell
   ): SpellModuleReturn {
-    const effect = this.getRawEffect(caster, targets, roll);
-
     const effects = targets
       .map((target) => {
+        const effect = this.getRawEffect(caster, target, roll);
         return battleManager.handler.effect(spell, effect, caster, target);
       })
       .filter((effect) => effect !== null);

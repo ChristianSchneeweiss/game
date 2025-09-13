@@ -8,7 +8,6 @@ export class BasicAttackSpell extends DamageSpell {
         id,
         type: "basic-attack",
         name: "Basic Attack",
-        description: "A basic attack that damages a single enemy.",
         manaCost: 0,
         cooldown: 0,
         targetType: { enemies: 1, allies: 0 },

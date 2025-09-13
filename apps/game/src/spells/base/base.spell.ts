@@ -124,6 +124,13 @@ export abstract class BaseSpell implements Spell {
       this.config.cooldown === 0 ? 0 : this.config.cooldown + 1;
   }
 
+  /**
+   * @returns A random number between 0 and 1
+   */
+  protected getRNG(): number {
+    return this.battleManager?.getRNG() ?? 0;
+  }
+
   getTargetType(): TargetType {
     return this.config.targetType;
   }

@@ -67,6 +67,20 @@ function RouteComponent() {
               <Play className="mr-2 h-5 w-5" />
               Enter Crypt of Forgotten Echoes
             </Button>
+            <Button
+              onClick={() => enterDungeon({ key: "trial-of-the-ashen" })}
+              className="bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-4 text-lg font-bold text-white shadow-2xl transition-all duration-300 hover:scale-105 hover:from-blue-500 hover:to-blue-400"
+            >
+              <Play className="mr-2 h-5 w-5" />
+              Enter Trial of the Ashen
+            </Button>
+            <Button
+              onClick={() => enterDungeon({ key: "trial-of-the-nature" })}
+              className="bg-gradient-to-r from-green-600 to-green-500 px-6 py-4 text-lg font-bold text-white shadow-2xl transition-all duration-300 hover:scale-105 hover:from-green-500 hover:to-green-400"
+            >
+              <Play className="mr-2 h-5 w-5" />
+              Enter Trial of the Nature
+            </Button>
           </div>
         </div>
 

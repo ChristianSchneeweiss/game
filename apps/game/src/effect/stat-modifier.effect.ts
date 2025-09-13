@@ -6,11 +6,11 @@ export class StatModifierEffect extends BaseEffect {
 
   constructor(
     spellSource: Spell,
-    effectType: EffectType,
-    duration: number,
     source: Entity,
+    target: Entity,
+    effectType: EffectType,
     modifiers: AttributeModifier[],
-    target: Entity
+    duration: number
   ) {
     super(spellSource, effectType, duration, source, target);
     this.modifiers = modifiers;
@@ -36,7 +36,13 @@ export class StatModifierEffect extends BaseEffect {
 
   getDescription(): string {
     const modifiers = this.modifiers
-      .map((mod) => `${mod.attribute}: ${Math.round(mod.value * 100)}%`)
+      .map((mod) => {
+        const text =
+          mod.operation === "ADD"
+            ? `${mod.value}.`
+            : `${Math.round(mod.value * 100)}%.`;
+        return `${mod.attribute}: ${text}`;
+      })
       .join("\n");
 
     return `Modifiers: ${modifiers}`;

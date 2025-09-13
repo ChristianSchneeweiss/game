@@ -26,8 +26,8 @@ export class HealingSpell extends BaseSpell {
   }
 
   protected textDescription(caster: Entity): string {
-    const min = this.healModule.getRawHeal(caster, [], 0);
-    const max = this.healModule.getRawHeal(caster, [], 20);
+    const min = this.healModule.getRawHeal(caster, caster, 0);
+    const max = this.healModule.getRawHeal(caster, caster, 20);
 
     return `A spell that heals for ${min}-${max} healing.`;
   }

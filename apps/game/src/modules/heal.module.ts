@@ -9,28 +9,28 @@ export class HealModule implements SpellModule {
       max: number;
       attributeScaling?: (params: {
         caster: Entity;
-        targets: Entity[];
+        target: Entity;
         roll: number;
       }) => number;
     },
     // if this is provided, the healCalc is ignored. Means we skip the min-max roll and use the totalHealCalc.
     public totalHealCalc?: (params: {
       caster: Entity;
-      targets: Entity[];
+      target: Entity;
       roll: number;
     }) => number
   ) {}
 
-  getRawHeal(caster: Entity, targets: Entity[], roll: number): number {
+  getRawHeal(caster: Entity, target: Entity, roll: number): number {
     if (this.totalHealCalc) {
-      return this.totalHealCalc({ caster, targets, roll });
+      return this.totalHealCalc({ caster, target, roll });
     }
     if (!this.healCalc) {
       throw new Error("Heal calculation module is not configured");
     }
     const baseHeal = minMaxRoll(this.healCalc.min, this.healCalc.max, roll);
     const scalingHeal =
-      this.healCalc.attributeScaling?.({ caster, targets, roll }) ?? 0;
+      this.healCalc.attributeScaling?.({ caster, target, roll }) ?? 0;
     return baseHeal + scalingHeal;
   }
 
@@ -41,10 +41,8 @@ export class HealModule implements SpellModule {
     battleManager: BattleManager,
     spell: Spell
   ): SpellModuleReturn {
-    const rawHeal = this.getRawHeal(caster, targets, roll);
-
     const heals = targets.map((target) => {
-      const heal = Math.floor(rawHeal);
+      const heal = Math.round(this.getRawHeal(caster, target, roll));
       return battleManager.handler.healing(spell, heal, caster, target);
     });
 

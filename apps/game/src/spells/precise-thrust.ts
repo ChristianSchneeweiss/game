@@ -1,22 +1,21 @@
 import { MinMaxDamageModule } from "../modules/damage.module";
 import { DamageSpell } from "./base/damage.spell";
 
-export class CinderWispSpell extends DamageSpell {
+export class PreciseThrustSpell extends DamageSpell {
   constructor(id: string) {
     super(
       {
         id,
-        type: "cinder-wisp",
-        name: "Cinder Wisp",
-        manaCost: 10,
+        type: "precise-thrust",
+        name: "Precise Thrust",
+        manaCost: 5,
         cooldown: 1,
         targetType: { enemies: 1, allies: 0 },
       },
-      new MinMaxDamageModule("MAGICAL", {
+      new MinMaxDamageModule("PHYSICAL", {
         min: 6,
-        max: 12,
-        attributeScaling: ({ caster }) =>
-          caster.getAttribute("intelligence") * 0.5,
+        max: 9,
+        attributeScaling: ({ caster }) => caster.getAttribute("agility") * 0.2,
       })
     );
   }

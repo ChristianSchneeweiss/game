@@ -2,6 +2,8 @@ import { Character } from "@loot-game/game/base-entity";
 import { cryptOfForgottenEchoes } from "@loot-game/game/dungeons/crypt-of-forgotten-echoes";
 import { DungeonKeySchema } from "@loot-game/game/dungeons/dungeon-keys";
 import { dungeon1 } from "@loot-game/game/dungeons/dungeon1";
+import { trialOfTheAshen } from "@loot-game/game/dungeons/trial-of-the-ashen";
+import { trialOfTheNature } from "@loot-game/game/dungeons/trial-of-the-nature";
 import type { DungeonData } from "@loot-game/game/dungeons/types";
 import type { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
 import type { LootEntity } from "@loot-game/game/types";
@@ -235,6 +237,10 @@ export const dungeonManager = {
       return dungeon1();
     } else if (dungeonKey.data === "crypt-of-forgotten-echoes") {
       return cryptOfForgottenEchoes();
+    } else if (dungeonKey.data === "trial-of-the-ashen") {
+      return trialOfTheAshen();
+    } else if (dungeonKey.data === "trial-of-the-nature") {
+      return trialOfTheNature();
     }
     throw new Error("Invalid dungeon key");
   },

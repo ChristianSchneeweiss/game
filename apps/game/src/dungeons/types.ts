@@ -1,7 +1,8 @@
 import z from "zod";
-import type { Character, Enemy } from "../base-entity";
+import type { Character } from "../base-entity";
 import type { BM } from "../bm";
-import type { EnemyType } from "../enemies/enemies";
+import type { BaseEnemy } from "../enemies/base/base.enemy";
+import type { EnemyType } from "../enemies/base/enemy-types";
 import type { DungeonKey } from "./dungeon-keys";
 
 export type DungeonRound = {
@@ -15,7 +16,7 @@ export type DungeonData = {
   key: string;
   playerTeam: Character[];
   round: number;
-  actualEnemies: Enemy[][];
+  actualEnemies: BaseEnemy[][];
   cleared: boolean;
 };
 
@@ -24,7 +25,7 @@ export type DungeonConfig = {
   name: string;
   description: string;
   availableEnemies: AvailableEnemies[];
-  rollEnemies: () => Enemy[][];
+  rollEnemies: () => BaseEnemy[][];
 };
 
 export const inBetweenCharacterData = z.object({

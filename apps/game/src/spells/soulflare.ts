@@ -4,22 +4,23 @@ import type { OptionalSpellCastEvent } from "../timeline-events";
 import type { BattleManager, Entity } from "../types";
 import { BaseSpell } from "./base/base.spell";
 
-export class VitalStrikeSpell extends BaseSpell {
+export class SoulflareSpell extends BaseSpell {
   protected damageModule: DamageModule;
 
   constructor(id: string) {
     super({
       id,
-      type: "vital-strike",
-      name: "Vital Strike",
-      manaCost: 0,
+      type: "soulflare",
+      name: "Soulflare",
+      manaCost: 20,
       cooldown: 2,
       targetType: { enemies: 1, allies: 0 },
     });
-    this.damageModule = new MinMaxDamageModule("PHYSICAL", {
-      min: 10,
-      max: 16,
-      attributeScaling: ({ caster }) => caster.getAttribute("strength") * 0.25,
+    this.damageModule = new MinMaxDamageModule("MAGICAL", {
+      min: 12,
+      max: 20,
+      attributeScaling: ({ caster }) =>
+        caster.getAttribute("intelligence") * 0.8,
     });
   }
 
@@ -56,6 +57,6 @@ export class VitalStrikeSpell extends BaseSpell {
     const min = this.damageModule.getRawDamage(caster, caster, 0);
     const max = this.damageModule.getRawDamage(caster, caster, 20);
 
-    return `A vital strike spell that damages a single enemy for ${min}-${max} damage. And heals the caster for 50% of the damage dealt.`;
+    return `A soulflare spell that damages a single enemy for ${min}-${max} magical damage. Heals the caster for 50% of the damage dealt.`;
   }
 }
