@@ -74,12 +74,15 @@ export interface TurnLifecycleHooks {
 }
 
 export interface Effect extends RoundLifecycleHooks, TurnLifecycleHooks {
+  id: string;
   effectType: EffectType;
   duration: number;
-  source: Entity;
-  target: Entity;
-  spellSource: Spell;
-  battleHandler?: BattleHandler;
+  sourceId: string;
+  targetId: string;
+  spellSourceId: string;
+  battleManager?: BattleManager;
+
+  getDescription(): string;
 
   // ** interaction hooks **
   beforeTakingDamage(damage: number): number;
@@ -165,11 +168,14 @@ export interface BattleManager {
   getTeam(team: Team): Entity[];
   getAliveEntities(): Entity[];
   getEntityById(id: string): Entity | undefined;
+  getSpellById(id: string): Spell | undefined;
   reviveEntity(entityId: string, health: number): boolean;
   getCurrentRound(): BattleRound;
   join(entity: Entity): void;
   processEntityDeath(entity: Entity, cause: { spellId: string }): void;
   processEvent(event: TimelineEvent): void;
+
+  addEffect(effect: Effect): void;
 }
 
 export interface BattleRound {

@@ -1,6 +1,6 @@
 import type { ClerkClient } from "@clerk/backend";
 import type { BaseEntity } from "@loot-game/game/base-entity";
-import { BM } from "@loot-game/game/bm";
+import { BM, type EffectTracking } from "@loot-game/game/bm";
 import { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
 import type { TimelineEventFull } from "@loot-game/game/timeline-events";
 import type {
@@ -60,6 +60,7 @@ export type BattleMessage = z.infer<typeof messageSchema>;
 export type BattleState = {
   events: TimelineEventFull[];
   round: BattleRound;
+  effectTracking: EffectTracking;
 };
 
 export type ResponseMessage =
@@ -426,6 +427,7 @@ export class BattleWebsocket extends DurableObject {
       data: {
         events,
         round: this.bm.getCurrentRound(),
+        effectTracking: this.bm.effectTracking,
       },
     } satisfies ResponseMessage;
     this.ctx.getWebSockets().forEach((ws) => {

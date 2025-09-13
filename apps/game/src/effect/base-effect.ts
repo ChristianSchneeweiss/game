@@ -1,5 +1,6 @@
+import { nanoid } from "nanoid";
 import type {
-  BattleHandler,
+  BattleManager,
   Effect,
   EffectType,
   Entity,
@@ -7,12 +8,13 @@ import type {
 } from "../types";
 
 export abstract class BaseEffect implements Effect {
+  id = nanoid(20);
   effectType: EffectType;
   duration: number;
-  source: Entity;
-  target: Entity;
-  spellSource: Spell;
-  battleHandler?: BattleHandler;
+  sourceId: string;
+  targetId: string;
+  spellSourceId: string;
+  battleManager?: BattleManager;
 
   constructor(
     spellSource: Spell,
@@ -25,9 +27,9 @@ export abstract class BaseEffect implements Effect {
     // we add 1 to the duration to account for the initial round.
     // as the duration already gets decremented by 1 in the onPostRound method.
     this.duration = duration + 1;
-    this.source = source;
-    this.target = target;
-    this.spellSource = spellSource;
+    this.sourceId = source.id;
+    this.targetId = target.id;
+    this.spellSourceId = spellSource.config.id;
   }
 
   onPreRound(): void {}
@@ -69,6 +71,36 @@ export abstract class BaseEffect implements Effect {
   }
 
   removeEffect(): void {
-    this.target.removeEffect(this);
+    const target = this.getTarget();
+    target.removeEffect(this);
+    this.battleManager?.processEvent({
+      eventType: "EFFECT_REMOVAL",
+      data: {
+        effectId: this.id,
+      },
+    });
+  }
+
+  getDescription(): string {
+    return "-";
+  }
+
+  protected getSource(): Entity {
+    const source = this.battleManager?.getEntityById(this.sourceId);
+    if (!source) throw new Error(`Source not found ${this.sourceId}`);
+    return source;
+  }
+
+  protected getTarget(): Entity {
+    const target = this.battleManager?.getEntityById(this.targetId);
+    if (!target) throw new Error(`Target not found ${this.targetId}`);
+    return target;
+  }
+
+  protected getSpellSource(): Spell {
+    const spellSource = this.battleManager?.getSpellById(this.spellSourceId);
+    if (!spellSource)
+      throw new Error(`Spell source not found ${this.spellSourceId}`);
+    return spellSource;
   }
 }

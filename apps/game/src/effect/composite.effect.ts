@@ -27,7 +27,7 @@ export class CompositeEffect extends BaseEffect {
 
   private updateChildSourcesAndDuration(): void {
     this.childEffects.forEach((effect) => {
-      effect.source = this.source;
+      effect.sourceId = this.sourceId;
       effect.duration = this.duration;
     });
   }
@@ -56,18 +56,21 @@ export class CompositeEffect extends BaseEffect {
     this.updateChildSourcesAndDuration();
 
     this.childEffects.forEach((effect) => {
+      const source = this.getSource();
+      const target = this.getTarget();
+
       if (effect instanceof DamageOverTimeEffect) {
         const dotEffect = effect as DamageOverTimeEffectExposed;
-        this.battleHandler?.damage(
+        this.battleManager?.handler.damage(
           this,
           dotEffect.damagePerRound,
           dotEffect.damageType,
-          this.source,
-          this.target
+          source,
+          target
         );
       } else if (effect instanceof HealingOverTimeEffect) {
         const hotEffect = effect as HealingOverTimeEffectExposed;
-        this.target.applyHealing(hotEffect.healingPerRound, effect.source);
+        target.applyHealing(hotEffect.healingPerRound, source);
       }
     });
 

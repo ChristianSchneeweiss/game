@@ -4,7 +4,9 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { cn } from "@/lib/utils";
+import type { EffectTracking } from "@loot-game/game/bm";
 import type {
+  EffectType,
   Entity,
   EntityAttributes,
   SpecialAttributes,
@@ -15,12 +17,20 @@ import {
   BotIcon,
   CheckIcon,
   CircleQuestionMarkIcon,
+  Droplets,
+  Eye,
+  Flame,
   Heart,
+  Lock,
   Shield,
+  ShieldCheck,
   SkullIcon,
   Sparkles,
   TargetIcon,
+  TrendingDown,
+  TrendingUp,
   Zap,
+  Zap as ZapIcon,
 } from "lucide-react";
 import { useState } from "react";
 import type { BattleState } from "../../../../server/src/battle-ws";
@@ -29,6 +39,8 @@ import type { Stats } from "./-hooks/use-stats-timeline";
 type Params = {
   participants: Entity[];
   stats: Map<string, Stats>;
+  effectTracking: EffectTracking;
+
   battleState?: BattleState;
   validTargets?: string[];
   chosenTargets?: string[];
@@ -56,6 +68,7 @@ type Params = {
 export const BattleRender = ({
   participants,
   battleState,
+  effectTracking,
   stats,
   validTargets,
   activeSpell,
@@ -78,6 +91,8 @@ export const BattleRender = ({
   // Separate allies and enemies
   const allies = participants.filter((p) => p.team === "TEAM_A");
   const enemies = participants.filter((p) => p.team === "TEAM_B");
+
+  const currentRound = battleState?.round.round ?? 0;
 
   const EntityCard = ({ entity, team }: { entity: Entity; team: Team }) => {
     const setHoverCharacterOpen = (open: boolean | undefined) => {
@@ -105,6 +120,9 @@ export const BattleRender = ({
     const isValidTarget = validTargets?.includes(entity.id);
     const isChosenTarget = chosenTargets?.includes(entity.id);
     const entityAttributes = characterAttributes?.get(entity.id);
+    const activeEffects = (stats.get(entity.id)?.activeEffects ?? [])
+      .map((effect) => effectTracking.get(effect))
+      .filter((effect) => effect !== undefined);
 
     return (
       <div
@@ -298,6 +316,65 @@ export const BattleRender = ({
           </div>
         </div>
 
+        {/* Active Effects */}
+        {activeEffects.length > 0 && (
+          <div className="mb-4">
+            <h4 className="mb-3 flex items-center gap-1 text-sm font-bold text-purple-300">
+              <Sparkles className="h-4 w-4" />
+              Active Effects
+            </h4>
+            <div className="flex flex-wrap gap-2">
+              {activeEffects.map((effect) => {
+                const roundsLeft =
+                  effect.round + effect.duration - currentRound + 1;
+                const sourceName = participants.find(
+                  (p) => p.id === effect.sourceId,
+                )?.name;
+
+                return (
+                  <div
+                    key={effect.id}
+                    className="group relative flex items-center gap-2 rounded-lg border border-slate-600/50 bg-slate-700/30 px-3 py-2 backdrop-blur-sm transition-all duration-200 hover:border-slate-500/70 hover:bg-slate-600/40"
+                  >
+                    {getEffectIcon(effect.effectType)}
+                    <div className="flex flex-col">
+                      <span className="text-xs font-medium text-white">
+                        {effect.effectType}
+                      </span>
+                      <div className="flex items-center gap-1 text-xs text-slate-400">
+                        <span className="rounded-full bg-orange-500/20 px-1.5 py-0.5 text-orange-300">
+                          {roundsLeft}{" "}
+                        </span>
+                        {sourceName && (
+                          <span className="max-w-[80px] truncate">
+                            from {sourceName}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    {/* Tooltip with description */}
+                    <div className="absolute bottom-full left-1/2 z-10 mb-2 hidden -translate-x-1/2 transform group-hover:block">
+                      <div
+                        className="max-w-[420px] min-w-[260px] rounded-lg border border-slate-500 bg-slate-800 px-4 py-3 text-xs break-words whitespace-pre-line text-slate-200 shadow-lg"
+                        style={{ whiteSpace: "pre-line" }}
+                      >
+                        {effect.description}
+                        <br />
+                        {sourceName && (
+                          <span className="inline-block max-w-[180px] truncate align-top">
+                            from {sourceName}
+                          </span>
+                        )}
+                        <div className="absolute top-full left-1/2 h-0 w-0 -translate-x-1/2 transform border-t-4 border-r-4 border-l-4 border-transparent border-t-slate-800"></div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         {/* Spells */}
         <div className="space-y-2">
           <h4 className="flex items-center gap-1 text-sm font-bold text-purple-300">
@@ -459,4 +536,28 @@ export const BattleRender = ({
       </div>
     </div>
   );
+};
+
+// Helper function to get icon for effect type
+const getEffectIcon = (effectType: EffectType) => {
+  switch (effectType) {
+    case "DOT":
+      return <Flame className="h-4 w-4 text-red-400" />;
+    case "HOT":
+      return <Droplets className="h-4 w-4 text-green-400" />;
+    case "SHIELD":
+      return <ShieldCheck className="h-4 w-4 text-blue-400" />;
+    case "BUFF":
+      return <TrendingUp className="h-4 w-4 text-green-300" />;
+    case "DEBUFF":
+      return <TrendingDown className="h-4 w-4 text-red-300" />;
+    case "CURSE":
+      return <ZapIcon className="h-4 w-4 text-purple-400" />;
+    case "STUN":
+      return <Lock className="h-4 w-4 text-yellow-400" />;
+    case "CONTROL":
+      return <Eye className="h-4 w-4 text-pink-400" />;
+    default:
+      return <Sparkles className="h-4 w-4 text-purple-300" />;
+  }
 };

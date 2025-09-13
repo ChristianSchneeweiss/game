@@ -27,15 +27,19 @@ export class DamageOverTimeEffect
   }
 
   onPostRound(): void {
-    const damage = this.battleHandler?.damage(
+    const source = this.getSource();
+    const target = this.getTarget();
+    const spellSource = this.getSpellSource();
+
+    const damage = this.battleManager?.handler.damage(
       this,
       this.damagePerRound,
       this.damageType,
-      this.source,
-      this.target
+      source,
+      target
     );
     console.log(
-      `${this.source.name} deals ${damage} damage to ${this.target.name} with ${this.spellSource.config.name}`
+      `${source.name} deals ${damage} damage to ${target.name} with ${spellSource.config.name}`
     );
     super.onPostRound();
   }

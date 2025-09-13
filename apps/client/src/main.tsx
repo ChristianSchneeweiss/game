@@ -1,6 +1,7 @@
 import { ClerkProvider } from "@clerk/clerk-react";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import ReactDOM from "react-dom/client";
+import { registerRecipes } from "../../server/src/lib/superjson-recipes";
 import Loader from "./components/loader";
 import { routeTree } from "./routeTree.gen";
 
@@ -20,6 +21,8 @@ declare module "@tanstack/react-router" {
     router: typeof router;
   }
 }
+
+registerRecipes();
 
 // Import your Publishable Key
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;

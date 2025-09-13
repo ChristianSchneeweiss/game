@@ -13,6 +13,17 @@ const storageSchema = z.object({
   startEntityData: COL_characterDungeonDataSchema,
   timelineEvents: z.array(timelineEventSchema),
   participants: z.array(z.any()), // TODO
+  // TODO
+  effectTracking: z.map(
+    z.string(),
+    z.object({
+      sourceId: z.string(),
+      targetId: z.string(),
+      round: z.number(),
+      duration: z.number(),
+      effectType: z.string(),
+    })
+  ),
 });
 type StorageSchema = z.infer<typeof storageSchema>;
 
@@ -24,6 +35,7 @@ export const bmStorage = {
         ent.spells.forEach((spells) => (spells.battleManager = undefined));
       });
     });
+    console.log(bm.effectTracking);
     await kv.put(
       `battle:${bm.battleId}`,
       stringify({
@@ -36,6 +48,9 @@ export const bmStorage = {
           })),
         timelineEvents: bm.events,
         participants: entities as BaseEntity[],
+        effectTracking: storageSchema.shape.effectTracking.parse(
+          bm.effectTracking
+        ),
       } satisfies StorageSchema)
     );
     await kv.put(
@@ -64,7 +79,19 @@ export const bmStorage = {
 
     const x = storageSchema.safeParse(serialized);
     if (!x.success) throw new Error(x.error.message);
-    return { ...x.data, participants: x.data.participants as Entity[] };
+    return {
+      ...x.data,
+      participants: x.data.participants as Entity[],
+      effectTracking: new Map(),
+      // x.data.effectTracking.entries().map(([id, effect]) => [
+      //   id,
+      //   {
+      //     ...effect,
+      //     id: id,
+      //     effectType: effect.effectType as EffectType,
+      //   },
+      // ])
+    };
   },
 };
 

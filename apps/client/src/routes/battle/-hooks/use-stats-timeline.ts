@@ -73,12 +73,12 @@ export type Stats = {
   deltaHealth: number;
   deltaMana: number;
   cooldowns: Map<string, number>;
+  activeEffects: Array<string>;
   roll?: number;
   flags: {
     casting: boolean;
     isCrit: boolean;
     dead: boolean;
-    effects: Array<string>;
   };
 };
 
@@ -100,7 +100,6 @@ function calculateStatsTimeline(
 
         stats.flags.casting = false;
         stats.flags.isCrit = false;
-        stats.flags.effects = [];
         // dont reset dead flag
 
         switch (event.event.eventType) {
@@ -135,7 +134,7 @@ function calculateStatsTimeline(
             if (effectsApplied && effectsApplied.has(entity.id)) {
               const effect = effectsApplied.get(entity.id);
               if (effect) {
-                stats.flags.effects.push(effect);
+                stats.activeEffects.push(...effect);
               }
             }
 
@@ -157,6 +156,13 @@ function calculateStatsTimeline(
                 stats.cooldowns.set(spellId, cooldown);
               }
             }
+            break;
+          }
+          case "EFFECT_REMOVAL": {
+            const { effectId } = event.event.data;
+            stats.activeEffects = stats.activeEffects.filter(
+              (effect) => effect !== effectId,
+            );
             break;
           }
           case "REDUCE_COOLDOWN": {
@@ -200,11 +206,11 @@ function calculateStatsTimeline(
         deltaHealth: 0,
         deltaMana: 0,
         cooldowns: new Map(),
+        activeEffects: [],
         flags: {
           casting: false,
           isCrit: false,
           dead: false,
-          effects: [],
         },
       } as Stats,
     );

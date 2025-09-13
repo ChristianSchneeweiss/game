@@ -57,6 +57,7 @@ function RouteComponent() {
       <BattleRender
         participants={participants}
         stats={stats}
+        effectTracking={battleState?.effectTracking ?? new Map()}
         battleState={battleState}
         validTargets={validTargets ?? undefined}
         activeSpell={activeSpell ?? undefined}

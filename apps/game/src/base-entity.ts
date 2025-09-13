@@ -1,3 +1,4 @@
+import superjson from "superjson";
 import { calculator } from "./calculator";
 import type { TimelineEvent } from "./timeline-events";
 import type {
@@ -122,7 +123,6 @@ export class BaseEntity implements Entity {
 
   applyEffect(effect: Effect): void {
     this.activeEffects.push(effect);
-    effect.onApply?.();
   }
 
   removeEffect(effect: Effect): void {

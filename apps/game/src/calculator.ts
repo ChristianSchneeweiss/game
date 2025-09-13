@@ -31,6 +31,12 @@ export class calculator {
     // todo add modifiers before from source, after from defender, and resistances
     // before dealing damage and before taking damage hook
 
+    // attacker effects hooks before dealing. highest priority
+    damage = attacker.activeEffects.reduce(
+      (acc, effect) => effect.beforeDealingDamage(acc),
+      damage
+    );
+
     const critChance = attacker.getAttribute("critChance");
     const critRoll = rng();
     const isCrit = critRoll < critChance;
@@ -50,6 +56,12 @@ export class calculator {
       damage = damage - realArmor;
     }
 
+    // defender effects hooks after dealing
+    damage = defender.activeEffects.reduce(
+      (acc, effect) => effect.beforeTakingDamage(acc),
+      damage
+    );
+
     return {
       damage: Math.round(Math.max(damage, 0)),
       isCrit,
@@ -63,15 +75,46 @@ export class calculator {
   ): number {
     // todo add modifiers before from source, after from defender, and resistances
     // before dealing healing and before taking healing hook
+
+    // attacker effects hooks before dealing
+    healing = attacker.activeEffects.reduce(
+      (acc, effect) => effect.beforeDealingHealing(acc),
+      healing
+    );
+
+    // defender effects hooks before taking
+    healing = defender.activeEffects.reduce(
+      (acc, effect) => effect.beforeTakingHealing(acc),
+      healing
+    );
+
     return Math.round(healing);
   }
 
-  static calculateRealEffect(effect: Effect): Effect | null {
-    const attacker = effect.source;
-    const defender = effect.target;
+  static calculateRealEffect(
+    effect: Effect,
+    battleManager: BattleManager
+  ): Effect | null {
+    const attacker = battleManager.getEntityById(effect.sourceId);
+    const defender = battleManager.getEntityById(effect.targetId);
+    if (!attacker) throw new Error(`attacker not found ${effect.sourceId}`);
+    if (!defender) throw new Error(`defender not found ${effect.targetId}`);
     // todo add modifiers before from source, after from defender, and resistances
     // before dealing effect and before taking effect hook
-    return effect;
+
+    // attacker effects hooks before taking
+    const realEffect = attacker.activeEffects.reduce<Effect | null>(
+      (acc, effect) =>
+        (acc ? effect.beforeTakingEffect(acc) : null) as Effect | null,
+      effect
+    );
+
+    // defender effects hooks before dealing
+    return defender.activeEffects.reduce<Effect | null>(
+      (acc, effect) =>
+        (acc ? effect.beforeDealingEffect(acc) : null) as Effect | null,
+      realEffect
+    );
   }
 }
 
@@ -114,24 +157,25 @@ export class Handler implements BattleHandler {
       isCrit,
     };
 
+    const lifesteal = source.getAttribute("lifesteal");
+    const omnivamp = source.getAttribute("omnivamp");
+
+    if (lifesteal + omnivamp === 0) return damageReturn;
+
     let healing: HandlerReturn | null = null;
     if (type === "PHYSICAL") {
-      healing = this.healing(
-        spell,
-        damage * source.getAttribute("lifesteal"),
-        source,
-        source
-      );
+      const lifesteal = source.getAttribute("lifesteal");
+      if (lifesteal > 0) {
+        healing = this.healing(spell, damage * lifesteal, source, source);
+      }
     } else {
-      healing = this.healing(
-        spell,
-        damage * source.getAttribute("omnivamp"),
-        source,
-        source
-      );
+      const omnivamp = source.getAttribute("omnivamp");
+      if (omnivamp > 0) {
+        healing = this.healing(spell, damage * omnivamp, source, source);
+      }
     }
 
-    return this.mergeHandlerReturns([damageReturn, healing]);
+    return this.mergeHandlerReturns([damageReturn, healing!]);
   }
 
   healing(
@@ -156,18 +200,21 @@ export class Handler implements BattleHandler {
     source: Entity,
     target: Entity
   ) {
-    const realEffect = calculator.calculateRealEffect(effect);
+    const realEffect = calculator.calculateRealEffect(
+      effect,
+      this.battleManager
+    );
     if (!realEffect) return null;
     console.log(
       `${source.name} applies ${realEffect.effectType} to ${target.name}`
     );
-    realEffect.battleHandler = this.battleManager.handler;
-    this.battleManager.lifeCycleHooks.push(realEffect);
+    realEffect.battleManager = this.battleManager;
+    this.battleManager.addEffect(realEffect);
     target.applyEffect(realEffect);
-    const effectsApplied = new Map<string, string>().set(
-      target.id,
-      realEffect.effectType
-    );
+    realEffect.onApply?.();
+    const effectsApplied = new Map<string, string[]>().set(target.id, [
+      realEffect.id,
+    ]);
     return {
       effectsApplied,
       realEffects: effectsApplied.values(),
@@ -178,7 +225,7 @@ export class Handler implements BattleHandler {
   mergeHandlerReturns(returns: HandlerReturn[]): HandlerReturn {
     const damageApplied = new Map<string, number>();
     const healingApplied = new Map<string, number>();
-    const effectsApplied = new Map<string, string>();
+    const effectsApplied = new Map<string, string[]>();
     for (const r of returns) {
       if (r.damageApplied) {
         for (const [key, value] of r.damageApplied) {
@@ -192,13 +239,12 @@ export class Handler implements BattleHandler {
           healingApplied.set(key, currentValue + value);
         }
       }
-      // TODO: add effects applied
-      // if (r.effectsApplied) {
-      //   for (const [key, value] of r.effectsApplied) {
-      //     const currentValue = effectsApplied.get(key) ?? 0;
-      //     effectsApplied.set(key, currentValue + value);
-      //   }
-      // }
+      if (r.effectsApplied) {
+        for (const [key, value] of r.effectsApplied) {
+          const currentValue = effectsApplied.get(key) ?? [];
+          effectsApplied.set(key, [...currentValue, ...value]);
+        }
+      }
     }
     return {
       damageApplied,

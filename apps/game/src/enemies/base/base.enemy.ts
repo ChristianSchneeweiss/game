@@ -81,18 +81,18 @@ export class BaseEnemy extends BaseEntity {
     let targets: Entity[] = [];
     const targetType = spell.getTargetType();
     for (let i = 0; i < targetType.enemies; i++) {
-      const rn = Math.round(this.battleManager.getRNG() * validTargets.length);
+      const rng = this.battleManager.getRNG();
+      const rn = Math.round(rng * (validTargets.length - 1));
       const randomEnemy = validTargets[rn];
-      if (randomEnemy) {
-        targets.push(randomEnemy);
-      }
+      if (!randomEnemy) throw new Error(`No random enemy found ${rn} ${rng}`);
+      targets.push(randomEnemy);
     }
     for (let i = 0; i < targetType.allies; i++) {
-      const rn = Math.round(this.battleManager.getRNG() * validTargets.length);
+      const rng = this.battleManager.getRNG();
+      const rn = Math.round(rng * (validTargets.length - 1));
       const randomAlly = validTargets[rn];
-      if (randomAlly) {
-        targets.push(randomAlly);
-      }
+      if (!randomAlly) throw new Error(`No random ally found ${rn} ${rng}`);
+      targets.push(randomAlly);
     }
     return targets;
   }

@@ -11,10 +11,26 @@ import type {
   BattleHandler,
   BattleManager,
   BattleRound,
+  Effect,
+  EffectType,
   Entity,
   RoundLifecycleHooks,
+  Spell,
   Team,
 } from "./types";
+
+export type EffectTracking = Map<
+  string,
+  {
+    id: string; // redundant but makes stuff simpler
+    sourceId: string;
+    targetId: string;
+    round: number;
+    duration: number;
+    effectType: EffectType;
+    description: string;
+  }
+>;
 
 export class BM implements BattleManager, RoundLifecycleHooks {
   startEntityData: Entity[] = [];
@@ -26,6 +42,7 @@ export class BM implements BattleManager, RoundLifecycleHooks {
   events: TimelineEventFull[] = [];
   battleId: string;
   rng: seedrandom.PRNG;
+  effectTracking: EffectTracking = new Map();
 
   constructor(entities: Entity[], battleId: string = nanoid(20)) {
     this.deadEntities = new Map();
@@ -46,6 +63,19 @@ export class BM implements BattleManager, RoundLifecycleHooks {
 
   getPRNG(): seedrandom.PRNG {
     return this.rng;
+  }
+
+  addEffect(effect: Effect): void {
+    this.lifeCycleHooks.push(effect);
+    this.effectTracking.set(effect.id, {
+      id: effect.id,
+      sourceId: effect.sourceId,
+      targetId: effect.targetId,
+      round: this.getCurrentRound().round,
+      duration: effect.duration,
+      effectType: effect.effectType,
+      description: effect.getDescription(),
+    });
   }
 
   join(entity: Entity): void {
@@ -102,6 +132,14 @@ export class BM implements BattleManager, RoundLifecycleHooks {
       this.entities.find((entity) => entity.id === id) ||
       this.deadEntities.get(id)
     );
+  }
+
+  getSpellById(id: string): Spell | undefined {
+    const entity = this.entities.find((entity) =>
+      entity.spells.some((spell) => spell.config.id === id)
+    );
+    if (!entity) return undefined;
+    return entity.spells.find((spell) => spell.config.id === id);
   }
 
   reviveEntity(entityId: string, health: number): boolean {

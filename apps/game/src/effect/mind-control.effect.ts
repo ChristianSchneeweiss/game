@@ -16,10 +16,13 @@ export class MindControlEffect extends BaseEffect {
   }
 
   onApply(): void {
-    this.target.team = this.source.team;
+    const target = this.getTarget();
+    const source = this.getSource();
+    target.team = source.team;
   }
 
   onRemove(): void {
-    this.target.team = this.originalTeam;
+    const target = this.getTarget();
+    target.team = this.originalTeam;
   }
 }

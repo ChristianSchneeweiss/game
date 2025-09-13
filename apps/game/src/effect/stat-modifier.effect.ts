@@ -1,4 +1,4 @@
-import type { EffectType, Entity, Spell, AttributeModifier } from "../types";
+import type { AttributeModifier, EffectType, Entity, Spell } from "../types";
 import { BaseEffect } from "./base-effect";
 
 export class StatModifierEffect extends BaseEffect {
@@ -17,17 +17,28 @@ export class StatModifierEffect extends BaseEffect {
   }
 
   onApply(): void {
+    const target = this.getTarget();
     this.modifiers.forEach((mod) => {
-      this.target.attributeModifiers.push(mod);
+      target.attributeModifiers.push(mod);
     });
   }
 
   onRemove(): void {
+    const target = this.getTarget();
+
     this.modifiers.forEach((mod) => {
-      const index = this.target.attributeModifiers.indexOf(mod);
+      const index = target.attributeModifiers.indexOf(mod);
       if (index !== -1) {
-        this.target.attributeModifiers.splice(index, 1);
+        target.attributeModifiers.splice(index, 1);
       }
     });
+  }
+
+  getDescription(): string {
+    const modifiers = this.modifiers
+      .map((mod) => `${mod.attribute}: ${Math.round(mod.value * 100)}%`)
+      .join("\n");
+
+    return `Modifiers: ${modifiers}`;
   }
 }

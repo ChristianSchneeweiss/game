@@ -23,14 +23,17 @@ export class HealingOverTimeEffect
   }
 
   onPostRound(): void {
-    const healing = this.battleHandler?.healing(
+    const source = this.getSource();
+    const target = this.getTarget();
+    const spellSource = this.getSpellSource();
+    const healing = this.battleManager?.handler.healing(
       this,
       this.healingPerRound,
-      this.source,
-      this.target
+      source,
+      target
     );
     console.log(
-      `${this.source.name} heals ${healing} to ${this.target.name} with ${this.spellSource.config.name}`
+      `${source.name} heals ${healing} to ${target.name} with ${spellSource.config.name}`
     );
     super.onPostRound();
   }

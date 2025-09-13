@@ -5,6 +5,7 @@ import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { envSchema } from "./env";
 import { createContext } from "./lib/context";
+import { registerRecipes } from "./lib/superjson-recipes";
 import { appRouter } from "./routers/index";
 export { BattleDoneWorkflow } from "./battle-done.workflow";
 export { BattleWebsocket } from "./battle-ws";
@@ -12,6 +13,8 @@ export { BattleWebsocket } from "./battle-ws";
 const app = new Hono<{
   Bindings: Env;
 }>();
+
+registerRecipes();
 
 app.use(logger());
 

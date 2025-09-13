@@ -9,7 +9,7 @@ const spellCastEvent = z.object({
     totalDamage: z.number().int().optional(),
     damageApplied: z.map(z.string(), z.number().int()).optional(),
     healingApplied: z.map(z.string(), z.number().int()).optional(),
-    effectsApplied: z.map(z.string(), z.string()).optional(),
+    effectsApplied: z.map(z.string(), z.array(z.string())).optional(),
   }),
 });
 
@@ -19,6 +19,15 @@ export type OptionalSpellCastEvent = Omit<
   SpellCastEvent["data"],
   "spellId" | "roll"
 > | null;
+
+const effectRemovalEvent = z.object({
+  eventType: z.literal("EFFECT_REMOVAL"),
+  data: z.object({
+    effectId: z.string(),
+  }),
+});
+
+export type EffectRemovalEvent = z.infer<typeof effectRemovalEvent>;
 
 const deathEvent = z.object({
   eventType: z.literal("DEATH"),
@@ -56,6 +65,7 @@ type HealthRegenEvent = z.infer<typeof healthRegenEvent>;
 
 const allEvents = z.union([
   spellCastEvent,
+  effectRemovalEvent,
   deathEvent,
   reduceCooldownEvent,
   healthRegenEvent,
