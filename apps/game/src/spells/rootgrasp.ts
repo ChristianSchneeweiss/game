@@ -21,9 +21,7 @@ export class RootgraspSpell extends DamageEffectSpell {
         attributeScaling: ({ caster }) =>
           caster.getAttribute("intelligence") * 0.3,
       }),
-      new EffectModule(
-        ({ caster, target }) => new StunEffect(this, 1, caster, target)
-      ),
+      new EffectModule(() => new StunEffect(1)),
       0.4
     );
   }

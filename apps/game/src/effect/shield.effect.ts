@@ -1,17 +1,10 @@
-import type { Entity, Spell } from "../types";
 import { BaseEffect } from "./base-effect";
 
 export class ShieldEffect extends BaseEffect {
   private shieldAmount: number;
 
-  constructor(
-    spellSource: Spell,
-    duration: number,
-    source: Entity,
-    target: Entity,
-    shieldAmount: number
-  ) {
-    super(spellSource, "SHIELD", duration, source, target);
+  constructor(duration: number, shieldAmount: number) {
+    super("SHIELD", duration);
     this.shieldAmount = shieldAmount;
   }
 

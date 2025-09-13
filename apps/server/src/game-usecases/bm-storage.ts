@@ -2,7 +2,7 @@ import { BaseEntity } from "@loot-game/game/base-entity";
 import type { BM } from "@loot-game/game/bm";
 import { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
 import { timelineEventSchema } from "@loot-game/game/timeline-events";
-import type { Entity } from "@loot-game/game/types";
+import type { EffectType, Entity } from "@loot-game/game/types";
 import { produce } from "immer";
 import { parse, stringify } from "superjson";
 import { z } from "zod";
@@ -82,15 +82,16 @@ export const bmStorage = {
     return {
       ...x.data,
       participants: x.data.participants as Entity[],
-      effectTracking: new Map(),
-      // x.data.effectTracking.entries().map(([id, effect]) => [
-      //   id,
-      //   {
-      //     ...effect,
-      //     id: id,
-      //     effectType: effect.effectType as EffectType,
-      //   },
-      // ])
+      effectTracking: new Map(
+        x.data.effectTracking.entries().map(([id, effect]) => [
+          id,
+          {
+            ...effect,
+            id: id,
+            effectType: effect.effectType as EffectType,
+          },
+        ])
+      ),
     };
   },
 };

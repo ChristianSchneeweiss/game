@@ -22,11 +22,8 @@ export class VerdantSmiteSpell extends DamageEffectSpell {
           caster.getAttribute("intelligence") * 0.6,
       }),
       new EffectModule(
-        ({ caster, target }) =>
+        () =>
           new ArmorDebuffEffect(
-            this,
-            caster,
-            target,
             {
               value: 0.85,
               operation: "MULTIPLY",

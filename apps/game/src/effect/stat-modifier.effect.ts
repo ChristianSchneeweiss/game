@@ -1,18 +1,15 @@
-import type { AttributeModifier, EffectType, Entity, Spell } from "../types";
+import type { AttributeModifier, EffectType } from "../types";
 import { BaseEffect } from "./base-effect";
 
 export class StatModifierEffect extends BaseEffect {
   private modifiers: AttributeModifier[];
 
   constructor(
-    spellSource: Spell,
-    source: Entity,
-    target: Entity,
     effectType: EffectType,
     modifiers: AttributeModifier[],
     duration: number
   ) {
-    super(spellSource, effectType, duration, source, target);
+    super(effectType, duration);
     this.modifiers = modifiers;
   }
 

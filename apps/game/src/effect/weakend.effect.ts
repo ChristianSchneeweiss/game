@@ -1,4 +1,4 @@
-import type { Entity, ModifierOperation, Spell } from "../types";
+import type { ModifierOperation } from "../types";
 import { BaseEffect } from "./base-effect";
 
 /**
@@ -6,14 +6,11 @@ import { BaseEffect } from "./base-effect";
  */
 export class WeakendEffect extends BaseEffect {
   constructor(
-    spellSource: Spell,
     duration: number,
-    source: Entity,
-    target: Entity,
     private bonusDamage: number,
     private modifier: ModifierOperation
   ) {
-    super(spellSource, "CURSE", duration, source, target);
+    super("CURSE", duration);
   }
 
   beforeTakingDamage(damage: number): number {

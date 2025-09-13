@@ -200,6 +200,10 @@ export class Handler implements BattleHandler {
     source: Entity,
     target: Entity
   ) {
+    effect.spellSourceId = spell.config.id;
+    effect.sourceId = source.id;
+    effect.targetId = target.id;
+
     const realEffect = calculator.calculateRealEffect(
       effect,
       this.battleManager

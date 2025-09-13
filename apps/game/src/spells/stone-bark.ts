@@ -16,11 +16,8 @@ export class StoneBarkSpell extends ApplyStatusSpell {
         targetType: { allies: 0, enemies: 0 },
       },
       new EffectModule(
-        ({ caster, target }) =>
+        () =>
           new StatModifierEffect(
-            this,
-            caster,
-            target,
             "BUFF",
             [
               {

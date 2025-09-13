@@ -1,4 +1,4 @@
-import type { Effect, EffectType, Entity, Spell } from "../types";
+import type { Effect, EffectType } from "../types";
 import { BaseEffect } from "./base-effect";
 import {
   DamageOverTimeEffect,
@@ -13,14 +13,11 @@ export class CompositeEffect extends BaseEffect {
   private childEffects: Effect[];
 
   constructor(
-    spellSource: Spell,
     effectType: EffectType,
     duration: number,
-    source: Entity,
-    target: Entity,
     childEffects: Effect[]
   ) {
-    super(spellSource, effectType, duration, source, target);
+    super(effectType, duration);
     this.childEffects = [...childEffects];
     this.updateChildSourcesAndDuration();
   }

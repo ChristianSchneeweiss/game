@@ -20,11 +20,8 @@ export class SplinterShotSpell extends DamageEffectSpell {
         max: 10,
       }),
       new EffectModule(
-        ({ caster, target }) =>
+        () =>
           new ArmorDebuffEffect(
-            this,
-            caster,
-            target,
             {
               value: 0.9,
               operation: "MULTIPLY",

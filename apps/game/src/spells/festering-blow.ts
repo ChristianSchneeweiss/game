@@ -19,10 +19,7 @@ export class FesteringBlowSpell extends DamageEffectSpell {
         min: 5,
         max: 8,
       }),
-      new EffectModule(
-        ({ caster, target }) =>
-          new WeakendEffect(this, 2, caster, target, 1.1, "MULTIPLY")
-      ),
+      new EffectModule(() => new WeakendEffect(2, 1.1, "MULTIPLY")),
       0.25
     );
   }

@@ -16,20 +16,15 @@ export abstract class BaseEffect implements Effect {
   spellSourceId: string;
   battleManager?: BattleManager;
 
-  constructor(
-    spellSource: Spell,
-    effectType: EffectType,
-    duration: number,
-    source: Entity,
-    target: Entity
-  ) {
+  constructor(effectType: EffectType, duration: number) {
     this.effectType = effectType;
-    // we add 1 to the duration to account for the initial round.
-    // as the duration already gets decremented by 1 in the onPostRound method.
-    this.duration = duration + 1;
-    this.sourceId = source.id;
-    this.targetId = target.id;
-    this.spellSourceId = spellSource.config.id;
+    this.duration = duration;
+
+    // we set these to undefined! to avoid type errors
+    // as they are set in the handler when we apply the effect
+    this.sourceId = undefined!;
+    this.targetId = undefined!;
+    this.spellSourceId = undefined!;
   }
 
   onPreRound(): void {}
@@ -37,7 +32,7 @@ export abstract class BaseEffect implements Effect {
   onPostRound(): void {
     this.duration--;
 
-    if (this.duration <= 0) {
+    if (this.duration < 0) {
       this.removeEffect();
     }
   }

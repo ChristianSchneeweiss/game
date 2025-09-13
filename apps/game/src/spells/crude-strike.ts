@@ -21,11 +21,8 @@ export class CrudeStrikeSpell extends DamageEffectSpell {
         max: 10,
       }),
       new EffectModule(
-        ({ caster, target }) =>
+        () =>
           new StatModifierEffect(
-            this,
-            caster,
-            target,
             "DEBUFF",
             [
               {

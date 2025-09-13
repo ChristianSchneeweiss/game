@@ -1,4 +1,4 @@
-import type { Effect, Entity, Spell } from "../types";
+import type { Effect } from "../types";
 import { BaseEffect } from "./base-effect";
 
 export interface HealingOverTimeEffectExposed extends Effect {
@@ -11,14 +11,8 @@ export class HealingOverTimeEffect
 {
   readonly healingPerRound: number;
 
-  constructor(
-    spellSource: Spell,
-    duration: number,
-    source: Entity,
-    target: Entity,
-    healingPerRound: number
-  ) {
-    super(spellSource, "HOT", duration, source, target);
+  constructor(duration: number, healingPerRound: number) {
+    super("HOT", duration);
     this.healingPerRound = healingPerRound;
   }
 

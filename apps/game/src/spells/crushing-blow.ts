@@ -19,9 +19,7 @@ export class CrushingBlowSpell extends DamageEffectSpell {
         min: 8,
         max: 12,
       }),
-      new EffectModule(
-        ({ caster, target }) => new StunEffect(this, 1, caster, target)
-      ),
+      new EffectModule(() => new StunEffect(1)),
       0.3
     );
   }

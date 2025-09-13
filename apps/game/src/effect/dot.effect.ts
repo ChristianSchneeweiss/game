@@ -1,4 +1,4 @@
-import type { DamageType, Effect, Entity, Spell } from "../types";
+import type { DamageType, Effect } from "../types";
 import { BaseEffect } from "./base-effect";
 
 export interface DamageOverTimeEffectExposed extends Effect {
@@ -14,14 +14,11 @@ export class DamageOverTimeEffect
   readonly damageType: DamageType;
 
   constructor(
-    spellSource: Spell,
     duration: number,
-    source: Entity,
-    target: Entity,
     damagePerRound: number,
     damageType: DamageType
   ) {
-    super(spellSource, "DOT", duration, source, target);
+    super("DOT", duration);
     this.damagePerRound = damagePerRound;
     this.damageType = damageType;
   }
