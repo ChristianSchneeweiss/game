@@ -224,32 +224,20 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     return currentRound;
   }
 
-  castSpell(
+  private castSpell(
     caster: Entity,
-    spellId: string,
+    spell: Spell,
     targetIds: string[]
   ): SpellCastEvent | null {
-    const spell = caster.spells.find((s) => s.config.id === spellId);
-    if (!spell) {
-      return null;
-    }
-
     const targets = targetIds
       .map((id) => this.getEntityById(id))
       .filter((e): e is Entity => e !== undefined);
 
     const targetType = spell.getTargetType();
-    if (
-      targets.length === 0 &&
-      targetType.enemies === 0 &&
-      targetType.allies === 0
-    ) {
-      return null;
-    }
 
     console.log(
       "casting spell",
-      spellId,
+      spell.config.id,
       targets.map((t) => t.id)
     );
     const myTeam = caster.team;
@@ -263,7 +251,7 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     return spell.cast(caster, allTargets);
   }
 
-  castNextSpell(
+  safeCastSpell(
     entityId: string,
     spellId: string,
     targetIds: string[]
@@ -277,7 +265,11 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     if (!entity) {
       return null;
     }
-    const event = this.castSpell(entity, spellId, targetIds);
+    const spell = entity.spells.find((s) => s.config.id === spellId);
+    if (!spell) {
+      return null;
+    }
+    const event = this.castSpell(entity, spell, targetIds);
     if (event) {
       this.processEvent(event);
     }

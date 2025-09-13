@@ -24,6 +24,6 @@ export abstract class ApplyStatusSpell extends BaseSpell {
       this
     );
 
-    return battleManager.handler.mergeHandlerReturns([effects]);
+    return effects;
   }
 }

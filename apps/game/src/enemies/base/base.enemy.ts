@@ -59,7 +59,7 @@ export class BaseEnemy extends BaseEntity {
     }
 
     const validTargets = spell.getValidTargets(this);
-    if (!validTargets) {
+    if (validTargets === null) {
       throw new Error(
         `No valid targets found for ${this.name} to cast spell ${spell.config.id}`
       );

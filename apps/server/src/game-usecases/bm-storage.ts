@@ -21,6 +21,7 @@ const storageSchema = z.object({
       targetId: z.string(),
       round: z.number(),
       duration: z.number(),
+      description: z.string(),
       effectType: z.string(),
     })
   ),

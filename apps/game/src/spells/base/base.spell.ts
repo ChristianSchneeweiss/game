@@ -73,6 +73,13 @@ export abstract class BaseSpell implements Spell {
       return null;
     }
 
+    // TODO maybe we should think about this better.
+    // but the 0,0 is an edge case because you would have no target and spells get super confused by this
+    // if the target type is 0,0, its a self spell
+    if (targets.length === 0) {
+      targets = [caster];
+    }
+
     this.processCasting(caster);
     const roll = Math.round(this.battleManager.getRNG() * 20);
     const result = this._cast(caster, targets, this.battleManager, roll);

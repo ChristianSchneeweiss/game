@@ -288,7 +288,7 @@ export class BattleWebsocket extends DurableObject {
     spellId: string,
     targetIds: string[]
   ) {
-    this.bm.castNextSpell(entityId, spellId, targetIds);
+    this.bm.safeCastSpell(entityId, spellId, targetIds);
     this.bm.postTurn();
     // process pre turn of next entity
     this.bm.preTurn();
@@ -310,7 +310,7 @@ export class BattleWebsocket extends DurableObject {
     // if the next entity is a bot, cast the spell
     if (nextEntity instanceof BaseEnemy) {
       const action = nextEntity.getAction();
-      this.bm.castNextSpell(
+      this.bm.safeCastSpell(
         nextEntity.id,
         action.spell.config.id,
         action.targets.map((t) => t.id)

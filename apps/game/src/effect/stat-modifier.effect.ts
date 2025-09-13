@@ -37,7 +37,7 @@ export class StatModifierEffect extends BaseEffect {
         const text =
           mod.operation === "ADD"
             ? `${mod.value}.`
-            : `${Math.round(mod.value * 100)}%.`;
+            : `${Math.round((mod.value - 1) * 100)}%.`;
         return `${mod.attribute}: ${text}`;
       })
       .join("\n");

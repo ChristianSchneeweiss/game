@@ -343,13 +343,8 @@ export const BattleRender = ({
                       </span>
                       <div className="flex items-center gap-1 text-xs text-slate-400">
                         <span className="rounded-full bg-orange-500/20 px-1.5 py-0.5 text-orange-300">
-                          {roundsLeft}{" "}
+                          {roundsLeft}
                         </span>
-                        {sourceName && (
-                          <span className="max-w-[80px] truncate">
-                            from {sourceName}
-                          </span>
-                        )}
                       </div>
                     </div>
                     {/* Tooltip with description */}

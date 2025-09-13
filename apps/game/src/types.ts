@@ -137,7 +137,7 @@ export interface Spell
   battleManager?: BattleManager;
 
   canCast(caster: Entity): boolean;
-  getValidTargets(caster: Entity): Entity[] | null;
+  getValidTargets(caster: Entity): Entity[];
   cast(caster: Entity, targets: Entity[]): SpellCastEvent | null;
   description(caster: Entity): SpellDescription;
 
