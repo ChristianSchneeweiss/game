@@ -1,10 +1,10 @@
 import { Character } from "@loot-game/game/base-entity";
 import type { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
 import { EnemyTypeSchema } from "@loot-game/game/enemies/base/enemy-types";
+import { createSpellFromType } from "@loot-game/game/spells/base/spell-from-type";
 import { SpellTypeSchema } from "@loot-game/game/spells/base/spell-types";
 import { z } from "zod";
 import { createEnemyFromType } from "./enemy-factory";
-import { createSpellFromType } from "./spell-factory";
 
 export const syncCharacterSchema = z.object({
   id: z.string(),

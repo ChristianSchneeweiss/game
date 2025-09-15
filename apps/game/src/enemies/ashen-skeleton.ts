@@ -1,6 +1,4 @@
 import { nanoid } from "nanoid";
-import { BasicAttackSpell } from "../spells/basic-attack";
-import { SplinterShotSpell } from "../spells/splinter-shot";
 import { BaseEnemy } from "./base/base.enemy";
 
 export class AshenSkeleton extends BaseEnemy {
@@ -24,11 +22,7 @@ export class AshenSkeleton extends BaseEnemy {
         items: [],
         gold: 20,
       },
+      spells: ["splinter-shot", "basic-attack"],
     });
-
-    this.spells = [
-      new SplinterShotSpell(`splinter-shot-${realId}`),
-      new BasicAttackSpell(`basic-attack-${realId}`),
-    ];
   }
 }

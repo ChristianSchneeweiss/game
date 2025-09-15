@@ -1,4 +1,6 @@
 import { BaseEntity } from "../../base-entity";
+import { createSpellFromType } from "../../spells/base/spell-from-type";
+import type { SpellType } from "../../spells/base/spell-types";
 import type {
   Entity,
   EntityAttributes,
@@ -20,6 +22,7 @@ type EnemyParams = {
   baseSpecialAttributes?: Partial<SpecialAttributes>;
   xp: number;
   loot: Loot;
+  spells: SpellType[];
 };
 
 export class BaseEnemy extends BaseEntity {
@@ -38,6 +41,7 @@ export class BaseEnemy extends BaseEntity {
     baseSpecialAttributes,
     xp,
     loot,
+    spells,
   }: EnemyParams) {
     super(id, name, team, maxHealth, maxMana, baseAttributes);
     this.type = type;
@@ -49,6 +53,9 @@ export class BaseEnemy extends BaseEntity {
         ...baseSpecialAttributes,
       };
     }
+    this.spells = spells.map((spell) =>
+      createSpellFromType(`${this.id}-${spell}`, spell)
+    );
   }
 
   getAction(): { spell: Spell; targets: Entity[] } {

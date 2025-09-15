@@ -1,5 +1,4 @@
 import { nanoid } from "nanoid";
-import { BasicAttackSpell } from "../spells/basic-attack";
 import { BaseEnemy } from "./base/base.enemy";
 
 export class Goblin extends BaseEnemy {
@@ -29,8 +28,7 @@ export class Goblin extends BaseEnemy {
         ],
         gold: 10,
       },
+      spells: ["basic-attack"],
     });
-
-    this.spells = [new BasicAttackSpell(`basic-attack-${realId}`)];
   }
 }

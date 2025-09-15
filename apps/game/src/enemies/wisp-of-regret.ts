@@ -1,6 +1,4 @@
 import { nanoid } from "nanoid";
-import { BasicAttackSpell } from "../spells/basic-attack";
-import { CinderWispSpell } from "../spells/cinder-wisp";
 import { BaseEnemy } from "./base/base.enemy";
 
 export class WispOfRegret extends BaseEnemy {
@@ -24,11 +22,7 @@ export class WispOfRegret extends BaseEnemy {
         items: [],
         gold: 20,
       },
+      spells: ["cinder-wisp", "basic-attack"],
     });
-
-    this.spells = [
-      new CinderWispSpell(`cinder-wisp-${realId}`),
-      new BasicAttackSpell(`basic-attack-${realId}`),
-    ];
   }
 }

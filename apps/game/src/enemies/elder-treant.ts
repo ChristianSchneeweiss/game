@@ -24,11 +24,7 @@ export class ElderTreant extends BaseEnemy {
         items: [],
         gold: 75,
       },
+      spells: ["rootgrasp", "basic-attack"],
     });
-
-    this.spells = [
-      new RootgraspSpell(`rootgrasp-${realId}`),
-      new BasicAttackSpell(`basic-attack-${realId}`),
-    ];
   }
 }

@@ -4,7 +4,12 @@ import { DungeonKeySchema } from "@loot-game/game/dungeons/dungeon-keys";
 import { dungeon1 } from "@loot-game/game/dungeons/dungeon1";
 import { trialOfTheAshen } from "@loot-game/game/dungeons/trial-of-the-ashen";
 import { trialOfTheNature } from "@loot-game/game/dungeons/trial-of-the-nature";
-import type { DungeonData } from "@loot-game/game/dungeons/types";
+import { trialOfTheStorm } from "@loot-game/game/dungeons/trial-of-the-storm";
+import { trialOfTheTides } from "@loot-game/game/dungeons/trial-of-the-tides";
+import type {
+  DungeonConfig,
+  DungeonData,
+} from "@loot-game/game/dungeons/types";
 import type { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
 import type { LootEntity } from "@loot-game/game/types";
 import { eq, inArray } from "drizzle-orm";
@@ -21,6 +26,7 @@ import {
   TB_loot,
 } from "../db/schema";
 import { handleXpReceived } from "./character";
+import { createEnemyFromType } from "./enemy-factory";
 import { EntityFactory } from "./entity-factory";
 import { LootManager } from "./loot-manager";
 
@@ -35,7 +41,7 @@ export const dungeonManager = {
       id: id(),
       playerTeam: characters,
       round: 0,
-      actualEnemies: config.rollEnemies(),
+      actualEnemies: dungeonManager.rollEnemies(config),
       key: key,
       cleared: false,
     } satisfies DungeonData;
@@ -233,15 +239,28 @@ export const dungeonManager = {
     if (!dungeonKey.success) {
       throw new Error("Invalid dungeon key");
     }
-    if (dungeonKey.data === "dungeon1") {
-      return dungeon1();
-    } else if (dungeonKey.data === "crypt-of-forgotten-echoes") {
-      return cryptOfForgottenEchoes();
-    } else if (dungeonKey.data === "trial-of-the-ashen") {
-      return trialOfTheAshen();
-    } else if (dungeonKey.data === "trial-of-the-nature") {
-      return trialOfTheNature();
+
+    switch (dungeonKey.data) {
+      case "dungeon1":
+        return dungeon1();
+      case "crypt-of-forgotten-echoes":
+        return cryptOfForgottenEchoes();
+      case "trial-of-the-ashen":
+        return trialOfTheAshen();
+      case "trial-of-the-nature":
+        return trialOfTheNature();
+      case "trial-of-the-storm":
+        return trialOfTheStorm();
+      case "trial-of-the-tides":
+        return trialOfTheTides();
+      default:
+        throw new Error("Invalid dungeon key");
     }
-    throw new Error("Invalid dungeon key");
+  },
+
+  rollEnemies: (config: DungeonConfig) => {
+    return config.availableEnemies.map((enemies) =>
+      enemies.map((enemy) => createEnemyFromType(enemy))
+    );
   },
 };

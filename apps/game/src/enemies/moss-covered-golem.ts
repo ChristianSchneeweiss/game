@@ -1,6 +1,4 @@
 import { nanoid } from "nanoid";
-import { BasicAttackSpell } from "../spells/basic-attack";
-import { CrushingBlowSpell } from "../spells/crushing-blow";
 import { BaseEnemy } from "./base/base.enemy";
 
 export class MossCoveredGolem extends BaseEnemy {
@@ -24,11 +22,7 @@ export class MossCoveredGolem extends BaseEnemy {
         items: [],
         gold: 25,
       },
+      spells: ["crushing-blow", "basic-attack"],
     });
-
-    this.spells = [
-      new CrushingBlowSpell(`crushing-blow-${realId}`),
-      new BasicAttackSpell(`basic-attack-${realId}`),
-    ];
   }
 }

@@ -40,4 +40,8 @@ export class DamageOverTimeEffect
     );
     super.onPostRound();
   }
+
+  getDescription(): string {
+    return `${this.damagePerRound} ${this.damageType} damage per round`;
+  }
 }

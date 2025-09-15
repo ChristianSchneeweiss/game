@@ -1,6 +1,4 @@
 import { nanoid } from "nanoid";
-import { BasicAttackSpell } from "../spells/basic-attack";
-import { FesteringBlowSpell } from "../spells/festering-blow";
 import { BaseEnemy } from "./base/base.enemy";
 
 export class RottingCorpse extends BaseEnemy {
@@ -24,11 +22,7 @@ export class RottingCorpse extends BaseEnemy {
         items: [],
         gold: 20,
       },
+      spells: ["festering-blow", "basic-attack"],
     });
-
-    this.spells = [
-      new FesteringBlowSpell(`festering-blow-${realId}`),
-      new BasicAttackSpell(`basic-attack-${realId}`),
-    ];
   }
 }

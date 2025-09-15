@@ -25,7 +25,6 @@ export type DungeonConfig = {
   name: string;
   description: string;
   availableEnemies: AvailableEnemies[];
-  rollEnemies: () => BaseEnemy[][];
 };
 
 export const inBetweenCharacterData = z.object({

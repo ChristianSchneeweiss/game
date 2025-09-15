@@ -1,28 +1,28 @@
 import { nanoid } from "nanoid";
 import { BaseEnemy } from "./base/base.enemy";
 
-export class LurkingFlameWraith extends BaseEnemy {
+export class FishfolkShaman extends BaseEnemy {
   constructor(id?: string) {
-    const realId = id ?? `lurking-flame-wraith-${nanoid()}`;
+    const realId = id ?? `fishfolk-shaman-${nanoid()}`;
     super({
       id: realId,
-      type: "lurking-flame-wraith",
-      name: "Lurking Flame Wraith",
+      type: "fishfolk-shaman",
+      name: "Fishfolk Shaman",
       team: "TEAM_B",
       maxHealth: 60,
       maxMana: 40,
       baseAttributes: {
         intelligence: 14,
-        vitality: 6,
-        agility: 11,
-        strength: 4,
+        vitality: 10,
+        agility: 8,
+        strength: 5,
       },
       xp: 30,
       loot: {
         items: [],
-        gold: 35,
+        gold: 30,
       },
-      spells: ["cinderbrand", "basic-attack"],
+      spells: ["ocean-blessing", "basic-attack"],
     });
   }
 }

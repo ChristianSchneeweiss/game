@@ -15,12 +15,4 @@ export const trialOfTheAshen = () =>
       ["crypt-crawler", "crypt-crawler"],
       ["emberbound-revenant"],
     ],
-    rollEnemies: () => {
-      return [
-        [new AshenSkeleton(), new AshenSkeleton()],
-        [new LurkingFlameWraith()],
-        [new CryptCrawler(), new CryptCrawler()],
-        [new EmberboundRevenant()],
-      ];
-    },
   }) satisfies DungeonConfig;

@@ -1,7 +1,4 @@
 import { nanoid } from "nanoid";
-import { BasicAttackSpell } from "../spells/basic-attack";
-import { NaturesEmbrace } from "../spells/natures-embrace";
-import { VerdantSmiteSpell } from "../spells/verdant-smite";
 import { BaseEnemy } from "./base/base.enemy";
 
 export class HollowedOakwarden extends BaseEnemy {
@@ -25,12 +22,7 @@ export class HollowedOakwarden extends BaseEnemy {
         items: [],
         gold: 150, // Boss enemy, higher gold
       },
+      spells: ["verdant-smite", "natures-embrace", "basic-attack"],
     });
-
-    this.spells = [
-      new VerdantSmiteSpell(`verdant-smite-${realId}`),
-      new NaturesEmbrace(`natures-embrace-${realId}`),
-      new BasicAttackSpell(`basic-attack-${realId}`),
-    ];
   }
 }

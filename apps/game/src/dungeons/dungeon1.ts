@@ -1,4 +1,3 @@
-import { Goblin } from "../enemies/goblin";
 import type { DungeonConfig } from "./types";
 
 export const dungeon1 = () =>
@@ -10,10 +9,4 @@ export const dungeon1 = () =>
       ["goblin", "goblin"],
       ["goblin", "goblin", "goblin"],
     ],
-    rollEnemies: () => {
-      return [
-        [new Goblin(), new Goblin()],
-        [new Goblin(), new Goblin(), new Goblin()],
-      ];
-    },
   }) satisfies DungeonConfig;

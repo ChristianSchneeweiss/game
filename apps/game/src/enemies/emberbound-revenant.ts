@@ -1,7 +1,4 @@
 import { nanoid } from "nanoid";
-import { BasicAttackSpell } from "../spells/basic-attack";
-import { CharredChainsSpell } from "../spells/charred-chains";
-import { SoulflareSpell } from "../spells/soulflare";
 import { BaseEnemy } from "./base/base.enemy";
 
 export class EmberboundRevenant extends BaseEnemy {
@@ -25,12 +22,7 @@ export class EmberboundRevenant extends BaseEnemy {
         items: [],
         gold: 100, // Higher gold for mini-boss
       },
+      spells: ["charred-chains", "soulflare", "basic-attack"],
     });
-
-    this.spells = [
-      new CharredChainsSpell(`charred-chains-${realId}`),
-      new SoulflareSpell(`soulflare-${realId}`),
-      new BasicAttackSpell(`basic-attack-${realId}`),
-    ];
   }
 }

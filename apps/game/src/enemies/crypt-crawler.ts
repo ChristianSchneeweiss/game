@@ -1,6 +1,4 @@
 import { nanoid } from "nanoid";
-import { BasicAttackSpell } from "../spells/basic-attack";
-import { PreciseThrustSpell } from "../spells/precise-thrust";
 import { BaseEnemy } from "./base/base.enemy";
 
 export class CryptCrawler extends BaseEnemy {
@@ -24,11 +22,7 @@ export class CryptCrawler extends BaseEnemy {
         items: [],
         gold: 20, // Reasonable gold for stage 3 enemy
       },
+      spells: ["precise-thrust", "basic-attack"],
     });
-
-    this.spells = [
-      new PreciseThrustSpell(`precise-thrust-${realId}`),
-      new BasicAttackSpell(`basic-attack-${realId}`),
-    ];
   }
 }

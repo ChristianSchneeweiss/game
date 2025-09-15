@@ -81,6 +81,20 @@ function RouteComponent() {
               <Play className="mr-2 h-5 w-5" />
               Enter Trial of the Nature
             </Button>
+            <Button
+              onClick={() => enterDungeon({ key: "trial-of-the-storm" })}
+              className="bg-gradient-to-r from-red-600 to-red-500 px-6 py-4 text-lg font-bold text-white shadow-2xl transition-all duration-300 hover:scale-105 hover:from-red-500 hover:to-red-400"
+            >
+              <Play className="mr-2 h-5 w-5" />
+              Enter Trial of the Storm
+            </Button>
+            <Button
+              onClick={() => enterDungeon({ key: "trial-of-the-tides" })}
+              className="bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-4 text-lg font-bold text-white shadow-2xl transition-all duration-300 hover:scale-105 hover:from-blue-500 hover:to-blue-400"
+            >
+              <Play className="mr-2 h-5 w-5" />
+              Enter Trial of the Tides
+            </Button>
           </div>
         </div>
 

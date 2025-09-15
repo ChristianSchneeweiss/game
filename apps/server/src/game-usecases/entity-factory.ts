@@ -1,12 +1,12 @@
 import { Character } from "@loot-game/game/base-entity";
 import type { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
 import type { EnemyType } from "@loot-game/game/enemies/base/enemy-types";
+import { createSpellFromType } from "@loot-game/game/spells/base/spell-from-type";
 import { BasicAttackSpell } from "@loot-game/game/spells/basic-attack";
 import { eq } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { TB_character, TB_dungeonEnemy, TB_spellStats } from "../db/schema";
 import { createEnemyFromType } from "./enemy-factory";
-import { createSpellFromType } from "./spell-factory";
 
 export class EntityFactory {
   static createEnemyFromType(type: EnemyType): BaseEnemy {

@@ -1,8 +1,5 @@
 import { nanoid } from "nanoid";
 import { BaseEnemy } from "./base/base.enemy";
-import { BasicAttackSpell } from "../spells/basic-attack";
-import { FesteringBlowSpell } from "../spells/festering-blow";
-import { VitalStrikeSpell } from "../spells/vital-strike";
 
 export class GhoulKnightIvern extends BaseEnemy {
   constructor(id?: string) {
@@ -25,12 +22,7 @@ export class GhoulKnightIvern extends BaseEnemy {
         items: [],
         gold: 40,
       },
+      spells: ["vital-strike", "festering-blow", "basic-attack"],
     });
-
-    this.spells = [
-      new VitalStrikeSpell(`vital-strike-${realId}`),
-      new FesteringBlowSpell(`festering-blow-${realId}`),
-      new BasicAttackSpell(`basic-attack-${realId}`),
-    ];
   }
 }

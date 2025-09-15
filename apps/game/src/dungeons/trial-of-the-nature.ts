@@ -16,13 +16,4 @@ export const trialOfTheNature = () =>
       ["barkhide-shaman", "barkhide-shaman"],
       ["hollowed-oakwarden"],
     ],
-    rollEnemies: () => {
-      return [
-        [new MossCoveredGolem(), new MossCoveredGolem()],
-        [new BarkhideShaman(), new MossCoveredGolem()],
-        [new ElderTreant()],
-        [new BarkhideShaman(), new BarkhideShaman()],
-        [new HollowedOakwarden()],
-      ];
-    },
   }) satisfies DungeonConfig;

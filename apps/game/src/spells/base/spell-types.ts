@@ -18,5 +18,16 @@ export const SpellTypeSchema = z.union([
   z.literal("rootgrasp"),
   z.literal("verdant-smite"),
   z.literal("natures-embrace"),
+  z.literal("lightning-surge"),
+  z.literal("stunning-strike"),
+  z.literal("staggering-jab"),
+  z.literal("battle-roar"),
+  z.literal("torrent-spiral"),
+  z.literal("tidepiercer-thrust"),
+  z.literal("ocean-blessing"),
+  z.literal("aqua-wave"),
+  z.literal("tidal-pulse"),
+  z.literal("stream-of-life"),
+  z.literal("rupture"),
 ]);
 export type SpellType = z.infer<typeof SpellTypeSchema>;

@@ -1,5 +1,4 @@
 import { nanoid } from "nanoid";
-import { CrudeStrikeSpell } from "../spells/crude-strike";
 import { BaseEnemy } from "./base/base.enemy";
 
 export class SkeletonGrunt extends BaseEnemy {
@@ -23,8 +22,7 @@ export class SkeletonGrunt extends BaseEnemy {
         items: [],
         gold: 20,
       },
+      spells: ["crude-strike"],
     });
-
-    this.spells = [new CrudeStrikeSpell(`crude-strike-${realId}`)];
   }
 }
