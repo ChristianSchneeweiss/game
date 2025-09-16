@@ -1,5 +1,5 @@
 import type { ClerkClient } from "@clerk/backend";
-import type { BaseEntity } from "@loot-game/game/base-entity";
+import type { BaseEntity, Character } from "@loot-game/game/base-entity";
 import { BM, type EffectTracking } from "@loot-game/game/bm";
 import { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
 import type { TimelineEventFull } from "@loot-game/game/timeline-events";
@@ -105,8 +105,11 @@ export type ResponseMessage =
       };
     };
 
+const sessionSchema = z.object({
+  id: z.string(),
+});
 export class BattleWebsocket extends DurableObject {
-  sessions: Map<WebSocket, { [key: string]: string }>;
+  sessions: Map<WebSocket, z.infer<typeof sessionSchema>>;
   clerk: ClerkClient = undefined!;
   bm: BM = undefined!;
   env: Env;
@@ -118,11 +121,12 @@ export class BattleWebsocket extends DurableObject {
     this.env = env;
     this.sessions = new Map();
     this.ctx.getWebSockets().forEach((ws) => {
-      let attachment = ws.deserializeAttachment();
-      if (attachment) {
+      const attachment = ws.deserializeAttachment();
+      const session = sessionSchema.safeParse(attachment);
+      if (session.success) {
         // If we previously attached state to our WebSocket,
         // let's add it to `sessions` map to restore the state of the connection.
-        this.sessions.set(ws, { ...attachment });
+        this.sessions.set(ws, session.data);
       }
     });
 
@@ -147,7 +151,6 @@ export class BattleWebsocket extends DurableObject {
 
   private async setupBm() {
     if (this.bm) return;
-    const userId = "user_31jfw5cC2LnsggJb9u98h1KtqFr";
     const syncFactory = new SyncFactory(this.env);
     const { characters, enemies } = await syncFactory.getAll(this.battleId);
 
@@ -182,6 +185,7 @@ export class BattleWebsocket extends DurableObject {
     }
     const user = await this.clerk.users.getUser(userId);
     this.sessions.set(server, { id: user.id });
+    server.serializeAttachment({ id: user.id });
 
     this.ctx.acceptWebSocket(server);
 
@@ -231,6 +235,20 @@ export class BattleWebsocket extends DurableObject {
     });
     switch (parsed.data.type) {
       case "castSpell":
+        if (ws) {
+          const user = this.sessions.get(ws);
+          if (!user) {
+            throw new Error("User not found");
+          }
+          const character = this.bm.getEntityById(parsed.data.data.entityId);
+          if (!character) {
+            throw new Error("Character not found");
+          }
+          // TODO this gonna break soon
+          if ((character as Character).userId !== user.id) {
+            throw new Error("Character not owned by user");
+          }
+        }
         await this.processSpellCast(
           parsed.data.data.entityId,
           parsed.data.data.spellId,

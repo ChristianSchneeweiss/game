@@ -9,4 +9,5 @@ export const dungeon1 = () =>
       ["goblin", "goblin"],
       ["goblin", "goblin", "goblin"],
     ],
+    maxPartySize: 2,
   }) satisfies DungeonConfig;

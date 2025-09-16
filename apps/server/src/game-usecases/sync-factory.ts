@@ -8,6 +8,7 @@ import { createEnemyFromType } from "./enemy-factory";
 
 export const syncCharacterSchema = z.object({
   id: z.string(),
+  userId: z.string(),
   name: z.string(),
   team: z.literal("TEAM_A"),
   health: z.number(),
@@ -78,6 +79,7 @@ export class SyncFactory {
   async addCharacterToSync(character: Character, battleId: string) {
     const characterData = syncCharacterSchema.parse({
       id: character.id,
+      userId: character.userId,
       name: character.name,
       team: character.team,
       health: character.health,
@@ -124,6 +126,7 @@ export class SyncFactory {
     const characterData = syncCharacterSchema.parse(JSON.parse(kvData));
     const character = new Character(
       characterData.id,
+      characterData.userId,
       characterData.name,
       characterData.team,
       characterData.maxHealth,

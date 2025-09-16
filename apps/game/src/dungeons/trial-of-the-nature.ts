@@ -1,7 +1,3 @@
-import { BarkhideShaman } from "../enemies/barkhide-shaman";
-import { ElderTreant } from "../enemies/elder-treant";
-import { HollowedOakwarden } from "../enemies/hollowed-oakwarden";
-import { MossCoveredGolem } from "../enemies/moss-covered-golem";
 import type { DungeonConfig } from "./types";
 
 export const trialOfTheNature = () =>
@@ -16,4 +12,5 @@ export const trialOfTheNature = () =>
       ["barkhide-shaman", "barkhide-shaman"],
       ["hollowed-oakwarden"],
     ],
+    maxPartySize: 2,
   }) satisfies DungeonConfig;

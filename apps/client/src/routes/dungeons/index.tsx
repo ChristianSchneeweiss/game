@@ -1,11 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/utils/trpc";
-import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
+import type { DungeonKey } from "@loot-game/game/dungeons/dungeon-keys";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { CheckCircle, Clock, Hash, MapPin, Play, Sword } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { DungeonEnterDialog } from "./-dungeon-enter.dialog";
 
 dayjs.extend(relativeTime);
 
@@ -14,17 +16,10 @@ export const Route = createFileRoute("/dungeons/")({
 });
 
 function RouteComponent() {
-  const router = useRouter();
+  const [selectedDungeon, setSelectedDungeon] = useState<string | null>(null);
 
   const { data: dungeons } = useSuspenseQuery(
     trpc.dungeon.allDungeons.queryOptions(),
-  );
-  const { mutate: enterDungeon } = useMutation(
-    trpc.dungeon.enterDungeon.mutationOptions({
-      onSuccess: (data) => {
-        router.navigate({ to: "/dungeons/$id", params: { id: data.id } });
-      },
-    }),
   );
 
   const activeDungeons = useMemo(() => {
@@ -54,42 +49,42 @@ function RouteComponent() {
           </h2>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <Button
-              onClick={() => enterDungeon({ key: "dungeon1" })}
+              onClick={() => setSelectedDungeon("dungeon1")}
               className="bg-gradient-to-r from-red-600 to-red-500 px-6 py-4 text-lg font-bold text-white shadow-2xl transition-all duration-300 hover:scale-105 hover:from-red-500 hover:to-red-400"
             >
               <Play className="mr-2 h-5 w-5" />
               Enter Dungeon 1
             </Button>
             <Button
-              onClick={() => enterDungeon({ key: "crypt-of-forgotten-echoes" })}
+              onClick={() => setSelectedDungeon("crypt-of-forgotten-echoes")}
               className="bg-gradient-to-r from-purple-600 to-purple-500 px-6 py-4 text-lg font-bold text-white shadow-2xl transition-all duration-300 hover:scale-105 hover:from-purple-500 hover:to-purple-400"
             >
               <Play className="mr-2 h-5 w-5" />
               Enter Crypt of Forgotten Echoes
             </Button>
             <Button
-              onClick={() => enterDungeon({ key: "trial-of-the-ashen" })}
+              onClick={() => setSelectedDungeon("trial-of-the-ashen")}
               className="bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-4 text-lg font-bold text-white shadow-2xl transition-all duration-300 hover:scale-105 hover:from-blue-500 hover:to-blue-400"
             >
               <Play className="mr-2 h-5 w-5" />
               Enter Trial of the Ashen
             </Button>
             <Button
-              onClick={() => enterDungeon({ key: "trial-of-the-nature" })}
+              onClick={() => setSelectedDungeon("trial-of-the-nature")}
               className="bg-gradient-to-r from-green-600 to-green-500 px-6 py-4 text-lg font-bold text-white shadow-2xl transition-all duration-300 hover:scale-105 hover:from-green-500 hover:to-green-400"
             >
               <Play className="mr-2 h-5 w-5" />
               Enter Trial of the Nature
             </Button>
             <Button
-              onClick={() => enterDungeon({ key: "trial-of-the-storm" })}
+              onClick={() => setSelectedDungeon("trial-of-the-storm")}
               className="bg-gradient-to-r from-red-600 to-red-500 px-6 py-4 text-lg font-bold text-white shadow-2xl transition-all duration-300 hover:scale-105 hover:from-red-500 hover:to-red-400"
             >
               <Play className="mr-2 h-5 w-5" />
               Enter Trial of the Storm
             </Button>
             <Button
-              onClick={() => enterDungeon({ key: "trial-of-the-tides" })}
+              onClick={() => setSelectedDungeon("trial-of-the-tides")}
               className="bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-4 text-lg font-bold text-white shadow-2xl transition-all duration-300 hover:scale-105 hover:from-blue-500 hover:to-blue-400"
             >
               <Play className="mr-2 h-5 w-5" />
@@ -258,6 +253,15 @@ function RouteComponent() {
           )}
         </div>
       </div>
+
+      {/* Dungeon Enter Dialog */}
+      {selectedDungeon && (
+        <DungeonEnterDialog
+          dungeonKey={selectedDungeon as DungeonKey}
+          isOpen={!!selectedDungeon}
+          onOpenChange={(open) => !open && setSelectedDungeon(null)}
+        />
+      )}
     </div>
   );
 }

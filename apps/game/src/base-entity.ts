@@ -1,4 +1,3 @@
-import superjson from "superjson";
 import { calculator } from "./calculator";
 import type { TimelineEvent } from "./timeline-events";
 import type {
@@ -203,8 +202,10 @@ export class BaseEntity implements Entity {
 }
 
 export class Character extends BaseEntity {
+  userId: string;
   constructor(
     id: string,
+    userId: string,
     name: string,
     team: Team,
     maxHealth: number,
@@ -216,5 +217,6 @@ export class Character extends BaseEntity {
   ) {
     super(id, name, team, maxHealth, maxMana, baseAttributes);
     this.isBot = false;
+    this.userId = userId;
   }
 }

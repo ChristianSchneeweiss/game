@@ -11,4 +11,5 @@ export const cryptOfForgottenEchoes = () =>
       ["wisp-of-regret", "wisp-of-regret"],
       ["ghoul-knight-ivern"],
     ],
+    maxPartySize: 2,
   }) satisfies DungeonConfig;

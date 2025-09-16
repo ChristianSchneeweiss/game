@@ -37,6 +37,10 @@ export const dungeonManager = {
     db: PostgresJsDatabase
   ) => {
     const config = dungeonManager.getDungeonConfig(key);
+    if (characters.length > config.maxPartySize) {
+      throw new Error("Max party size exceeded");
+    }
+
     const dungeon = {
       id: id(),
       playerTeam: characters,
@@ -186,19 +190,26 @@ export const dungeonManager = {
         );
       const userIds = new Set(users.map((user) => user.userId));
 
+      const rng = seedrandom(battleId);
       for (const userId of userIds) {
         const lootManager = new LootManager(userId, tx);
         const droppedLoot: LootEntity[] = [];
         for (const enemy of enemies) {
-          droppedLoot.push(
-            ...(await lootManager.drop(seedrandom(), enemy.loot))
-          );
+          const drops = await lootManager.drop(rng, enemy.loot);
+          if (drops.length > 0) {
+            droppedLoot.push(...drops);
+          }
         }
 
         await tx.insert(TB_loot).values({
           userId: userId,
           items: droppedLoot,
-          gold: enemies.reduce((acc, enemy) => acc + enemy.loot.gold, 0),
+          gold: Math.round(
+            enemies.reduce(
+              (acc, enemy) => acc + (rng() + 0.5) * enemy.loot.gold,
+              0
+            )
+          ),
           battleId: battleId,
         });
       }

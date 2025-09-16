@@ -12,4 +12,5 @@ export const trialOfTheTides = () =>
       ["fishfolk-shaman", "fishfolk-shaman"],
       ["commander-kelvaris"],
     ],
+    maxPartySize: 2,
   }) satisfies DungeonConfig;

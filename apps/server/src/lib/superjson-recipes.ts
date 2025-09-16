@@ -1,3 +1,4 @@
+import { BaseEntity, Character } from "@loot-game/game/base-entity";
 import type { Effect } from "@loot-game/game/types";
 import superjson from "superjson";
 
@@ -20,4 +21,7 @@ export const registerRecipes = () => {
     },
     "Effect"
   );
+
+  superjson.registerClass(Character, { identifier: "Character" });
+  superjson.registerClass(BaseEntity, { identifier: "BaseEntity" });
 };

@@ -4,6 +4,8 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { cn } from "@/lib/utils";
+import { useUser } from "@clerk/clerk-react";
+import { Character } from "@loot-game/game/base-entity";
 import type { EffectTracking } from "@loot-game/game/bm";
 import type {
   EffectType,
@@ -88,6 +90,8 @@ export const BattleRender = ({
   );
   const [hoverSpellOpen, _setHoverSpellOpen] = useState<string | null>(null);
 
+  const user = useUser();
+
   // Separate allies and enemies
   const allies = participants.filter((p) => p.team === "TEAM_A");
   const enemies = participants.filter((p) => p.team === "TEAM_B");
@@ -106,7 +110,10 @@ export const BattleRender = ({
 
     const currentStats = stats.get(entity.id)!;
     const activeEntity = battleState?.round.orderQueue[0];
-    const myTurn = activeEntity === entity.id;
+    const myTurn =
+      activeEntity === entity.id &&
+      entity instanceof Character &&
+      entity.userId === user.user?.id;
 
     const displayHealth = Math.max(
       0,

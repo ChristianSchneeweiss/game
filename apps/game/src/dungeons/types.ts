@@ -25,6 +25,7 @@ export type DungeonConfig = {
   name: string;
   description: string;
   availableEnemies: AvailableEnemies[];
+  maxPartySize: number;
 };
 
 export const inBetweenCharacterData = z.object({

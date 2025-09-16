@@ -1,7 +1,3 @@
-import { AshenSkeleton } from "../enemies/ashen-skeleton";
-import { CryptCrawler } from "../enemies/crypt-crawler";
-import { EmberboundRevenant } from "../enemies/emberbound-revenant";
-import { LurkingFlameWraith } from "../enemies/lurking-flame-wraith";
 import type { DungeonConfig } from "./types";
 
 export const trialOfTheAshen = () =>
@@ -15,4 +11,5 @@ export const trialOfTheAshen = () =>
       ["crypt-crawler", "crypt-crawler"],
       ["emberbound-revenant"],
     ],
+    maxPartySize: 2,
   }) satisfies DungeonConfig;

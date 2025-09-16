@@ -3,7 +3,7 @@ import type { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
 import type { EnemyType } from "@loot-game/game/enemies/base/enemy-types";
 import { createSpellFromType } from "@loot-game/game/spells/base/spell-from-type";
 import { BasicAttackSpell } from "@loot-game/game/spells/basic-attack";
-import { eq } from "drizzle-orm";
+import { eq, ilike } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { TB_character, TB_dungeonEnemy, TB_spellStats } from "../db/schema";
 import { createEnemyFromType } from "./enemy-factory";
@@ -66,6 +66,7 @@ export class EntityFactory {
 
     const baseEntity = new Character(
       character.id,
+      character.userId,
       character.name,
       "TEAM_A",
       character.health,
@@ -88,5 +89,16 @@ export class EntityFactory {
     baseEntity.spells.push(new BasicAttackSpell(baseEntity.id));
 
     return baseEntity;
+  }
+
+  static async searchCharacters(query: string, db: PostgresJsDatabase) {
+    const charactersDb = await db
+      .select()
+      .from(TB_character)
+      .where(ilike(TB_character.name, `%${query}%`));
+
+    return Promise.all(
+      charactersDb.map((character) => this.createCharacter(character.id, db))
+    );
   }
 }

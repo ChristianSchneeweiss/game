@@ -16,12 +16,13 @@ import { protectedProcedure, router } from "../lib/trpc";
 
 export const dungeonRouter = router({
   enterDungeon: protectedProcedure
-    .input(z.object({ key: DungeonKeySchema }))
+    .input(z.object({ key: DungeonKeySchema, characters: z.string().array() }))
     .mutation(async ({ ctx, input }) => {
-      const { session, db } = ctx;
-      const characters = await EntityFactory.createCharactersFromUser(
-        session.id,
-        db
+      const { db } = ctx;
+      const characters = await Promise.all(
+        input.characters.map((characterId) =>
+          EntityFactory.createCharacter(characterId, db)
+        )
       );
       const dungeon = await dungeonManager.enterDungeon(
         characters,

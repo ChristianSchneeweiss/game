@@ -39,6 +39,14 @@ export const characterRouter = router({
       return character;
     }),
 
+  searchCharacters: protectedProcedure
+    .input(z.object({ query: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const { db } = ctx;
+      const characters = await EntityFactory.searchCharacters(input.query, db);
+      return characters;
+    }),
+
   equipSpell: protectedProcedure
     .input(
       z.object({

@@ -1,8 +1,3 @@
-import { SkySerpent } from "../enemies/sky-serpent";
-import { SkyboltWyvern } from "../enemies/skybolt-wyvern";
-import { StormHatchling } from "../enemies/storm-hatchling";
-import { Thundermaw } from "../enemies/thundermaw";
-import { ThunderDrake } from "../enemies/tunder-drake";
 import type { DungeonConfig } from "./types";
 
 export const trialOfTheStorm = () =>
@@ -17,4 +12,5 @@ export const trialOfTheStorm = () =>
       ["thunder-drake"],
       ["thundermaw"],
     ],
+    maxPartySize: 2,
   }) satisfies DungeonConfig;
