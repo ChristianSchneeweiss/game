@@ -19,6 +19,7 @@ import { SoulflareSpell } from "../soulflare";
 import { SplinterShotSpell } from "../splinter-shot";
 import { StaggeringJabSpell } from "../staggering-jab";
 import { StoneBarkSpell } from "../stone-bark";
+import { StormPulseSpell } from "../storm-pulse";
 import { StreamOfLifeSpell } from "../stream-of-life";
 import { StunningStrikeSpell } from "../stunning-strike";
 import { TidalPulseSpell } from "../tidal-pulse";
@@ -26,6 +27,7 @@ import { TidepiercerThrustSpell } from "../tidepiercer-thrust";
 import { TorrentSpiralSpell } from "../torrent-spiral";
 import { VerdantSmiteSpell } from "../verdant-smite";
 import { VitalStrikeSpell } from "../vital-strike";
+import { VoltLashSpell } from "../volt-lash";
 import type { SpellType } from "./spell-types";
 
 export const createSpellFromType = (id: string, type: SpellType) => {
@@ -86,7 +88,10 @@ export const createSpellFromType = (id: string, type: SpellType) => {
       return new StreamOfLifeSpell(id);
     case "rupture":
       return new RuptureSpell(id);
-
+    case "volt-lash":
+      return new VoltLashSpell(id);
+    case "storm-pulse":
+      return new StormPulseSpell(id);
     default:
       throw new Error(`Unknown spell type: ${type}`);
   }

@@ -22,7 +22,7 @@ export class SkySerpent extends BaseEnemy {
         items: [],
         gold: 75, // Higher gold for mini-boss
       },
-      spells: ["battle-roar", "basic-attack"],
+      spells: ["storm-pulse", "battle-roar", "basic-attack"],
     });
   }
 }

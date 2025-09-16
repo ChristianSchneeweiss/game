@@ -9,6 +9,7 @@ import type {
   Spell,
   Team,
 } from "../../types";
+import { randomInArray } from "../../utils/random-in-array";
 import type { EnemyType } from "./enemy-types";
 
 type EnemyParams = {
@@ -99,17 +100,19 @@ export class BaseEnemy extends BaseEntity {
       this.battleManager.getTeam(this.team).length
     );
     for (let i = 0; i < maxEnemies; i++) {
-      const rng = this.battleManager.getRNG();
-      const rn = Math.round(rng * (validTargets.length - 1));
-      const randomEnemy = validTargets[rn];
-      if (!randomEnemy) throw new Error(`No random enemy found ${rn} ${rng}`);
+      const randomEnemy = randomInArray(
+        validTargets,
+        this.battleManager.getPRNG()
+      );
+      if (!randomEnemy) throw new Error(`No random enemy found`);
       targets.push(randomEnemy);
     }
     for (let i = 0; i < maxAllies; i++) {
-      const rng = this.battleManager.getRNG();
-      const rn = Math.round(rng * (validTargets.length - 1));
-      const randomAlly = validTargets[rn];
-      if (!randomAlly) throw new Error(`No random ally found ${rn} ${rng}`);
+      const randomAlly = randomInArray(
+        validTargets,
+        this.battleManager.getPRNG()
+      );
+      if (!randomAlly) throw new Error(`No random ally found`);
       targets.push(randomAlly);
     }
     return targets;

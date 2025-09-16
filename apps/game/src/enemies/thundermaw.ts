@@ -10,9 +10,9 @@ export class Thundermaw extends BaseEnemy {
       name: "Thundermaw",
       team: "TEAM_B",
       maxHealth: 280,
-      maxMana: 60,
+      maxMana: 200,
       baseAttributes: {
-        intelligence: 18,
+        intelligence: 40,
         vitality: 22,
         agility: 14,
         strength: 20,
@@ -22,7 +22,7 @@ export class Thundermaw extends BaseEnemy {
         items: [],
         gold: 50,
       },
-      spells: ["lightning-surge", "basic-attack"],
+      spells: ["volt-lash", "lightning-surge", "basic-attack"],
     });
   }
 }

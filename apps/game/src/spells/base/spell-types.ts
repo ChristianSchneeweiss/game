@@ -29,5 +29,7 @@ export const SpellTypeSchema = z.union([
   z.literal("tidal-pulse"),
   z.literal("stream-of-life"),
   z.literal("rupture"),
+  z.literal("storm-pulse"),
+  z.literal("volt-lash"),
 ]);
 export type SpellType = z.infer<typeof SpellTypeSchema>;

@@ -76,6 +76,14 @@ export class BM implements BattleManager, RoundLifecycleHooks {
       effectType: effect.effectType,
       description: effect.getDescription(),
     });
+
+    // if the effect is a stun, we remove the target from the order queue
+    if (effect.effectType === "STUN") {
+      this.getCurrentRound().orderQueue =
+        this.getCurrentRound().orderQueue.filter(
+          (id) => id !== effect.targetId
+        );
+    }
   }
 
   join(entity: Entity): void {
@@ -97,16 +105,7 @@ export class BM implements BattleManager, RoundLifecycleHooks {
   onPreRound(): void {
     const round: BattleRound = {
       round: this.rounds.length,
-      orderQueue: this.getAliveEntities()
-        // we filter out stun effects as they can not act this turn
-        .filter((e) => {
-          const isStunned = e.activeEffects.some(
-            (ef) => ef.effectType === "STUN"
-          );
-          return !isStunned;
-        })
-        .sort((a, b) => b.getAttribute("agility") - a.getAttribute("agility"))
-        .map((e) => e.id),
+      orderQueue: this.calculateOrderQueue(),
     };
 
     this.rounds.push(round);
@@ -318,6 +317,19 @@ export class BM implements BattleManager, RoundLifecycleHooks {
       this.onPostRound();
       this.onPreRound();
     }
+  }
+
+  private calculateOrderQueue(): string[] {
+    return this.getAliveEntities()
+      .filter((e) => {
+        const isStunned = e.activeEffects.some(
+          (ef) => ef.effectType === "STUN"
+        );
+
+        return !isStunned;
+      })
+      .sort((a, b) => b.getAttribute("agility") - a.getAttribute("agility"))
+      .map((e) => e.id);
   }
 
   // fight() {
