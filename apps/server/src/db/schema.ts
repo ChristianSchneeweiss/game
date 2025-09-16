@@ -1,5 +1,5 @@
-import type { EnemyType } from "@loot-game/game/enemies/enemies";
-import type { SpellType } from "@loot-game/game/spell-types";
+import type { EnemyType } from "@loot-game/game/enemies/base/enemy-types";
+import type { SpellType } from "@loot-game/game/spells/base/spell-types";
 import type { EventTypes } from "@loot-game/game/timeline-events";
 import type { LootEntity } from "@loot-game/game/types";
 import {
@@ -71,6 +71,10 @@ export const TB_dungeonData = pgTable("dungeon_data", {
   key: text("key").notNull(),
   round: integer("round").notNull().default(0),
   cleared: boolean("cleared").notNull().default(false),
+  activeBattle: boolean("active_battle").notNull().default(false),
+  createdBy: text("created_by")
+    .notNull()
+    .references(() => TB_user.id),
   characterData: COL_characterDungeonData("character_data")
     .notNull()
     .default([]),

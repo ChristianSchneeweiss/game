@@ -1,6 +1,9 @@
 import { Character } from "@loot-game/game/base-entity";
 import { cryptOfForgottenEchoes } from "@loot-game/game/dungeons/crypt-of-forgotten-echoes";
-import { DungeonKeySchema } from "@loot-game/game/dungeons/dungeon-keys";
+import {
+  DungeonKeySchema,
+  type DungeonKey,
+} from "@loot-game/game/dungeons/dungeon-keys";
 import { dungeon1 } from "@loot-game/game/dungeons/dungeon1";
 import { trialOfTheAshen } from "@loot-game/game/dungeons/trial-of-the-ashen";
 import { trialOfTheNature } from "@loot-game/game/dungeons/trial-of-the-nature";
@@ -33,7 +36,8 @@ import { LootManager } from "./loot-manager";
 export const dungeonManager = {
   enterDungeon: async (
     characters: Character[],
-    key: string,
+    key: DungeonKey,
+    userId: string,
     db: PostgresJsDatabase
   ) => {
     const config = dungeonManager.getDungeonConfig(key);
@@ -48,6 +52,7 @@ export const dungeonManager = {
       actualEnemies: dungeonManager.rollEnemies(config),
       key: key,
       cleared: false,
+      activeBattle: false,
     } satisfies DungeonData;
 
     await db.transaction(async (tx) => {
@@ -60,6 +65,7 @@ export const dungeonManager = {
           health: character.health,
           mana: character.mana,
         })),
+        createdBy: userId,
       });
       for (const character of characters) {
         await tx.insert(TB_dungeonParticipant).values({
@@ -132,6 +138,7 @@ export const dungeonManager = {
       actualEnemies: enemies,
       key: dungeon.key,
       cleared: dungeon.cleared,
+      activeBattle: dungeon.activeBattle,
     } as DungeonData;
   },
 
@@ -218,6 +225,7 @@ export const dungeonManager = {
         .update(TB_dungeonData)
         .set({
           round: dungeon.round,
+          activeBattle: false,
           characterData: characters.map((character) => {
             // const characterFromBattle = bm
             //   .getTeam("TEAM_A")

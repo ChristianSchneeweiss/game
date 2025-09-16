@@ -18,7 +18,7 @@ export const dungeonRouter = router({
   enterDungeon: protectedProcedure
     .input(z.object({ key: DungeonKeySchema, characters: z.string().array() }))
     .mutation(async ({ ctx, input }) => {
-      const { db } = ctx;
+      const { db, session } = ctx;
       const characters = await Promise.all(
         input.characters.map((characterId) =>
           EntityFactory.createCharacter(characterId, db)
@@ -27,6 +27,7 @@ export const dungeonRouter = router({
       const dungeon = await dungeonManager.enterDungeon(
         characters,
         input.key,
+        session.id,
         db
       );
       return dungeon;
@@ -68,7 +69,9 @@ export const dungeonRouter = router({
         key: TB_dungeonData.key,
         cleared: TB_dungeonData.cleared,
         round: TB_dungeonData.round,
+        createdBy: TB_dungeonData.createdBy,
         createdAt: TB_dungeonData.createdAt,
+        activeBattle: TB_dungeonData.activeBattle,
       })
       .from(TB_dungeonData)
       .innerJoin(
@@ -88,7 +91,9 @@ export const dungeonRouter = router({
         key: string;
         cleared: boolean;
         round: number;
+        guest: boolean;
         createdAt: Date;
+        activeBattle: boolean;
       }
     >();
     for (const dungeon of dungeons) {
@@ -97,7 +102,9 @@ export const dungeonRouter = router({
         key: dungeon.key,
         cleared: dungeon.cleared,
         round: dungeon.round,
+        guest: dungeon.createdBy !== session.id,
         createdAt: dungeon.createdAt ?? new Date(),
+        activeBattle: dungeon.activeBattle,
       });
     }
 
@@ -126,6 +133,13 @@ export const dungeonRouter = router({
       const syncFactory = new SyncFactory(ctx.cfEnv);
       const dungeon = await dungeonManager.getDungeon(input.id, db);
 
+      if (dungeon.activeBattle) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Dungeon is already in a battle",
+        });
+      }
+
       if (dungeon.cleared) {
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -134,10 +148,16 @@ export const dungeonRouter = router({
       }
 
       const battleId = id();
-      await db.insert(TB_dungeonBattle).values({
-        dungeonId: input.id,
-        battleId: battleId,
-        round: dungeon.round,
+      await db.transaction(async (tx) => {
+        await tx
+          .update(TB_dungeonData)
+          .set({ activeBattle: true })
+          .where(eq(TB_dungeonData.id, input.id));
+        await tx.insert(TB_dungeonBattle).values({
+          dungeonId: input.id,
+          battleId: battleId,
+          round: dungeon.round,
+        });
       });
 
       console.log("dungeon in dungeon router", dungeon);

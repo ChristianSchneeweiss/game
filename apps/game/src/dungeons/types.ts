@@ -18,6 +18,7 @@ export type DungeonData = {
   round: number;
   actualEnemies: BaseEnemy[][];
   cleared: boolean;
+  activeBattle: boolean;
 };
 
 export type DungeonConfig = {
