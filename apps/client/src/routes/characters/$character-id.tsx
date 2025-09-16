@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { trpc } from "@/utils/trpc";
+import { queryClient, trpc } from "@/utils/trpc";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Sparkles, Wand2Icon } from "lucide-react";
@@ -30,6 +30,9 @@ function RouteComponent() {
       onSuccess: () => {
         refetchCharacter();
         refetchSpells();
+        queryClient.invalidateQueries(
+          trpc.character.getCharacters.queryOptions(),
+        );
       },
     }),
   );

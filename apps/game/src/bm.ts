@@ -258,7 +258,12 @@ export class BM implements BattleManager, RoundLifecycleHooks {
   ): SpellCastEvent | null {
     const currentRound = this.getCurrentRound();
     if (currentRound.orderQueue[0] !== entityId) {
-      throw new Error("Entity is not the next in round");
+      console.error(
+        "Entity is not the next in round",
+        entityId,
+        currentRound.orderQueue
+      );
+      return null;
     }
 
     const entity = this.getEntityById(entityId);

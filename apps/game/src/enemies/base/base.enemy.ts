@@ -91,7 +91,8 @@ export class BaseEnemy extends BaseEntity {
     // this fixes the edge case where we have infinity as target type for aoe spells
     const maxEnemies = Math.min(
       targetType.enemies,
-      this.battleManager.getTeam(this.team).length
+      this.battleManager.getAliveEntities().filter((e) => e.team !== this.team)
+        .length
     );
     const maxAllies = Math.min(
       targetType.allies,

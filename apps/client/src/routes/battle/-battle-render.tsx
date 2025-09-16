@@ -97,6 +97,7 @@ export const BattleRender = ({
   const enemies = participants.filter((p) => p.team === "TEAM_B");
 
   const currentRound = battleState?.round.round ?? 0;
+  const orderQueue = battleState?.round.orderQueue ?? [];
 
   const EntityCard = ({ entity, team }: { entity: Entity; team: Team }) => {
     const setHoverCharacterOpen = (open: boolean | undefined) => {
@@ -396,13 +397,14 @@ export const BattleRender = ({
             const cooldown = currentStats.cooldowns.get(spell.config.id);
             const isReady = cooldown === 0 || !cooldown;
             const desc = spellDescription?.get(spell.config.id);
+            const hasEnoughMana = entity.mana >= spell.config.manaCost;
 
             return (
               <div
                 key={spell.config.id}
                 className={cn(
                   "flex items-center justify-between rounded-lg border p-3 transition-all duration-200",
-                  isReady && myTurn
+                  isReady && myTurn && hasEnoughMana
                     ? "cursor-pointer border-slate-500 bg-slate-700/50 hover:border-slate-400 hover:bg-slate-600/50"
                     : "border-slate-600 bg-slate-800/50",
                   activeSpell === spell.config.id &&
@@ -411,6 +413,7 @@ export const BattleRender = ({
                 onClick={() => {
                   if (!myTurn) return;
                   if (!isReady) return;
+                  if (!hasEnoughMana) return;
 
                   if (validTargets || activeSpell) {
                     cancelSpell?.();
@@ -520,6 +523,44 @@ export const BattleRender = ({
             {allies.map((entity) => (
               <EntityCard key={entity.id} entity={entity} team="TEAM_A" />
             ))}
+          </div>
+        </div>
+
+        {/* Order Queue Section */}
+        <div className="mb-8">
+          <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-yellow-300">
+            <Zap className="h-6 w-6" />
+            TURN ORDER
+          </h2>
+          <div className="flex flex-wrap justify-center gap-3">
+            {orderQueue.map((entityId, index) => {
+              const entity = participants.find((p) => p.id === entityId);
+              if (!entity) return null;
+
+              const isCurrentTurn = index === 0;
+              const isAlly = entity.team === "TEAM_A";
+
+              return (
+                <div
+                  key={entityId}
+                  className={cn(
+                    "flex items-center gap-2 rounded-lg border-2 px-4 py-2 transition-all duration-300",
+                    isCurrentTurn
+                      ? "scale-105 border-yellow-400 bg-yellow-400/20 shadow-lg shadow-yellow-400/30"
+                      : "border-slate-600 bg-slate-800/50",
+                    isAlly ? "text-blue-300" : "text-red-300",
+                  )}
+                >
+                  <span className="text-medium">{isAlly ? "🧙‍♂️" : "👹"}</span>
+                  <span className="font-medium">{entity.name}</span>
+                  {isCurrentTurn && (
+                    <div className="flex items-center gap-1">
+                      <div className="h-2 w-2 animate-pulse rounded-full bg-yellow-400"></div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
 
