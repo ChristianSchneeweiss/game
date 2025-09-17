@@ -384,119 +384,119 @@ export const BattleRender = ({
             <Sparkles className="h-4 w-4" />
             Spells
           </h4>
-          {entity.spells.map((spell) => {
-            const setHoverSpellOpen = (open: boolean | undefined) => {
-              _setHoverSpellOpen(open ? spell.config.id : null);
-              if (open) {
-                getSpellDescription?.(spell.config.id);
-              } else {
-                _setHoverSpellOpen(null);
-              }
-            };
+          <div className="grid grid-cols-2 gap-2">
+            {entity.spells.map((spell) => {
+              const setHoverSpellOpen = (open: boolean | undefined) => {
+                _setHoverSpellOpen(open ? spell.config.id : null);
+                if (open) {
+                  getSpellDescription?.(spell.config.id);
+                } else {
+                  _setHoverSpellOpen(null);
+                }
+              };
 
-            const cooldown = currentStats.cooldowns.get(spell.config.id);
-            const isReady = cooldown === 0 || !cooldown;
-            const desc = spellDescription?.get(spell.config.id);
-            const hasEnoughMana = entity.mana >= spell.config.manaCost;
+              const cooldown = currentStats.cooldowns.get(spell.config.id);
+              const isReady = cooldown === 0 || !cooldown;
+              const desc = spellDescription?.get(spell.config.id);
+              const hasEnoughMana = entity.mana >= spell.config.manaCost;
 
-            return (
-              <div
-                key={spell.config.id}
-                className={cn(
-                  "flex items-center justify-between rounded-lg border p-3 transition-all duration-200",
-                  isReady && myTurn && hasEnoughMana
-                    ? "cursor-pointer border-slate-500 bg-slate-700/50 hover:border-slate-400 hover:bg-slate-600/50"
-                    : "border-slate-600 bg-slate-800/50",
-                  activeSpell === spell.config.id &&
-                    "border-blue-400 bg-blue-600/20 ring-2 ring-blue-400/30",
-                )}
-                onClick={() => {
-                  if (!myTurn) return;
-                  if (!isReady) return;
-                  if (!hasEnoughMana) return;
-
-                  if (validTargets || activeSpell) {
-                    cancelSpell?.();
-                  } else {
-                    getTargets?.(spell.config.id);
-                  }
-                }}
-              >
-                <div className="flex items-center gap-2">
-                  <span className="text-lg">⚡</span>
-                  <span
-                    className={cn(
-                      "font-medium",
-                      isReady && myTurn ? "text-white" : "text-gray-400",
-                      activeSpell === spell.config.id && "text-blue-300",
-                    )}
-                  >
-                    {spell.config.name}
-                  </span>
-                  <HoverCard
-                    open={hoverSpellOpen === spell.config.id}
-                    onOpenChange={setHoverSpellOpen}
-                    key={spell.config.id}
-                    openDelay={1000}
-                    closeDelay={50}
-                  >
-                    <HoverCardTrigger asChild>
-                      <CircleQuestionMarkIcon className="size-4 cursor-help text-blue-400 hover:text-blue-300" />
-                    </HoverCardTrigger>
-                    {desc && (
-                      <HoverCardContent className="min-w-[400px] border-slate-600 bg-slate-800 p-4">
-                        <div className="space-y-3">
-                          <h4 className="text-lg font-bold text-white">
-                            {spell.config.name}
-                          </h4>
-                          <p className="text-sm leading-relaxed text-slate-300">
-                            {desc.text}
-                          </p>
-                          <div className="flex flex-wrap gap-2">
-                            {desc?.manaCost !== undefined && (
-                              <span className="flex items-center gap-1 rounded-full border border-blue-500/30 bg-blue-600/20 px-3 py-1 text-sm font-medium text-blue-300">
-                                <Zap className="h-3 w-3" />
-                                {desc.manaCost} Mana
-                              </span>
-                            )}
-                            {desc?.cooldown !== undefined && (
-                              <span className="flex items-center gap-1 rounded-full border border-orange-500/30 bg-orange-600/20 px-3 py-1 text-sm font-medium text-orange-300">
-                                <span className="text-xs">⏱️</span>
-                                {desc.cooldown} CD
-                              </span>
-                            )}
-                            {desc?.targetType && (
-                              <span className="flex items-center gap-1 rounded-full border border-purple-500/30 bg-purple-600/20 px-3 py-1 text-sm font-medium text-purple-300">
-                                <span className="text-xs">🎯</span>
-                                {desc.targetType.enemies > 0 &&
-                                  `Enemies: ${desc.targetType.enemies}`}
-                                {desc.targetType.allies > 0 &&
-                                  `Allies: ${desc.targetType.allies}`}
-                                {desc.targetType.enemies === 0 &&
-                                  desc.targetType.allies === 0 &&
-                                  "Self"}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </HoverCardContent>
-                    )}
-                  </HoverCard>
-                </div>
-                <div className="text-sm">
-                  {cooldown ? (
-                    <span className="rounded-full bg-orange-600/20 px-2 py-1 font-bold text-orange-300">
-                      {cooldown}
-                    </span>
-                  ) : (
-                    <span className="rounded-full bg-green-600/20 px-2 py-1 font-bold text-green-300">
-                      Ready
-                    </span>
+              return (
+                <div
+                  key={spell.config.id}
+                  className={cn(
+                    "flex flex-col rounded-lg border p-2 transition-all duration-200",
+                    isReady && myTurn && hasEnoughMana
+                      ? "cursor-pointer border-slate-500 bg-slate-700/50 hover:border-slate-400 hover:bg-slate-600/50"
+                      : "border-slate-600 bg-slate-800/50",
+                    activeSpell === spell.config.id &&
+                      "border-blue-400 bg-blue-600/20 ring-2 ring-blue-400/30",
                   )}
+                  onClick={() => {
+                    if (!myTurn) return;
+                    if (!isReady) return;
+                    if (!hasEnoughMana) return;
+
+                    if (validTargets || activeSpell) {
+                      cancelSpell?.();
+                    } else {
+                      getTargets?.(spell.config.id);
+                    }
+                  }}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1">
+                      <span className="text-sm">⚡</span>
+                      <span
+                        className={cn(
+                          "truncate text-xs font-medium",
+                          isReady && myTurn ? "text-white" : "text-gray-400",
+                          activeSpell === spell.config.id && "text-blue-300",
+                        )}
+                      >
+                        {spell.config.name}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      {cooldown !== undefined && cooldown > 0 && (
+                        <span className="rounded-full bg-orange-600/20 px-1.5 py-0.5 text-xs font-bold text-orange-300">
+                          {cooldown}
+                        </span>
+                      )}
+                      <HoverCard
+                        open={hoverSpellOpen === spell.config.id}
+                        onOpenChange={setHoverSpellOpen}
+                        key={spell.config.id}
+                        openDelay={1000}
+                        closeDelay={50}
+                      >
+                        <HoverCardTrigger asChild>
+                          <CircleQuestionMarkIcon className="size-3 cursor-help text-blue-400 hover:text-blue-300" />
+                        </HoverCardTrigger>
+                        {desc && (
+                          <HoverCardContent className="min-w-[400px] border-slate-600 bg-slate-800 p-4">
+                            <div className="space-y-3">
+                              <h4 className="text-lg font-bold text-white">
+                                {spell.config.name}
+                              </h4>
+                              <p className="text-sm leading-relaxed text-slate-300">
+                                {desc.text}
+                              </p>
+                              <div className="flex flex-wrap gap-2">
+                                {desc?.manaCost !== undefined && (
+                                  <span className="flex items-center gap-1 rounded-full border border-blue-500/30 bg-blue-600/20 px-3 py-1 text-sm font-medium text-blue-300">
+                                    <Zap className="h-3 w-3" />
+                                    {desc.manaCost} Mana
+                                  </span>
+                                )}
+                                {desc?.cooldown !== undefined && (
+                                  <span className="flex items-center gap-1 rounded-full border border-orange-500/30 bg-orange-600/20 px-3 py-1 text-sm font-medium text-orange-300">
+                                    <span className="text-xs">⏱️</span>
+                                    {desc.cooldown} CD
+                                  </span>
+                                )}
+                                {desc?.targetType && (
+                                  <span className="flex items-center gap-1 rounded-full border border-purple-500/30 bg-purple-600/20 px-3 py-1 text-sm font-medium text-purple-300">
+                                    <span className="text-xs">🎯</span>
+                                    {desc.targetType.enemies > 0 &&
+                                      `Enemies: ${desc.targetType.enemies}`}
+                                    {desc.targetType.allies > 0 &&
+                                      `Allies: ${desc.targetType.allies}`}
+                                    {desc.targetType.enemies === 0 &&
+                                      desc.targetType.allies === 0 &&
+                                      "Self"}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </HoverCardContent>
+                        )}
+                      </HoverCard>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
     );
@@ -527,12 +527,12 @@ export const BattleRender = ({
         </div>
 
         {/* Order Queue Section */}
-        <div className="mb-8">
-          <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-yellow-300">
-            <Zap className="h-6 w-6" />
+        <div className="mb-6">
+          <h2 className="mb-2 flex items-center gap-2 text-base font-bold text-yellow-300">
+            <Zap className="h-4 w-4" />
             TURN ORDER
           </h2>
-          <div className="flex flex-wrap justify-center gap-3">
+          <div className="flex flex-wrap justify-center gap-1.5">
             {orderQueue.map((entityId, index) => {
               const entity = participants.find((p) => p.id === entityId);
               if (!entity) return null;
@@ -544,19 +544,17 @@ export const BattleRender = ({
                 <div
                   key={entityId}
                   className={cn(
-                    "flex items-center gap-2 rounded-lg border-2 px-4 py-2 transition-all duration-300",
+                    "flex items-center gap-1 rounded-md border px-2 py-1 text-sm transition-all duration-300",
                     isCurrentTurn
-                      ? "scale-105 border-yellow-400 bg-yellow-400/20 shadow-lg shadow-yellow-400/30"
+                      ? "scale-105 border-yellow-400 bg-yellow-400/20 shadow-md shadow-yellow-400/30"
                       : "border-slate-600 bg-slate-800/50",
                     isAlly ? "text-blue-300" : "text-red-300",
                   )}
                 >
-                  <span className="text-medium">{isAlly ? "🧙‍♂️" : "👹"}</span>
-                  <span className="font-medium">{entity.name}</span>
+                  <span className="text-sm">{isAlly ? "🧙‍♂️" : "👹"}</span>
+                  <span className="truncate font-medium">{entity.name}</span>
                   {isCurrentTurn && (
-                    <div className="flex items-center gap-1">
-                      <div className="h-2 w-2 animate-pulse rounded-full bg-yellow-400"></div>
-                    </div>
+                    <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-yellow-400"></div>
                   )}
                 </div>
               );

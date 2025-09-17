@@ -10,7 +10,7 @@ export class FishfolkScout extends BaseEnemy {
       name: "Fishfolk Scout",
       team: "TEAM_B",
       maxHealth: 55,
-      maxMana: 10,
+      maxMana: 30,
       baseAttributes: {
         intelligence: 6,
         vitality: 8,

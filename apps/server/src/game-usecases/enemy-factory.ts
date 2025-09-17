@@ -18,8 +18,8 @@ import { SkeletonGrunt } from "@loot-game/game/enemies/skeleton-grunt";
 import { SkySerpent } from "@loot-game/game/enemies/sky-serpent";
 import { SkyboltWyvern } from "@loot-game/game/enemies/skybolt-wyvern";
 import { StormHatchling } from "@loot-game/game/enemies/storm-hatchling";
+import { ThunderDrake } from "@loot-game/game/enemies/thunder-drake";
 import { Thundermaw } from "@loot-game/game/enemies/thundermaw";
-import { ThunderDrake } from "@loot-game/game/enemies/tunder-drake";
 import { WaterElemental } from "@loot-game/game/enemies/water-elemental";
 import { WispOfRegret } from "@loot-game/game/enemies/wisp-of-regret";
 

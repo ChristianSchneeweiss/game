@@ -34,6 +34,9 @@ export const bmStorage = {
       draft.forEach((ent) => {
         ent.battleManager = undefined;
         ent.spells.forEach((spells) => (spells.battleManager = undefined));
+        ent.activeEffects.forEach(
+          (effect) => (effect.battleManager = undefined)
+        );
       });
     });
     console.log(bm.effectTracking);

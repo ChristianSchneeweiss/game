@@ -19,7 +19,15 @@ export class ThunderDrake extends BaseEnemy {
       },
       xp: 40,
       loot: {
-        items: [],
+        items: [
+          {
+            type: "SPELL",
+            data: {
+              spellType: "stunning-strike",
+            },
+            dropRate: 0.06,
+          },
+        ],
         gold: 50,
       },
       spells: ["stunning-strike", "basic-attack"],

@@ -10,7 +10,7 @@ export class FishfolkCaster extends BaseEnemy {
       name: "Fishfolk Caster",
       team: "TEAM_B",
       maxHealth: 40,
-      maxMana: 30,
+      maxMana: 60,
       baseAttributes: {
         intelligence: 12,
         vitality: 8,

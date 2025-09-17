@@ -204,6 +204,11 @@ export class BattleWebsocket extends DurableObject {
       } satisfies ResponseMessage)
     );
 
+    if (this.bm.isGameOver()) {
+      const winner = this.bm.getWinningTeam();
+      server.send(SuperJSON.stringify({ type: "finished", data: { winner } }));
+    }
+
     this.bm.start();
     await this.sendState();
 
@@ -334,6 +339,23 @@ export class BattleWebsocket extends DurableObject {
         action.targets.map((t) => t.id)
       );
       this.bm.postTurn();
+
+      if (this.bm.isGameOver()) {
+        console.log("Game over");
+        const winner = this.bm.getWinningTeam();
+        const ws = this.ctx.getWebSockets();
+        ws.forEach((w) => {
+          w.send(SuperJSON.stringify({ type: "finished", data: { winner } }));
+        });
+
+        await bmStorage.save(this.bm, this.env.GAME);
+        await this.env.BATTLE_DONE_WORKFLOW.create({
+          params: { battleId: this.battleId },
+        });
+
+        return false;
+      }
+
       this.bm.preTurn();
 
       return true;

@@ -48,6 +48,7 @@ export class VoltLashSpell extends BaseSpell {
 
     for (let i = 0; i < 4; i++) {
       const randomEnemy = randomInArray(enemies, this.battleManager.getPRNG());
+      if (!randomEnemy) return null;
       const damage = this.damageModule.applyRawDamage(
         caster,
         [randomEnemy],

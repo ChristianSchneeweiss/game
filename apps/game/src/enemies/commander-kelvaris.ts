@@ -10,17 +10,32 @@ export class CommanderKelvaris extends BaseEnemy {
       name: "Commander Kelvaris, Tidepiercer",
       team: "TEAM_B",
       maxHealth: 280,
-      maxMana: 40,
+      maxMana: 120,
       baseAttributes: {
         strength: 18,
-        vitality: 16,
+        vitality: 28,
         agility: 16, // DEX mapped to agility
-        intelligence: 10,
+        intelligence: 24,
       },
       xp: 150, // Boss XP reward
       loot: {
-        items: [], // A-rank items can be added here
-        gold: 100, // Boss gold reward
+        items: [
+          {
+            type: "SPELL",
+            data: {
+              spellType: "torrent-spiral",
+            },
+            dropRate: 0.05,
+          },
+          {
+            type: "SPELL",
+            data: {
+              spellType: "tidepiercer-thrust",
+            },
+            dropRate: 0.05,
+          },
+        ],
+        gold: 100,
       },
       spells: ["torrent-spiral", "tidepiercer-thrust", "basic-attack"],
     });

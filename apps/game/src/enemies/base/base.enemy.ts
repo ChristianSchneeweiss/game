@@ -9,7 +9,7 @@ import type {
   Spell,
   Team,
 } from "../../types";
-import { randomInArray } from "../../utils/random-in-array";
+import { uniqueRandomFromArray } from "../../utils/random-in-array";
 import type { EnemyType } from "./enemy-types";
 
 type EnemyParams = {
@@ -86,7 +86,6 @@ export class BaseEnemy extends BaseEntity {
   protected getTargets(spell: Spell, validTargets: Entity[]): Entity[] {
     if (!this.battleManager) throw new Error("Battle manager not set");
 
-    let targets: Entity[] = [];
     const targetType = spell.getTargetType();
 
     // this fixes the edge case where we have infinity as target type for aoe spells
@@ -99,22 +98,19 @@ export class BaseEnemy extends BaseEntity {
       targetType.allies,
       this.battleManager.getTeam(this.team).length
     );
-    for (let i = 0; i < maxEnemies; i++) {
-      const randomEnemy = randomInArray(
-        validTargets,
+    const validEnemies = validTargets.filter((e) => e.team !== this.team);
+    const validAllies = validTargets.filter((e) => e.team === this.team);
+    return [
+      ...uniqueRandomFromArray(
+        validEnemies,
+        maxEnemies,
         this.battleManager.getPRNG()
-      );
-      if (!randomEnemy) throw new Error(`No random enemy found`);
-      targets.push(randomEnemy);
-    }
-    for (let i = 0; i < maxAllies; i++) {
-      const randomAlly = randomInArray(
-        validTargets,
+      ),
+      ...uniqueRandomFromArray(
+        validAllies,
+        maxAllies,
         this.battleManager.getPRNG()
-      );
-      if (!randomAlly) throw new Error(`No random ally found`);
-      targets.push(randomAlly);
-    }
-    return targets;
+      ),
+    ];
   }
 }

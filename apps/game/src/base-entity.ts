@@ -184,7 +184,7 @@ export class BaseEntity implements Entity {
       case "healthRegen":
         return (
           this.baseSpecialAttributes.healthRegen +
-          (this.isBot ? 2 : this.getAttribute("vitality") / 2)
+          this.getAttribute("vitality") / 4
         );
       case "manaRegen":
         return (

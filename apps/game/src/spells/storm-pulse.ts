@@ -2,6 +2,7 @@ import { DamageModule, MinMaxDamageModule } from "../modules/damage.module";
 import type { OptionalSpellCastEvent } from "../timeline-events";
 import type { BattleManager, Entity } from "../types";
 import { minMaxRoll } from "../utils/min-max-roll";
+import { uniqueRandomFromArray } from "../utils/random-in-array";
 import { BaseSpell } from "./base/base.spell";
 
 export class StormPulseSpell extends BaseSpell {
@@ -38,18 +39,15 @@ export class StormPulseSpell extends BaseSpell {
   ): OptionalSpellCastEvent {
     if (!this.battleManager) throw new Error("Battle manager not set");
 
-    // we delete targets until we have 3
-    const randomTargets = new Set(this.battleManager.getAliveEntities());
-    while (randomTargets.size > 3) {
-      const randomIndex = Math.floor(this.getRNG() * randomTargets.size);
-      const randomTarget = Array.from(randomTargets)[randomIndex];
-      if (!randomTarget) throw new Error("No random target found");
-      randomTargets.delete(randomTarget);
-    }
+    const randomTargets = uniqueRandomFromArray(
+      this.battleManager.getAliveEntities(),
+      3,
+      this.battleManager.getPRNG()
+    );
 
     const damage = this.damageModule.applyRawDamage(
       caster,
-      Array.from(randomTargets),
+      randomTargets,
       roll,
       battleManager,
       this
