@@ -10,7 +10,7 @@ export class ThunderDrake extends BaseEnemy {
       name: "Thunder Drake",
       team: "TEAM_B",
       maxHealth: 130,
-      maxMana: 30,
+      maxMana: 50,
       baseAttributes: {
         intelligence: 10,
         vitality: 18,

@@ -10,7 +10,7 @@ export class StormHatchling extends BaseEnemy {
       name: "Storm Hatchling",
       team: "TEAM_B",
       maxHealth: 35,
-      maxMana: 10,
+      maxMana: 40,
       baseAttributes: {
         intelligence: 8,
         vitality: 6,
@@ -19,7 +19,15 @@ export class StormHatchling extends BaseEnemy {
       },
       xp: 20,
       loot: {
-        items: [],
+        items: [
+          {
+            type: "SPELL",
+            data: {
+              spellType: "staggering-jab",
+            },
+            dropRate: 0.2,
+          },
+        ],
         gold: 20,
       },
       spells: ["staggering-jab", "basic-attack"],

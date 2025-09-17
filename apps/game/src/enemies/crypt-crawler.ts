@@ -10,7 +10,7 @@ export class CryptCrawler extends BaseEnemy {
       name: "Crypt Crawler",
       team: "TEAM_B",
       maxHealth: 40,
-      maxMana: 10,
+      maxMana: 40,
       baseAttributes: {
         strength: 9,
         vitality: 8,
@@ -19,7 +19,15 @@ export class CryptCrawler extends BaseEnemy {
       },
       xp: 25, // Reasonable XP for stage 3 enemy
       loot: {
-        items: [],
+        items: [
+          {
+            type: "SPELL",
+            data: {
+              spellType: "precise-thrust",
+            },
+            dropRate: 0.2,
+          },
+        ],
         gold: 20, // Reasonable gold for stage 3 enemy
       },
       spells: ["precise-thrust", "basic-attack"],

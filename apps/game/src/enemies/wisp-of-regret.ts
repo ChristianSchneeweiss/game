@@ -19,7 +19,15 @@ export class WispOfRegret extends BaseEnemy {
       },
       xp: 20,
       loot: {
-        items: [],
+        items: [
+          {
+            type: "SPELL",
+            data: {
+              spellType: "cinder-wisp",
+            },
+            dropRate: 0.2,
+          },
+        ],
         gold: 20,
       },
       spells: ["cinder-wisp", "basic-attack"],

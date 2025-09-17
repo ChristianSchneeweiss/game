@@ -10,7 +10,7 @@ export class SkySerpent extends BaseEnemy {
       name: "Sky Serpent",
       team: "TEAM_B",
       maxHealth: 100,
-      maxMana: 40,
+      maxMana: 70,
       baseAttributes: {
         strength: 10,
         vitality: 12,
@@ -19,7 +19,22 @@ export class SkySerpent extends BaseEnemy {
       },
       xp: 50, // Higher XP for mini-boss
       loot: {
-        items: [],
+        items: [
+          {
+            type: "SPELL",
+            data: {
+              spellType: "storm-pulse",
+            },
+            dropRate: 0.06,
+          },
+          {
+            type: "SPELL",
+            data: {
+              spellType: "battle-roar",
+            },
+            dropRate: 0.06,
+          },
+        ],
         gold: 75, // Higher gold for mini-boss
       },
       spells: ["storm-pulse", "battle-roar", "basic-attack"],

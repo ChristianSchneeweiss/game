@@ -10,7 +10,7 @@ export class MossCoveredGolem extends BaseEnemy {
       name: "Moss-Covered Golem",
       team: "TEAM_B",
       maxHealth: 90,
-      maxMana: 0,
+      maxMana: 25,
       baseAttributes: {
         intelligence: 5,
         vitality: 14,
@@ -19,7 +19,15 @@ export class MossCoveredGolem extends BaseEnemy {
       },
       xp: 30,
       loot: {
-        items: [],
+        items: [
+          {
+            type: "SPELL",
+            data: {
+              spellType: "crushing-blow",
+            },
+            dropRate: 0.1,
+          },
+        ],
         gold: 25,
       },
       spells: ["crushing-blow", "basic-attack"],

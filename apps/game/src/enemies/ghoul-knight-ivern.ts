@@ -19,7 +19,22 @@ export class GhoulKnightIvern extends BaseEnemy {
       },
       xp: 50,
       loot: {
-        items: [],
+        items: [
+          {
+            type: "SPELL",
+            data: {
+              spellType: "vital-strike",
+            },
+            dropRate: 0.06,
+          },
+          {
+            type: "SPELL",
+            data: {
+              spellType: "festering-blow",
+            },
+            dropRate: 0.2,
+          },
+        ],
         gold: 40,
       },
       spells: ["vital-strike", "festering-blow", "basic-attack"],

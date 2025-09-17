@@ -10,7 +10,7 @@ export class AshenSkeleton extends BaseEnemy {
       name: "Ashen Skeleton",
       team: "TEAM_B",
       maxHealth: 50,
-      maxMana: 0,
+      maxMana: 15,
       baseAttributes: {
         intelligence: 3,
         vitality: 10,
@@ -19,7 +19,15 @@ export class AshenSkeleton extends BaseEnemy {
       },
       xp: 20,
       loot: {
-        items: [],
+        items: [
+          {
+            type: "SPELL",
+            data: {
+              spellType: "splinter-shot",
+            },
+            dropRate: 0.2,
+          },
+        ],
         gold: 20,
       },
       spells: ["splinter-shot", "basic-attack"],

@@ -10,7 +10,7 @@ export class SkyboltWyvern extends BaseEnemy {
       name: "Skybolt Wyvern",
       team: "TEAM_B",
       maxHealth: 35,
-      maxMana: 10,
+      maxMana: 50,
       baseAttributes: {
         intelligence: 8,
         vitality: 6,

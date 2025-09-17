@@ -19,7 +19,15 @@ export class FishfolkCaster extends BaseEnemy {
       },
       xp: 25,
       loot: {
-        items: [],
+        items: [
+          {
+            type: "SPELL",
+            data: {
+              spellType: "aqua-wave",
+            },
+            dropRate: 0.1,
+          },
+        ],
         gold: 25,
       },
       spells: ["aqua-wave", "basic-attack"],

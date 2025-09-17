@@ -12,16 +12,24 @@ export class ElderTreant extends BaseEnemy {
       name: "Elder Treant",
       team: "TEAM_B",
       maxHealth: 180,
-      maxMana: 30,
+      maxMana: 80,
       baseAttributes: {
-        intelligence: 10,
+        intelligence: 16,
         vitality: 18,
         agility: 6,
         strength: 16,
       },
       xp: 50,
       loot: {
-        items: [],
+        items: [
+          {
+            type: "SPELL",
+            data: {
+              spellType: "rootgrasp",
+            },
+            dropRate: 0.03,
+          },
+        ],
         gold: 75,
       },
       spells: ["rootgrasp", "basic-attack"],

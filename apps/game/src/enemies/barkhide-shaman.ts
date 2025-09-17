@@ -10,7 +10,7 @@ export class BarkhideShaman extends BaseEnemy {
       name: "Barkhide Shaman",
       team: "TEAM_B",
       maxHealth: 60,
-      maxMana: 40,
+      maxMana: 70,
       baseAttributes: {
         intelligence: 14,
         vitality: 10,
@@ -19,7 +19,15 @@ export class BarkhideShaman extends BaseEnemy {
       },
       xp: 25,
       loot: {
-        items: [],
+        items: [
+          {
+            type: "SPELL",
+            data: {
+              spellType: "stone-bark",
+            },
+            dropRate: 0.06,
+          },
+        ],
         gold: 20,
       },
       spells: ["stone-bark", "basic-attack"],

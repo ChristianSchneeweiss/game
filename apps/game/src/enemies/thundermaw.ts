@@ -19,7 +19,22 @@ export class Thundermaw extends BaseEnemy {
       },
       xp: 100,
       loot: {
-        items: [],
+        items: [
+          {
+            type: "SPELL",
+            data: {
+              spellType: "volt-lash",
+            },
+            dropRate: 0.01,
+          },
+          {
+            type: "SPELL",
+            data: {
+              spellType: "lightning-surge",
+            },
+            dropRate: 0.01,
+          },
+        ],
         gold: 50,
       },
       spells: ["volt-lash", "lightning-surge", "basic-attack"],

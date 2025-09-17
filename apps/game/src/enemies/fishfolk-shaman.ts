@@ -19,7 +19,15 @@ export class FishfolkShaman extends BaseEnemy {
       },
       xp: 30,
       loot: {
-        items: [],
+        items: [
+          {
+            type: "SPELL",
+            data: {
+              spellType: "ocean-blessing",
+            },
+            dropRate: 0.06,
+          },
+        ],
         gold: 30,
       },
       spells: ["ocean-blessing", "basic-attack"],

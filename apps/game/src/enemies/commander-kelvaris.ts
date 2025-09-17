@@ -25,14 +25,14 @@ export class CommanderKelvaris extends BaseEnemy {
             data: {
               spellType: "torrent-spiral",
             },
-            dropRate: 0.05,
+            dropRate: 0.01,
           },
           {
             type: "SPELL",
             data: {
               spellType: "tidepiercer-thrust",
             },
-            dropRate: 0.05,
+            dropRate: 0.01,
           },
         ],
         gold: 100,

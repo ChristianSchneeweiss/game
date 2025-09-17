@@ -10,7 +10,7 @@ export class LurkingFlameWraith extends BaseEnemy {
       name: "Lurking Flame Wraith",
       team: "TEAM_B",
       maxHealth: 60,
-      maxMana: 40,
+      maxMana: 70,
       baseAttributes: {
         intelligence: 14,
         vitality: 6,
@@ -19,7 +19,15 @@ export class LurkingFlameWraith extends BaseEnemy {
       },
       xp: 30,
       loot: {
-        items: [],
+        items: [
+          {
+            type: "SPELL",
+            data: {
+              spellType: "cinderbrand",
+            },
+            dropRate: 0.1,
+          },
+        ],
         gold: 35,
       },
       spells: ["cinderbrand", "basic-attack"],
