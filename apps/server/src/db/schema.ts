@@ -1,5 +1,6 @@
 import { faker } from "@faker-js/faker";
 import type { EnemyType } from "@loot-game/game/enemies/base/enemy-types";
+import type { PassiveType } from "@loot-game/game/passive-skills/passive-types";
 import type { SpellType } from "@loot-game/game/spells/base/spell-types";
 import type { EventTypes } from "@loot-game/game/timeline-events";
 import type { LootEntity } from "@loot-game/game/types";
@@ -63,6 +64,17 @@ export const TB_spellStats = pgTable("spell_stats", {
     .primaryKey()
     .$defaultFn(() => id()),
   type: text("type").$type<SpellType>().notNull(),
+  equippedBy: text("equipped_by").references(() => TB_character.id),
+  userId: text("user_id")
+    .notNull()
+    .references(() => TB_user.id),
+});
+
+export const TB_passivSkillStats = pgTable("passive_skill_stats", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => id()),
+  type: text("type").$type<PassiveType>().notNull(),
   equippedBy: text("equipped_by").references(() => TB_character.id),
   userId: text("user_id")
     .notNull()

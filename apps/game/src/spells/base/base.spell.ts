@@ -13,11 +13,12 @@ import type {
 export abstract class BaseSpell implements Spell {
   config: SpellConfig;
   currentCooldown: number;
-  battleManager?: BattleManager;
+  battleManager: BattleManager;
 
   constructor(config: SpellConfig) {
     this.config = config;
     this.currentCooldown = 0;
+    this.battleManager = undefined!;
   }
 
   canCast(caster: Entity): boolean {
@@ -123,7 +124,7 @@ export abstract class BaseSpell implements Spell {
    * @returns A random number between 0 and 1
    */
   protected getRNG(): number {
-    return this.battleManager?.getRNG() ?? 0;
+    return this.battleManager.getRNG();
   }
 
   getTargetType(): TargetType {

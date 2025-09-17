@@ -1,4 +1,5 @@
 import { calculator } from "./calculator";
+import type { PassiveSkill } from "./passive-skills/base/passive-types";
 import type { TimelineEvent } from "./timeline-events";
 import type {
   AllAttributeKeys,
@@ -26,7 +27,8 @@ export class BaseEntity implements Entity {
   activeEffects: Effect[];
   attributeModifiers: AttributeModifier[];
   spells: Spell[];
-  battleManager?: BattleManager;
+  passiveSkills: PassiveSkill[];
+  battleManager: BattleManager;
   isBot = true;
 
   constructor(
@@ -49,6 +51,7 @@ export class BaseEntity implements Entity {
     this.activeEffects = [];
     this.attributeModifiers = [];
     this.spells = [];
+    this.passiveSkills = [];
     this.baseSpecialAttributes = {
       lifesteal: 0,
       omnivamp: 0,
@@ -62,6 +65,7 @@ export class BaseEntity implements Entity {
       blessed: 0,
       critChance: 0,
     };
+    this.battleManager = undefined!;
   }
 
   onUpkeep(): TimelineEvent[] | null {

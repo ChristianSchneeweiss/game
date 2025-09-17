@@ -1,4 +1,6 @@
 import { BaseEntity } from "../../base-entity";
+import { passiveSkillFactory } from "../../passive-skills/base/passive-skill.factory";
+import type { PassiveType } from "../../passive-skills/base/passive-types";
 import { createSpellFromType } from "../../spells/base/spell-from-type";
 import type { SpellType } from "../../spells/base/spell-types";
 import type {
@@ -24,6 +26,7 @@ type EnemyParams = {
   xp: number;
   loot: Loot;
   spells: SpellType[];
+  passiveSkills?: PassiveType[];
 };
 
 export class BaseEnemy extends BaseEntity {
@@ -43,6 +46,7 @@ export class BaseEnemy extends BaseEntity {
     xp,
     loot,
     spells,
+    passiveSkills,
   }: EnemyParams) {
     super(id, name, team, maxHealth, maxMana, baseAttributes);
     this.type = type;
@@ -57,6 +61,10 @@ export class BaseEnemy extends BaseEntity {
     this.spells = spells.map((spell) =>
       createSpellFromType(`${this.id}-${spell}`, spell)
     );
+    this.passiveSkills =
+      passiveSkills?.map((passive) =>
+        passiveSkillFactory(passive, `${this.id}-${passive}`, this)
+      ) ?? [];
   }
 
   getAction(): { spell: Spell; targets: Entity[] } {

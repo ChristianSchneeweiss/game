@@ -13,7 +13,18 @@ const spellCastEvent = z.object({
   }),
 });
 
+const EffectTriggerEvent = z.object({
+  eventType: z.literal("EFFECT_TRIGGER"),
+  data: z.object({
+    effectId: z.string(),
+    damageApplied: z.map(z.string(), z.number().int()).optional(),
+    healingApplied: z.map(z.string(), z.number().int()).optional(),
+    effectsApplied: z.map(z.string(), z.array(z.string())).optional(),
+  }),
+});
+
 export type SpellCastEvent = z.infer<typeof spellCastEvent>;
+export type EffectTriggerEvent = z.infer<typeof EffectTriggerEvent>;
 
 export type OptionalSpellCastEvent = Omit<
   SpellCastEvent["data"],
@@ -55,10 +66,9 @@ const regenEvent = z.object({
   }),
 });
 
-type HealthRegenEvent = z.infer<typeof regenEvent>;
-
 const allEvents = z.union([
   spellCastEvent,
+  EffectTriggerEvent,
   effectRemovalEvent,
   deathEvent,
   reduceCooldownEvent,

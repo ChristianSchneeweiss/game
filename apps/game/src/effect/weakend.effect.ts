@@ -1,4 +1,4 @@
-import type { ModifierOperation } from "../types";
+import type { DamageHookArgs, ModifierOperation } from "../types";
 import { BaseEffect } from "./base-effect";
 
 /**
@@ -13,7 +13,7 @@ export class WeakendEffect extends BaseEffect {
     super("CURSE", duration);
   }
 
-  beforeTakingDamage(damage: number): number {
+  beforeTakingDamage({ damage }: DamageHookArgs): number {
     let damageToApply = damage;
     if (this.modifier === "ADD") {
       damageToApply += this.bonusDamage;

@@ -31,6 +31,7 @@ export class ThunderDrake extends BaseEnemy {
         gold: 50,
       },
       spells: ["stunning-strike", "basic-attack"],
+      passiveSkills: ["mirror"],
     });
   }
 }

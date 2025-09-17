@@ -33,7 +33,13 @@ export class calculator {
 
     // attacker effects hooks before dealing. highest priority
     damage = attacker.activeEffects.reduce(
-      (acc, effect) => effect.beforeDealingDamage(acc),
+      (acc, effect) =>
+        effect.beforeDealingDamage({
+          damage: acc,
+          type: damageType,
+          source: attacker,
+          target: defender,
+        }),
       damage
     );
 
@@ -58,7 +64,13 @@ export class calculator {
 
     // defender effects hooks after dealing
     damage = defender.activeEffects.reduce(
-      (acc, effect) => effect.beforeTakingDamage(acc),
+      (acc, effect) =>
+        effect.beforeTakingDamage({
+          damage: acc,
+          type: damageType,
+          source: attacker,
+          target: defender,
+        }),
       damage
     );
 
@@ -78,13 +90,23 @@ export class calculator {
 
     // attacker effects hooks before dealing
     healing = attacker.activeEffects.reduce(
-      (acc, effect) => effect.beforeDealingHealing(acc),
+      (acc, effect) =>
+        effect.beforeDealingHealing({
+          healing: acc,
+          source: attacker,
+          target: defender,
+        }),
       healing
     );
 
     // defender effects hooks before taking
     healing = defender.activeEffects.reduce(
-      (acc, effect) => effect.beforeTakingHealing(acc),
+      (acc, effect) =>
+        effect.beforeTakingHealing({
+          healing: acc,
+          source: attacker,
+          target: defender,
+        }),
       healing
     );
 
@@ -105,14 +127,26 @@ export class calculator {
     // attacker effects hooks before taking
     const realEffect = attacker.activeEffects.reduce<Effect | null>(
       (acc, effect) =>
-        (acc ? effect.beforeTakingEffect(acc) : null) as Effect | null,
+        (acc
+          ? effect.beforeTakingEffect({
+              effect: acc,
+              source: attacker,
+              target: defender,
+            })
+          : null) as Effect | null,
       effect
     );
 
     // defender effects hooks before dealing
     return defender.activeEffects.reduce<Effect | null>(
       (acc, effect) =>
-        (acc ? effect.beforeDealingEffect(acc) : null) as Effect | null,
+        (acc
+          ? effect.beforeDealingEffect({
+              effect: acc,
+              source: attacker,
+              target: defender,
+            })
+          : null) as Effect | null,
       realEffect
     );
   }

@@ -68,11 +68,12 @@ export class BM implements BattleManager, RoundLifecycleHooks {
 
   addEffect(effect: Effect): void {
     this.lifeCycleHooks.push(effect);
+    const currentRound = this.getCurrentRoundNumber();
     this.effectTracking.set(effect.id, {
       id: effect.id,
       sourceId: effect.sourceId,
       targetId: effect.targetId,
-      round: this.getCurrentRound().round,
+      round: currentRound,
       duration: effect.duration,
       effectType: effect.effectType,
       description: effect.getDescription(),
@@ -87,6 +88,27 @@ export class BM implements BattleManager, RoundLifecycleHooks {
       spell.battleManager = this;
       this.lifeCycleHooks.push(spell);
     });
+
+    if (entity.passiveSkills.length > 0) {
+      // we create a fake spell cast event to apply the passive skills
+      this.processEvent({
+        eventType: "SPELL_CAST",
+        data: {
+          spellId: entity.id,
+          roll: 0,
+          isCrit: false,
+          effectsApplied: new Map([
+            [entity.id, entity.passiveSkills.map((p) => p.id)],
+          ]),
+        },
+      });
+      entity.passiveSkills.forEach((passive) => {
+        passive.battleManager = this;
+        entity.applyEffect(passive);
+        passive.onApply?.();
+        this.addEffect(passive);
+      });
+    }
   }
 
   changeTurnOrder(cb: (currentOrder: string[]) => string[]): void {
@@ -123,7 +145,8 @@ export class BM implements BattleManager, RoundLifecycleHooks {
   }
 
   processEvent(event: TimelineEvent): void {
-    this.events.push({ round: this.getCurrentRound().round, event });
+    const round = this.getCurrentRoundNumber();
+    this.events.push({ round, event });
 
     if (event.eventType === "SPELL_CAST") {
       this.spellCastBuffer.forEach((event) => this.processEvent(event));
@@ -227,6 +250,14 @@ export class BM implements BattleManager, RoundLifecycleHooks {
       throw new Error("No current round");
     }
     return currentRound;
+  }
+
+  getCurrentRoundNumber(): number {
+    const currentRound = this.rounds[this.rounds.length - 1];
+    if (!currentRound) {
+      return 0;
+    }
+    return this.rounds.length - 1;
   }
 
   private castSpell(
@@ -343,38 +374,4 @@ export class BM implements BattleManager, RoundLifecycleHooks {
       .sort((a, b) => b.getAttribute("agility") - a.getAttribute("agility"))
       .map((e) => e.id);
   }
-
-  // fight() {
-  //   while (!this.isGameOver()) {
-  //     this.onPreRound();
-  //     console.log(`\n`, this.getCurrentRound());
-
-  //     while (this.getCurrentRound().orderQueue.length > 0) {
-  //       const casterId = this.getCurrentRound().orderQueue.shift();
-  //       if (!casterId) {
-  //         throw new Error("No caster found");
-  //       }
-  //       const caster = this.getEntityById(casterId);
-  //       if (!caster) {
-  //         throw new Error(`Caster ${casterId} not found`);
-  //       }
-
-  //       this.processTurn(caster, (round) => {
-  //         const { spell, targets } = caster.getAction();
-  //         if (targets.length > 0 || spell.config.targetType === "NO_TARGET") {
-  //           const targetIds = targets.length > 0 ? [targets[0]!.id] : [];
-  //           const result = this.castSpell(caster, spell.config.id, targetIds);
-
-  //           if (result) {
-  //             this.processEvent(result);
-  //           }
-  //         }
-  //       });
-  //     }
-
-  //     this.onPostRound();
-  //   }
-  //   const winner = this.getWinningTeam();
-  //   console.log(`Game over! ${winner} wins!`);
-  // }
 }

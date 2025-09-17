@@ -6,7 +6,7 @@ export class StunEffect extends BaseEffect {
   }
 
   onApply(): void {
-    this.battleManager?.changeTurnOrder((currentOrder) => {
+    this.battleManager.changeTurnOrder((currentOrder) => {
       if (currentOrder.includes(this.targetId)) {
         // onApply we use a special removal because the effect is removed instantly **after** the spell cast
         // so we need to add it to the spell cast buffer
@@ -23,7 +23,7 @@ export class StunEffect extends BaseEffect {
   safeRemoveEffect(): void {
     const target = this.getTarget();
     target.removeEffect(this);
-    this.battleManager?.addEventToSpellCastBuffer({
+    this.battleManager.addEventToSpellCastBuffer({
       eventType: "EFFECT_REMOVAL",
       data: {
         effectId: this.id,

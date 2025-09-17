@@ -42,7 +42,8 @@ export type EffectType =
   | "CURSE"
   | "STUN"
   | "CONTROL"
-  | "SHIELD";
+  | "SHIELD"
+  | "PASSIVE";
 
 export type ModifierOperation = "ADD" | "MULTIPLY";
 
@@ -73,6 +74,24 @@ export interface TurnLifecycleHooks {
   onEndStep?: () => TimelineEvent[] | null;
 }
 
+export type BaseEffectHookArgs = {
+  source: Entity;
+  target: Entity;
+};
+
+export type DamageHookArgs = BaseEffectHookArgs & {
+  damage: number;
+  type: DamageType;
+};
+
+export type HealingHookArgs = BaseEffectHookArgs & {
+  healing: number;
+};
+
+export type EffectHookArgs = BaseEffectHookArgs & {
+  effect: Effect;
+};
+
 export interface Effect extends RoundLifecycleHooks, TurnLifecycleHooks {
   id: string;
   effectType: EffectType;
@@ -80,18 +99,18 @@ export interface Effect extends RoundLifecycleHooks, TurnLifecycleHooks {
   sourceId: string;
   targetId: string;
   spellSourceId: string;
-  battleManager?: BattleManager;
+  battleManager: BattleManager;
 
   getDescription(): string;
 
   // ** interaction hooks **
-  beforeTakingDamage(damage: number): number;
-  beforeTakingHealing(healing: number): number;
-  beforeTakingEffect(effect: Effect): Effect | null;
+  beforeTakingDamage(args: DamageHookArgs): number;
+  beforeTakingHealing(args: HealingHookArgs): number;
+  beforeTakingEffect(args: EffectHookArgs): Effect | null;
 
-  beforeDealingDamage(damage: number): number;
-  beforeDealingHealing(healing: number): number;
-  beforeDealingEffect(effect: Effect): Effect | null;
+  beforeDealingDamage(args: DamageHookArgs): number;
+  beforeDealingHealing(args: HealingHookArgs): number;
+  beforeDealingEffect(args: EffectHookArgs): Effect | null;
 }
 
 export interface Entity
@@ -109,7 +128,8 @@ export interface Entity
   activeEffects: Effect[];
   attributeModifiers: AttributeModifier[];
   spells: Spell[];
-  battleManager?: BattleManager;
+  passiveSkills: Effect[];
+  battleManager: BattleManager;
   isBot: boolean;
 
   // todo: do i need them?
@@ -134,7 +154,7 @@ export interface Spell
     TurnLifecycleHooks {
   config: SpellConfig;
   currentCooldown: number;
-  battleManager?: BattleManager;
+  battleManager: BattleManager;
 
   canCast(caster: Entity): boolean;
   getValidTargets(caster: Entity): Entity[];

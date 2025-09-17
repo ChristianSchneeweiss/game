@@ -28,7 +28,7 @@ export class DamageOverTimeEffect
     const target = this.getTarget();
     const spellSource = this.getSpellSource();
 
-    const damage = this.battleManager?.handler.damage(
+    const damage = this.battleManager.handler.damage(
       this,
       this.damagePerRound,
       this.damageType,
@@ -38,6 +38,13 @@ export class DamageOverTimeEffect
     console.log(
       `${source.name} deals ${damage} damage to ${target.name} with ${spellSource.config.name}`
     );
+    this.battleManager.addEventToSpellCastBuffer({
+      eventType: "EFFECT_TRIGGER",
+      data: {
+        effectId: this.id,
+        ...damage,
+      },
+    });
     super.onPostRound();
   }
 

@@ -6,8 +6,8 @@ import type { EffectType, Entity } from "@loot-game/game/types";
 import { produce } from "immer";
 import { parse, stringify } from "superjson";
 import { z } from "zod";
-import type { BattleResult } from "../workflows/battle-done.workflow";
 import { COL_characterDungeonDataSchema } from "../db/character-dungeon-data";
+import type { BattleResult } from "../workflows/battle-done.workflow";
 
 const storageSchema = z.object({
   startEntityData: COL_characterDungeonDataSchema,
@@ -32,14 +32,13 @@ export const bmStorage = {
   save: async (bm: BM, kv: KVNamespace) => {
     const entities = produce(bm.entities, (draft) => {
       draft.forEach((ent) => {
-        ent.battleManager = undefined;
-        ent.spells.forEach((spells) => (spells.battleManager = undefined));
+        ent.battleManager = undefined!;
+        ent.spells.forEach((spells) => (spells.battleManager = undefined!));
         ent.activeEffects.forEach(
-          (effect) => (effect.battleManager = undefined)
+          (effect) => (effect.battleManager = undefined!)
         );
       });
     });
-    console.log(bm.effectTracking);
     await kv.put(
       `battle:${bm.battleId}`,
       stringify({

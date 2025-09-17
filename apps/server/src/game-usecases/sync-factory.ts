@@ -1,6 +1,8 @@
 import { Character } from "@loot-game/game/base-entity";
 import type { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
 import { EnemyTypeSchema } from "@loot-game/game/enemies/base/enemy-types";
+import { passiveSkillFactory } from "@loot-game/game/passive-skills/base/passive-skill.factory";
+import { PassiveTypeSchema } from "@loot-game/game/passive-skills/base/passive-types";
 import { createSpellFromType } from "@loot-game/game/spells/base/spell-from-type";
 import { SpellTypeSchema } from "@loot-game/game/spells/base/spell-types";
 import { z } from "zod";
@@ -34,6 +36,11 @@ export const syncEnemySchema = z.object({
 export const syncSpellSchema = z.object({
   id: z.string(),
   type: SpellTypeSchema,
+});
+
+export const syncPassiveSkillSchema = z.object({
+  id: z.string(),
+  type: PassiveTypeSchema,
 });
 
 export const configSchema = z.object({
@@ -113,6 +120,18 @@ export class SyncFactory {
       this.getCharacterSpellsKey(battleId, character.id),
       JSON.stringify(spells)
     );
+
+    const passiveSkills = character.passiveSkills.map((passive) =>
+      syncPassiveSkillSchema.parse({
+        id: passive.id,
+        type: passive.passiveType,
+      })
+    );
+
+    await this.env.GAME_DO_SYNC.put(
+      this.getCharacterPassiveSkillsKey(battleId, character.id),
+      JSON.stringify(passiveSkills)
+    );
   }
 
   async createCharacterFromSync(
@@ -148,6 +167,22 @@ export class SyncFactory {
     character.spells = spellsData.map((spell) =>
       createSpellFromType(spell.id, spell.type)
     );
+
+    const passiveSkills = await this.env.GAME_DO_SYNC.get(
+      this.getCharacterPassiveSkillsKey(battleId, characterId)
+    );
+    if (!passiveSkills) throw new Error("No passiveSkillsData");
+    const passiveSkillsData = syncPassiveSkillSchema
+      .array()
+      .parse(JSON.parse(passiveSkills));
+
+    character.passiveSkills = passiveSkillsData.map((passive) =>
+      passiveSkillFactory(passive.type, passive.id, character)
+    );
+
+    character.passiveSkills.forEach((passive) => {
+      character.applyEffect(passive);
+    });
 
     return character;
   }
@@ -222,5 +257,9 @@ export class SyncFactory {
 
   private getCharacterSpellsKey(battleId: string, characterId: string) {
     return `${battleId}:spells:${characterId}`;
+  }
+
+  private getCharacterPassiveSkillsKey(battleId: string, characterId: string) {
+    return `${battleId}:passiveSkills:${characterId}`;
   }
 }

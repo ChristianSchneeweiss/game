@@ -20,12 +20,19 @@ export class HealingOverTimeEffect
     const source = this.getSource();
     const target = this.getTarget();
     const spellSource = this.getSpellSource();
-    const healing = this.battleManager?.handler.healing(
+    const healing = this.battleManager.handler.healing(
       this,
       this.healingPerRound,
       source,
       target
     );
+    this.battleManager.addEventToSpellCastBuffer({
+      eventType: "EFFECT_TRIGGER",
+      data: {
+        effectId: this.id,
+        ...healing,
+      },
+    });
     console.log(
       `${source.name} heals ${healing} to ${target.name} with ${spellSource.config.name}`
     );

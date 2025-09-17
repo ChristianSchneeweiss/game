@@ -24,6 +24,7 @@ import {
   Flame,
   Heart,
   Lock,
+  PersonStandingIcon,
   Shield,
   ShieldCheck,
   SkullIcon,
@@ -349,11 +350,13 @@ export const BattleRender = ({
                       <span className="text-xs font-medium text-white">
                         {effect.effectType}
                       </span>
-                      <div className="flex items-center gap-1 text-xs text-slate-400">
-                        <span className="rounded-full bg-orange-500/20 px-1.5 py-0.5 text-orange-300">
-                          {roundsLeft}
-                        </span>
-                      </div>
+                      {effect.effectType !== "PASSIVE" && (
+                        <div className="flex items-center gap-1 text-xs text-slate-400">
+                          <span className="rounded-full bg-orange-500/20 px-1.5 py-0.5 text-orange-300">
+                            {roundsLeft}
+                          </span>
+                        </div>
+                      )}
                     </div>
                     {/* Tooltip with description */}
                     <div className="absolute bottom-full left-1/2 z-10 mb-2 hidden -translate-x-1/2 transform group-hover:block">
@@ -598,6 +601,8 @@ const getEffectIcon = (effectType: EffectType) => {
       return <Lock className="h-4 w-4 text-yellow-400" />;
     case "CONTROL":
       return <Eye className="h-4 w-4 text-pink-400" />;
+    case "PASSIVE":
+      return <PersonStandingIcon className="h-4 w-4 text-blue-400" />;
     default:
       return <Sparkles className="h-4 w-4 text-purple-300" />;
   }

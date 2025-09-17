@@ -113,6 +113,25 @@ function calculateStatsTimeline(
               isCrit,
             } = event.event.data;
 
+            // i am the caster
+            if (entity.spells.some((s) => s.config.id === spellId)) {
+              const { spell } = spellMap.get(spellId)!;
+              stats.mana = Math.max(0, stats.mana - spell.config.manaCost);
+              stats.deltaMana -= spell.config.manaCost;
+
+              stats.flags.casting = true;
+              stats.flags.isCrit = isCrit;
+              stats.roll = roll;
+
+              // if the spell has a cooldown of 0 we leave it. otherwise we add 1
+              // to make sure its working the same as the server
+              const cooldown =
+                spell.config.cooldown === 0 ? 0 : spell.config.cooldown + 1;
+              if (cooldown) {
+                stats.cooldowns.set(spellId, cooldown);
+              }
+            }
+
             if (damageApplied && damageApplied.has(entity.id)) {
               const damage = damageApplied.get(entity.id) || 0;
               stats.health -= damage;
@@ -138,26 +157,41 @@ function calculateStatsTimeline(
               }
             }
 
-            // i am the caster
-            if (entity.spells.some((s) => s.config.id === spellId)) {
-              const { spell } = spellMap.get(spellId)!;
-              stats.mana = Math.max(0, stats.mana - spell.config.manaCost);
-              stats.deltaMana -= spell.config.manaCost;
-
-              stats.flags.casting = true;
-              stats.flags.isCrit = isCrit;
-              stats.roll = roll;
-
-              // if the spell has a cooldown of 0 we leave it. otherwise we add 1
-              // to make sure its working the same as the server
-              const cooldown =
-                spell.config.cooldown === 0 ? 0 : spell.config.cooldown + 1;
-              if (cooldown) {
-                stats.cooldowns.set(spellId, cooldown);
-              }
-            }
             break;
           }
+
+          case "EFFECT_TRIGGER": {
+            const { damageApplied, healingApplied, effectsApplied } =
+              event.event.data;
+
+            if (damageApplied && damageApplied.has(entity.id)) {
+              const damage = damageApplied.get(entity.id) || 0;
+              stats.health -= damage;
+              stats.deltaHealth -= damage;
+            }
+
+            if (healingApplied && healingApplied.has(entity.id)) {
+              const healing = healingApplied.get(entity.id) || 0;
+              stats.health += Math.min(
+                healing,
+                entity.maxHealth - stats.health,
+              );
+              stats.deltaHealth += Math.min(
+                healing,
+                entity.maxHealth - stats.health,
+              );
+            }
+
+            if (effectsApplied && effectsApplied.has(entity.id)) {
+              const effect = effectsApplied.get(entity.id);
+              if (effect) {
+                stats.activeEffects.push(...effect);
+              }
+            }
+
+            break;
+          }
+
           case "EFFECT_REMOVAL": {
             const { effectId } = event.event.data;
             stats.activeEffects = stats.activeEffects.filter(

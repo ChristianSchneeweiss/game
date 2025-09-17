@@ -1,9 +1,12 @@
 import { nanoid } from "nanoid";
 import type {
   BattleManager,
+  DamageHookArgs,
   Effect,
+  EffectHookArgs,
   EffectType,
   Entity,
+  HealingHookArgs,
   Spell,
 } from "../types";
 
@@ -14,7 +17,7 @@ export abstract class BaseEffect implements Effect {
   sourceId: string;
   targetId: string;
   spellSourceId: string;
-  battleManager?: BattleManager;
+  battleManager: BattleManager;
 
   constructor(effectType: EffectType, duration: number) {
     this.effectType = effectType;
@@ -25,6 +28,7 @@ export abstract class BaseEffect implements Effect {
     this.sourceId = undefined!;
     this.targetId = undefined!;
     this.spellSourceId = undefined!;
+    this.battleManager = undefined!;
   }
 
   onPreRound(): void {}
@@ -45,28 +49,28 @@ export abstract class BaseEffect implements Effect {
 
   onRemove(): void {}
 
-  beforeTakingDamage(damage: number): number {
-    return damage;
+  beforeTakingDamage(args: DamageHookArgs): number {
+    return args.damage;
   }
 
-  beforeTakingHealing(healing: number): number {
-    return healing;
+  beforeTakingHealing(args: HealingHookArgs): number {
+    return args.healing;
   }
 
-  beforeTakingEffect(effect: Effect): Effect | null {
-    return effect;
+  beforeTakingEffect(args: EffectHookArgs): Effect | null {
+    return args.effect;
   }
 
-  beforeDealingDamage(damage: number): number {
-    return damage;
+  beforeDealingDamage(args: DamageHookArgs): number {
+    return args.damage;
   }
 
-  beforeDealingHealing(healing: number): number {
-    return healing;
+  beforeDealingHealing(args: HealingHookArgs): number {
+    return args.healing;
   }
 
-  beforeDealingEffect(effect: Effect): Effect | null {
-    return effect;
+  beforeDealingEffect(args: EffectHookArgs): Effect | null {
+    return args.effect;
   }
 
   removeEffect(): void {
@@ -87,19 +91,19 @@ export abstract class BaseEffect implements Effect {
   }
 
   protected getSource(): Entity {
-    const source = this.battleManager?.getEntityById(this.sourceId);
+    const source = this.battleManager.getEntityById(this.sourceId);
     if (!source) throw new Error(`Source not found ${this.sourceId}`);
     return source;
   }
 
   protected getTarget(): Entity {
-    const target = this.battleManager?.getEntityById(this.targetId);
+    const target = this.battleManager.getEntityById(this.targetId);
     if (!target) throw new Error(`Target not found ${this.targetId}`);
     return target;
   }
 
   protected getSpellSource(): Spell {
-    const spellSource = this.battleManager?.getSpellById(this.spellSourceId);
+    const spellSource = this.battleManager.getSpellById(this.spellSourceId);
     if (!spellSource)
       throw new Error(`Spell source not found ${this.spellSourceId}`);
     return spellSource;

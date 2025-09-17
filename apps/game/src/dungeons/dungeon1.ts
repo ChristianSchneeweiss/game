@@ -8,11 +8,10 @@ export const dungeon1 = () =>
     availableEnemies: [
       // ["sky-serpent"],
       // ["water-elemental"],
+      // ["goblin"],
       ["thunder-drake"],
       ["commander-kelvaris"],
       ["thundermaw"],
-      ["goblin", "goblin"],
-      ["goblin", "goblin", "goblin"],
     ],
     maxPartySize: 2,
   }) satisfies DungeonConfig;

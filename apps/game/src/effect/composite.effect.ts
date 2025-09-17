@@ -58,7 +58,7 @@ export class CompositeEffect extends BaseEffect {
 
       if (effect instanceof DamageOverTimeEffect) {
         const dotEffect = effect as DamageOverTimeEffectExposed;
-        this.battleManager?.handler.damage(
+        this.battleManager.handler.damage(
           this,
           dotEffect.damagePerRound,
           dotEffect.damageType,

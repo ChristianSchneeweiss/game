@@ -32,7 +32,6 @@ export const useBattle = (id: string) => {
     if (!battleState) return;
     if (!activeSpell) return;
     if (enemies === undefined || allies === undefined) return;
-    console.log("chosenTargets", chosenTargets, enemies, allies);
     if (chosenTargets.length === enemies + allies) {
       castSpell(activeSpell, chosenTargets);
     }
