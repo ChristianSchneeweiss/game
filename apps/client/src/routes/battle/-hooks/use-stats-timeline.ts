@@ -165,11 +165,13 @@ function calculateStatsTimeline(
             );
             break;
           }
-          case "REDUCE_COOLDOWN": {
-            const { spellId, amount } = event.event.data;
-            const cooldown = stats.cooldowns.get(spellId);
-            if (cooldown) {
-              stats.cooldowns.set(spellId, cooldown - amount);
+          case "REDUCE_SPELL_COOLDOWN": {
+            const spells = event.event.data;
+            for (const { spellId, amount } of spells) {
+              const cooldown = stats.cooldowns.get(spellId);
+              if (cooldown) {
+                stats.cooldowns.set(spellId, cooldown - amount);
+              }
             }
             break;
           }
@@ -178,18 +180,17 @@ function calculateStatsTimeline(
             stats.flags.dead = true;
             break;
           }
-          case "HEALTH_REGEN": {
+          case "REGEN": {
             if (entity.id !== event.event.data.entityId) break;
-            const { amount } = event.event.data;
-            stats.health = Math.min(stats.health + amount, entity.maxHealth);
-            stats.deltaHealth += amount;
-            break;
-          }
-          case "MANA_REGEN": {
-            if (entity.id !== event.event.data.entityId) break;
-            const { amount } = event.event.data;
-            stats.mana = Math.min(stats.mana + amount, entity.maxMana);
-            stats.deltaMana += amount;
+            const { healthRegen, manaRegen } = event.event.data;
+            stats.health = Math.min(
+              stats.health + healthRegen,
+              entity.maxHealth,
+            );
+            stats.deltaHealth += healthRegen;
+
+            stats.mana = Math.min(stats.mana + manaRegen, entity.maxMana);
+            stats.deltaMana += manaRegen;
             break;
           }
         }

@@ -334,7 +334,7 @@ export const BattleRender = ({
             <div className="flex flex-wrap gap-2">
               {activeEffects.map((effect) => {
                 const roundsLeft =
-                  effect.round + effect.duration - currentRound + 1;
+                  effect.round + effect.duration - currentRound;
                 const sourceName = participants.find(
                   (p) => p.id === effect.sourceId,
                 )?.name;

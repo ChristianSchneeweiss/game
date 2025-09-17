@@ -173,6 +173,7 @@ export interface BattleManager {
   join(entity: Entity): void;
   processEntityDeath(entity: Entity, cause: { spellId: string }): void;
   processEvent(event: TimelineEvent): void;
+  changeTurnOrder(cb: (currentOrder: string[]) => string[]): void;
 
   addEffect(effect: Effect): void;
 }

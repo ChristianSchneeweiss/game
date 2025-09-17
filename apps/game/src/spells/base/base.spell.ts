@@ -20,19 +20,6 @@ export abstract class BaseSpell implements Spell {
     this.currentCooldown = 0;
   }
 
-  onPostRound(): void {
-    if (this.currentCooldown > 0) {
-      this.battleManager?.processEvent({
-        eventType: "REDUCE_COOLDOWN",
-        data: {
-          spellId: this.config.id,
-          amount: 1,
-        },
-      });
-      this.currentCooldown--;
-    }
-  }
-
   canCast(caster: Entity): boolean {
     return (
       caster.mana >= this.config.manaCost &&
@@ -66,6 +53,7 @@ export abstract class BaseSpell implements Spell {
   cast(caster: Entity, targets: Entity[]): SpellCastEvent | null {
     if (!this.battleManager) throw new Error("Battle manager not set");
     if (!this.canCast(caster)) {
+      console.error("cannot cast", this.config.id, this.config.cooldown);
       return null;
     }
 

@@ -37,39 +37,32 @@ const deathEvent = z.object({
 });
 
 const reduceCooldownEvent = z.object({
-  eventType: z.literal("REDUCE_COOLDOWN"),
-  data: z.object({
-    spellId: z.string(),
-    amount: z.number().int(),
-  }),
+  eventType: z.literal("REDUCE_SPELL_COOLDOWN"),
+  data: z.array(
+    z.object({
+      spellId: z.string(),
+      amount: z.number().int(),
+    })
+  ),
 });
 
-const healthRegenEvent = z.object({
-  eventType: z.literal("HEALTH_REGEN"),
-  data: z.object({
-    entityId: z.string(),
-    amount: z.number().int(),
-  }),
-});
-
-const manaRegenEvent = z.object({
-  eventType: z.literal("MANA_REGEN"),
+const regenEvent = z.object({
+  eventType: z.literal("REGEN"),
   data: z.object({
     entityId: z.string(),
-    amount: z.number().int(),
+    healthRegen: z.number().int(),
+    manaRegen: z.number().int(),
   }),
 });
 
-type ManaRegenEvent = z.infer<typeof manaRegenEvent>;
-type HealthRegenEvent = z.infer<typeof healthRegenEvent>;
+type HealthRegenEvent = z.infer<typeof regenEvent>;
 
 const allEvents = z.union([
   spellCastEvent,
   effectRemovalEvent,
   deathEvent,
   reduceCooldownEvent,
-  healthRegenEvent,
-  manaRegenEvent,
+  regenEvent,
 ]);
 
 export const timelineEventSchema = z.object({

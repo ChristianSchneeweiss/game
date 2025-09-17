@@ -29,12 +29,16 @@ export abstract class BaseEffect implements Effect {
 
   onPreRound(): void {}
 
-  onPostRound(): void {
+  onPostRound(): void {}
+
+  onEndStep() {
     this.duration--;
 
-    if (this.duration < 0) {
+    if (this.duration <= 0) {
       this.removeEffect();
     }
+
+    return null;
   }
 
   onApply(): void {}
@@ -66,9 +70,11 @@ export abstract class BaseEffect implements Effect {
   }
 
   removeEffect(): void {
+    if (!this.battleManager) throw new Error("Battle manager not found");
+
     const target = this.getTarget();
     target.removeEffect(this);
-    this.battleManager?.processEvent({
+    this.battleManager.processEvent({
       eventType: "EFFECT_REMOVAL",
       data: {
         effectId: this.id,

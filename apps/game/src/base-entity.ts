@@ -85,17 +85,11 @@ export class BaseEntity implements Entity {
 
     return [
       {
-        eventType: "HEALTH_REGEN",
+        eventType: "REGEN",
         data: {
           entityId: this.id,
-          amount: realHealthRegen,
-        },
-      },
-      {
-        eventType: "MANA_REGEN",
-        data: {
-          entityId: this.id,
-          amount: realManaRegen,
+          healthRegen: realHealthRegen,
+          manaRegen: realManaRegen,
         },
       },
     ];
@@ -106,10 +100,30 @@ export class BaseEntity implements Entity {
     if (effects.length > 0) {
       console.log(
         `${this.name} has ${effects
-          .map((e) => e.effectType)
+          .map((e) => `${e.effectType}(${e.duration})`)
           .join(", ")} effects`
       );
     }
+  }
+
+  onEndStep() {
+    const cdSpell = this.spells.filter((s) => s.currentCooldown > 0);
+    cdSpell.forEach((s) => {
+      console.log("reducing cooldown", s.config.id, s.currentCooldown);
+      s.currentCooldown--;
+      console.log("reduced cooldown", s.config.id, s.currentCooldown);
+    });
+    const cdEvent = {
+      eventType: "REDUCE_SPELL_COOLDOWN",
+      data: cdSpell.map((s) => ({ spellId: s.config.id, amount: 1 })),
+    } satisfies TimelineEvent;
+
+    const effects = this.activeEffects.filter((e) => e.duration > 0);
+    const effectEvents = effects
+      .flatMap((e) => e.onEndStep?.())
+      .filter((e) => !!e);
+
+    return [cdEvent, ...effectEvents];
   }
 
   applyDamage(amount: number, type: DamageType, source: Entity): void {

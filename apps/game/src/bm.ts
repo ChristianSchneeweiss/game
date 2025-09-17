@@ -76,14 +76,6 @@ export class BM implements BattleManager, RoundLifecycleHooks {
       effectType: effect.effectType,
       description: effect.getDescription(),
     });
-
-    // if the effect is a stun, we remove the target from the order queue
-    if (effect.effectType === "STUN") {
-      this.getCurrentRound().orderQueue =
-        this.getCurrentRound().orderQueue.filter(
-          (id) => id !== effect.targetId
-        );
-    }
   }
 
   join(entity: Entity): void {
@@ -94,6 +86,10 @@ export class BM implements BattleManager, RoundLifecycleHooks {
       spell.battleManager = this;
       this.lifeCycleHooks.push(spell);
     });
+  }
+
+  changeTurnOrder(cb: (currentOrder: string[]) => string[]): void {
+    this.getCurrentRound().orderQueue = cb(this.getCurrentRound().orderQueue);
   }
 
   start() {
@@ -237,6 +233,7 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     console.log(
       "casting spell",
       spell.config.id,
+      spell.config.cooldown,
       targets.map((t) => t.id)
     );
     const myTeam = caster.team;
@@ -322,9 +319,14 @@ export class BM implements BattleManager, RoundLifecycleHooks {
   private calculateOrderQueue(): string[] {
     return this.getAliveEntities()
       .filter((e) => {
-        const isStunned = e.activeEffects.some(
+        const stunEffects = e.activeEffects.filter(
           (ef) => ef.effectType === "STUN"
         );
+        const isStunned = stunEffects.length > 0;
+        stunEffects
+          .flatMap((ef) => ef.onEndStep?.())
+          .filter((e) => !!e)
+          .forEach((e) => this.processEvent(e));
 
         return !isStunned;
       })
