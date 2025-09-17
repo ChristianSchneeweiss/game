@@ -176,6 +176,13 @@ export interface BattleManager {
   changeTurnOrder(cb: (currentOrder: string[]) => string[]): void;
 
   addEffect(effect: Effect): void;
+
+  /**
+   * Add an event to the spell cast buffer.
+   * Because some events need to be processed in order **after** the spell cast event.
+   * Like Death and effect removal (eg 1 turn stun gets instantly removed, but needs to happen after the spell cast)
+   */
+  addEventToSpellCastBuffer(event: TimelineEvent): void;
 }
 
 export interface BattleRound {

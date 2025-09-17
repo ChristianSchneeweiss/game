@@ -7,7 +7,7 @@ export const dungeon1 = () =>
     description: "This is the first dungeon",
     availableEnemies: [
       // ["sky-serpent"],
-      ["water-elemental"],
+      // ["water-elemental"],
       ["thunder-drake"],
       ["commander-kelvaris"],
       ["thundermaw"],

@@ -43,6 +43,7 @@ export class BM implements BattleManager, RoundLifecycleHooks {
   battleId: string;
   rng: seedrandom.PRNG;
   effectTracking: EffectTracking = new Map();
+  spellCastBuffer: TimelineEvent[] = [];
 
   constructor(entities: Entity[], battleId: string = nanoid(20)) {
     this.deadEntities = new Map();
@@ -117,8 +118,17 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     });
   }
 
+  addEventToSpellCastBuffer(event: TimelineEvent): void {
+    this.spellCastBuffer.push(event);
+  }
+
   processEvent(event: TimelineEvent): void {
     this.events.push({ round: this.getCurrentRound().round, event });
+
+    if (event.eventType === "SPELL_CAST") {
+      this.spellCastBuffer.forEach((event) => this.processEvent(event));
+      this.spellCastBuffer = [];
+    }
   }
 
   getTeam(team: Team): Entity[] {
@@ -159,7 +169,7 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     if (!entity.isDead()) return;
 
     this.deadEntities.set(entity.id, entity);
-    this.processEvent({
+    this.addEventToSpellCastBuffer({
       eventType: "DEATH",
       data: { id: entity.id },
     });
