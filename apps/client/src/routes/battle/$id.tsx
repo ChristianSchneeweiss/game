@@ -2,7 +2,9 @@ import { trpcClient } from "@/utils/trpc";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { ReadyState } from "react-use-websocket";
 import { BattleRender } from "./-battle-render";
+import { BattleChatBar } from "./-components/battle-chat-bar";
 import { useBattle } from "./-hooks/use-battle";
+import { useChat as useBattleChat } from "./-hooks/use-battle-chat";
 
 export const Route = createFileRoute("/battle/$id")({
   component: RouteComponent,
@@ -45,6 +47,12 @@ function RouteComponent() {
     getSpellDescription,
   } = useBattle(id);
 
+  const {
+    messages,
+    sendMessage,
+    readyState: chatReadyState,
+  } = useBattleChat(id);
+
   const stats =
     statsTimeline.length === 0
       ? defaultStats
@@ -72,6 +80,12 @@ function RouteComponent() {
         resetCharacterAttributes={resetCharacterAttributes}
         spellDescription={spellDescription}
         getSpellDescription={getSpellDescription}
+      />
+
+      <BattleChatBar
+        messages={messages}
+        sendMessage={sendMessage}
+        isConnected={chatReadyState === ReadyState.OPEN}
       />
     </div>
   );

@@ -36,12 +36,20 @@
         "name": "BATTLE_WEBSOCKET",
         "class_name": "BattleWebsocket",
       },
+      {
+        "name": "BATTLE_CHAT",
+        "class_name": "BattleChat",
+      },
     ],
   },
   "migrations": [
     {
       "tag": "v1",
       "new_sqlite_classes": ["BattleWebsocket"],
+    },
+    {
+      "tag": "v2",
+      "new_sqlite_classes": ["BattleChat"],
     },
   ],
   "kv_namespaces": [

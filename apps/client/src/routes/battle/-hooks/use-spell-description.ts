@@ -5,7 +5,7 @@ import SuperJSON from "superjson";
 import type {
   BattleMessage,
   ResponseMessage,
-} from "../../../../../server/src/battle-ws";
+} from "../../../../../server/src/durable-objects/battle-ws";
 
 export const useSpellDescription = (
   sendMessage: (message: string) => void,

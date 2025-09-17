@@ -9,7 +9,7 @@ import type {
   BattleMessage,
   BattleState,
   ResponseMessage,
-} from "../../../../../server/src/battle-ws";
+} from "../../../../../server/src/durable-objects/battle-ws";
 import { useAttributes } from "./use-attributes";
 import { useSpellDescription } from "./use-spell-description";
 import { useStatsTimeline } from "./use-stats-timeline";

@@ -1,3 +1,4 @@
+import { faker } from "@faker-js/faker";
 import type { EnemyType } from "@loot-game/game/enemies/base/enemy-types";
 import type { SpellType } from "@loot-game/game/spells/base/spell-types";
 import type { EventTypes } from "@loot-game/game/timeline-events";
@@ -17,6 +18,10 @@ export const id = customAlphabet("1234567890abcdefghijklmnopqrstuvwxyz", 12);
 
 export const TB_user = pgTable("user", {
   id: text("id").primaryKey(),
+  username: text("username")
+    .$defaultFn(() => faker.internet.username())
+    .unique()
+    .notNull(),
   email: text("email"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });

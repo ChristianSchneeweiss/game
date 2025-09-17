@@ -44,7 +44,9 @@ function RootComponent() {
         <Outlet />
         <Toaster richColors />
       </ThemeProvider>
-      <ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
+      {import.meta.env.DEV && (
+        <ReactQueryDevtools position="bottom" buttonPosition="bottom-left" />
+      )}
     </TRPCProvider>
   );
 }

@@ -1,3 +1,4 @@
+import { faker } from "@faker-js/faker";
 import { SpellTypeSchema } from "@loot-game/game/spells/base/spell-types";
 import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
@@ -30,7 +31,7 @@ export const appRouter = router({
       })
       .onConflictDoNothing();
 
-    await createCharacter("noobie", session.id, db);
+    await createCharacter(faker.internet.username(), session.id, db);
   }),
 
   character: characterRouter,

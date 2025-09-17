@@ -1,5 +1,5 @@
+import { faker } from "@faker-js/faker";
 import z from "zod";
-import { id } from "../db/schema";
 import {
   applyStatIncrease,
   createCharacter,
@@ -16,7 +16,7 @@ export const characterRouter = router({
     if (!session) {
       throw new Error("No session found");
     }
-    await createCharacter(`noobie-${id()}`, session.id, db);
+    await createCharacter(faker.internet.username(), session.id, db);
   }),
 
   getCharacters: protectedProcedure.query(async ({ ctx }) => {

@@ -13,9 +13,9 @@ import { DurableObject } from "cloudflare:workers";
 import { produce } from "immer";
 import SuperJSON from "superjson";
 import z from "zod";
-import { createClerk } from "./clerk";
-import { bmStorage } from "./game-usecases/bm-storage";
-import { SyncFactory } from "./game-usecases/sync-factory";
+import { createClerk } from "../clerk";
+import { bmStorage } from "../game-usecases/bm-storage";
+import { SyncFactory } from "../game-usecases/sync-factory";
 
 const castSpellSchema = z.object({
   type: z.literal("castSpell"),

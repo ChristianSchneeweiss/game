@@ -35,7 +35,7 @@ import {
   Zap as ZapIcon,
 } from "lucide-react";
 import { useState } from "react";
-import type { BattleState } from "../../../../server/src/battle-ws";
+import type { BattleState } from "../../../../server/src/durable-objects/battle-ws";
 import type { Stats } from "./-hooks/use-stats-timeline";
 
 type Params = {
