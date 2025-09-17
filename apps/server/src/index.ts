@@ -7,8 +7,9 @@ import { envSchema } from "./env";
 import { createContext } from "./lib/context";
 import { registerRecipes } from "./lib/superjson-recipes";
 import { appRouter } from "./routers/index";
-export { BattleDoneWorkflow } from "./battle-done.workflow";
 export { BattleWebsocket } from "./battle-ws";
+export { ActiveBattleWorkflow } from "./workflows/active-battle";
+export { BattleDoneWorkflow } from "./workflows/battle-done.workflow";
 
 const app = new Hono<{
   Bindings: Env;

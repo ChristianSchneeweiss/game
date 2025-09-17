@@ -6,7 +6,7 @@ import type { EffectType, Entity } from "@loot-game/game/types";
 import { produce } from "immer";
 import { parse, stringify } from "superjson";
 import { z } from "zod";
-import type { BattleResult } from "../battle-done.workflow";
+import type { BattleResult } from "../workflows/battle-done.workflow";
 import { COL_characterDungeonDataSchema } from "../db/character-dungeon-data";
 
 const storageSchema = z.object({

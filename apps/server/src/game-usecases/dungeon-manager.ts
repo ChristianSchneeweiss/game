@@ -18,7 +18,7 @@ import type { LootEntity } from "@loot-game/game/types";
 import { eq, inArray } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import seedrandom from "seedrandom";
-import type { CharacterData as BattleResultCharacterData } from "../battle-done.workflow";
+import type { CharacterData as BattleResultCharacterData } from "../workflows/battle-done.workflow";
 import {
   id,
   TB_character,

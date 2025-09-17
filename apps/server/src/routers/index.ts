@@ -1,7 +1,7 @@
 import { SpellTypeSchema } from "@loot-game/game/spells/base/spell-types";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
-import { TB_spellStats, TB_user } from "../db/schema";
+import { TB_activeBattle, TB_spellStats, TB_user } from "../db/schema";
 import { bmStorage } from "../game-usecases/bm-storage";
 import { createCharacter } from "../game-usecases/character";
 import { LootManager } from "../game-usecases/loot-manager";
@@ -86,6 +86,18 @@ export const appRouter = router({
       const lootManager = new LootManager(session.id, db);
       await lootManager.claim(input);
     }),
+
+  activeBattles: protectedProcedure.query(async ({ ctx }) => {
+    const { session, db } = ctx;
+    if (!session) {
+      throw new Error("No session found");
+    }
+    const battles = await db
+      .select()
+      .from(TB_activeBattle)
+      .orderBy(desc(TB_activeBattle.lastAction));
+    return battles;
+  }),
 });
 
 export type AppRouter = typeof appRouter;

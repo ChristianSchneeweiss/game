@@ -116,6 +116,13 @@ export const TB_dungeonBattle = pgTable("dungeon_battle", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 
+export const TB_activeBattle = pgTable("active_battle", {
+  battleId: text("id").primaryKey(),
+  lastAction: timestamp("last_action", { withTimezone: true })
+    .notNull()
+    .$onUpdateFn(() => new Date()),
+});
+
 export const TB_timeline = pgTable("timeline", {
   id: text("id")
     .primaryKey()

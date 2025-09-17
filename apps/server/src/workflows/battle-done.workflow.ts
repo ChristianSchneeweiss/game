@@ -8,10 +8,10 @@ import {
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import z from "zod";
-import { TB_dungeonBattle } from "./db/schema";
-import { dungeonManager } from "./game-usecases/dungeon-manager";
-import { EntityFactory } from "./game-usecases/entity-factory";
-import { SyncFactory } from "./game-usecases/sync-factory";
+import { TB_activeBattle, TB_dungeonBattle } from "../db/schema";
+import { dungeonManager } from "../game-usecases/dungeon-manager";
+import { EntityFactory } from "../game-usecases/entity-factory";
+import { SyncFactory } from "../game-usecases/sync-factory";
 
 export type Params = {
   battleId: string;
@@ -83,6 +83,11 @@ export class BattleDoneWorkflow extends WorkflowEntrypoint<Env, Params> {
       await this.env.GAME.delete(`${battleId}:result`);
       const syncFactory = new SyncFactory(this.env);
       await syncFactory.cleanup(battleId);
+
+      const db = drizzle(this.env.HYPERDRIVE.connectionString);
+      await db
+        .delete(TB_activeBattle)
+        .where(eq(TB_activeBattle.battleId, battleId));
     });
 
     console.log("Battle cleared workflow done");
