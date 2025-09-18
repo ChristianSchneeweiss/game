@@ -5,14 +5,13 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
-import { TB_user } from "./db/schema";
+import { TB_activeBattle, TB_user } from "./db/schema";
 import { envSchema } from "./env";
 import { createContext } from "./lib/context";
 import { registerRecipes } from "./lib/superjson-recipes";
 import { appRouter } from "./routers/index";
 export { BattleChat } from "./durable-objects/battle-chat.do";
 export { BattleWebsocket } from "./durable-objects/battle-ws";
-export { ActiveBattleWorkflow } from "./workflows/active-battle";
 export { BattleDoneWorkflow } from "./workflows/battle-done.workflow";
 
 const app = new Hono<{
@@ -97,6 +96,14 @@ app.get("/api/battle/:id/chat", async (c) => {
   if (!username) {
     return c.json({ error: "No username" }, 401);
   }
+
+  await db
+    .insert(TB_activeBattle)
+    .values({ battleId })
+    .onConflictDoUpdate({
+      target: TB_activeBattle.battleId,
+      set: { lastAction: new Date() },
+    });
 
   const url = new URL(c.req.raw.url);
   url.searchParams.set("userId", userId);

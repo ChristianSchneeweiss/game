@@ -24,11 +24,6 @@
       "binding": "BATTLE_DONE_WORKFLOW",
       "class_name": "BattleDoneWorkflow",
     },
-    {
-      "name": "active-battle-workflow",
-      "binding": "ACTIVE_BATTLE_WORKFLOW",
-      "class_name": "ActiveBattleWorkflow",
-    },
   ],
   "durable_objects": {
     "bindings": [

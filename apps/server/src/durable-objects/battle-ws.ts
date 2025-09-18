@@ -253,9 +253,6 @@ export class BattleWebsocket extends DurableObject {
           if ((character as Character).userId !== user.id) {
             throw new Error("Character not owned by user");
           }
-          this.env.ACTIVE_BATTLE_WORKFLOW.create({
-            params: { battleId: this.battleId },
-          });
         }
         await this.processSpellCast(
           parsed.data.data.entityId,
