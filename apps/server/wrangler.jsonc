@@ -53,19 +53,5 @@
       "id": "92b8173ae64b4c4a937337e4fd7f094d",
       "experimental_remote": true,
     },
-    {
-      "binding": "GAME_DO_SYNC",
-      "id": "fbffd148f64644b78df28f540e470e1d",
-    },
-  ],
-  // Add this to your wrangler.jsonc
-  "hyperdrive": [
-    {
-      "binding": "HYPERDRIVE",
-      "id": "41a2c2926f874e0e9c23dcf06517a196",
-
-      // Optional. Can be used to connect to a local database for local development with `wrangler dev`
-      "localConnectionString": "postgres://postgres:password@0.0.0.0:5432/game",
-    },
   ],
 }

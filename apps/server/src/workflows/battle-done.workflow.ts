@@ -52,7 +52,7 @@ export class BattleDoneWorkflow extends WorkflowEntrypoint<Env, Params> {
     });
 
     await step.do("update-dungeon", async () => {
-      const db = drizzle(this.env.HYPERDRIVE.connectionString);
+      const db = drizzle(this.env.DATABASE_URL);
       const [dungeonBattle] = await db
         .select()
         .from(TB_dungeonBattle)
@@ -65,7 +65,10 @@ export class BattleDoneWorkflow extends WorkflowEntrypoint<Env, Params> {
       const id = dungeonBattle.dungeonId;
       const enemies: BaseEnemy[] = [];
       for (const enemy of battleResult.teamB.filter((e) => e.dead)) {
-        const enemyEntity = EntityFactory.createEnemyFromType(enemy.type);
+        const enemyEntity = EntityFactory.createEnemyFromType(
+          enemy.type,
+          enemy.id
+        );
         enemies.push(enemyEntity);
       }
 
@@ -81,10 +84,10 @@ export class BattleDoneWorkflow extends WorkflowEntrypoint<Env, Params> {
 
     await step.do("clean-up-battle", async () => {
       await this.env.GAME.delete(`${battleId}:result`);
-      const syncFactory = new SyncFactory(this.env);
+      const db = drizzle(this.env.DATABASE_URL);
+      const syncFactory = new SyncFactory(db);
       await syncFactory.cleanup(battleId);
 
-      const db = drizzle(this.env.HYPERDRIVE.connectionString);
       await db
         .delete(TB_activeBattle)
         .where(eq(TB_activeBattle.battleId, battleId));

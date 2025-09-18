@@ -11,12 +11,13 @@ import {
   TB_dungeonEnemy,
   TB_passivSkillStats,
   TB_spellStats,
+  type Database,
 } from "../db/schema";
 import { createEnemyFromType } from "./enemy-factory";
 
 export class EntityFactory {
-  static createEnemyFromType(type: EnemyType): BaseEnemy {
-    return createEnemyFromType(type);
+  static createEnemyFromType(type: EnemyType, id?: string): BaseEnemy {
+    return createEnemyFromType(type, id);
   }
 
   static createEnemyFromDb(
@@ -24,7 +25,7 @@ export class EntityFactory {
   ): BaseEnemy[][] {
     const entitiesByRound: BaseEnemy[][] = [];
     for (const enemy of enemies) {
-      const entity = this.createEnemyFromType(enemy.type);
+      const entity = this.createEnemyFromType(enemy.type, enemy.id);
       entity.id = enemy.id;
       const current = entitiesByRound[enemy.inRound] || [];
       entitiesByRound[enemy.inRound] = [...current, entity];
@@ -51,10 +52,8 @@ export class EntityFactory {
     return characters;
   }
 
-  static async createCharacter(
-    id: string,
-    db: PostgresJsDatabase
-  ): Promise<Character> {
+  static async createCharacter(id: string, db: Database): Promise<Character> {
+    console.log("createCharacter", id);
     const rows = await db
       .select({
         character: TB_character,

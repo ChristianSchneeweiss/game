@@ -26,7 +26,7 @@ export async function createContext({
     });
   }
 
-  const db = drizzle(cfEnv.HYPERDRIVE.connectionString);
+  const db = drizzle(env.DATABASE_URL);
 
   if (!db) {
     throw new TRPCError({

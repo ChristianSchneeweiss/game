@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
 import { SpellTypeSchema } from "@loot-game/game/spells/base/spell-types";
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, gt } from "drizzle-orm";
 import { z } from "zod";
 import { TB_activeBattle, TB_spellStats, TB_user } from "../db/schema";
 import { bmStorage } from "../game-usecases/bm-storage";
@@ -93,9 +93,11 @@ export const appRouter = router({
     if (!session) {
       throw new Error("No session found");
     }
+    const fiveMinsAgo = new Date(Date.now() - 5 * 60 * 1000);
     const battles = await db
       .select()
       .from(TB_activeBattle)
+      .where(gt(TB_activeBattle.lastAction, fiveMinsAgo))
       .orderBy(desc(TB_activeBattle.lastAction));
     return battles;
   }),

@@ -61,7 +61,6 @@ app.get("/api/battle/:id", async (c) => {
     return c.json({ error: "No user id" }, 401);
   }
 
-  // @ts-ignore
   await stub.setup(env.CLERK_SECRET_KEY, battleId);
 
   const url = new URL(c.req.raw.url);
@@ -84,9 +83,8 @@ app.get("/api/battle/:id/chat", async (c) => {
     return c.json({ error: "No user id" }, 401);
   }
 
-  // @ts-ignore
   await stub.setup(env.CLERK_SECRET_KEY, battleId);
-  const db = drizzle(c.env.HYPERDRIVE.connectionString);
+  const db = drizzle(c.env.DATABASE_URL);
 
   const [username] = await db
     .select({ username: TB_user.username })

@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "doppler run --mount .env -- bunx wrangler dev --port 3000",
+    "dev:prd": "doppler run -c prd --mount .env -- bunx wrangler dev --port 3000",
     "types": "doppler run --mount .env -- bunx wrangler types",
     "start": "bun run src/index.ts",
     "deploy": "doppler run -c prd --mount .env -- bunx wrangler secret bulk .env && bunx wrangler deploy",
@@ -17,6 +18,7 @@
     "@hono/clerk-auth": "^3.0.3",
     "@hono/trpc-server": "^0.4.0",
     "@loot-game/game": "workspace:*",
+    "@neondatabase/serverless": "^1.0.1",
     "@trpc/server": "^11.5.0",
     "@types/seedrandom": "^3.0.8",
     "drizzle-orm": "^0.44.5",
@@ -26,7 +28,7 @@
     "postgres": "^3.4.7",
     "seedrandom": "^3.0.5",
     "superjson": "^2.2.2",
-    "wrangler": "^4.33.1",
+    "wrangler": "^4.38.0",
     "zod": "^4.1.5"
   },
   "devDependencies": {

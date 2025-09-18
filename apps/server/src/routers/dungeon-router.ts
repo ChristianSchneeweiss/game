@@ -130,7 +130,6 @@ export const dungeonRouter = router({
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { db } = ctx;
-      const syncFactory = new SyncFactory(ctx.cfEnv);
       const dungeon = await dungeonManager.getDungeon(input.id, db);
 
       if (dungeon.activeBattle) {
@@ -158,27 +157,15 @@ export const dungeonRouter = router({
           battleId: battleId,
           round: dungeon.round,
         });
-      });
 
-      console.log("dungeon in dungeon router", dungeon);
-      await syncFactory.addConfigToSync(
-        {
-          characters: dungeon.playerTeam.map((character) => character.id),
-          enemies: dungeon.actualEnemies[dungeon.round].map(
-            (enemy) => enemy.id
-          ),
-        },
-        battleId
-      );
-      console.log("added config to sync");
-      for (const enemy of dungeon.actualEnemies[dungeon.round]) {
-        await syncFactory.addEnemyToSync(enemy, battleId);
-      }
-      console.log("added enemies to sync");
-      for (const character of dungeon.playerTeam) {
-        await syncFactory.addCharacterToSync(character, battleId);
-      }
-      console.log("added characters to sync");
+        const syncFactory = new SyncFactory(tx);
+
+        await syncFactory.add(
+          battleId,
+          dungeon.playerTeam,
+          dungeon.actualEnemies[dungeon.round]
+        );
+      });
 
       return battleId;
     }),

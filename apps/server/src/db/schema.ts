@@ -1,19 +1,23 @@
 import { faker } from "@faker-js/faker";
 import type { EnemyType } from "@loot-game/game/enemies/base/enemy-types";
-import type { PassiveType } from "@loot-game/game/passive-skills/passive-types";
+import type { PassiveType } from "@loot-game/game/passive-skills/base/passive-types";
 import type { SpellType } from "@loot-game/game/spells/base/spell-types";
 import type { EventTypes } from "@loot-game/game/timeline-events";
-import type { LootEntity } from "@loot-game/game/types";
+import type { LootEntity, Team } from "@loot-game/game/types";
 import {
   boolean,
   integer,
   json,
+  PgDatabase,
   pgTable,
   text,
   timestamp,
 } from "drizzle-orm/pg-core";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { customAlphabet } from "nanoid";
 import { COL_characterDungeonData } from "./character-dungeon-data";
+
+export type Database = PostgresJsDatabase | PgDatabase<any, any, any>;
 
 export const id = customAlphabet("1234567890abcdefghijklmnopqrstuvwxyz", 12);
 
@@ -131,6 +135,17 @@ export const TB_dungeonBattle = pgTable("dungeon_battle", {
   battleId: text("battle_id").notNull(),
   round: integer("round").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+});
+
+export const TB_battleParticipants = pgTable("battle_participants", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => id()),
+  battleId: text("battle_id").notNull(),
+  entityId: text("entity_id").notNull(),
+  isBot: boolean("is_bot").notNull(),
+  enemyType: text("enemy_type").$type<EnemyType>(),
+  team: text("team").notNull().$type<Team>(),
 });
 
 export const TB_activeBattle = pgTable("active_battle", {

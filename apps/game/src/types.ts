@@ -176,6 +176,7 @@ export interface SpellConfig {
 }
 
 export interface BattleManager {
+  battleId: string;
   entities: Entity[];
   deadEntities: Map<string, Entity>;
   rounds: BattleRound[];

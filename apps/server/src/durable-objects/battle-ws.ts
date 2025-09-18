@@ -10,10 +10,14 @@ import type {
   SpellDescription,
 } from "@loot-game/game/types";
 import { DurableObject } from "cloudflare:workers";
+import { eq } from "drizzle-orm";
+import { drizzle as neonDrizzle } from "drizzle-orm/neon-http";
+import { drizzle as postgresDrizzle } from "drizzle-orm/postgres-js";
 import { produce } from "immer";
 import SuperJSON from "superjson";
 import z from "zod";
 import { createClerk } from "../clerk";
+import { TB_activeBattle, type Database } from "../db/schema";
 import { bmStorage } from "../game-usecases/bm-storage";
 import { SyncFactory } from "../game-usecases/sync-factory";
 
@@ -108,6 +112,7 @@ export type ResponseMessage =
 const sessionSchema = z.object({
   id: z.string(),
 });
+
 export class BattleWebsocket extends DurableObject {
   sessions: Map<WebSocket, z.infer<typeof sessionSchema>>;
   clerk: ClerkClient = undefined!;
@@ -115,6 +120,7 @@ export class BattleWebsocket extends DurableObject {
   env: Env;
   battleId: string = undefined!;
   messages: string[] = [];
+  db: Database;
 
   constructor(ctx: DurableObjectState, env: Env) {
     super(ctx, env);
@@ -129,6 +135,8 @@ export class BattleWebsocket extends DurableObject {
         this.sessions.set(ws, session.data);
       }
     });
+
+    this.db = this.getDb();
 
     this.ctx.blockConcurrencyWhile(async () => {
       const clerkSecretKey = await this.ctx.storage.get("clerkSecretKey");
@@ -151,8 +159,9 @@ export class BattleWebsocket extends DurableObject {
 
   private async setupBm() {
     if (this.bm) return;
-    const syncFactory = new SyncFactory(this.env);
-    const { characters, enemies } = await syncFactory.getAll(this.battleId);
+
+    const syncFactory = new SyncFactory(this.db);
+    const { characters, enemies } = await syncFactory.get(this.battleId);
 
     this.bm = new BM(characters, this.battleId);
     for (const enemy of enemies) {
@@ -223,6 +232,20 @@ export class BattleWebsocket extends DurableObject {
     await this.ctx.storage.put({
       messages: this.messages,
     });
+    const [activeBattle] = await this.db
+      .select()
+      .from(TB_activeBattle)
+      .where(eq(TB_activeBattle.battleId, this.battleId));
+    if (!activeBattle) {
+      await this.db.insert(TB_activeBattle).values({
+        battleId: this.battleId,
+      });
+    } else {
+      await this.db
+        .update(TB_activeBattle)
+        .set({ lastAction: new Date() })
+        .where(eq(TB_activeBattle.battleId, this.battleId));
+    }
     await this.handleMessage(message as string, ws);
   }
 
@@ -474,6 +497,12 @@ export class BattleWebsocket extends DurableObject {
     this.ctx.getWebSockets().forEach((ws) => {
       ws.send(SuperJSON.stringify(state));
     });
+  }
+
+  private getDb() {
+    return process.env.NODE_ENV === "production"
+      ? neonDrizzle(this.env.DATABASE_URL)
+      : postgresDrizzle(this.env.DATABASE_URL);
   }
 
   async webSocketClose(

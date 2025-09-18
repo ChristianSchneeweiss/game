@@ -2,15 +2,14 @@ import type { SpellType } from "@loot-game/game/spells/base/spell-types";
 import type { Loot, LootEntity } from "@loot-game/game/types";
 import { and, eq } from "drizzle-orm";
 import type { PgTransaction } from "drizzle-orm/pg-core";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import type seedrandom from "seedrandom";
-import { TB_loot } from "../db/schema";
+import { TB_loot, type Database } from "../db/schema";
 import { createSpellInTransaction } from "./spell-factory";
 
 export class LootManager {
   constructor(
     private userId: string,
-    private db: PostgresJsDatabase
+    private db: Database
   ) {}
 
   async drop(rng: seedrandom.PRNG, loot: Loot) {

@@ -18,7 +18,6 @@ import type { LootEntity } from "@loot-game/game/types";
 import { eq, inArray } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import seedrandom from "seedrandom";
-import type { CharacterData as BattleResultCharacterData } from "../workflows/battle-done.workflow";
 import {
   id,
   TB_character,
@@ -27,7 +26,9 @@ import {
   TB_dungeonEnemy,
   TB_dungeonParticipant,
   TB_loot,
+  type Database,
 } from "../db/schema";
+import type { CharacterData as BattleResultCharacterData } from "../workflows/battle-done.workflow";
 import { handleXpReceived } from "./character";
 import { createEnemyFromType } from "./enemy-factory";
 import { EntityFactory } from "./entity-factory";
@@ -88,7 +89,7 @@ export const dungeonManager = {
     return dungeon;
   },
 
-  getDungeonBattles: async (id: string, db: PostgresJsDatabase) => {
+  getDungeonBattles: async (id: string, db: Database) => {
     const battles = await db
       .select()
       .from(TB_dungeonBattle)
@@ -96,7 +97,7 @@ export const dungeonManager = {
     return battles;
   },
 
-  getDungeon: async (id: string, db: PostgresJsDatabase) => {
+  getDungeon: async (id: string, db: Database) => {
     const [dungeon] = await db
       .select()
       .from(TB_dungeonData)
@@ -148,7 +149,7 @@ export const dungeonManager = {
     enemies: BaseEnemy[],
     characters: BattleResultCharacterData[],
     winningTeam: "TEAM_A" | "TEAM_B",
-    db: PostgresJsDatabase
+    db: Database
   ) => {
     await db.transaction(async (tx) => {
       const [dungeon] = await tx
