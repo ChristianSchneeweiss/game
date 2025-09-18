@@ -7,9 +7,9 @@ export const trialOfTheTides = () =>
     description: "This is the sixth dungeon",
     availableEnemies: [
       ["fishfolk-scout", "fishfolk-scout"],
-      ["fishfolk-scout", "fishfolk-caster"],
+      ["fishfolk-scout", "fishfolk-shaman"],
       ["water-elemental"],
-      ["fishfolk-shaman", "fishfolk-shaman"],
+      ["fishfolk-shaman", "fishfolk-shaman", "fishfolk-scout"],
       ["commander-kelvaris"],
     ],
     maxPartySize: 2,

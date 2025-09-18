@@ -9,13 +9,13 @@ export class ThunderDrake extends BaseEnemy {
       type: "thunder-drake",
       name: "Thunder Drake",
       team: "TEAM_B",
-      maxHealth: 130,
+      maxHealth: 150,
       maxMana: 50,
       baseAttributes: {
         intelligence: 10,
-        vitality: 18,
+        vitality: 15,
         agility: 12,
-        strength: 16,
+        strength: 20,
       },
       xp: 40,
       loot: {
@@ -30,8 +30,7 @@ export class ThunderDrake extends BaseEnemy {
         ],
         gold: 50,
       },
-      spells: ["stunning-strike", "basic-attack"],
-      passiveSkills: ["mirror"],
+      spells: ["stunning-strike", "festering-blow", "basic-attack"],
     });
   }
 }

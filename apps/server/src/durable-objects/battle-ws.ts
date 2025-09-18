@@ -192,8 +192,8 @@ export class BattleWebsocket extends DurableObject {
     // we want to send the start entitites as the client is also doing all the hp, mp, ... processing
     const startEntities = produce(this.bm.startEntityData, (draft) => {
       draft.forEach((ent) => {
-        ent.battleManager = undefined;
-        ent.spells.forEach((spells) => (spells.battleManager = undefined));
+        ent.battleManager = undefined!;
+        ent.spells.forEach((spells) => (spells.battleManager = undefined!));
       });
     });
 
@@ -434,6 +434,7 @@ export class BattleWebsocket extends DurableObject {
       manaRegen: character.getAttribute("manaRegen"),
       blessed: character.getAttribute("blessed"),
       critChance: character.getAttribute("critChance"),
+      critDamage: character.getAttribute("critDamage"),
     } satisfies SpecialAttributes;
     ws.send(
       SuperJSON.stringify({

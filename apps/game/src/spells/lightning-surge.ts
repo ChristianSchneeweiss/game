@@ -11,7 +11,7 @@ export class LightningSurgeSpell extends DamageEffectSpell {
         id,
         type: "lightning-surge",
         name: "Lightning Surge",
-        manaCost: 30,
+        manaCost: 50,
         cooldown: 3,
         targetType: { enemies: Infinity, allies: 0 },
       },
@@ -19,7 +19,7 @@ export class LightningSurgeSpell extends DamageEffectSpell {
         min: 15,
         max: 22,
         attributeScaling: ({ caster }) =>
-          caster.getAttribute("intelligence") * 0.5,
+          caster.getAttribute("intelligence") * 0.6,
       }),
       new EffectModule(() => new StunEffect(1)),
       0.25

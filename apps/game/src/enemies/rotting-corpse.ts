@@ -9,11 +9,11 @@ export class RottingCorpse extends BaseEnemy {
       type: "rotting-corpse",
       name: "Rotting Corpse",
       team: "TEAM_B",
-      maxHealth: 60,
+      maxHealth: 80,
       maxMana: 0,
       baseAttributes: {
         intelligence: 2,
-        vitality: 12,
+        vitality: 8,
         agility: 6,
         strength: 14,
       },

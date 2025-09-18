@@ -64,6 +64,7 @@ export class BaseEntity implements Entity {
       manaRegen: 0,
       blessed: 0,
       critChance: 0,
+      critDamage: 1,
     };
     this.battleManager = undefined!;
   }

@@ -47,7 +47,8 @@ export class calculator {
     const critRoll = rng();
     const isCrit = critRoll < critChance;
     if (isCrit) {
-      damage = damage * 2;
+      const critDamage = attacker.getAttribute("critDamage");
+      damage = damage * (1 + critDamage);
     }
 
     if (damageType === "MAGICAL") {

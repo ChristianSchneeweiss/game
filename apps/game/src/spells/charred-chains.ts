@@ -11,13 +11,13 @@ export class CharredChainsSpell extends DamageEffectSpell {
         id,
         type: "charred-chains",
         name: "Charred Chains",
-        manaCost: 15,
+        manaCost: 25,
         cooldown: 3,
         targetType: { enemies: Infinity, allies: 0 },
       },
       new MinMaxDamageModule("MAGICAL", {
-        min: 6,
-        max: 10,
+        min: 15,
+        max: 20,
         attributeScaling: ({ caster }) =>
           caster.getAttribute("intelligence") * 0.4,
       }),

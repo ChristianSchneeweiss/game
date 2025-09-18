@@ -19,6 +19,7 @@ export class Goblin extends BaseEnemy {
       },
       baseSpecialAttributes: {
         armor: 10,
+        blessed: 5,
       },
       xp: 10,
       loot: {
@@ -29,7 +30,7 @@ export class Goblin extends BaseEnemy {
         gold: 10,
       },
       spells: ["basic-attack"],
-      passiveSkills: ["armor-up", "mirror"],
+      passiveSkills: ["armor-up"],
     });
   }
 }

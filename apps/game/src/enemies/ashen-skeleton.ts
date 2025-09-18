@@ -27,10 +27,17 @@ export class AshenSkeleton extends BaseEnemy {
             },
             dropRate: 0.2,
           },
+          {
+            type: "SPELL",
+            data: {
+              spellType: "crude-strike",
+            },
+            dropRate: 0.2,
+          },
         ],
         gold: 20,
       },
-      spells: ["splinter-shot", "basic-attack"],
+      spells: ["splinter-shot", "crude-strike", "basic-attack"],
     });
   }
 }

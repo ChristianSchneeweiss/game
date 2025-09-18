@@ -9,8 +9,8 @@ export class StreamOfLifeSpell extends HealingSpell {
         id,
         type: "stream-of-life",
         name: "Stream of Life",
-        manaCost: 10,
-        cooldown: 2,
+        manaCost: 25,
+        cooldown: 4,
         targetType: { allies: 0, enemies: 0 },
       },
       new HealModule({

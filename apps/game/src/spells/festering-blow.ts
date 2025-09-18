@@ -12,12 +12,13 @@ export class FesteringBlowSpell extends DamageEffectSpell {
         type: "festering-blow",
         name: "Festering Blow",
         manaCost: 0,
-        cooldown: 1,
+        cooldown: 2,
         targetType: { enemies: Infinity, allies: 0 },
       },
       new MinMaxDamageModule("PHYSICAL", {
-        min: 5,
-        max: 8,
+        min: 8,
+        max: 10,
+        attributeScaling: ({ caster }) => caster.getAttribute("vitality") * 0.3,
       }),
       new EffectModule(() => new WeakendEffect(2, 1.1, "MULTIPLY")),
       0.25

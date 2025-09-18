@@ -24,7 +24,7 @@ export class VoltLashSpell extends BaseSpell {
       min: 8,
       max: 12,
       attributeScaling: ({ caster }) => {
-        return caster.getAttribute("intelligence") * 0.4;
+        return caster.getAttribute("intelligence") * 0.6;
       },
     });
 

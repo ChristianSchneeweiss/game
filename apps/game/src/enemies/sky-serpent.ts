@@ -9,11 +9,11 @@ export class SkySerpent extends BaseEnemy {
       type: "sky-serpent",
       name: "Sky Serpent",
       team: "TEAM_B",
-      maxHealth: 100,
+      maxHealth: 180,
       maxMana: 70,
       baseAttributes: {
-        strength: 10,
-        vitality: 12,
+        strength: 24,
+        vitality: 18,
         agility: 18, // DEX maps to agility
         intelligence: 14,
       },
@@ -37,7 +37,8 @@ export class SkySerpent extends BaseEnemy {
         ],
         gold: 75, // Higher gold for mini-boss
       },
-      spells: ["storm-pulse", "battle-roar", "basic-attack"],
+      spells: ["storm-pulse", "battle-roar", "festering-blow", "basic-attack"],
+      passiveSkills: ["mystic-flow"],
     });
   }
 }

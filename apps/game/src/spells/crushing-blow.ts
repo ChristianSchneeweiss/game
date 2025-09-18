@@ -18,6 +18,7 @@ export class CrushingBlowSpell extends DamageEffectSpell {
       new MinMaxDamageModule("PHYSICAL", {
         min: 8,
         max: 12,
+        attributeScaling: ({ caster }) => caster.getAttribute("strength") * 0.2,
       }),
       new EffectModule(() => new StunEffect(1)),
       0.3

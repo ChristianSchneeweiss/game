@@ -12,15 +12,15 @@ export class SoulflareSpell extends BaseSpell {
       id,
       type: "soulflare",
       name: "Soulflare",
-      manaCost: 20,
-      cooldown: 2,
+      manaCost: 40,
+      cooldown: 4,
       targetType: { enemies: 1, allies: 0 },
     });
     this.damageModule = new MinMaxDamageModule("MAGICAL", {
-      min: 12,
-      max: 20,
+      min: 25,
+      max: 30,
       attributeScaling: ({ caster }) =>
-        caster.getAttribute("intelligence") * 0.8,
+        caster.getAttribute("intelligence") * 0.6,
     });
   }
 

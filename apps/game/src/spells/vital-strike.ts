@@ -19,7 +19,7 @@ export class VitalStrikeSpell extends BaseSpell {
     this.damageModule = new MinMaxDamageModule("PHYSICAL", {
       min: 10,
       max: 16,
-      attributeScaling: ({ caster }) => caster.getAttribute("strength") * 0.25,
+      attributeScaling: ({ caster }) => caster.getAttribute("strength") * 0.3,
     });
   }
 

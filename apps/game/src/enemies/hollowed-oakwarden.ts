@@ -13,7 +13,7 @@ export class HollowedOakwarden extends BaseEnemy {
       maxMana: 200,
       baseAttributes: {
         intelligence: 40,
-        vitality: 20,
+        vitality: 26,
         agility: 10,
         strength: 18,
       },
@@ -37,7 +37,13 @@ export class HollowedOakwarden extends BaseEnemy {
         ],
         gold: 150, // Boss enemy, higher gold
       },
-      spells: ["verdant-smite", "natures-embrace", "basic-attack"],
+      spells: [
+        "verdant-smite",
+        "natures-embrace",
+        "festering-blow",
+        "basic-attack",
+      ],
+      passiveSkills: ["blessed-fortune", "titans-resurgence"],
     });
   }
 }

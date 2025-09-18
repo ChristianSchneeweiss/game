@@ -20,7 +20,6 @@ export const EnemyTypeSchema = z.union([
   z.literal("storm-hatchling"),
   z.literal("skybolt-wyvern"),
   z.literal("commander-kelvaris"),
-  z.literal("fishfolk-caster"),
   z.literal("fishfolk-shaman"),
   z.literal("fishfolk-scout"),
   z.literal("water-elemental"),

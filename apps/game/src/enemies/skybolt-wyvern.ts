@@ -19,10 +19,18 @@ export class SkyboltWyvern extends BaseEnemy {
       },
       xp: 20,
       loot: {
-        items: [],
+        items: [
+          {
+            type: "SPELL",
+            data: {
+              spellType: "festering-blow",
+            },
+            dropRate: 0.2,
+          },
+        ],
         gold: 20,
       },
-      spells: ["basic-attack"],
+      spells: ["festering-blow", "basic-attack"],
     });
   }
 }

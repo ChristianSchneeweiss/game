@@ -27,10 +27,17 @@ export class FishfolkShaman extends BaseEnemy {
             },
             dropRate: 0.06,
           },
+          {
+            type: "SPELL",
+            data: {
+              spellType: "aqua-wave",
+            },
+            dropRate: 0.2,
+          },
         ],
         gold: 30,
       },
-      spells: ["ocean-blessing", "basic-attack"],
+      spells: ["ocean-blessing", "aqua-wave", "basic-attack"],
     });
   }
 }

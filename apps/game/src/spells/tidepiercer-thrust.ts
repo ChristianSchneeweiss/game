@@ -9,14 +9,14 @@ export class TidepiercerThrustSpell extends DamageSpell {
         id,
         type: "tidepiercer-thrust",
         name: "Tidepiercer Thrust",
-        manaCost: 10,
+        manaCost: 25,
         cooldown: 3,
         targetType: { enemies: 1, allies: 0 },
       },
       new MinMaxDamageModule("PHYSICAL", {
         min: 20,
-        max: 30,
-        attributeScaling: ({ caster }) => caster.getAttribute("strength") * 0.5,
+        max: 25,
+        attributeScaling: ({ caster }) => caster.getAttribute("strength") * 0.6,
       })
     );
   }

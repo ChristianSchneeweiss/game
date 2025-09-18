@@ -70,7 +70,9 @@ export abstract class BaseSpell implements Spell {
     }
 
     this.processCasting(caster);
-    const roll = Math.round(this.battleManager.getRNG() * 20);
+    let roll = Math.round(this.battleManager.getRNG() * 20);
+    const blessed = caster.getAttribute("blessed");
+    roll = Math.min(roll + blessed, 20);
     const result = this._cast(caster, targets, this.battleManager, roll);
     if (!result) return null;
     return {

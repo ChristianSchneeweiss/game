@@ -1,6 +1,4 @@
 import { nanoid } from "nanoid";
-import { BasicAttackSpell } from "../spells/basic-attack";
-import { RootgraspSpell } from "../spells/rootgrasp";
 import { BaseEnemy } from "./base/base.enemy";
 
 export class ElderTreant extends BaseEnemy {
@@ -29,10 +27,18 @@ export class ElderTreant extends BaseEnemy {
             },
             dropRate: 0.03,
           },
+          {
+            type: "SPELL",
+            data: {
+              spellType: "crushing-blow",
+            },
+            dropRate: 0.1,
+          },
         ],
         gold: 75,
       },
-      spells: ["rootgrasp", "basic-attack"],
+      spells: ["rootgrasp", "crushing-blow", "basic-attack"],
+      passiveSkills: ["stoneform-resolve"],
     });
   }
 }

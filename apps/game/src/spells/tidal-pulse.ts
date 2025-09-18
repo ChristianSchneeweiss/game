@@ -12,8 +12,8 @@ export class TidalPulseSpell extends DamageEffectSpell {
         id,
         type: "tidal-pulse",
         name: "Tidal Pulse",
-        manaCost: 15,
-        cooldown: 2,
+        manaCost: 30,
+        cooldown: 3,
         targetType: { enemies: Infinity, allies: 0 },
       },
       new MinMaxDamageModule("MAGICAL", {

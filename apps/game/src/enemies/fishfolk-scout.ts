@@ -27,10 +27,17 @@ export class FishfolkScout extends BaseEnemy {
             },
             dropRate: 0.06,
           },
+          {
+            type: "SPELL",
+            data: {
+              spellType: "crude-strike",
+            },
+            dropRate: 0.2,
+          },
         ],
         gold: 25,
       },
-      spells: ["rupture", "basic-attack"],
+      spells: ["rupture", "crude-strike", "basic-attack"],
     });
   }
 }

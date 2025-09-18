@@ -17,7 +17,7 @@ export class NaturesEmbrace extends HealingSpell {
         min: 15,
         max: 25,
         attributeScaling: ({ caster }) =>
-          caster.getAttribute("intelligence") * 0.5,
+          caster.getAttribute("intelligence") * 0.6,
       })
     );
   }

@@ -3,7 +3,15 @@ import type { Effect } from "../../types";
 
 export const PassiveTypeSchema = z.union([
   z.literal("armor-up"),
-  z.literal("mirror"),
+  z.literal("thorn-carapace"),
+  z.literal("blessed-fortune"),
+  z.literal("bloodfang"),
+  z.literal("soulleech"),
+  z.literal("mystic-flow"),
+  z.literal("vital-wellspring"),
+  z.literal("stoneform-resolve"),
+  z.literal("titans-resurgence"),
+  z.literal("keen-instincts"),
 ]);
 
 export type PassiveType = z.infer<typeof PassiveTypeSchema>;

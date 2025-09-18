@@ -19,8 +19,6 @@ export class AquaWaveSpell extends DamageEffectSpell {
       new MinMaxDamageModule("MAGICAL", {
         min: 10,
         max: 14,
-        attributeScaling: ({ caster }) =>
-          caster.getAttribute("intelligence") * 0.3,
       }),
       new EffectModule(
         () =>

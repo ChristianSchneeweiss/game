@@ -6,7 +6,12 @@ export const trialOfTheStorm = () =>
     name: "Trial of the Storm",
     description: "This is the fifth dungeon",
     availableEnemies: [
-      ["storm-hatchling", "storm-hatchling", "storm-hatchling"],
+      [
+        "storm-hatchling",
+        "storm-hatchling",
+        "storm-hatchling",
+        "storm-hatchling",
+      ],
       ["skybolt-wyvern", "skybolt-wyvern"],
       ["sky-serpent"],
       ["thunder-drake"],

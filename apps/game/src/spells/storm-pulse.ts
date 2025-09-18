@@ -13,18 +13,18 @@ export class StormPulseSpell extends BaseSpell {
       id,
       type: "storm-pulse",
       name: "Storm Pulse",
-      manaCost: 18,
+      manaCost: 25,
       cooldown: 3,
       targetType: { enemies: 0, allies: 0 },
     });
     this.damageModule = new MinMaxDamageModule("PHYSICAL", {
-      min: 8,
-      max: 12,
+      min: 5,
+      max: 10,
       attributeScaling: ({ roll, caster }) => {
-        const bonusDamageChance = 0.25;
-        const baseBonusDamage = caster.getAttribute("intelligence") * 0.3;
+        const bonusDamageChance = 0.4;
+        const baseBonusDamage = caster.getAttribute("intelligence") * 0.4;
         if (this.getRNG() < bonusDamageChance) {
-          return minMaxRoll(4, 8, roll) + baseBonusDamage;
+          return minMaxRoll(5, 10, roll) + baseBonusDamage;
         }
         return baseBonusDamage;
       },

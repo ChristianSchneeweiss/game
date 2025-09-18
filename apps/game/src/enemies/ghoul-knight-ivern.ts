@@ -12,8 +12,8 @@ export class GhoulKnightIvern extends BaseEnemy {
       maxHealth: 150,
       maxMana: 20,
       baseAttributes: {
-        intelligence: 6,
-        vitality: 14,
+        intelligence: 4,
+        vitality: 15,
         agility: 10,
         strength: 16,
       },

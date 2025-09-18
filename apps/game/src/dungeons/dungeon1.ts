@@ -8,7 +8,7 @@ export const dungeon1 = () =>
     availableEnemies: [
       // ["sky-serpent"],
       // ["water-elemental"],
-      // ["goblin"],
+      ["goblin"],
       ["thunder-drake"],
       ["commander-kelvaris"],
       ["thundermaw"],

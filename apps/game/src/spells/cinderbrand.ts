@@ -11,7 +11,7 @@ export class CinderbrandSpell extends DamageEffectSpell {
         id,
         type: "cinderbrand",
         name: "Cinderbrand",
-        manaCost: 12,
+        manaCost: 15,
         cooldown: 2,
         targetType: { enemies: 1, allies: 0 },
       },
@@ -19,7 +19,7 @@ export class CinderbrandSpell extends DamageEffectSpell {
         min: 8,
         max: 14,
         attributeScaling: ({ caster }) =>
-          caster.getAttribute("intelligence") * 0.6,
+          caster.getAttribute("intelligence") * 0.3,
       }),
       new EffectModule(() => new DamageOverTimeEffect(2, 5, "MAGICAL")),
       0.3

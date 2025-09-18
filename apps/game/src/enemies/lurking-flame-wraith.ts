@@ -27,10 +27,17 @@ export class LurkingFlameWraith extends BaseEnemy {
             },
             dropRate: 0.1,
           },
+          {
+            type: "SPELL",
+            data: {
+              spellType: "splinter-shot",
+            },
+            dropRate: 0.2,
+          },
         ],
         gold: 35,
       },
-      spells: ["cinderbrand", "basic-attack"],
+      spells: ["cinderbrand", "splinter-shot", "basic-attack"],
     });
   }
 }

@@ -28,6 +28,7 @@ export interface SpecialAttributes {
   manaRegen: number;
   blessed: number;
   critChance: number;
+  critDamage: number;
 }
 
 export type AllAttributeKeys = keyof EntityAttributes | keyof SpecialAttributes;

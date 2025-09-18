@@ -1,3 +1,4 @@
+import type { TimelineEvent } from "../../timeline-events";
 import type { BattleManager, DamageType, Effect, Entity } from "../../types";
 import type { PassiveSkill, PassiveType } from "./passive-types";
 
@@ -30,6 +31,34 @@ export abstract class BasePassive implements PassiveSkill {
 
   getDescription(): string {
     return "";
+  }
+
+  onApply(): void {
+    // do nothing
+  }
+
+  onPreRound(): void {
+    // do nothing
+  }
+
+  onPostRound(): void {
+    // do nothing
+  }
+
+  onRemove(): void {
+    // do nothing
+  }
+
+  onActionSelection(): TimelineEvent[] | null {
+    return null;
+  }
+
+  onUpkeep(): TimelineEvent[] | null {
+    return null;
+  }
+
+  onEndStep(): TimelineEvent[] | null {
+    return null;
   }
 
   beforeTakingDamage(args: {

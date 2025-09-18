@@ -5,7 +5,6 @@ import { CommanderKelvaris } from "@loot-game/game/enemies/commander-kelvaris";
 import { CryptCrawler } from "@loot-game/game/enemies/crypt-crawler";
 import { ElderTreant } from "@loot-game/game/enemies/elder-treant";
 import { EmberboundRevenant } from "@loot-game/game/enemies/emberbound-revenant";
-import { FishfolkCaster } from "@loot-game/game/enemies/fishfolk-caster";
 import { FishfolkScout } from "@loot-game/game/enemies/fishfolk-scout";
 import { FishfolkShaman } from "@loot-game/game/enemies/fishfolk-shaman";
 import { GhoulKnightIvern } from "@loot-game/game/enemies/ghoul-knight-ivern";
@@ -63,8 +62,6 @@ export const createEnemyFromType = (type: EnemyType, id?: string) => {
       return new SkyboltWyvern(id);
     case "commander-kelvaris":
       return new CommanderKelvaris(id);
-    case "fishfolk-caster":
-      return new FishfolkCaster(id);
     case "fishfolk-shaman":
       return new FishfolkShaman(id);
     case "fishfolk-scout":

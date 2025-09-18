@@ -27,10 +27,17 @@ export class CryptCrawler extends BaseEnemy {
             },
             dropRate: 0.2,
           },
+          {
+            type: "SPELL",
+            data: {
+              spellType: "festering-blow",
+            },
+            dropRate: 0.2,
+          },
         ],
         gold: 20, // Reasonable gold for stage 3 enemy
       },
-      spells: ["precise-thrust", "basic-attack"],
+      spells: ["precise-thrust", "festering-blow", "basic-attack"],
     });
   }
 }

@@ -9,13 +9,13 @@ export class EmberboundRevenant extends BaseEnemy {
       type: "emberbound-revenant",
       name: "Emberbound Revenant",
       team: "TEAM_B",
-      maxHealth: 130,
-      maxMana: 120,
+      maxHealth: 150,
+      maxMana: 150,
       baseAttributes: {
-        intelligence: 24,
+        intelligence: 30,
         vitality: 14,
         agility: 12,
-        strength: 13,
+        strength: 25,
       },
       xp: 100, // Higher XP for mini-boss
       loot: {
@@ -38,6 +38,7 @@ export class EmberboundRevenant extends BaseEnemy {
         gold: 100, // Higher gold for mini-boss
       },
       spells: ["charred-chains", "soulflare", "basic-attack"],
+      passiveSkills: ["soulleech"],
     });
   }
 }

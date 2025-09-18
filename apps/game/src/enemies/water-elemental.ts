@@ -10,10 +10,10 @@ export class WaterElemental extends BaseEnemy {
       name: "Water Elemental",
       team: "TEAM_B",
       maxHealth: 130,
-      maxMana: 80,
+      maxMana: 150,
       baseAttributes: {
-        intelligence: 16,
-        vitality: 14,
+        intelligence: 30,
+        vitality: 13,
         agility: 9,
         strength: 6,
       },
@@ -38,6 +38,7 @@ export class WaterElemental extends BaseEnemy {
         gold: 50,
       },
       spells: ["tidal-pulse", "stream-of-life", "basic-attack"],
+      passiveSkills: ["vital-wellspring"],
     });
   }
 }
