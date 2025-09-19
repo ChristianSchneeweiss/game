@@ -2,7 +2,7 @@ import { nanoid } from "nanoid";
 import { StatModifierEffect } from "../effect/stat-modifier.effect";
 import { MinMaxDamageModule } from "../modules/damage.module";
 import { EffectModule } from "../modules/effect.module";
-import type { Entity } from "../types";
+import type { Entity } from "../entity-types";
 import { DamageEffectSpell } from "./base/damage+effect.spell";
 
 export class CrudeStrikeSpell extends DamageEffectSpell {

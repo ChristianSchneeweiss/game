@@ -1,18 +1,16 @@
 import { calculator } from "./calculator";
-import type { PassiveSkill } from "./passive-skills/base/passive-types";
-import type { TimelineEvent } from "./timeline-events";
 import type {
+  Affinities,
   AllAttributeKeys,
-  AttributeModifier,
-  BattleManager,
-  DamageType,
-  Effect,
   Entity,
   EntityAttributes,
   SpecialAttributes,
-  Spell,
   Team,
-} from "./types";
+} from "./entity-types";
+import type { PassiveSkill } from "./passive-skills/base/passive-types";
+import type { BattleManager } from "./battle-types";
+import type { TimelineEvent } from "./timeline-events";
+import type { AttributeModifier, DamageType, Effect, Spell } from "./types";
 
 export class BaseEntity implements Entity {
   id: string;
@@ -24,6 +22,7 @@ export class BaseEntity implements Entity {
   maxMana: number;
   baseAttributes: EntityAttributes;
   baseSpecialAttributes: SpecialAttributes;
+  baseAffinities: Affinities;
   activeEffects: Effect[];
   attributeModifiers: AttributeModifier[];
   spells: Spell[];
@@ -57,7 +56,6 @@ export class BaseEntity implements Entity {
       omnivamp: 0,
       armor: 0,
       magicResistance: 0,
-      affinities: 0,
       armorPenetration: 0,
       magicPenetration: 0,
       healthRegen: 0,
@@ -65,6 +63,14 @@ export class BaseEntity implements Entity {
       blessed: 0,
       critChance: 0,
       critDamage: 1,
+    };
+    this.baseAffinities = {
+      fire: 0,
+      lightning: 0,
+      earth: 0,
+      water: 0,
+
+      dark: 0,
     };
     this.battleManager = undefined!;
   }
@@ -194,8 +200,6 @@ export class BaseEntity implements Entity {
         return this.baseSpecialAttributes.armor;
       case "magicResistance":
         return this.baseSpecialAttributes.magicResistance;
-      case "affinities":
-        return this.baseSpecialAttributes.affinities;
       case "armorPenetration":
         return this.baseSpecialAttributes.armorPenetration;
       case "magicPenetration":
@@ -214,6 +218,19 @@ export class BaseEntity implements Entity {
         return this.baseSpecialAttributes.blessed;
       case "critChance":
         return this.baseSpecialAttributes.critChance;
+
+      // *** affinities ***
+      case "fire":
+        return this.baseAffinities.fire;
+      case "dark":
+        return this.baseAffinities.dark;
+      case "lightning":
+        return this.baseAffinities.lightning;
+      case "earth":
+        return this.baseAffinities.earth;
+      case "water":
+        return this.baseAffinities.water;
+
       default:
         return 0;
     }

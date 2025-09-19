@@ -1,14 +1,10 @@
+import type { Entity } from "../../entity-types";
+import type { BattleManager } from "../../battle-types";
 import type {
   OptionalSpellCastEvent,
   SpellCastEvent,
 } from "../../timeline-events";
-import type {
-  BattleManager,
-  Entity,
-  Spell,
-  SpellConfig,
-  TargetType,
-} from "../../types";
+import type { Spell, SpellConfig, TargetType } from "../../types";
 
 export abstract class BaseSpell implements Spell {
   config: SpellConfig;

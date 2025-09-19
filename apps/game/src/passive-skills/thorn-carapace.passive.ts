@@ -1,4 +1,5 @@
-import type { DamageHookArgs, Entity } from "../types";
+import type { Entity } from "../entity-types";
+import type { DamageHookArgs } from "../lifecycle-hooks";
 import { BasePassive } from "./base/base.passive";
 
 export class ThornCarapacePassive extends BasePassive {

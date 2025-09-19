@@ -1,5 +1,7 @@
+import type { BattleManager } from "../../battle-types";
+import type { Entity } from "../../entity-types";
 import type { HealModule } from "../../modules/heal.module";
-import type { BattleManager, Entity, SpellConfig } from "../../types";
+import type { SpellConfig } from "../../types";
 import { BaseSpell } from "./base.spell";
 
 export class HealingSpell extends BaseSpell {

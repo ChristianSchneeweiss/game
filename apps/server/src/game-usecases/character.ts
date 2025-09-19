@@ -1,4 +1,4 @@
-import type { EntityAttributes } from "@loot-game/game/types";
+import type { EntityAttributes } from "@loot-game/game/entity-types";
 import {
   statPointsReceived,
   xpNeededForLevelUp,

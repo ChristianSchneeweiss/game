@@ -1,23 +1,16 @@
 import _ from "lodash";
 import { nanoid } from "nanoid";
 import seedrandom from "seedrandom";
+import type { BattleHandler, BattleManager, BattleRound } from "./battle-types";
 import { Handler } from "./calculator";
+import type { Entity, Team } from "./entity-types";
+import type { RoundLifecycleHooks } from "./lifecycle-hooks";
 import type {
   SpellCastEvent,
   TimelineEvent,
   TimelineEventFull,
 } from "./timeline-events";
-import type {
-  BattleHandler,
-  BattleManager,
-  BattleRound,
-  Effect,
-  EffectType,
-  Entity,
-  RoundLifecycleHooks,
-  Spell,
-  Team,
-} from "./types";
+import type { Effect, EffectType, Spell } from "./types";
 
 export type EffectTracking = Map<
   string,

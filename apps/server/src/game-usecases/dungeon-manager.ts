@@ -283,4 +283,28 @@ export const dungeonManager = {
       enemies.map((enemy) => createEnemyFromType(enemy))
     );
   },
+
+  removeDungeon: async (id: string, userId: string, db: Database) => {
+    await db.transaction(async (tx) => {
+      const [dungeon] = await db
+        .select()
+        .from(TB_dungeonData)
+        .where(eq(TB_dungeonData.id, id));
+      if (!dungeon) {
+        throw new Error("Dungeon not found");
+      }
+      if (dungeon.createdBy !== userId) {
+        throw new Error("Dungeon not found");
+      }
+
+      await tx
+        .delete(TB_dungeonParticipant)
+        .where(eq(TB_dungeonParticipant.dungeonId, id));
+      await tx.delete(TB_dungeonEnemy).where(eq(TB_dungeonEnemy.dungeonId, id));
+      await tx
+        .delete(TB_dungeonBattle)
+        .where(eq(TB_dungeonBattle.dungeonId, id));
+      await tx.delete(TB_dungeonData).where(eq(TB_dungeonData.id, id));
+    });
+  },
 };

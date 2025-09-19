@@ -1,8 +1,9 @@
 import { BaseEntity } from "@loot-game/game/base-entity";
 import type { BM } from "@loot-game/game/bm";
 import { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
+import type { Entity } from "@loot-game/game/entity-types";
 import { timelineEventSchema } from "@loot-game/game/timeline-events";
-import type { EffectType, Entity } from "@loot-game/game/types";
+import type { EffectType } from "@loot-game/game/types";
 import { produce } from "immer";
 import { parse, stringify } from "superjson";
 import { z } from "zod";

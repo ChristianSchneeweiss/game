@@ -1,16 +1,16 @@
 import { BaseEntity } from "../../base-entity";
+import type {
+  Affinities,
+  Entity,
+  EntityAttributes,
+  SpecialAttributes,
+  Team,
+} from "../../entity-types";
 import { passiveSkillFactory } from "../../passive-skills/base/passive-skill.factory";
 import type { PassiveType } from "../../passive-skills/base/passive-types";
 import { createSpellFromType } from "../../spells/base/spell-from-type";
 import type { SpellType } from "../../spells/base/spell-types";
-import type {
-  Entity,
-  EntityAttributes,
-  Loot,
-  SpecialAttributes,
-  Spell,
-  Team,
-} from "../../types";
+import type { Loot, Spell } from "../../types";
 import { uniqueRandomFromArray } from "../../utils/random-in-array";
 import type { EnemyType } from "./enemy-types";
 
@@ -23,6 +23,7 @@ type EnemyParams = {
   maxMana: number;
   baseAttributes: EntityAttributes;
   baseSpecialAttributes?: Partial<SpecialAttributes>;
+  baseAffinities?: Partial<Affinities>;
   xp: number;
   loot: Loot;
   spells: SpellType[];
@@ -43,6 +44,7 @@ export class BaseEnemy extends BaseEntity {
     maxMana,
     baseAttributes,
     baseSpecialAttributes,
+    baseAffinities,
     xp,
     loot,
     spells,
@@ -52,12 +54,19 @@ export class BaseEnemy extends BaseEntity {
     this.type = type;
     this.xp = xp;
     this.loot = loot;
+    if (baseAffinities) {
+      this.baseAffinities = {
+        ...this.baseAffinities,
+        ...baseAffinities,
+      };
+    }
     if (baseSpecialAttributes) {
       this.baseSpecialAttributes = {
         ...this.baseSpecialAttributes,
         ...baseSpecialAttributes,
       };
     }
+
     this.spells = spells.map((spell) =>
       createSpellFromType(`${this.id}-${spell}`, spell)
     );

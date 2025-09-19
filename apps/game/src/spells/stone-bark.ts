@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import { StatModifierEffect } from "../effect/stat-modifier.effect";
+import type { Entity } from "../entity-types";
 import { EffectModule } from "../modules/effect.module";
-import type { Entity } from "../types";
 import { ApplyStatusSpell } from "./base/status.spell";
 
 export class StoneBarkSpell extends ApplyStatusSpell {

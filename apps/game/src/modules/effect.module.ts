@@ -1,4 +1,6 @@
-import type { BattleManager, Effect, Entity, Spell } from "../types";
+import type { Entity } from "../entity-types";
+import type { BattleManager } from "../battle-types";
+import type { Effect, Spell } from "../types";
 import type { SpellModule, SpellModuleReturn } from "./types";
 
 export class EffectModule implements SpellModule {

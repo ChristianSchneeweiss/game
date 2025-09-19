@@ -1,4 +1,4 @@
-import type { Team } from "../types";
+import type { Team } from "../entity-types";
 import { BaseEffect } from "./base-effect";
 
 export class MindControlEffect extends BaseEffect {

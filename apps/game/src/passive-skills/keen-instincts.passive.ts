@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid";
-import type { Entity } from "../types";
+import type { Entity } from "../entity-types";
 import { BasePassive } from "./base/base.passive";
 
 export class KeenInstinctsPassive extends BasePassive {

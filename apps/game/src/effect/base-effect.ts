@@ -1,14 +1,12 @@
 import { nanoid } from "nanoid";
+import type { Entity } from "../entity-types";
 import type {
-  BattleManager,
   DamageHookArgs,
-  Effect,
   EffectHookArgs,
-  EffectType,
-  Entity,
   HealingHookArgs,
-  Spell,
-} from "../types";
+} from "../lifecycle-hooks";
+import type { BattleManager } from "../battle-types";
+import type { Effect, EffectType, Spell } from "../types";
 
 export abstract class BaseEffect implements Effect {
   id = nanoid(20);

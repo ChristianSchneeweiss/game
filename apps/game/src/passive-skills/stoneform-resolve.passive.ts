@@ -1,5 +1,6 @@
 import { nanoid } from "nanoid";
-import type { AttributeModifier, Entity } from "../types";
+import type { AttributeModifier } from "../types";
+import type { Entity } from "../entity-types";
 import { BasePassive } from "./base/base.passive";
 
 export class StoneformResolvePassive extends BasePassive {

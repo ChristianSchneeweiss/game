@@ -1,7 +1,7 @@
 import { WeakendEffect } from "../effect/weakend.effect";
 import { MinMaxDamageModule } from "../modules/damage.module";
 import { EffectModule } from "../modules/effect.module";
-import type { Entity } from "../types";
+import type { Entity } from "../entity-types";
 import { DamageEffectSpell } from "./base/damage+effect.spell";
 
 export class FesteringBlowSpell extends DamageEffectSpell {

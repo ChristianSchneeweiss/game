@@ -1,6 +1,6 @@
 import { StunEffect } from "../effect/stun.effect";
 import { EffectModule } from "../modules/effect.module";
-import type { Entity } from "../types";
+import type { Entity } from "../entity-types";
 import { ApplyStatusSpell } from "./base/status.spell";
 
 export class BattleRoarSpell extends ApplyStatusSpell {

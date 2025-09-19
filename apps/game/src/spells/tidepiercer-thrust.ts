@@ -1,5 +1,5 @@
+import type { Entity } from "../entity-types";
 import { MinMaxDamageModule } from "../modules/damage.module";
-import type { Entity } from "../types";
 import { DamageSpell } from "./base/damage.spell";
 
 export class TidepiercerThrustSpell extends DamageSpell {

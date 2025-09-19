@@ -1,7 +1,7 @@
 {
   "name": "@loot-game/server",
   "main": "src/index.ts",
-  "packageManager": "bun@1.2.21",
+  "packageManager": "bun@1.2.22",
   "type": "module",
   "scripts": {
     "dev": "doppler run --mount .env -- bunx wrangler dev --port 3000",
@@ -10,29 +10,31 @@
     "start": "bun run src/index.ts",
     "deploy": "doppler run -c prd --mount .env -- bunx wrangler secret bulk .env && bunx wrangler deploy",
     "db:push": "doppler run --mount .env -- bunx drizzle-kit push",
-    "db:push:prod": "doppler run -c prd --mount .env -- bunx drizzle-kit push"
+    "db:push:prod": "doppler run -c prd --mount .env -- bunx drizzle-kit push",
+    "db:studio": "doppler run --mount .env -- bunx drizzle-kit studio",
+    "db:studio:prod": "doppler run -c prd --mount .env -- bunx drizzle-kit studio"
   },
   "dependencies": {
-    "@clerk/backend": "^2.10.1",
+    "@clerk/backend": "^2.14.0",
     "@faker-js/faker": "^10.0.0",
     "@hono/clerk-auth": "^3.0.3",
     "@hono/trpc-server": "^0.4.0",
     "@loot-game/game": "workspace:*",
     "@neondatabase/serverless": "^1.0.1",
-    "@trpc/server": "^11.5.0",
+    "@trpc/server": "^11.5.1",
     "@types/seedrandom": "^3.0.8",
     "drizzle-orm": "^0.44.5",
-    "hono": "^4.9.5",
+    "hono": "^4.9.8",
     "immer": "^10.1.3",
     "nanoid": "^5.1.5",
     "postgres": "^3.4.7",
     "seedrandom": "^3.0.5",
     "superjson": "^2.2.2",
     "wrangler": "^4.38.0",
-    "zod": "^4.1.5"
+    "zod": "^4.1.9"
   },
   "devDependencies": {
-    "@types/bun": "^1.2.21",
+    "@types/bun": "^1.2.22",
     "drizzle-kit": "^0.31.4"
   }
 }

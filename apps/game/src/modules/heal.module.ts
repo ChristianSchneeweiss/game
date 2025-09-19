@@ -1,4 +1,6 @@
-import type { BattleManager, Entity, Spell } from "../types";
+import type { Entity } from "../entity-types";
+import type { BattleManager } from "../battle-types";
+import type { Spell } from "../types";
 import { minMaxRoll } from "../utils/min-max-roll";
 import type { SpellModule, SpellModuleReturn } from "./types";
 

@@ -1,7 +1,9 @@
+import type { BattleManager } from "../../battle-types";
+import type { Entity } from "../../entity-types";
 import { DamageModule } from "../../modules/damage.module";
 import type { EffectModule } from "../../modules/effect.module";
 import type { OptionalSpellCastEvent } from "../../timeline-events";
-import type { BattleManager, Entity, SpellConfig } from "../../types";
+import type { SpellConfig } from "../../types";
 import { BaseSpell } from "./base.spell";
 
 /**

@@ -1,5 +1,7 @@
+import type { BattleManager } from "../../battle-types";
+import type { Entity } from "../../entity-types";
 import type { DamageModule } from "../../modules/damage.module";
-import type { BattleManager, Entity, SpellConfig } from "../../types";
+import type { SpellConfig } from "../../types";
 import { BaseSpell } from "./base.spell";
 
 export class DamageSpell extends BaseSpell {

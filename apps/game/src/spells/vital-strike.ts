@@ -1,7 +1,8 @@
+import type { BattleManager } from "../battle-types";
+import type { Entity } from "../entity-types";
 import { DamageModule, MinMaxDamageModule } from "../modules/damage.module";
 import { HealModule } from "../modules/heal.module";
 import type { OptionalSpellCastEvent } from "../timeline-events";
-import type { BattleManager, Entity } from "../types";
 import { BaseSpell } from "./base/base.spell";
 
 export class VitalStrikeSpell extends BaseSpell {

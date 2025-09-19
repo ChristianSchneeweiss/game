@@ -1,6 +1,7 @@
 import type { InBetweenCharacterData } from "@loot-game/game/dungeons/types";
+import type { Entity } from "@loot-game/game/entity-types";
 import type { TimelineEventFull } from "@loot-game/game/timeline-events";
-import type { Entity, Spell } from "@loot-game/game/types";
+import type { Spell } from "@loot-game/game/types";
 import { useMemo } from "react";
 
 export const useStatsTimeline = (

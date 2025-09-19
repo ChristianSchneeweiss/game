@@ -1,9 +1,10 @@
 import { faker } from "@faker-js/faker";
 import type { EnemyType } from "@loot-game/game/enemies/base/enemy-types";
+import type { Team } from "@loot-game/game/entity-types";
 import type { PassiveType } from "@loot-game/game/passive-skills/base/passive-types";
 import type { SpellType } from "@loot-game/game/spells/base/spell-types";
 import type { EventTypes } from "@loot-game/game/timeline-events";
-import type { LootEntity, Team } from "@loot-game/game/types";
+import type { LootEntity } from "@loot-game/game/types";
 import {
   boolean,
   integer,

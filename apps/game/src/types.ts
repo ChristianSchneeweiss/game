@@ -1,37 +1,13 @@
-import type seedrandom from "seedrandom";
 import z from "zod";
-import { SpellTypeSchema, type SpellType } from "./spells/base/spell-types";
+import type { AllAttributeKeys, Entity } from "./entity-types";
 import type {
-  SpellCastEvent,
-  TimelineEvent,
-  TimelineEventFull,
-} from "./timeline-events";
-
-export type Team = "TEAM_A" | "TEAM_B";
-
-export interface EntityAttributes {
-  strength: number;
-  intelligence: number;
-  vitality: number;
-  agility: number;
-}
-
-export interface SpecialAttributes {
-  lifesteal: number;
-  omnivamp: number;
-  armor: number;
-  magicResistance: number;
-  affinities: number;
-  armorPenetration: number;
-  magicPenetration: number;
-  healthRegen: number;
-  manaRegen: number;
-  blessed: number;
-  critChance: number;
-  critDamage: number;
-}
-
-export type AllAttributeKeys = keyof EntityAttributes | keyof SpecialAttributes;
+  InteractionHooks,
+  RoundLifecycleHooks,
+  TurnLifecycleHooks,
+} from "./lifecycle-hooks";
+import type { BattleManager } from "./battle-types";
+import { SpellTypeSchema, type SpellType } from "./spells/base/spell-types";
+import type { SpellCastEvent } from "./timeline-events";
 
 export type DamageType = "PHYSICAL" | "MAGICAL";
 
@@ -60,40 +36,10 @@ export interface AttributeModifier {
   operation: ModifierOperation;
 }
 
-export interface RoundLifecycleHooks {
-  onPreRound?: () => void;
-  onPostRound?: () => void;
-
-  // todo move these?
-  onApply?: () => void;
-  onRemove?: () => void;
-}
-
-export interface TurnLifecycleHooks {
-  onUpkeep?: () => TimelineEvent[] | null;
-  onActionSelection?: () => TimelineEvent[] | null;
-  onEndStep?: () => TimelineEvent[] | null;
-}
-
-export type BaseEffectHookArgs = {
-  source: Entity;
-  target: Entity;
-};
-
-export type DamageHookArgs = BaseEffectHookArgs & {
-  damage: number;
-  type: DamageType;
-};
-
-export type HealingHookArgs = BaseEffectHookArgs & {
-  healing: number;
-};
-
-export type EffectHookArgs = BaseEffectHookArgs & {
-  effect: Effect;
-};
-
-export interface Effect extends RoundLifecycleHooks, TurnLifecycleHooks {
+export interface Effect
+  extends RoundLifecycleHooks,
+    TurnLifecycleHooks,
+    InteractionHooks {
   id: string;
   effectType: EffectType;
   duration: number;
@@ -103,44 +49,6 @@ export interface Effect extends RoundLifecycleHooks, TurnLifecycleHooks {
   battleManager: BattleManager;
 
   getDescription(): string;
-
-  // ** interaction hooks **
-  beforeTakingDamage(args: DamageHookArgs): number;
-  beforeTakingHealing(args: HealingHookArgs): number;
-  beforeTakingEffect(args: EffectHookArgs): Effect | null;
-
-  beforeDealingDamage(args: DamageHookArgs): number;
-  beforeDealingHealing(args: HealingHookArgs): number;
-  beforeDealingEffect(args: EffectHookArgs): Effect | null;
-}
-
-export interface Entity
-  extends Pick<RoundLifecycleHooks, "onPreRound" | "onPostRound">,
-    TurnLifecycleHooks {
-  id: string;
-  name: string;
-  team: Team;
-  health: number;
-  maxHealth: number;
-  mana: number;
-  maxMana: number;
-  baseAttributes: EntityAttributes;
-  baseSpecialAttributes: SpecialAttributes;
-  activeEffects: Effect[];
-  attributeModifiers: AttributeModifier[];
-  spells: Spell[];
-  passiveSkills: Effect[];
-  battleManager: BattleManager;
-  isBot: boolean;
-
-  // todo: do i need them?
-  applyDamage(amount: number, type: DamageType, source: Entity): void;
-  applyHealing(amount: number, source: Entity): void;
-  applyEffect(effect: Effect): void;
-  removeEffect(effect: Effect): void;
-
-  isDead(): boolean;
-  getAttribute(attribute: AllAttributeKeys): number;
 }
 
 export interface SpellDescription {
@@ -173,69 +81,6 @@ export interface SpellConfig {
   manaCost: number;
   cooldown: number;
   targetType: TargetType;
-}
-
-export interface BattleManager {
-  battleId: string;
-  entities: Entity[];
-  deadEntities: Map<string, Entity>;
-  rounds: BattleRound[];
-  handler: BattleHandler;
-  lifeCycleHooks: RoundLifecycleHooks[];
-  events: TimelineEventFull[];
-
-  getRNG(): number;
-  getPRNG(): seedrandom.PRNG;
-  getTeam(team: Team): Entity[];
-  getAliveEntities(): Entity[];
-  getEntityById(id: string): Entity | undefined;
-  getSpellById(id: string): Spell | undefined;
-  reviveEntity(entityId: string, health: number): boolean;
-  getCurrentRound(): BattleRound;
-  join(entity: Entity): void;
-  processEntityDeath(entity: Entity, cause: { spellId: string }): void;
-  processEvent(event: TimelineEvent): void;
-  changeTurnOrder(cb: (currentOrder: string[]) => string[]): void;
-
-  addEffect(effect: Effect): void;
-
-  /**
-   * Add an event to the spell cast buffer.
-   * Because some events need to be processed in order **after** the spell cast event.
-   * Like Death and effect removal (eg 1 turn stun gets instantly removed, but needs to happen after the spell cast)
-   */
-  addEventToSpellCastBuffer(event: TimelineEvent): void;
-}
-
-export interface BattleRound {
-  round: number;
-  orderQueue: string[];
-}
-
-export type HandlerReturn = Omit<SpellCastEvent["data"], "roll" | "spellId">;
-
-export interface BattleHandler {
-  damage(
-    spell: Spell | Effect,
-    amount: number,
-    type: DamageType,
-    source: Entity,
-    target: Entity
-  ): HandlerReturn;
-  healing(
-    spell: Spell | Effect,
-    amount: number,
-    source: Entity,
-    target: Entity
-  ): HandlerReturn;
-  effect(
-    spell: Spell | Effect,
-    effect: Effect,
-    source: Entity,
-    target: Entity
-  ): HandlerReturn | null;
-
-  mergeHandlerReturns(returns: HandlerReturn[]): HandlerReturn;
 }
 
 export interface Loot {

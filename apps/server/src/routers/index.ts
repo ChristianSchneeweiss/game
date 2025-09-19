@@ -1,10 +1,13 @@
 import { faker } from "@faker-js/faker";
+import { createSpellFromType } from "@loot-game/game/spells/base/spell-from-type";
 import { SpellTypeSchema } from "@loot-game/game/spells/base/spell-types";
+import { TRPCError } from "@trpc/server";
 import { desc, eq, gt } from "drizzle-orm";
 import { z } from "zod";
 import { TB_activeBattle, TB_spellStats, TB_user } from "../db/schema";
 import { bmStorage } from "../game-usecases/bm-storage";
 import { createCharacter } from "../game-usecases/character";
+import { EntityFactory } from "../game-usecases/entity-factory";
 import { LootManager } from "../game-usecases/loot-manager";
 import { createSpell } from "../game-usecases/spell-factory";
 import { protectedProcedure, publicProcedure, router } from "../lib/trpc";
@@ -44,6 +47,10 @@ export const appRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      throw new TRPCError({
+        code: "NOT_IMPLEMENTED",
+        message: "Create spell is not implemented",
+      });
       const { session, db } = ctx;
       if (!session) {
         throw new Error("No session found");
@@ -60,7 +67,28 @@ export const appRouter = router({
       .select()
       .from(TB_spellStats)
       .where(eq(TB_spellStats.userId, session.id));
-    return spells;
+
+    const characters = await EntityFactory.createCharactersFromUser(
+      session.id,
+      db
+    );
+    if (characters.length === 0) {
+      throw new TRPCError({
+        code: "PRECONDITION_FAILED",
+        message: "User has no characters",
+      });
+    }
+    const character = characters.sort((a, b) => a.level - b.level)[0];
+
+    const spellClass = spells.map((spell) => {
+      return {
+        ...spell,
+        description: createSpellFromType(spell.id, spell.type).description(
+          character
+        ),
+      };
+    });
+    return spellClass;
   }),
 
   getBattle: publicProcedure.input(z.string()).query(async ({ input, ctx }) => {

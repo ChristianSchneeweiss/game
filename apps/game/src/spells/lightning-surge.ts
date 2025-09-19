@@ -1,7 +1,7 @@
 import { StunEffect } from "../effect/stun.effect";
+import type { Entity } from "../entity-types";
 import { MinMaxDamageModule } from "../modules/damage.module";
 import { EffectModule } from "../modules/effect.module";
-import type { Entity } from "../types";
 import { DamageEffectSpell } from "./base/damage+effect.spell";
 
 export class LightningSurgeSpell extends DamageEffectSpell {

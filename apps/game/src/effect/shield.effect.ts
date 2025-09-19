@@ -1,3 +1,4 @@
+import type { DamageHookArgs } from "../lifecycle-hooks";
 import { BaseEffect } from "./base-effect";
 
 export class ShieldEffect extends BaseEffect {
@@ -8,7 +9,7 @@ export class ShieldEffect extends BaseEffect {
     this.shieldAmount = shieldAmount;
   }
 
-  beforeTakingDamage(damage: number): number {
+  beforeTakingDamage({ damage }: DamageHookArgs): number {
     const damageToApply = Math.max(0, damage - this.shieldAmount);
     this.shieldAmount -= damage;
     if (this.shieldAmount <= 0) {

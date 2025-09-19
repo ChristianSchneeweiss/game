@@ -1,5 +1,5 @@
 import { HealingOverTimeEffect } from "../effect/hot.effect";
-import type { Entity } from "../types";
+import type { Entity } from "../entity-types";
 import { BasePassive } from "./base/base.passive";
 
 export class TitansResurgencePassive extends BasePassive {

@@ -1,14 +1,15 @@
 import type { ClerkClient } from "@clerk/backend";
 import type { BaseEntity, Character } from "@loot-game/game/base-entity";
+import type { BattleRound } from "@loot-game/game/battle-types";
 import { BM, type EffectTracking } from "@loot-game/game/bm";
 import { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
-import type { TimelineEventFull } from "@loot-game/game/timeline-events";
 import type {
-  BattleRound,
+  Affinities,
   EntityAttributes,
   SpecialAttributes,
-  SpellDescription,
-} from "@loot-game/game/types";
+} from "@loot-game/game/entity-types";
+import type { TimelineEventFull } from "@loot-game/game/timeline-events";
+import type { SpellDescription } from "@loot-game/game/types";
 import { DurableObject } from "cloudflare:workers";
 import { eq } from "drizzle-orm";
 import { drizzle as neonDrizzle } from "drizzle-orm/neon-http";
@@ -97,6 +98,7 @@ export type ResponseMessage =
       data: {
         baseAttributes: EntityAttributes;
         specialAttributes: SpecialAttributes;
+        affinities: Affinities;
         entityId: string;
       };
     }
@@ -447,7 +449,6 @@ export class BattleWebsocket extends DurableObject {
       omnivamp: character.getAttribute("omnivamp"),
       armor: character.getAttribute("armor"),
       magicResistance: character.getAttribute("magicResistance"),
-      affinities: character.getAttribute("affinities"),
       armorPenetration: character.getAttribute("armorPenetration"),
       magicPenetration: character.getAttribute("magicPenetration"),
       healthRegen: character.getAttribute("healthRegen"),
@@ -456,10 +457,22 @@ export class BattleWebsocket extends DurableObject {
       critChance: character.getAttribute("critChance"),
       critDamage: character.getAttribute("critDamage"),
     } satisfies SpecialAttributes;
+    const affinities = {
+      fire: character.getAttribute("fire"),
+      lightning: character.getAttribute("lightning"),
+      earth: character.getAttribute("earth"),
+      water: character.getAttribute("water"),
+      dark: character.getAttribute("dark"),
+    } satisfies Affinities;
     ws.send(
       SuperJSON.stringify({
         type: "characterAttributes",
-        data: { baseAttributes, specialAttributes, entityId: characterId },
+        data: {
+          baseAttributes,
+          specialAttributes,
+          affinities,
+          entityId: characterId,
+        },
       } satisfies ResponseMessage)
     );
   }

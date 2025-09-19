@@ -169,4 +169,11 @@ export const dungeonRouter = router({
 
       return battleId;
     }),
+
+  removeDungeon: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { db, session } = ctx;
+      await dungeonManager.removeDungeon(input.id, session.id, db);
+    }),
 });

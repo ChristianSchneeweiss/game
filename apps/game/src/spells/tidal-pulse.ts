@@ -1,8 +1,8 @@
 import { nanoid } from "nanoid";
 import { StatModifierEffect } from "../effect/stat-modifier.effect";
+import type { Entity } from "../entity-types";
 import { MinMaxDamageModule } from "../modules/damage.module";
 import { EffectModule } from "../modules/effect.module";
-import type { Entity } from "../types";
 import { DamageEffectSpell } from "./base/damage+effect.spell";
 
 export class TidalPulseSpell extends DamageEffectSpell {

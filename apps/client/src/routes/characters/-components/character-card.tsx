@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/utils/trpc";
 import type { Character } from "@loot-game/game/base-entity";
-import type { EntityAttributes } from "@loot-game/game/types";
+import type { EntityAttributes } from "@loot-game/game/entity-types";
 import { xpNeededForLevelUp } from "@loot-game/game/utils/xp-curve";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Heart, PlusIcon, Shield, Sparkles, XIcon, Zap } from "lucide-react";
@@ -35,9 +35,9 @@ export const CharacterCard = ({ character }: { character: Character }) => {
   const [statToAdd, setStatToAdd] = useState<(keyof EntityAttributes)[]>([]);
 
   return (
-    <div className="relative w-[480px] rounded-xl border-2 bg-gradient-to-br from-slate-800/90 to-slate-900/90 p-6 shadow-2xl backdrop-blur-sm transition-all duration-300">
+    <div className="relative w-[480px] rounded-xl border-2 bg-gradient-to-br from-slate-800/90 to-slate-900/90 p-4 shadow-2xl backdrop-blur-sm transition-all duration-300">
       {/* Character Header */}
-      <div className="mb-6">
+      <div className="mb-4">
         <div className="mb-4 flex items-center gap-3">
           <span className="text-3xl">🧙‍♂️</span>
           <div className="flex-1">
@@ -77,56 +77,68 @@ export const CharacterCard = ({ character }: { character: Character }) => {
         </div>
       </div>
       {/* Attributes Section */}
-      <div className="mb-6">
-        <h3 className="mb-4 flex items-center gap-2 text-xl font-bold text-blue-300">
+      <div className="mb-4">
+        <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-blue-300">
           <Shield className="h-5 w-5" />
           ATTRIBUTES
         </h3>
 
-        {/* Health & Mana */}
-        <div className="mb-4 grid grid-cols-2 gap-4">
-          <div className="rounded-lg border border-slate-600 bg-slate-800/50 p-4">
-            <div className="mb-2 flex items-center gap-2 text-sm">
-              <Heart className="h-4 w-4 text-red-300" />
-              <span className="text-red-300">Health</span>
-            </div>
-            <div className="text-2xl font-bold text-white">
-              {character.health}
-            </div>
-          </div>
-          <div className="rounded-lg border border-slate-600 bg-slate-800/50 p-4">
-            <div className="mb-2 flex items-center gap-2 text-sm">
-              <Zap className="h-4 w-4 text-blue-300" />
-              <span className="text-blue-300">Mana</span>
-            </div>
-            <div className="text-2xl font-bold text-white">
-              {character.mana}
+        {/* Health, Mana & Stat Points */}
+        <div className="mb-4 grid grid-cols-3 gap-2">
+          <div className="rounded-lg border border-slate-600 bg-slate-800/50 p-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1">
+                <Heart className="h-3 w-3 text-red-300" />
+                <span className="text-xs text-red-300">Health</span>
+              </div>
+              <div className="text-sm font-bold text-white">
+                {character.health}
+              </div>
             </div>
           </div>
-        </div>
-
-        {/* Stat Points */}
-        <div className="mb-4 rounded-lg border border-slate-600 bg-slate-800/50 p-4">
-          <div className="mb-2 flex items-center gap-2 text-sm">
-            <Sparkles className="h-4 w-4 text-yellow-300" />
-            <span className="text-yellow-300">Stat Points Available</span>
+          <div className="rounded-lg border border-slate-600 bg-slate-800/50 p-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1">
+                <Zap className="h-3 w-3 text-blue-300" />
+                <span className="text-xs text-blue-300">Mana</span>
+              </div>
+              <div className="text-sm font-bold text-white">
+                {character.mana}
+              </div>
+            </div>
           </div>
-          <div className="text-xl font-bold text-white">
-            {character.statPointsAvailable - statToAdd.length}
+          <div className="rounded-lg border border-slate-600 bg-slate-800/50 p-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1">
+                <Sparkles className="h-3 w-3 text-yellow-300" />
+                <span className="text-xs text-yellow-300">Points</span>
+              </div>
+              <div className="text-sm font-bold text-white">
+                {character.statPointsAvailable - statToAdd.length}
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Core Stats */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-2">
           {["intelligence", "vitality", "agility", "strength"].map((attr) => (
             <div
-              className="rounded-lg border border-slate-600 bg-slate-800/50 p-3"
+              className="rounded-lg border border-slate-600 bg-slate-800/50 p-2"
               key={attr}
             >
-              <div className="mb-2 flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-300">
+              <div className="mt-1 flex items-center gap-2">
+                <span className="text-xs font-medium text-gray-300">
                   {attr.charAt(0).toUpperCase() + attr.slice(1)}
                 </span>
+                <span className="text-sm font-bold text-white">
+                  {character.baseAttributes[attr as keyof EntityAttributes]}
+                </span>
+                {statToAdd.filter((s) => s === attr).length > 0 && (
+                  <span className="rounded-full bg-green-600/20 px-1 py-0.5 text-xs font-bold text-green-300">
+                    +{statToAdd.filter((s) => s === attr).length}
+                  </span>
+                )}
                 {character.statPointsAvailable > 0 && (
                   <button
                     className={cn(
@@ -149,18 +161,8 @@ export const CharacterCard = ({ character }: { character: Character }) => {
                       character.statPointsAvailable - statToAdd.length <= 0
                     }
                   >
-                    <PlusIcon className="h-3 w-3" />
+                    <PlusIcon className="h-2 w-2" />
                   </button>
-                )}
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-lg font-bold text-white">
-                  {character.baseAttributes[attr as keyof EntityAttributes]}
-                </span>
-                {statToAdd.filter((s) => s === attr).length > 0 && (
-                  <span className="rounded-full bg-green-600/20 px-2 py-1 text-xs font-bold text-green-300">
-                    +{statToAdd.filter((s) => s === attr).length}
-                  </span>
                 )}
               </div>
             </div>
@@ -183,9 +185,167 @@ export const CharacterCard = ({ character }: { character: Character }) => {
           </Button>
         )}
       </div>
+
+      {/* Affinities Section */}
+      <div className="mb-4">
+        <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-orange-300">
+          <Sparkles className="h-5 w-5" />
+          AFFINITIES
+        </h3>
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { key: "fire", label: "Fire", icon: "🔥", color: "text-red-300" },
+            {
+              key: "lightning",
+              label: "Lightning",
+              icon: "⚡",
+              color: "text-yellow-300",
+            },
+            {
+              key: "earth",
+              label: "Earth",
+              icon: "🌍",
+              color: "text-green-300",
+            },
+            {
+              key: "water",
+              label: "Water",
+              icon: "💧",
+              color: "text-blue-300",
+            },
+            {
+              key: "dark",
+              label: "Dark",
+              icon: "🌑",
+              color: "text-purple-300",
+            },
+          ].map(({ key, label, icon, color }) => (
+            <div
+              className="rounded-lg border border-slate-600 bg-slate-800/50 p-3"
+              key={key}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">{icon}</span>
+                  <span className={`text-sm font-medium ${color}`}>
+                    {label}
+                  </span>
+                </div>
+                <div className="text-lg font-bold text-white">
+                  {
+                    character.baseAffinities[
+                      key as keyof typeof character.baseAffinities
+                    ]
+                  }
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Special Attributes Section */}
+      <div className="mb-4">
+        <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-cyan-300">
+          <Shield className="h-5 w-5" />
+          SPECIAL ATTRIBUTES
+        </h3>
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            {
+              key: "lifesteal",
+              label: "Lifesteal",
+              icon: "🩸",
+              color: "text-red-300",
+            },
+            {
+              key: "omnivamp",
+              label: "Omnivamp",
+              icon: "🔄",
+              color: "text-purple-300",
+            },
+            {
+              key: "armor",
+              label: "Armor",
+              icon: "🛡️",
+              color: "text-gray-300",
+            },
+            {
+              key: "magicResistance",
+              label: "Magic Resist",
+              icon: "✨",
+              color: "text-blue-300",
+            },
+            {
+              key: "armorPenetration",
+              label: "Armor Pen",
+              icon: "⚔️",
+              color: "text-orange-300",
+            },
+            {
+              key: "magicPenetration",
+              label: "Magic Pen",
+              icon: "🔮",
+              color: "text-pink-300",
+            },
+            {
+              key: "healthRegen",
+              label: "Health Regen",
+              icon: "💚",
+              color: "text-green-300",
+            },
+            {
+              key: "manaRegen",
+              label: "Mana Regen",
+              icon: "💙",
+              color: "text-cyan-300",
+            },
+            {
+              key: "blessed",
+              label: "Blessed",
+              icon: "🙏",
+              color: "text-yellow-300",
+            },
+            {
+              key: "critChance",
+              label: "Crit Chance",
+              icon: "💥",
+              color: "text-red-400",
+            },
+            {
+              key: "critDamage",
+              label: "Crit Damage",
+              icon: "💢",
+              color: "text-red-500",
+            },
+          ].map(({ key, label, icon, color }) => (
+            <div
+              className="rounded-lg border border-slate-600 bg-slate-800/50 p-2"
+              key={key}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1">
+                  <span className="text-sm">{icon}</span>
+                  <span className={`text-xs font-medium ${color}`}>
+                    {label}
+                  </span>
+                </div>
+                <div className="text-sm font-bold text-white">
+                  {
+                    character.baseSpecialAttributes[
+                      key as keyof typeof character.baseSpecialAttributes
+                    ]
+                  }
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Spells Section */}
       <div>
-        <h3 className="mb-4 flex items-center gap-2 text-xl font-bold text-purple-300">
+        <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-purple-300">
           <Sparkles className="h-5 w-5" />
           EQUIPPED SPELLS
         </h3>

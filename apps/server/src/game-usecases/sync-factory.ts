@@ -1,6 +1,6 @@
 import { Character } from "@loot-game/game/base-entity";
+import type { BattleManager } from "@loot-game/game/battle-types";
 import { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
-import type { BattleManager } from "@loot-game/game/types";
 import { eq } from "drizzle-orm";
 import { TB_battleParticipants, type Database } from "../db/schema";
 import { EntityFactory } from "./entity-factory";

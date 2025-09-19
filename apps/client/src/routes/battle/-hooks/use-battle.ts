@@ -1,5 +1,5 @@
 import { TinyEmitter } from "@/utils/tiny-emitter";
-import type { Entity } from "@loot-game/game/types";
+import type { Entity } from "@loot-game/game/entity-types";
 import { useRouter } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import useWebSocket from "react-use-websocket";

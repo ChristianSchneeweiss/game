@@ -1,6 +1,7 @@
+import type { BattleManager } from "../battle-types";
+import type { Entity } from "../entity-types";
 import { DamageModule, MinMaxDamageModule } from "../modules/damage.module";
 import type { OptionalSpellCastEvent } from "../timeline-events";
-import type { BattleManager, Entity } from "../types";
 import { minMaxRoll } from "../utils/min-max-roll";
 import { uniqueRandomFromArray } from "../utils/random-in-array";
 import { BaseSpell } from "./base/base.spell";

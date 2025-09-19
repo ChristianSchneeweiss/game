@@ -2,12 +2,10 @@ import type seedrandom from "seedrandom";
 import type {
   BattleHandler,
   BattleManager,
-  DamageType,
-  Effect,
-  Entity,
   HandlerReturn,
-  Spell,
-} from "./types";
+} from "./battle-types";
+import type { Entity } from "./entity-types";
+import type { DamageType, Effect, Spell } from "./types";
 
 export class calculator {
   /**

@@ -1,4 +1,5 @@
-import type { DamageHookArgs, ModifierOperation } from "../types";
+import type { DamageHookArgs } from "../lifecycle-hooks";
+import type { ModifierOperation } from "../types";
 import { BaseEffect } from "./base-effect";
 
 /**

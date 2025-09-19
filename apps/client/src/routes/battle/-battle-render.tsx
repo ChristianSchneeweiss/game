@@ -8,13 +8,13 @@ import { useUser } from "@clerk/clerk-react";
 import { Character } from "@loot-game/game/base-entity";
 import type { EffectTracking } from "@loot-game/game/bm";
 import type {
-  EffectType,
+  Affinities,
   Entity,
   EntityAttributes,
   SpecialAttributes,
-  SpellDescription,
   Team,
-} from "@loot-game/game/types";
+} from "@loot-game/game/entity-types";
+import type { EffectType, SpellDescription } from "@loot-game/game/types";
 import {
   BotIcon,
   CheckIcon,
@@ -59,6 +59,7 @@ type Params = {
     {
       baseAttributes: EntityAttributes;
       specialAttributes: SpecialAttributes;
+      affinities: Affinities;
     }
   >;
   getCharacterAttributes?: (characterId: string) => void;
@@ -197,7 +198,7 @@ export const BattleRender = ({
                 CRIT!
               </span>
             )}
-            {currentStats?.roll && (
+            {currentStats.roll !== undefined && (
               <span className="rounded bg-slate-700 px-2 py-1 text-sm text-yellow-300">
                 {currentStats.roll}
               </span>
@@ -216,7 +217,7 @@ export const BattleRender = ({
                 <CircleQuestionMarkIcon className="size-5 cursor-help text-blue-400 hover:text-blue-300" />
               </HoverCardTrigger>
               {entityAttributes && (
-                <HoverCardContent className="w-[400px] border-slate-600 bg-slate-800">
+                <HoverCardContent className="w-[600px] border-slate-600 bg-slate-800">
                   <div className="space-y-2 text-sm">
                     <h4 className="mb-2 font-bold text-white">
                       Character Attributes
@@ -235,8 +236,27 @@ export const BattleRender = ({
                     <h4 className="mb-2 font-bold text-white">
                       Special Attributes
                     </h4>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-3 gap-3">
                       {Object.entries(entityAttributes.specialAttributes).map(
+                        ([key, value]) => (
+                          <div
+                            key={key}
+                            className="flex justify-between text-xs"
+                          >
+                            <span className="font-mono text-gray-400">
+                              {key}
+                            </span>
+                            <span className="font-mono text-white">
+                              {String(value)}
+                            </span>
+                          </div>
+                        ),
+                      )}
+                    </div>
+                    <hr />
+                    <h4 className="mb-2 font-bold text-white">Affinities</h4>
+                    <div className="grid grid-cols-3 gap-3">
+                      {Object.entries(entityAttributes.affinities).map(
                         ([key, value]) => (
                           <div
                             key={key}

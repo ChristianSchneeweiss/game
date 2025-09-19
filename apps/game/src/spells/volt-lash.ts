@@ -1,8 +1,9 @@
+import type { BattleManager, HandlerReturn } from "../battle-types";
 import { StunEffect } from "../effect/stun.effect";
+import type { Entity } from "../entity-types";
 import { DamageModule, MinMaxDamageModule } from "../modules/damage.module";
 import { EffectModule } from "../modules/effect.module";
 import type { OptionalSpellCastEvent } from "../timeline-events";
-import type { BattleManager, Entity, HandlerReturn } from "../types";
 import { randomInArray } from "../utils/random-in-array";
 import { BaseSpell } from "./base/base.spell";
 

@@ -1,5 +1,5 @@
+import type { Entity } from "../entity-types";
 import { HealModule } from "../modules/heal.module";
-import type { Entity } from "../types";
 import { HealingSpell } from "./base/healing.spell";
 
 export class NaturesEmbrace extends HealingSpell {

@@ -1,11 +1,29 @@
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { trpc } from "@/utils/trpc";
+import { queryClient, trpc } from "@/utils/trpc";
 import type { DungeonKey } from "@loot-game/game/dungeons/dungeon-keys";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { CheckCircle, Clock, Hash, MapPin, Play, Sword } from "lucide-react";
+import {
+  CheckCircle,
+  Clock,
+  Hash,
+  MapPin,
+  Play,
+  Sword,
+  Trash,
+} from "lucide-react";
 import { useMemo, useState } from "react";
 import { DungeonEnterDialog } from "./-dungeon-enter.dialog";
 
@@ -17,9 +35,20 @@ export const Route = createFileRoute("/dungeons/")({
 
 function RouteComponent() {
   const [selectedDungeon, setSelectedDungeon] = useState<string | null>(null);
+  const [removeDungeonId, setRemoveDungeonId] = useState<string | null>(null);
 
   const { data: dungeons } = useSuspenseQuery(
     trpc.dungeon.allDungeons.queryOptions(),
+  );
+
+  const { mutate: removeDungeon } = useMutation(
+    trpc.dungeon.removeDungeon.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: trpc.dungeon.allDungeons.queryKey(),
+        });
+      },
+    }),
   );
 
   const inBattleDungeons = useMemo(() => {
@@ -43,7 +72,7 @@ function RouteComponent() {
         className="group relative rounded-xl border-2 bg-gradient-to-br from-slate-800/90 to-slate-900/90 p-6 shadow-2xl backdrop-blur-sm transition-all duration-300 hover:scale-105"
       >
         {/* Dungeon Header */}
-        <div className="mb-4 flex items-center gap-3">
+        <div className="group mb-4 flex items-center gap-3">
           <span className="text-3xl">🏰</span>
           <div className="flex-1">
             <h3 className="text-xl font-bold text-white capitalize">
@@ -60,6 +89,18 @@ function RouteComponent() {
               )}
             </div>
           </div>
+          <Button
+            className="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+            variant="destructive"
+            size="icon"
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              return setRemoveDungeonId(dungeon.id);
+            }}
+          >
+            <Trash className="size-2" />
+          </Button>
         </div>
 
         {/* Dungeon Status */}
@@ -254,6 +295,27 @@ function RouteComponent() {
           onOpenChange={(open) => !open && setSelectedDungeon(null)}
         />
       )}
+      <AlertDialog
+        open={!!removeDungeonId}
+        onOpenChange={() => setRemoveDungeonId(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete dungeon?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This cannot be undone. The dungeon and all its data will be lost.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => removeDungeon({ id: removeDungeonId! })}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

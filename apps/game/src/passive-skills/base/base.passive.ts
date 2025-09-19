@@ -1,5 +1,7 @@
+import type { Entity } from "../../entity-types";
+import type { BattleManager } from "../../battle-types";
 import type { TimelineEvent } from "../../timeline-events";
-import type { BattleManager, DamageType, Effect, Entity } from "../../types";
+import type { DamageType, Effect } from "../../types";
 import type { PassiveSkill, PassiveType } from "./passive-types";
 
 export abstract class BasePassive implements PassiveSkill {

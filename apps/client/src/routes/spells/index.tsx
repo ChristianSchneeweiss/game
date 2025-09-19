@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { trpc } from "@/utils/trpc";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Sparkles, Wand2, PlusIcon, Zap } from "lucide-react";
+import { Zap } from "lucide-react";
 
 export const Route = createFileRoute("/spells/")({
   component: RouteComponent,
@@ -14,13 +14,6 @@ function RouteComponent() {
   );
   const { mutateAsync: unequipSpell } = useMutation(
     trpc.character.unequipSpell.mutationOptions({
-      onSuccess: () => {
-        refetchSpells();
-      },
-    }),
-  );
-  const { mutateAsync: createSpell } = useMutation(
-    trpc.createSpell.mutationOptions({
       onSuccess: () => {
         refetchSpells();
       },
@@ -38,58 +31,6 @@ function RouteComponent() {
       </div>
 
       <div className="mx-auto max-w-6xl">
-        {/* Create Spells Section */}
-        <div className="mb-8">
-          <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-blue-300">
-            <Wand2 className="h-6 w-6" />
-            CREATE NEW SPELLS
-          </h2>
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
-            <Button
-              onClick={() => createSpell({ type: "fireball" })}
-              className="bg-gradient-to-r from-red-600 to-red-500 px-4 py-3 text-white shadow-lg transition-all duration-300 hover:scale-105 hover:from-red-500 hover:to-red-400"
-            >
-              <Sparkles className="mr-2 h-4 w-4" />
-              Fireball
-            </Button>
-            <Button
-              onClick={() => createSpell({ type: "single-heal" })}
-              className="bg-gradient-to-r from-green-600 to-green-500 px-4 py-3 text-white shadow-lg transition-all duration-300 hover:scale-105 hover:from-green-500 hover:to-green-400"
-            >
-              <Sparkles className="mr-2 h-4 w-4" />
-              Single Heal
-            </Button>
-            <Button
-              onClick={() => createSpell({ type: "crude-strike" })}
-              className="bg-gradient-to-r from-orange-600 to-orange-500 px-4 py-3 text-white shadow-lg transition-all duration-300 hover:scale-105 hover:from-orange-500 hover:to-orange-400"
-            >
-              <Sparkles className="mr-2 h-4 w-4" />
-              Crude Strike
-            </Button>
-            <Button
-              onClick={() => createSpell({ type: "festering-blow" })}
-              className="bg-gradient-to-r from-purple-600 to-purple-500 px-4 py-3 text-white shadow-lg transition-all duration-300 hover:scale-105 hover:from-purple-500 hover:to-purple-400"
-            >
-              <Sparkles className="mr-2 h-4 w-4" />
-              Festering Blow
-            </Button>
-            <Button
-              onClick={() => createSpell({ type: "cinder-wisp" })}
-              className="bg-gradient-to-r from-yellow-600 to-yellow-500 px-4 py-3 text-white shadow-lg transition-all duration-300 hover:scale-105 hover:from-yellow-500 hover:to-yellow-400"
-            >
-              <Sparkles className="mr-2 h-4 w-4" />
-              Cinder Wisp
-            </Button>
-            <Button
-              onClick={() => createSpell({ type: "vital-strike" })}
-              className="bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-3 text-white shadow-lg transition-all duration-300 hover:scale-105 hover:from-blue-500 hover:to-blue-400"
-            >
-              <Sparkles className="mr-2 h-4 w-4" />
-              Vital Strike
-            </Button>
-          </div>
-        </div>
-
         {/* My Spells Section */}
         <div className="mb-6">
           <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-purple-300">
@@ -112,47 +53,81 @@ function RouteComponent() {
                         <h3 className="text-xl font-bold text-white capitalize">
                           {spell.type.replace("-", " ")}
                         </h3>
-                        <div className="flex items-center gap-2">
-                          <span className="rounded-full bg-gradient-to-r from-blue-400 to-purple-500 px-3 py-1 text-sm font-bold text-white">
-                            Spell ID: {spell.id.slice(0, 8)}...
-                          </span>
-                        </div>
                       </div>
                     </div>
 
-                    {/* Spell Status */}
+                    {/* Spell Info */}
                     <div className="mb-4">
-                      {spell.equippedBy !== null ? (
-                        <div className="rounded-lg border border-green-600 bg-green-800/30 p-3">
-                          <div className="flex items-center gap-2 text-sm">
-                            <span className="text-green-300">⚡</span>
-                            <span className="font-bold text-green-300">
-                              EQUIPPED
+                      <div className="rounded-lg p-4">
+                        {/* Description */}
+                        <div className="mb-4">
+                          <div className="mb-2 flex items-center gap-2 text-sm">
+                            <span className="text-blue-300">📖</span>
+                            <span className="font-bold text-blue-300">
+                              DESCRIPTION
                             </span>
                           </div>
-                          <div className="text-sm text-green-200">
-                            <Link
-                              to="/characters/$character-id"
-                              params={{ "character-id": spell.equippedBy }}
-                              className="hover:text-green-100 hover:underline"
-                            >
-                              Character ID: {spell.equippedBy.slice(0, 8)}...
-                            </Link>
+                          <div className="text-sm text-blue-200">
+                            {spell.description.text}
                           </div>
                         </div>
-                      ) : (
-                        <div className="rounded-lg border border-slate-600 bg-slate-800/50 p-3">
-                          <div className="flex items-center gap-2 text-sm">
-                            <span className="text-gray-400">📦</span>
-                            <span className="font-bold text-gray-400">
-                              INVENTORY
-                            </span>
+
+                        {/* Stats Grid */}
+                        <div className="mb-4 grid grid-cols-3 gap-3 text-xs">
+                          <div className="rounded bg-blue-900/40 p-2 text-center">
+                            <div className="text-blue-300">Mana</div>
+                            <div className="font-bold text-blue-100">
+                              {spell.description.manaCost}
+                            </div>
                           </div>
-                          <div className="text-sm text-gray-300">
-                            Ready to equip
+                          <div className="rounded bg-blue-900/40 p-2 text-center">
+                            <div className="text-blue-300">Cooldown</div>
+                            <div className="font-bold text-blue-100">
+                              {spell.description.cooldown}
+                            </div>
+                          </div>
+                          <div className="rounded bg-blue-900/40 p-2 text-center">
+                            <div className="text-blue-300">Targets</div>
+                            <div className="font-bold text-blue-100">
+                              {spell.description.targetType.enemies}E/
+                              {spell.description.targetType.allies}A
+                            </div>
                           </div>
                         </div>
-                      )}
+
+                        {/* Status */}
+                        {spell.equippedBy !== null ? (
+                          <div className="rounded border border-green-600 bg-green-800/30 p-3">
+                            <div className="flex items-center gap-2 text-sm">
+                              <span className="text-green-300">⚡</span>
+                              <span className="font-bold text-green-300">
+                                EQUIPPED
+                              </span>
+                            </div>
+                            <div className="text-sm text-green-200">
+                              <Link
+                                to="/characters/$character-id"
+                                params={{ "character-id": spell.equippedBy }}
+                                className="hover:text-green-100 hover:underline"
+                              >
+                                Character ID: {spell.equippedBy.slice(0, 8)}...
+                              </Link>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="rounded border border-slate-600 bg-slate-800/50 p-3">
+                            <div className="flex items-center gap-2 text-sm">
+                              <span className="text-gray-400">📦</span>
+                              <span className="font-bold text-gray-400">
+                                INVENTORY
+                              </span>
+                            </div>
+                            <div className="text-sm text-gray-300">
+                              Ready to equip
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
 
                     {/* Unequip Button */}

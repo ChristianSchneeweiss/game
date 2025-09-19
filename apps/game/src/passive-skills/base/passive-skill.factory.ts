@@ -1,4 +1,4 @@
-import type { Entity } from "../../types";
+import type { Entity } from "../../entity-types";
 import { ArmorUpPassive } from "../armor-up.passive";
 import { BlessedFortunePassive } from "../blessed-fortune.passive";
 import { BloodfangPassive } from "../bloodfang.passive";
