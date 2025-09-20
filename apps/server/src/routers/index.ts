@@ -99,7 +99,7 @@ export const appRouter = router({
   }),
 
   getBattle: publicProcedure.input(z.string()).query(async ({ input, ctx }) => {
-    const timeline = await bmStorage.get(input, ctx.cfEnv.GAME);
+    const timeline = await bmStorage.get(input, ctx.db);
     return timeline;
   }),
 

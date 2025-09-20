@@ -9,6 +9,7 @@ import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import z from "zod";
 import { TB_activeBattle, TB_dungeonBattle } from "../db/schema";
+import { bmStorage } from "../game-usecases/bm-storage";
 import { dungeonManager } from "../game-usecases/dungeon-manager";
 import { EntityFactory } from "../game-usecases/entity-factory";
 import { SyncFactory } from "../game-usecases/sync-factory";
@@ -32,7 +33,7 @@ export const enemyDataSchema = z.object({
 });
 
 export const battleResultSchema = z.object({
-  winner: z.enum(["TEAM_A", "TEAM_B"]),
+  winner: z.union([z.literal("TEAM_A"), z.literal("TEAM_B")]),
   teamA: z.array(characterDataSchema),
   teamB: z.array(enemyDataSchema),
 });
@@ -44,11 +45,8 @@ export class BattleDoneWorkflow extends WorkflowEntrypoint<Env, Params> {
   async run(event: WorkflowEvent<Params>, step: WorkflowStep) {
     const { battleId } = event.payload;
     const battleResult = await step.do("get-battle-result", async () => {
-      const battleResultData = await this.env.GAME.get(`${battleId}:result`);
-      if (!battleResultData) {
-        throw new Error("Battle result not found");
-      }
-      return battleResultSchema.parse(JSON.parse(battleResultData));
+      const db = drizzle(this.env.DATABASE_URL);
+      return await bmStorage.get(battleId, db);
     });
 
     await step.do("update-dungeon", async () => {
@@ -58,11 +56,10 @@ export class BattleDoneWorkflow extends WorkflowEntrypoint<Env, Params> {
         .from(TB_dungeonBattle)
         .where(eq(TB_dungeonBattle.battleId, battleId));
       if (!dungeonBattle) {
-        console.log("Dungeon battle not found");
+        console.error("Dungeon battle not found");
         return;
       }
 
-      const id = dungeonBattle.dungeonId;
       const enemies: BaseEnemy[] = [];
       for (const enemy of battleResult.teamB.filter((e) => e.dead)) {
         const enemyEntity = EntityFactory.createEnemyFromType(
@@ -73,7 +70,7 @@ export class BattleDoneWorkflow extends WorkflowEntrypoint<Env, Params> {
       }
 
       await dungeonManager.handleDungeonCleared(
-        id,
+        dungeonBattle.dungeonId,
         battleId,
         enemies,
         battleResult.teamA,
@@ -83,7 +80,6 @@ export class BattleDoneWorkflow extends WorkflowEntrypoint<Env, Params> {
     });
 
     await step.do("clean-up-battle", async () => {
-      await this.env.GAME.delete(`${battleId}:result`);
       const db = drizzle(this.env.DATABASE_URL);
       const syncFactory = new SyncFactory(db);
       await syncFactory.cleanup(battleId);

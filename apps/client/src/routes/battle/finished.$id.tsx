@@ -15,7 +15,7 @@ function RouteComponent() {
   const { data } = useSuspenseQuery(trpc.getBattle.queryOptions(id));
 
   const { statsTimeline } = useStatsTimeline(
-    data.timelineEvents,
+    data.timelineData,
     data.participants,
     data.startEntityData,
   );
@@ -31,16 +31,16 @@ function RouteComponent() {
       <input
         type="range"
         min={0}
-        max={data.timelineEvents.length - 1}
+        max={data.timelineData.length - 1}
         value={visibleEvents}
         onChange={(e) => setVisibleEvents(Number(e.target.value))}
       />
       <p>
-        Visible events: {visibleEvents + 1} / {data.timelineEvents.length}
+        Visible events: {visibleEvents + 1} / {data.timelineData.length}
       </p>
       <pre>
         {JSON.stringify(
-          serialize(data.timelineEvents[visibleEvents - 1]).json,
+          serialize(data.timelineData[visibleEvents - 1]).json,
           null,
           2,
         )}

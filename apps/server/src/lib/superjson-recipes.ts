@@ -81,6 +81,33 @@ export const registerRecipes = () => {
     "Equipment"
   );
 
+  superjson.registerCustom<BaseEntity, any>(
+    {
+      isApplicable: (data): data is BaseEntity => {
+        return data instanceof BaseEntity;
+      },
+      serialize: (entities) => {
+        entities.battleManager = undefined!;
+        entities.spells.forEach(
+          (spells) => (spells.battleManager = undefined!)
+        );
+        entities.activeEffects.forEach(
+          (effect) => (effect.battleManager = undefined!)
+        );
+        entities.passiveSkills.forEach(
+          (passive) => (passive.battleManager = undefined!)
+        );
+        Object.values(entities.equipped).forEach((equipment) => {
+          equipment.battleManager = undefined!;
+        });
+        return entities;
+      },
+      deserialize: (data) => {
+        return data;
+      },
+    },
+    "BaseEntity[]"
+  );
+
   superjson.registerClass(Character, { identifier: "Character" });
-  superjson.registerClass(BaseEntity, { identifier: "BaseEntity" });
 };

@@ -4,7 +4,6 @@ import type { Team } from "@loot-game/game/entity-types";
 import type { ItemType } from "@loot-game/game/items/item-types";
 import type { PassiveType } from "@loot-game/game/passive-skills/base/passive-types";
 import type { SpellType } from "@loot-game/game/spells/base/spell-types";
-import type { EventTypes } from "@loot-game/game/timeline-events";
 import type { LootEntity } from "@loot-game/game/types";
 import {
   boolean,
@@ -168,15 +167,15 @@ export const TB_activeBattle = pgTable("active_battle", {
     .$onUpdateFn(() => new Date()),
 });
 
-export const TB_timeline = pgTable("timeline", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => id(24)),
-  battleId: text("battle_id").notNull(),
-  inBattleIndex: integer("in_battle_index").notNull(),
-  round: integer("round").notNull(),
-  eventType: text("event_type").$type<EventTypes>().notNull(),
-  data: json("data").notNull(), // superjson event data
+export const TB_battleResult = pgTable("battle_result", {
+  battleId: text("battle_id").primaryKey().notNull(),
+  timelineData: json("timeline_data").notNull(), // superjson event data
+  startEntityData: json("start_entity_data").notNull(), // superjson event data
+  participants: json("participants").notNull(), // superjson event data
+  effectTracking: json("effect_tracking").notNull(), // superjson event data
+  winner: text("winner").$type<Team>().notNull(),
+  teamA: json("team_a").notNull(), // superjson event data
+  teamB: json("team_b").notNull(), // superjson event data
 });
 
 // const lootEntityType = customType<{ data: LootEntity[]; driverData: string }>({

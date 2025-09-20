@@ -4,15 +4,17 @@ import { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
 import type { Entity } from "@loot-game/game/entity-types";
 import { timelineEventSchema } from "@loot-game/game/timeline-events";
 import type { EffectType } from "@loot-game/game/types";
+import { eq } from "drizzle-orm";
 import { produce } from "immer";
-import { parse, stringify } from "superjson";
+import { deserialize, serialize, type SuperJSONResult } from "superjson";
 import { z } from "zod";
 import { COL_characterDungeonDataSchema } from "../db/character-dungeon-data";
-import type { BattleResult } from "../workflows/battle-done.workflow";
+import { TB_battleResult, type Database } from "../db/schema";
+import { battleResultSchema } from "../workflows/battle-done.workflow";
 
 const storageSchema = z.object({
   startEntityData: COL_characterDungeonDataSchema,
-  timelineEvents: z.array(timelineEventSchema),
+  timelineData: z.array(timelineEventSchema),
   participants: z.array(z.any()), // TODO
   // TODO
   effectTracking: z.map(
@@ -26,11 +28,12 @@ const storageSchema = z.object({
       effectType: z.string(),
     })
   ),
+  ...battleResultSchema.shape,
 });
 type StorageSchema = z.infer<typeof storageSchema>;
 
 export const bmStorage = {
-  save: async (bm: BM, kv: KVNamespace) => {
+  save: async (bm: BM, db: Database) => {
     const entities = produce(bm.entities, (draft) => {
       draft.forEach((ent) => {
         ent.battleManager = undefined!;
@@ -38,50 +41,74 @@ export const bmStorage = {
         ent.activeEffects.forEach(
           (effect) => (effect.battleManager = undefined!)
         );
+        ent.passiveSkills.forEach(
+          (passive) => (passive.battleManager = undefined!)
+        );
+        Object.values(ent.equipped).forEach((equipment) => {
+          equipment.battleManager = undefined!;
+        });
       });
     });
-    await kv.put(
-      `battle:${bm.battleId}`,
-      stringify({
-        startEntityData: bm.startEntityData
-          .filter((ent) => ent.team === "TEAM_A")
-          .map((ent) => ({
-            characterId: ent.id,
-            health: ent.health,
-            mana: ent.mana,
-          })),
-        timelineEvents: bm.events,
-        participants: entities as BaseEntity[],
-        effectTracking: storageSchema.shape.effectTracking.parse(
-          bm.effectTracking
-        ),
-      } satisfies StorageSchema)
-    );
-    await kv.put(
-      `${bm.battleId}:result`,
-      JSON.stringify({
-        winner: bm.getWinningTeam()!,
-        teamA: bm.getTeam("TEAM_A").map((ent) => ({
-          id: ent.id,
+    const storageData = {
+      startEntityData: bm.startEntityData
+        .filter((ent) => ent.team === "TEAM_A")
+        .map((ent) => ({
+          characterId: ent.id,
           health: ent.health,
           mana: ent.mana,
-          dead: ent.isDead(),
         })),
-        teamB: bm.getTeam("TEAM_B").map((ent) => ({
-          id: ent.id,
-          health: ent.health,
-          dead: ent.isDead(),
-          type: ent instanceof BaseEnemy ? ent.type : "goblin", // todo not goblin default
-        })),
-      } satisfies BattleResult)
-    );
-  },
-  get: async (id: string, kv: KVNamespace) => {
-    const timeline = await kv.get(`battle:${id}`);
-    if (!timeline) throw new Error("battle does not exist");
-    const serialized = parse(timeline);
+      timelineData: bm.events,
+      participants: entities as BaseEntity[],
+      effectTracking: storageSchema.shape.effectTracking.parse(
+        bm.effectTracking
+      ),
+      winner: bm.getWinningTeam()!,
+      teamA: bm.getTeam("TEAM_A").map((ent) => ({
+        id: ent.id,
+        health: ent.health,
+        mana: ent.mana,
+        dead: ent.isDead(),
+      })),
+      teamB: bm.getTeam("TEAM_B").map((ent) => ({
+        id: ent.id,
+        health: ent.health,
+        dead: ent.isDead(),
+        type: ent instanceof BaseEnemy ? ent.type : "goblin", // todo not goblin default
+      })),
+    } satisfies StorageSchema;
 
-    const x = storageSchema.safeParse(serialized);
+    await db.insert(TB_battleResult).values({
+      battleId: bm.battleId,
+      timelineData: serialize(storageData.timelineData),
+      startEntityData: serialize(storageData.startEntityData),
+      participants: serialize(storageData.participants),
+      effectTracking: serialize(storageData.effectTracking),
+      winner: storageData.winner,
+      teamA: serialize(storageData.teamA),
+      teamB: serialize(storageData.teamB),
+    });
+  },
+  get: async (id: string, db: Database) => {
+    const [storageData] = await db
+      .select()
+      .from(TB_battleResult)
+      .where(eq(TB_battleResult.battleId, id));
+    if (!storageData) throw new Error("battle does not exist");
+    const y = {
+      timelineData: deserialize(storageData.timelineData as SuperJSONResult),
+      startEntityData: deserialize(
+        storageData.startEntityData as SuperJSONResult
+      ),
+      participants: deserialize(storageData.participants as SuperJSONResult),
+      effectTracking: deserialize(
+        storageData.effectTracking as SuperJSONResult
+      ),
+      winner: storageData.winner,
+      teamA: deserialize(storageData.teamA as SuperJSONResult),
+      teamB: deserialize(storageData.teamB as SuperJSONResult),
+    };
+
+    const x = storageSchema.safeParse(y);
     if (!x.success) throw new Error(x.error.message);
     return {
       ...x.data,

@@ -295,7 +295,7 @@ export class BattleWebsocket extends DurableObject {
             w.send(SuperJSON.stringify({ type: "finished", data: { winner } }));
           });
 
-          await bmStorage.save(this.bm, this.env.GAME);
+          await bmStorage.save(this.bm, this.db);
           await this.env.BATTLE_DONE_WORKFLOW.create({
             params: { battleId: this.battleId },
           });
@@ -373,7 +373,7 @@ export class BattleWebsocket extends DurableObject {
           w.send(SuperJSON.stringify({ type: "finished", data: { winner } }));
         });
 
-        await bmStorage.save(this.bm, this.env.GAME);
+        await bmStorage.save(this.bm, this.db);
         await this.env.BATTLE_DONE_WORKFLOW.create({
           params: { battleId: this.battleId },
         });
