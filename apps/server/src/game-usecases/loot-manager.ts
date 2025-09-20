@@ -64,7 +64,6 @@ export class LootManager {
     await tx.insert(TB_equipmentStats).values({
       userId,
       type,
-      slot: "ARMOR",
     });
   }
 

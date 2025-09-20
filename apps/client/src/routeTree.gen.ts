@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as LootRouteImport } from './routes/loot'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SpellsIndexRouteImport } from './routes/spells/index'
+import { Route as ItemsIndexRouteImport } from './routes/items/index'
 import { Route as DungeonsIndexRouteImport } from './routes/dungeons/index'
 import { Route as CharactersIndexRouteImport } from './routes/characters/index'
 import { Route as DungeonsIdRouteImport } from './routes/dungeons/$id'
@@ -32,6 +33,11 @@ const IndexRoute = IndexRouteImport.update({
 const SpellsIndexRoute = SpellsIndexRouteImport.update({
   id: '/spells/',
   path: '/spells/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ItemsIndexRoute = ItemsIndexRouteImport.update({
+  id: '/items/',
+  path: '/items/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DungeonsIndexRoute = DungeonsIndexRouteImport.update({
@@ -73,6 +79,7 @@ export interface FileRoutesByFullPath {
   '/dungeons/$id': typeof DungeonsIdRoute
   '/characters': typeof CharactersIndexRoute
   '/dungeons': typeof DungeonsIndexRoute
+  '/items': typeof ItemsIndexRoute
   '/spells': typeof SpellsIndexRoute
   '/battle/finished/$id': typeof BattleFinishedIdRoute
 }
@@ -84,6 +91,7 @@ export interface FileRoutesByTo {
   '/dungeons/$id': typeof DungeonsIdRoute
   '/characters': typeof CharactersIndexRoute
   '/dungeons': typeof DungeonsIndexRoute
+  '/items': typeof ItemsIndexRoute
   '/spells': typeof SpellsIndexRoute
   '/battle/finished/$id': typeof BattleFinishedIdRoute
 }
@@ -96,6 +104,7 @@ export interface FileRoutesById {
   '/dungeons/$id': typeof DungeonsIdRoute
   '/characters/': typeof CharactersIndexRoute
   '/dungeons/': typeof DungeonsIndexRoute
+  '/items/': typeof ItemsIndexRoute
   '/spells/': typeof SpellsIndexRoute
   '/battle/finished/$id': typeof BattleFinishedIdRoute
 }
@@ -109,6 +118,7 @@ export interface FileRouteTypes {
     | '/dungeons/$id'
     | '/characters'
     | '/dungeons'
+    | '/items'
     | '/spells'
     | '/battle/finished/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -120,6 +130,7 @@ export interface FileRouteTypes {
     | '/dungeons/$id'
     | '/characters'
     | '/dungeons'
+    | '/items'
     | '/spells'
     | '/battle/finished/$id'
   id:
@@ -131,6 +142,7 @@ export interface FileRouteTypes {
     | '/dungeons/$id'
     | '/characters/'
     | '/dungeons/'
+    | '/items/'
     | '/spells/'
     | '/battle/finished/$id'
   fileRoutesById: FileRoutesById
@@ -143,6 +155,7 @@ export interface RootRouteChildren {
   DungeonsIdRoute: typeof DungeonsIdRoute
   CharactersIndexRoute: typeof CharactersIndexRoute
   DungeonsIndexRoute: typeof DungeonsIndexRoute
+  ItemsIndexRoute: typeof ItemsIndexRoute
   SpellsIndexRoute: typeof SpellsIndexRoute
   BattleFinishedIdRoute: typeof BattleFinishedIdRoute
 }
@@ -168,6 +181,13 @@ declare module '@tanstack/react-router' {
       path: '/spells'
       fullPath: '/spells'
       preLoaderRoute: typeof SpellsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/items/': {
+      id: '/items/'
+      path: '/items'
+      fullPath: '/items'
+      preLoaderRoute: typeof ItemsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dungeons/': {
@@ -223,6 +243,7 @@ const rootRouteChildren: RootRouteChildren = {
   DungeonsIdRoute: DungeonsIdRoute,
   CharactersIndexRoute: CharactersIndexRoute,
   DungeonsIndexRoute: DungeonsIndexRoute,
+  ItemsIndexRoute: ItemsIndexRoute,
   SpellsIndexRoute: SpellsIndexRoute,
   BattleFinishedIdRoute: BattleFinishedIdRoute,
 }

@@ -11,7 +11,7 @@ export class IntArmor extends Equipment {
       id,
       equipmentSlot: "ARMOR",
       name: "Int Armor",
-      description: "Increases armor by 20%.",
+      description: "Increases intelligence by 10.",
       modifiers: [
         {
           id: nanoid(),

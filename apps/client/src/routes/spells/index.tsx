@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { trpc } from "@/utils/trpc";
+import { trpc, trpcClient } from "@/utils/trpc";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Zap } from "lucide-react";
+import { Shield, Star, Zap } from "lucide-react";
 
 export const Route = createFileRoute("/spells/")({
   component: RouteComponent,
@@ -19,6 +19,21 @@ function RouteComponent() {
       },
     }),
   );
+
+  const { data: passiveSkills, refetch: refetchPassiveSkills } = useQuery(
+    trpc.getMyPassiveSkills.queryOptions(),
+  );
+  const { mutateAsync: unequipPassiveSkill } = useMutation({
+    mutationFn: async (passiveSkillId: string) => {
+      // @ts-ignore - temporary until types are updated
+      return await trpcClient.character.unequipPassiveSkill.mutate({
+        passiveSkillId,
+      });
+    },
+    onSuccess: () => {
+      refetchPassiveSkills();
+    },
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
@@ -160,7 +175,124 @@ function RouteComponent() {
             </div>
           )}
         </div>
+
+        {/* Passive Skills Section */}
+        <div className="mb-6">
+          <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-purple-300">
+            <Shield className="h-6 w-6" />
+            PASSIVE SKILLS
+          </h2>
+          {passiveSkills && passiveSkills.length > 0 ? (
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {passiveSkills
+                .sort((a, b) => a.type.localeCompare(b.type))
+                .map((passive) => (
+                  <div
+                    key={passive.id}
+                    className="group relative rounded-xl border-2 bg-gradient-to-br from-slate-800/90 to-slate-900/90 p-6 shadow-2xl backdrop-blur-sm transition-all duration-300 hover:scale-105"
+                  >
+                    {/* Passive Header */}
+                    <div className="mb-4 flex items-center gap-3">
+                      <span className="text-3xl">🛡️</span>
+                      <div className="flex-1">
+                        <h3 className="text-xl font-bold text-white capitalize">
+                          {passive.type.replace("-", " ")}
+                        </h3>
+                        <div className="flex items-center gap-2">
+                          <Star className="h-4 w-4 text-yellow-400" />
+                          <span className="text-sm font-bold text-yellow-400">
+                            PASSIVE SKILL
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Passive Info */}
+                    <div className="mb-4">
+                      <div className="rounded-lg p-4">
+                        {/* Description */}
+                        <div className="mb-4">
+                          <div className="mb-2 flex items-center gap-2 text-sm">
+                            <span className="text-green-300">📖</span>
+                            <span className="font-bold text-green-300">
+                              DESCRIPTION
+                            </span>
+                          </div>
+                          <div className="text-sm text-green-200">
+                            {getPassiveDescription(passive.type)}
+                          </div>
+                        </div>
+
+                        {/* Status */}
+                        {passive.equippedBy !== null ? (
+                          <div className="rounded border border-green-600 bg-green-800/30 p-3">
+                            <div className="flex items-center gap-2 text-sm">
+                              <span className="text-green-300">⚡</span>
+                              <span className="font-bold text-green-300">
+                                EQUIPPED
+                              </span>
+                            </div>
+                            <div className="text-sm text-green-200">
+                              <Link
+                                to="/characters/$character-id"
+                                params={{ "character-id": passive.equippedBy }}
+                                className="hover:text-green-100 hover:underline"
+                              >
+                                Character ID: {passive.equippedBy.slice(0, 8)}
+                                ...
+                              </Link>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="rounded border border-slate-600 bg-slate-800/50 p-3">
+                            <div className="flex items-center gap-2 text-sm">
+                              <span className="text-gray-400">📦</span>
+                              <span className="font-bold text-gray-400">
+                                INVENTORY
+                              </span>
+                            </div>
+                            <div className="text-sm text-gray-300">
+                              Ready to equip
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          ) : (
+            <div className="text-center">
+              <div className="mx-auto mb-6 flex h-32 w-32 items-center justify-center rounded-full bg-gradient-to-br from-slate-800 to-slate-900">
+                <span className="text-6xl">🛡️</span>
+              </div>
+              <h3 className="mb-2 text-2xl font-bold text-white">
+                No Passive Skills Yet
+              </h3>
+              <p className="mb-6 text-gray-400">
+                Discover your first passive skill to enhance your abilities!
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
+}
+
+// Helper function to get passive skill descriptions
+function getPassiveDescription(type: string): string {
+  const descriptions: Record<string, string> = {
+    "armor-up": "Increases armor by 20%",
+    "thorn-carapace": "Reflects damage back to attackers",
+    "blessed-fortune": "Increases blessed by 5",
+    bloodfang: "Gains life steal on attacks",
+    soulleech: "Drains mana from enemies",
+    "mystic-flow": "Increases mana regeneration",
+    "vital-wellspring": "Increases health regeneration",
+    "stoneform-resolve": "Gains damage reduction",
+    "titans-resurgence": "Increases strength and vitality",
+    "keen-instincts": "Increases critical hit chance",
+  };
+  return descriptions[type] || "A powerful passive ability";
 }

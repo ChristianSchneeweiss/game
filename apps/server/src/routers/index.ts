@@ -1,10 +1,17 @@
 import { faker } from "@faker-js/faker";
+import { itemFactory } from "@loot-game/game/items/equipment/item-factory";
 import { createSpellFromType } from "@loot-game/game/spells/base/spell-from-type";
 import { SpellTypeSchema } from "@loot-game/game/spells/base/spell-types";
 import { TRPCError } from "@trpc/server";
 import { desc, eq, gt } from "drizzle-orm";
 import { z } from "zod";
-import { TB_activeBattle, TB_spellStats, TB_user } from "../db/schema";
+import {
+  TB_activeBattle,
+  TB_equipmentStats,
+  TB_passivSkillStats,
+  TB_spellStats,
+  TB_user,
+} from "../db/schema";
 import { bmStorage } from "../game-usecases/bm-storage";
 import { createCharacter } from "../game-usecases/character";
 import { EntityFactory } from "../game-usecases/entity-factory";
@@ -128,6 +135,43 @@ export const appRouter = router({
       .where(gt(TB_activeBattle.lastAction, fiveMinsAgo))
       .orderBy(desc(TB_activeBattle.lastAction));
     return battles;
+  }),
+
+  getMyPassiveSkills: protectedProcedure.query(async ({ ctx }) => {
+    const { session, db } = ctx;
+    const passiveSkills = await db
+      .select()
+      .from(TB_passivSkillStats)
+      .where(eq(TB_passivSkillStats.userId, session.id));
+
+    return passiveSkills;
+  }),
+
+  getMyEquipment: protectedProcedure.query(async ({ ctx }) => {
+    const { session, db } = ctx;
+    const equipment = await db
+      .select()
+      .from(TB_equipmentStats)
+      .where(eq(TB_equipmentStats.userId, session.id));
+
+    const characters = await EntityFactory.createCharactersFromUser(
+      session.id,
+      db
+    );
+
+    const equip = equipment.map((equip) => {
+      const character =
+        characters.find((character) => character.id === equip.equippedBy) ??
+        characters[0];
+
+      const items = itemFactory(equip.type, character, equip.id);
+      return {
+        ...equip,
+        item: items,
+      };
+    });
+
+    return equip;
   }),
 });
 

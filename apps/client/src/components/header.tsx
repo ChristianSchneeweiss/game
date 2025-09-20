@@ -2,7 +2,7 @@ import { trpc } from "@/utils/trpc";
 import { UserButton } from "@clerk/clerk-react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { Crown, Home, MapPin, Sparkles, Users } from "lucide-react";
+import { Crown, Home, MapPin, Package, Sparkles, Users } from "lucide-react";
 import { Button } from "./ui/button";
 
 export default function Header() {
@@ -29,7 +29,7 @@ export default function Header() {
             className="flex items-center gap-2 rounded-lg px-3 py-2 text-white transition-colors duration-300 hover:bg-slate-800/50 hover:text-yellow-400"
           >
             <Home className="h-4 w-4" />
-            <span className="font-medium">🏰 Home</span>
+            <span className="font-medium">Home</span>
           </Link>
           <Link
             to="/characters"
@@ -39,7 +39,7 @@ export default function Header() {
             className="flex items-center gap-2 rounded-lg px-3 py-2 text-white transition-colors duration-300 hover:bg-slate-800/50 hover:text-yellow-400"
           >
             <Users className="h-4 w-4" />
-            <span className="font-medium">🧙‍♂️ Characters</span>
+            <span className="font-medium">Characters</span>
           </Link>
           <Link
             to="/spells"
@@ -49,7 +49,17 @@ export default function Header() {
             className="flex items-center gap-2 rounded-lg px-3 py-2 text-white transition-colors duration-300 hover:bg-slate-800/50 hover:text-yellow-400"
           >
             <Sparkles className="h-4 w-4" />
-            <span className="font-medium">🔮 Spells</span>
+            <span className="font-medium">Spells</span>
+          </Link>
+          <Link
+            to="/items"
+            activeProps={{
+              className: "text-yellow-400 font-bold",
+            }}
+            className="flex items-center gap-2 rounded-lg px-3 py-2 text-white transition-colors duration-300 hover:bg-slate-800/50 hover:text-yellow-400"
+          >
+            <Package className="h-4 w-4" />
+            <span className="font-medium">Items</span>
           </Link>
           <Link
             to="/dungeons"
@@ -60,7 +70,7 @@ export default function Header() {
             className="flex items-center gap-2 rounded-lg px-3 py-2 text-white transition-colors duration-300 hover:bg-slate-800/50 hover:text-yellow-400"
           >
             <MapPin className="h-4 w-4" />
-            <span className="font-medium">🗡️ Dungeons</span>
+            <span className="font-medium">Dungeons</span>
           </Link>
         </div>
 
