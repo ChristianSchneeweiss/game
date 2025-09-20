@@ -3,8 +3,12 @@ import z from "zod";
 import {
   applyStatIncrease,
   createCharacter,
+  equipEquipment,
+  equipPassiveSkill,
   equipSpell,
   renameCharacter,
+  unequipEquipment,
+  unequipPassiveSkill,
   unequipSpell,
 } from "../game-usecases/character";
 import { EntityFactory } from "../game-usecases/entity-factory";
@@ -64,6 +68,44 @@ export const characterRouter = router({
     .mutation(async ({ ctx, input }) => {
       const { db } = ctx;
       await unequipSpell(input.spellId, db);
+    }),
+
+  equipPassiveSkill: protectedProcedure
+    .input(z.object({ passiveSkillId: z.string(), characterId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { db, session } = ctx;
+      await equipPassiveSkill(
+        input.characterId,
+        input.passiveSkillId,
+        session.id,
+        db
+      );
+    }),
+
+  unequipPassiveSkill: protectedProcedure
+    .input(z.object({ passiveSkillId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { db, session } = ctx;
+      await unequipPassiveSkill(input.passiveSkillId, session.id, db);
+    }),
+
+  equipEquipment: protectedProcedure
+    .input(z.object({ equipmentId: z.string(), characterId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { db, session } = ctx;
+      await equipEquipment(
+        input.characterId,
+        input.equipmentId,
+        session.id,
+        db
+      );
+    }),
+
+  unequipEquipment: protectedProcedure
+    .input(z.object({ equipmentId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { db, session } = ctx;
+      await unequipEquipment(input.equipmentId, session.id, db);
     }),
 
   renameCharacter: protectedProcedure

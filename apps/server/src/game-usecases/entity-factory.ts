@@ -56,7 +56,6 @@ export class EntityFactory {
   }
 
   static async createCharacter(id: string, db: Database): Promise<Character> {
-    console.log("createCharacter", id);
     const rows = await db
       .select({
         character: TB_character,
@@ -113,7 +112,7 @@ export class EntityFactory {
       );
 
     baseEntity.equipped = equipmentStats.reduce((acc, equip) => {
-      const equipment = itemFactory(equip.type, baseEntity, baseEntity.id);
+      const equipment = itemFactory(equip.type, baseEntity, equip.id);
       acc[equipment.equipmentSlot] = equipment;
       return acc;
     }, {} as Equipped);

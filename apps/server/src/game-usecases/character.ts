@@ -1,4 +1,5 @@
 import type { EntityAttributes } from "@loot-game/game/entity-types";
+import { itemFactory } from "@loot-game/game/items/equipment/item-factory";
 import {
   statPointsReceived,
   xpNeededForLevelUp,
@@ -6,7 +7,14 @@ import {
 import { eq } from "drizzle-orm";
 import type { PgTransaction } from "drizzle-orm/pg-core";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import { TB_character, TB_spellStats } from "../db/schema";
+import {
+  TB_character,
+  TB_equipmentStats,
+  TB_passivSkillStats,
+  TB_spellStats,
+  type Database,
+} from "../db/schema";
+import { EntityFactory } from "./entity-factory";
 
 export const createCharacter = async (
   name: string,
@@ -81,6 +89,106 @@ export const unequipSpell = async (spellId: string, db: PostgresJsDatabase) => {
     .update(TB_spellStats)
     .set({ equippedBy: null })
     .where(eq(TB_spellStats.id, spellId));
+};
+
+export const equipPassiveSkill = async (
+  characterId: string,
+  passiveSkillId: string,
+  userId: string,
+  db: Database
+) => {
+  await db.transaction(async (tx) => {
+    const [passiveSkill] = await tx
+      .select()
+      .from(TB_passivSkillStats)
+      .where(eq(TB_passivSkillStats.id, passiveSkillId));
+
+    if (!passiveSkill) throw new Error("Passive skill not found");
+    if (passiveSkill.userId !== userId)
+      throw new Error("Not your passive skill");
+
+    await tx
+      .update(TB_passivSkillStats)
+      .set({ equippedBy: characterId })
+      .where(eq(TB_passivSkillStats.id, passiveSkillId));
+  });
+};
+
+export const unequipPassiveSkill = async (
+  passiveSkillId: string,
+  userId: string,
+  db: Database
+) => {
+  await db.transaction(async (tx) => {
+    const [passiveSkill] = await tx
+      .select()
+      .from(TB_passivSkillStats)
+      .where(eq(TB_passivSkillStats.id, passiveSkillId));
+
+    if (!passiveSkill) throw new Error("Passive skill not found");
+    if (passiveSkill.userId !== userId)
+      throw new Error("Not your passive skill");
+
+    await tx
+      .update(TB_passivSkillStats)
+      .set({ equippedBy: null })
+      .where(eq(TB_passivSkillStats.id, passiveSkillId));
+  });
+};
+
+export const equipEquipment = async (
+  characterId: string,
+  equipmentId: string,
+  userId: string,
+  db: Database
+) => {
+  await db.transaction(async (tx) => {
+    const character = await EntityFactory.createCharacter(characterId, tx);
+    if (character.userId !== userId) throw new Error("Not your character");
+
+    const [equipment] = await tx
+      .select()
+      .from(TB_equipmentStats)
+      .where(eq(TB_equipmentStats.id, equipmentId));
+
+    if (!equipment) throw new Error("Equipment not found");
+    if (equipment.userId !== userId) throw new Error("Not your equipment");
+    const equipmentItem = itemFactory(equipment.type, character, equipmentId);
+
+    const currentItemAtSlot = character.equipped[equipmentItem.equipmentSlot];
+    if (currentItemAtSlot) {
+      await tx
+        .update(TB_equipmentStats)
+        .set({ equippedBy: null })
+        .where(eq(TB_equipmentStats.id, currentItemAtSlot.id));
+    }
+
+    await tx
+      .update(TB_equipmentStats)
+      .set({ equippedBy: characterId })
+      .where(eq(TB_equipmentStats.id, equipmentId));
+  });
+};
+
+export const unequipEquipment = async (
+  equipmentId: string,
+  userId: string,
+  db: Database
+) => {
+  await db.transaction(async (tx) => {
+    const [equipment] = await tx
+      .select()
+      .from(TB_equipmentStats)
+      .where(eq(TB_equipmentStats.id, equipmentId));
+
+    if (!equipment) throw new Error("Equipment not found");
+    if (equipment.userId !== userId) throw new Error("Not your equipment");
+
+    await tx
+      .update(TB_equipmentStats)
+      .set({ equippedBy: null })
+      .where(eq(TB_equipmentStats.id, equipmentId));
+  });
 };
 
 export const applyStatIncrease = async (

@@ -108,6 +108,22 @@ export const registerRecipes = () => {
     },
     "BaseEntity[]"
   );
-
+  superjson.registerCustom<PassiveSkill, any>(
+    {
+      isApplicable: (data): data is PassiveSkill => {
+        return (
+          typeof data === "object" && data !== null && "passiveType" in data
+        );
+      },
+      serialize: (passiveSkill) => {
+        passiveSkill.battleManager = undefined!;
+        return passiveSkill;
+      },
+      deserialize: (data) => {
+        return data;
+      },
+    },
+    "PassiveSkill"
+  );
   superjson.registerClass(Character, { identifier: "Character" });
 };

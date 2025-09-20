@@ -30,6 +30,28 @@ export const CharacterCard = ({ character }: { character: Character }) => {
     }),
   );
 
+  const { mutateAsync: unequipPassiveSkill } = useMutation(
+    trpc.character.unequipPassiveSkill.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries(
+          trpc.character.getCharacter.queryOptions({ id: character.id }),
+        );
+        queryClient.invalidateQueries(trpc.getMyPassiveSkills.queryOptions());
+      },
+    }),
+  );
+
+  const { mutateAsync: unequipEquipment } = useMutation(
+    trpc.character.unequipEquipment.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries(
+          trpc.character.getCharacter.queryOptions({ id: character.id }),
+        );
+        queryClient.invalidateQueries(trpc.getMyEquipment.queryOptions());
+      },
+    }),
+  );
+
   const queryClient = useQueryClient();
   const xpNeeded = xpNeededForLevelUp(character.level);
   const [statToAdd, setStatToAdd] = useState<(keyof EntityAttributes)[]>([]);
@@ -343,37 +365,127 @@ export const CharacterCard = ({ character }: { character: Character }) => {
         </div>
       </div>
 
+      {/* Passive Skills Section */}
+      <div className="mb-4">
+        <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-green-300">
+          <Sparkles className="h-5 w-5" />
+          PASSIVE SKILLS
+        </h3>
+        <div className="grid grid-cols-2 gap-2">
+          {character.passiveSkills.length > 0 ? (
+            character.passiveSkills.map((passive) => (
+              <div
+                className="flex items-center justify-between rounded-lg border border-slate-600 bg-slate-800/50 p-2 transition-all duration-200"
+                key={passive.id}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-sm">🌟</span>
+                  <span className="text-sm font-medium text-white capitalize">
+                    {passive.passiveType}
+                  </span>
+                </div>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-6 w-6 rounded-full bg-red-600/20 text-red-300 hover:bg-red-600/30 hover:text-red-200"
+                  onClick={() =>
+                    unequipPassiveSkill({ passiveSkillId: passive.id })
+                  }
+                >
+                  <XIcon className="h-2 w-2" />
+                </Button>
+              </div>
+            ))
+          ) : (
+            <div className="col-span-2 rounded-lg border border-slate-600 bg-slate-800/50 p-2 text-center text-xs text-gray-400">
+              No passive skills equipped
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Equipment Section */}
+      <div className="mb-4">
+        <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-amber-300">
+          <Shield className="h-5 w-5" />
+          EQUIPMENT
+        </h3>
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            { slot: "WEAPON", icon: "⚔️", label: "Weapon" },
+            { slot: "ARMOR", icon: "🛡️", label: "Armor" },
+            { slot: "RING", icon: "💍", label: "Ring" },
+            { slot: "AMULET", icon: "🔮", label: "Amulet" },
+            { slot: "BOOTS", icon: "👢", label: "Boots" },
+            { slot: "GLOVES", icon: "🧤", label: "Gloves" },
+            { slot: "HELMET", icon: "⛑️", label: "Helmet" },
+            { slot: "CLOAK", icon: "🧥", label: "Cloak" },
+            { slot: "BELT", icon: "🪢", label: "Belt" },
+          ].map(({ slot, icon, label }) => {
+            const equipment =
+              character.equipped[slot as keyof typeof character.equipped];
+            return (
+              <div
+                className="rounded-lg border border-slate-600 bg-slate-800/50 p-2 transition-all duration-200"
+                key={slot}
+              >
+                <div className="flex flex-col items-center gap-1">
+                  <span className="text-2xl">{icon}</span>
+                  <span className="text-xs font-medium text-gray-300">
+                    {label}
+                  </span>
+                  {equipment ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <p className="text-sm font-bold text-white">
+                        {equipment.name}
+                      </p>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="mt-1 h-5 w-5 rounded-full bg-red-600/20 text-red-300 hover:bg-red-600/30 hover:text-red-200"
+                        onClick={() =>
+                          unequipEquipment({ equipmentId: equipment.id })
+                        }
+                      >
+                        <XIcon className="h-2 w-2" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="text-xs text-gray-500">Empty</div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Spells Section */}
       <div>
         <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-purple-300">
           <Sparkles className="h-5 w-5" />
           EQUIPPED SPELLS
         </h3>
-        <div className="space-y-2">
+        <div className="grid grid-cols-2 gap-2">
           {character.spells.map((spell) => (
             <div
-              className="flex items-center justify-between rounded-lg border border-slate-600 bg-slate-800/50 p-3 transition-all duration-200"
+              className="flex items-center justify-between rounded-lg border border-slate-600 bg-slate-800/50 p-2 transition-all duration-200"
               key={spell.config.id}
             >
-              <div className="flex items-center gap-3">
-                <span className="text-lg">⚡</span>
-                <div>
-                  <span className="font-medium text-white capitalize">
-                    {spell.config.name}
-                  </span>
-                  <div className="font-mono text-xs text-gray-400">
-                    {spell.config.id.slice(0, 8)}...
-                  </div>
-                </div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm">⚡</span>
+                <span className="text-sm font-medium text-white capitalize">
+                  {spell.config.name}
+                </span>
               </div>
               {spell.config.type !== "basic-attack" && (
                 <Button
                   size="icon"
                   variant="ghost"
-                  className="h-8 w-8 rounded-full bg-red-600/20 text-red-300 hover:bg-red-600/30 hover:text-red-200"
+                  className="h-6 w-6 rounded-full bg-red-600/20 text-red-300 hover:bg-red-600/30 hover:text-red-200"
                   onClick={() => unequipSpell({ spellId: spell.config.id })}
                 >
-                  <XIcon className="h-3 w-3" />
+                  <XIcon className="h-2 w-2" />
                 </Button>
               )}
             </div>
