@@ -14,6 +14,7 @@ export class VerdantSmiteSpell extends DamageEffectSpell {
         manaCost: 25,
         cooldown: 3,
         targetType: { enemies: 1, allies: 0 },
+        tier: "A",
       },
       new MinMaxDamageModule("MAGICAL", {
         min: 18,

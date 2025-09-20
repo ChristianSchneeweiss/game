@@ -64,11 +64,20 @@ function RouteComponent() {
                       <span className="text-muted-foreground">(Spell)</span>
                     </span>
                   )}
-                  {item.type !== "SPELL" && (
+                  {item.type === "ITEM" && (
                     <span>
                       <span className="rounded bg-muted px-2 py-0.5 font-mono">
-                        {item.type}
-                      </span>
+                        {item.data.itemType}
+                      </span>{" "}
+                      <span className="text-muted-foreground">(Item)</span>
+                    </span>
+                  )}
+                  {item.type === "PASSIVE" && (
+                    <span>
+                      <span className="rounded bg-muted px-2 py-0.5 font-mono">
+                        {item.data.passiveType}
+                      </span>{" "}
+                      <span className="text-muted-foreground">(Passive)</span>
                     </span>
                   )}
                 </li>

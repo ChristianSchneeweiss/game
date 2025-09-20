@@ -1,9 +1,15 @@
+import type { ItemType } from "@loot-game/game/items/item-types";
+import type { PassiveType } from "@loot-game/game/passive-skills/base/passive-types";
 import type { SpellType } from "@loot-game/game/spells/base/spell-types";
 import type { Loot, LootEntity } from "@loot-game/game/types";
 import { and, eq } from "drizzle-orm";
-import type { PgTransaction } from "drizzle-orm/pg-core";
 import type seedrandom from "seedrandom";
-import { TB_loot, type Database } from "../db/schema";
+import {
+  TB_equipmentStats,
+  TB_loot,
+  TB_passivSkillStats,
+  type Database,
+} from "../db/schema";
 import { createSpellInTransaction } from "./spell-factory";
 
 export class LootManager {
@@ -38,18 +44,35 @@ export class LootManager {
         if (item.type === "SPELL") {
           await this.claimSpell(this.userId, item.data.spellType, tx);
         }
+        if (item.type === "ITEM") {
+          await this.claimItem(this.userId, item.data.itemType, tx);
+        }
+        if (item.type === "PASSIVE") {
+          await this.claimPassive(this.userId, item.data.passiveType, tx);
+        }
       }
 
       await tx.delete(TB_loot).where(eq(TB_loot.id, lootId));
     });
   }
 
-  private async claimSpell(
-    userId: string,
-    type: SpellType,
-    tx: PgTransaction<any, any, any>
-  ) {
+  private async claimSpell(userId: string, type: SpellType, tx: Database) {
     await createSpellInTransaction(userId, type, tx);
+  }
+
+  private async claimItem(userId: string, type: ItemType, tx: Database) {
+    await tx.insert(TB_equipmentStats).values({
+      userId,
+      type,
+      slot: "ARMOR",
+    });
+  }
+
+  private async claimPassive(userId: string, type: PassiveType, tx: Database) {
+    await tx.insert(TB_passivSkillStats).values({
+      userId,
+      type,
+    });
   }
 
   async getLoot() {

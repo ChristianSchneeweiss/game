@@ -2,7 +2,7 @@ import { faker } from "@faker-js/faker";
 import type { EnemyType } from "@loot-game/game/enemies/base/enemy-types";
 import type { Team } from "@loot-game/game/entity-types";
 import type { EquipmentSlot } from "@loot-game/game/items/equipment/equipment";
-import type { EquipmentType } from "@loot-game/game/items/equipment/equipment-types";
+import type { ItemType } from "@loot-game/game/items/item-types";
 import type { PassiveType } from "@loot-game/game/passive-skills/base/passive-types";
 import type { SpellType } from "@loot-game/game/spells/base/spell-types";
 import type { EventTypes } from "@loot-game/game/timeline-events";
@@ -93,7 +93,7 @@ export const TB_equipmentStats = pgTable("equipment_stats", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => id()),
-  type: text("type").$type<EquipmentType>().notNull(),
+  type: text("type").$type<ItemType>().notNull(),
   slot: text("slot").$type<EquipmentSlot>().notNull(),
   equippedBy: text("equipped_by").references(() => TB_character.id),
   userId: text("user_id")

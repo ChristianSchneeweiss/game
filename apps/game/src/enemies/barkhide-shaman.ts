@@ -19,22 +19,6 @@ export class BarkhideShaman extends BaseEnemy {
       },
       xp: 25,
       loot: {
-        items: [
-          {
-            type: "SPELL",
-            data: {
-              spellType: "stone-bark",
-            },
-            dropRate: 0.06,
-          },
-          {
-            type: "SPELL",
-            data: {
-              spellType: "splinter-shot",
-            },
-            dropRate: 0.2,
-          },
-        ],
         gold: 20,
       },
       spells: ["stone-bark", "splinter-shot", "basic-attack"],

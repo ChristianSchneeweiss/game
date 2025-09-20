@@ -12,6 +12,7 @@ export class OceanBlessingSpell extends HealingSpell {
         manaCost: 20,
         cooldown: 3,
         targetType: { allies: 1, enemies: 0 },
+        tier: "A",
       },
       new HealModule({
         min: 15,

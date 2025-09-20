@@ -19,15 +19,6 @@ export class RottingCorpse extends BaseEnemy {
       },
       xp: 20,
       loot: {
-        items: [
-          {
-            type: "SPELL",
-            data: {
-              spellType: "festering-blow",
-            },
-            dropRate: 0.2,
-          },
-        ],
         gold: 20,
       },
       spells: ["festering-blow", "basic-attack"],

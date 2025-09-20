@@ -1,7 +1,7 @@
-import type { Entity } from "../../entity-types";
 import type { BattleManager } from "../../battle-types";
+import type { Entity } from "../../entity-types";
 import type { TimelineEvent } from "../../timeline-events";
-import type { DamageType, Effect } from "../../types";
+import type { DamageType, Effect, Tier } from "../../types";
 import type { PassiveSkill, PassiveType } from "./passive-types";
 
 export abstract class BasePassive implements PassiveSkill {
@@ -13,15 +13,18 @@ export abstract class BasePassive implements PassiveSkill {
   spellSourceId: string;
   battleManager: BattleManager;
   passiveType: PassiveType;
+  tier: Tier;
 
   constructor({
     holder,
     id,
     passiveType,
+    tier,
   }: {
     id: string;
     holder: Entity;
     passiveType: PassiveType;
+    tier: Tier;
   }) {
     this.id = id;
     this.sourceId = holder.id;
@@ -29,6 +32,7 @@ export abstract class BasePassive implements PassiveSkill {
     this.spellSourceId = holder.id;
     this.battleManager = undefined!;
     this.passiveType = passiveType;
+    this.tier = tier;
   }
 
   getDescription(): string {

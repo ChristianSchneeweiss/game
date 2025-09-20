@@ -19,22 +19,6 @@ export class FishfolkScout extends BaseEnemy {
       },
       xp: 25,
       loot: {
-        items: [
-          {
-            type: "SPELL",
-            data: {
-              spellType: "rupture",
-            },
-            dropRate: 0.06,
-          },
-          {
-            type: "SPELL",
-            data: {
-              spellType: "crude-strike",
-            },
-            dropRate: 0.2,
-          },
-        ],
         gold: 25,
       },
       spells: ["rupture", "crude-strike", "basic-attack"],

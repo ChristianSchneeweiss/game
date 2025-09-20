@@ -16,6 +16,7 @@ export class VitalStrikeSpell extends BaseSpell {
       manaCost: 0,
       cooldown: 2,
       targetType: { enemies: 1, allies: 0 },
+      tier: "A",
     });
     this.damageModule = new MinMaxDamageModule("PHYSICAL", {
       min: 10,

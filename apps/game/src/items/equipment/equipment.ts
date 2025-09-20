@@ -9,9 +9,9 @@ import type {
   TurnLifecycleHooks,
 } from "../../lifecycle-hooks";
 import type { TimelineEvent } from "../../timeline-events";
-import type { AttributeModifier, Effect } from "../../types";
+import type { AttributeModifier, Effect, Tier } from "../../types";
 import { BaseItem } from "../base.item";
-import type { EquipmentType } from "./equipment-types";
+import type { ItemType } from "../item-types";
 
 export type EquipmentSlot = keyof Equipped;
 
@@ -22,7 +22,8 @@ export interface EquipmentParams {
   equipmentSlot: EquipmentSlot;
   modifiers?: AttributeModifier[];
   holderId: string;
-  equipmentType: EquipmentType;
+  itemType: ItemType;
+  tier: Tier;
 }
 
 export class Equipment
@@ -33,7 +34,6 @@ export class Equipment
   modifiers: AttributeModifier[];
   holderId: string;
   battleManager: BattleManager;
-  equipmentType: EquipmentType;
 
   constructor({
     id,
@@ -42,14 +42,14 @@ export class Equipment
     equipmentSlot,
     modifiers,
     holderId,
-    equipmentType,
+    itemType,
+    tier,
   }: EquipmentParams) {
-    super(id, name, description);
+    super(id, name, description, tier, itemType);
     this.equipmentSlot = equipmentSlot;
     this.modifiers = modifiers ?? [];
     this.holderId = holderId;
     this.battleManager = undefined!;
-    this.equipmentType = equipmentType;
   }
 
   beforeTakingDamage(args: DamageHookArgs): number {

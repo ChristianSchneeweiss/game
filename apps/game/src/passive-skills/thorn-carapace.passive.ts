@@ -4,7 +4,7 @@ import { BasePassive } from "./base/base.passive";
 
 export class ThornCarapacePassive extends BasePassive {
   constructor({ holder, id }: { id: string; holder: Entity }) {
-    super({ holder, id, passiveType: "thorn-carapace" });
+    super({ holder, id, passiveType: "thorn-carapace", tier: "B" });
   }
 
   beforeTakingDamage(args: DamageHookArgs): number {

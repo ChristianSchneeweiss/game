@@ -11,6 +11,7 @@ export class BasicAttackSpell extends DamageSpell {
         manaCost: 0,
         cooldown: 0,
         targetType: { enemies: 1, allies: 0 },
+        tier: "A",
       },
       new MinMaxDamageModule("PHYSICAL", {
         min: 0,

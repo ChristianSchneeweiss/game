@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { Effect } from "../../types";
+import type { Effect, Tier } from "../../types";
 
 export const PassiveTypeSchema = z.union([
   z.literal("armor-up"),
@@ -18,4 +18,5 @@ export type PassiveType = z.infer<typeof PassiveTypeSchema>;
 
 export interface PassiveSkill extends Effect {
   passiveType: PassiveType;
+  tier: Tier;
 }

@@ -19,15 +19,6 @@ export class StormHatchling extends BaseEnemy {
       },
       xp: 20,
       loot: {
-        items: [
-          {
-            type: "SPELL",
-            data: {
-              spellType: "staggering-jab",
-            },
-            dropRate: 0.2,
-          },
-        ],
         gold: 20,
       },
       spells: ["staggering-jab", "basic-attack"],

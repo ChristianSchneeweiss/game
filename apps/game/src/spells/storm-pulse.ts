@@ -17,6 +17,7 @@ export class StormPulseSpell extends BaseSpell {
       manaCost: 25,
       cooldown: 3,
       targetType: { enemies: 0, allies: 0 },
+      tier: "A",
     });
     this.damageModule = new MinMaxDamageModule("PHYSICAL", {
       min: 5,

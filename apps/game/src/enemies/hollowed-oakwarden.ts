@@ -19,22 +19,6 @@ export class HollowedOakwarden extends BaseEnemy {
       },
       xp: 100, // Boss enemy, higher XP
       loot: {
-        items: [
-          {
-            type: "SPELL",
-            data: {
-              spellType: "verdant-smite",
-            },
-            dropRate: 0.01,
-          },
-          {
-            type: "SPELL",
-            data: {
-              spellType: "natures-embrace",
-            },
-            dropRate: 0.01,
-          },
-        ],
         gold: 150, // Boss enemy, higher gold
       },
       spells: [

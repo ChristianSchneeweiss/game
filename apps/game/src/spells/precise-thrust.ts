@@ -11,6 +11,7 @@ export class PreciseThrustSpell extends DamageSpell {
         manaCost: 5,
         cooldown: 1,
         targetType: { enemies: 1, allies: 0 },
+        tier: "A",
       },
       new MinMaxDamageModule("PHYSICAL", {
         min: 6,

@@ -14,6 +14,7 @@ export class RootgraspSpell extends DamageEffectSpell {
         manaCost: 15,
         cooldown: 4,
         targetType: { enemies: Infinity, allies: 0 },
+        tier: "A",
       },
       new MinMaxDamageModule("MAGICAL", {
         min: 8,

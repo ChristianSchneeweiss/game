@@ -8,7 +8,7 @@ export class TitansResurgencePassive extends BasePassive {
   healingPerRoundPercentage = 0.075;
 
   constructor({ holder, id }: { id: string; holder: Entity }) {
-    super({ holder, id, passiveType: "titans-resurgence" });
+    super({ holder, id, passiveType: "titans-resurgence", tier: "S" });
   }
 
   onPreRound(): void {

@@ -4,7 +4,7 @@ import { BasePassive } from "./base/base.passive";
 
 export class BlessedFortunePassive extends BasePassive {
   constructor({ holder, id }: { id: string; holder: Entity }) {
-    super({ holder, id, passiveType: "blessed-fortune" });
+    super({ holder, id, passiveType: "blessed-fortune", tier: "S" });
   }
 
   onApply(): void {

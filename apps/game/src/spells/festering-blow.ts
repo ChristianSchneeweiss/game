@@ -14,6 +14,7 @@ export class FesteringBlowSpell extends DamageEffectSpell {
         manaCost: 0,
         cooldown: 2,
         targetType: { enemies: Infinity, allies: 0 },
+        tier: "A",
       },
       new MinMaxDamageModule("PHYSICAL", {
         min: 8,

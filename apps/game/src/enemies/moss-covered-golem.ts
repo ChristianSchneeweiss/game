@@ -19,22 +19,6 @@ export class MossCoveredGolem extends BaseEnemy {
       },
       xp: 30,
       loot: {
-        items: [
-          {
-            type: "SPELL",
-            data: {
-              spellType: "crushing-blow",
-            },
-            dropRate: 0.1,
-          },
-          {
-            type: "SPELL",
-            data: {
-              spellType: "crude-strike",
-            },
-            dropRate: 0.1,
-          },
-        ],
         gold: 25,
       },
       spells: ["crushing-blow", "crude-strike", "basic-attack"],

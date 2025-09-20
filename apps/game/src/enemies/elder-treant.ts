@@ -19,22 +19,6 @@ export class ElderTreant extends BaseEnemy {
       },
       xp: 50,
       loot: {
-        items: [
-          {
-            type: "SPELL",
-            data: {
-              spellType: "rootgrasp",
-            },
-            dropRate: 0.03,
-          },
-          {
-            type: "SPELL",
-            data: {
-              spellType: "crushing-blow",
-            },
-            dropRate: 0.1,
-          },
-        ],
         gold: 75,
       },
       spells: ["rootgrasp", "crushing-blow", "basic-attack"],

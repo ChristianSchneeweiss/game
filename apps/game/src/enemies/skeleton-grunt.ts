@@ -19,7 +19,6 @@ export class SkeletonGrunt extends BaseEnemy {
       },
       xp: 20,
       loot: {
-        items: [],
         gold: 20,
       },
       spells: ["crude-strike"],

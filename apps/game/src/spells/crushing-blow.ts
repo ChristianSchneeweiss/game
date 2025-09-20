@@ -14,6 +14,7 @@ export class CrushingBlowSpell extends DamageEffectSpell {
         manaCost: 0,
         cooldown: 2,
         targetType: { enemies: 1, allies: 0 },
+        tier: "A",
       },
       new MinMaxDamageModule("PHYSICAL", {
         min: 8,

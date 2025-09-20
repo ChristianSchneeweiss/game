@@ -2,7 +2,7 @@ import { Character } from "@loot-game/game/base-entity";
 import type { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
 import type { EnemyType } from "@loot-game/game/enemies/base/enemy-types";
 import type { Equipped } from "@loot-game/game/entity-types";
-import { equipmentFactory } from "@loot-game/game/items/equipment/equipment-factory";
+import { itemFactory } from "@loot-game/game/items/equipment/item-factory";
 import { passiveSkillFactory } from "@loot-game/game/passive-skills/base/passive-skill.factory";
 import { createSpellFromType } from "@loot-game/game/spells/base/spell-from-type";
 import { BasicAttackSpell } from "@loot-game/game/spells/basic-attack";
@@ -113,7 +113,7 @@ export class EntityFactory {
       );
 
     baseEntity.equipped = equipmentStats.reduce((acc, equip) => {
-      const equipment = equipmentFactory(equip.type, baseEntity, baseEntity.id);
+      const equipment = itemFactory(equip.type, baseEntity, baseEntity.id);
       acc[equipment.equipmentSlot] = equipment;
       return acc;
     }, {} as Equipped);

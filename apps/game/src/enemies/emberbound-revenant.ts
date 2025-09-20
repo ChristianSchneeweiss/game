@@ -19,22 +19,6 @@ export class EmberboundRevenant extends BaseEnemy {
       },
       xp: 100, // Higher XP for mini-boss
       loot: {
-        items: [
-          {
-            type: "SPELL",
-            data: {
-              spellType: "charred-chains",
-            },
-            dropRate: 0.1,
-          },
-          {
-            type: "SPELL",
-            data: {
-              spellType: "soulflare",
-            },
-            dropRate: 0.06,
-          },
-        ],
         gold: 100, // Higher gold for mini-boss
       },
       spells: ["charred-chains", "soulflare", "basic-attack"],

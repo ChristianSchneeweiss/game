@@ -12,6 +12,7 @@ export class TidepiercerThrustSpell extends DamageSpell {
         manaCost: 25,
         cooldown: 3,
         targetType: { enemies: 1, allies: 0 },
+        tier: "A",
       },
       new MinMaxDamageModule("PHYSICAL", {
         min: 20,

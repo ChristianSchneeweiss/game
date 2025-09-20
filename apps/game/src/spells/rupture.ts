@@ -14,6 +14,7 @@ export class RuptureSpell extends DamageEffectSpell {
         manaCost: 0,
         cooldown: 1,
         targetType: { enemies: 1, allies: 0 },
+        tier: "A",
       },
       new MinMaxDamageModule("PHYSICAL", {
         min: 8,

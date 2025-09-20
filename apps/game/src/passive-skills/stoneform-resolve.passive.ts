@@ -8,7 +8,7 @@ export class StoneformResolvePassive extends BasePassive {
   max = 15;
 
   constructor({ holder, id }: { id: string; holder: Entity }) {
-    super({ holder, id, passiveType: "stoneform-resolve" });
+    super({ holder, id, passiveType: "stoneform-resolve", tier: "A" });
   }
 
   onPostRound(): void {

@@ -13,6 +13,7 @@ export class BattleRoarSpell extends ApplyStatusSpell {
         manaCost: 15,
         cooldown: 3,
         targetType: { allies: 0, enemies: 1 },
+        tier: "A",
       },
       new EffectModule(() => new StunEffect(1)),
       0.6

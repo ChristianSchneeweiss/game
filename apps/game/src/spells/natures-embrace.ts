@@ -12,6 +12,7 @@ export class NaturesEmbrace extends HealingSpell {
         manaCost: 35,
         cooldown: 4,
         targetType: { allies: Infinity, enemies: 0 },
+        tier: "A",
       },
       new HealModule({
         min: 15,

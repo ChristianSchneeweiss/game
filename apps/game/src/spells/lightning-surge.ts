@@ -14,6 +14,7 @@ export class LightningSurgeSpell extends DamageEffectSpell {
         manaCost: 50,
         cooldown: 3,
         targetType: { enemies: Infinity, allies: 0 },
+        tier: "A",
       },
       new MinMaxDamageModule("MAGICAL", {
         min: 15,

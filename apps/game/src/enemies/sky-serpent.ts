@@ -19,22 +19,6 @@ export class SkySerpent extends BaseEnemy {
       },
       xp: 50, // Higher XP for mini-boss
       loot: {
-        items: [
-          {
-            type: "SPELL",
-            data: {
-              spellType: "storm-pulse",
-            },
-            dropRate: 0.06,
-          },
-          {
-            type: "SPELL",
-            data: {
-              spellType: "battle-roar",
-            },
-            dropRate: 0.06,
-          },
-        ],
         gold: 75, // Higher gold for mini-boss
       },
       spells: ["storm-pulse", "battle-roar", "festering-blow", "basic-attack"],

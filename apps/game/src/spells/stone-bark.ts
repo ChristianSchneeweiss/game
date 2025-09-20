@@ -14,6 +14,7 @@ export class StoneBarkSpell extends ApplyStatusSpell {
         manaCost: 10,
         cooldown: 3,
         targetType: { allies: 0, enemies: 0 },
+        tier: "A",
       },
       new EffectModule(
         () =>

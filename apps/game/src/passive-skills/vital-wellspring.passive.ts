@@ -4,7 +4,7 @@ import { BasePassive } from "./base/base.passive";
 
 export class VitalWellspringPassive extends BasePassive {
   constructor({ holder, id }: { id: string; holder: Entity }) {
-    super({ holder, id, passiveType: "vital-wellspring" });
+    super({ holder, id, passiveType: "vital-wellspring", tier: "C" });
   }
 
   onApply(): void {

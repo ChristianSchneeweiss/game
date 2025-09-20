@@ -19,22 +19,6 @@ export class AshenSkeleton extends BaseEnemy {
       },
       xp: 20,
       loot: {
-        items: [
-          {
-            type: "SPELL",
-            data: {
-              spellType: "splinter-shot",
-            },
-            dropRate: 0.2,
-          },
-          {
-            type: "SPELL",
-            data: {
-              spellType: "crude-strike",
-            },
-            dropRate: 0.2,
-          },
-        ],
         gold: 20,
       },
       spells: ["splinter-shot", "crude-strike", "basic-attack"],

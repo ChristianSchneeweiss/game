@@ -8,13 +8,14 @@ import type {
   Team,
 } from "../../entity-types";
 import type { Equipment } from "../../items/equipment/equipment";
-import { equipmentFactory } from "../../items/equipment/equipment-factory";
-import type { EquipmentType } from "../../items/equipment/equipment-types";
+import { itemFactory } from "../../items/equipment/item-factory";
+import type { ItemType } from "../../items/item-types";
 import { passiveSkillFactory } from "../../passive-skills/base/passive-skill.factory";
 import type { PassiveType } from "../../passive-skills/base/passive-types";
 import { createSpellFromType } from "../../spells/base/spell-from-type";
 import type { SpellType } from "../../spells/base/spell-types";
-import type { Loot, Spell } from "../../types";
+import type { Loot, LootEntity, Spell } from "../../types";
+import { defaultSpellDropRate } from "../../utils/loot";
 import { uniqueRandomFromArray } from "../../utils/random-in-array";
 import type { EnemyType } from "./enemy-types";
 
@@ -29,10 +30,10 @@ type EnemyParams = {
   baseSpecialAttributes?: Partial<SpecialAttributes>;
   baseAffinities?: Partial<Affinities>;
   xp: number;
-  loot: Loot;
+  loot: { gold: number; items?: LootEntity[] };
   spells: SpellType[];
   passiveSkills?: PassiveType[];
-  equipment?: EquipmentType[];
+  equipment?: ItemType[];
 };
 
 export class BaseEnemy extends BaseEntity {
@@ -59,10 +60,14 @@ export class BaseEnemy extends BaseEntity {
     super(id, name, team, maxHealth, maxMana, baseAttributes);
     this.type = type;
     this.xp = xp;
-    this.loot = loot;
+    this.loot = {
+      gold: loot.gold,
+      items:
+        loot.items ??
+        defaultSpellDropRate(spells.filter((s) => s !== "basic-attack")),
+    };
     const equipments: Equipment[] =
-      equipment?.map((equipment) => equipmentFactory(equipment, this, id)) ??
-      [];
+      equipment?.map((equipment) => itemFactory(equipment, this, id)) ?? [];
     this.equipped = equipments.reduce((acc, equipment) => {
       acc[equipment.equipmentSlot] = equipment;
       return acc;

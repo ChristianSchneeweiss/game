@@ -1,12 +1,10 @@
 import type { SpellType } from "@loot-game/game/spells/base/spell-types";
-import type { PgTransaction } from "drizzle-orm/pg-core";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import { TB_spellStats } from "../db/schema";
+import { TB_spellStats, type Database } from "../db/schema";
 
 export const createSpell = async (
   userId: string,
   type: SpellType,
-  db: PostgresJsDatabase
+  db: Database
 ) => {
   await db.insert(TB_spellStats).values({
     userId,
@@ -17,7 +15,7 @@ export const createSpell = async (
 export const createSpellInTransaction = async (
   userId: string,
   type: SpellType,
-  tx: PgTransaction<any, any, any>
+  tx: Database
 ) => {
   await tx.insert(TB_spellStats).values({
     userId,

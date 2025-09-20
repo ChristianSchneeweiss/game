@@ -5,8 +5,9 @@ import { Equipment } from "./equipment";
 export class IntArmor extends Equipment {
   constructor({ holder, id }: { id: string; holder: Entity }) {
     super({
-      equipmentType: "int-armor",
+      itemType: "int-armor",
       holderId: holder.id,
+      tier: "E",
       id,
       equipmentSlot: "ARMOR",
       name: "Int Armor",

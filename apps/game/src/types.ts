@@ -1,15 +1,19 @@
 import z from "zod";
+import type { BattleManager } from "./battle-types";
 import type { AllAttributeKeys, Entity } from "./entity-types";
+import { ItemTypeSchema } from "./items/item-types";
 import type {
   InteractionHooks,
   RoundLifecycleHooks,
   TurnLifecycleHooks,
 } from "./lifecycle-hooks";
-import type { BattleManager } from "./battle-types";
+import { PassiveTypeSchema } from "./passive-skills/base/passive-types";
 import { SpellTypeSchema, type SpellType } from "./spells/base/spell-types";
 import type { SpellCastEvent } from "./timeline-events";
 
 export type DamageType = "PHYSICAL" | "MAGICAL";
+
+export type Tier = "E" | "D" | "C" | "B" | "A" | "S";
 
 export type EffectType =
   | "BUFF"
@@ -81,6 +85,7 @@ export interface SpellConfig {
   manaCost: number;
   cooldown: number;
   targetType: TargetType;
+  tier: Tier;
 }
 
 export interface Loot {
@@ -88,12 +93,34 @@ export interface Loot {
   gold: number;
 }
 
-export const LootEntitySchema = z.object({
-  type: z.enum(["SPELL"]),
+const SpellLootEntitySchema = z.object({
+  type: z.literal("SPELL"),
   dropRate: z.number(),
   data: z.object({
     spellType: SpellTypeSchema,
   }),
 });
+
+const ItemLootEntitySchema = z.object({
+  type: z.literal("ITEM"),
+  dropRate: z.number(),
+  data: z.object({
+    itemType: ItemTypeSchema,
+  }),
+});
+
+const PassiveLootEntitySchema = z.object({
+  type: z.literal("PASSIVE"),
+  dropRate: z.number(),
+  data: z.object({
+    passiveType: PassiveTypeSchema,
+  }),
+});
+
+export const LootEntitySchema = z.union([
+  SpellLootEntitySchema,
+  ItemLootEntitySchema,
+  PassiveLootEntitySchema,
+]);
 
 export type LootEntity = z.infer<typeof LootEntitySchema>;

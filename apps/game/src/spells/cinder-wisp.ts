@@ -11,6 +11,7 @@ export class CinderWispSpell extends DamageSpell {
         manaCost: 10,
         cooldown: 1,
         targetType: { enemies: 1, allies: 0 },
+        tier: "A",
       },
       new MinMaxDamageModule("MAGICAL", {
         min: 6,

@@ -20,6 +20,7 @@ export class VoltLashSpell extends BaseSpell {
       manaCost: 35,
       cooldown: 4,
       targetType: { enemies: 0, allies: 0 },
+      tier: "A",
     });
     this.damageModule = new MinMaxDamageModule("MAGICAL", {
       min: 8,

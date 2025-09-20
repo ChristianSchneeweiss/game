@@ -16,6 +16,7 @@ export class SoulflareSpell extends BaseSpell {
       manaCost: 40,
       cooldown: 4,
       targetType: { enemies: 1, allies: 0 },
+      tier: "A",
     });
     this.damageModule = new MinMaxDamageModule("MAGICAL", {
       min: 25,

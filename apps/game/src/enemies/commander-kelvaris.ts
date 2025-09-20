@@ -19,22 +19,6 @@ export class CommanderKelvaris extends BaseEnemy {
       },
       xp: 150, // Boss XP reward
       loot: {
-        items: [
-          {
-            type: "SPELL",
-            data: {
-              spellType: "torrent-spiral",
-            },
-            dropRate: 0.01,
-          },
-          {
-            type: "SPELL",
-            data: {
-              spellType: "tidepiercer-thrust",
-            },
-            dropRate: 0.01,
-          },
-        ],
         gold: 100,
       },
       spells: [

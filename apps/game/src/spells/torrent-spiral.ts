@@ -14,6 +14,7 @@ export class TorrentSpiralSpell extends DamageEffectSpell {
         manaCost: 35,
         cooldown: 4,
         targetType: { enemies: Infinity, allies: 0 },
+        tier: "A",
       },
       new MinMaxDamageModule("PHYSICAL", {
         min: 10,

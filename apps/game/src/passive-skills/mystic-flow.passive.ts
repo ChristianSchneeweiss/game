@@ -4,7 +4,7 @@ import { BasePassive } from "./base/base.passive";
 
 export class MysticFlowPassive extends BasePassive {
   constructor({ holder, id }: { id: string; holder: Entity }) {
-    super({ holder, id, passiveType: "mystic-flow" });
+    super({ holder, id, passiveType: "mystic-flow", tier: "C" });
   }
 
   onApply(): void {

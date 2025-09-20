@@ -15,6 +15,7 @@ export class CrudeStrikeSpell extends DamageEffectSpell {
         manaCost: 0,
         cooldown: 0,
         targetType: { enemies: 1, allies: 0 },
+        tier: "A",
       },
       new MinMaxDamageModule("PHYSICAL", {
         min: 6,

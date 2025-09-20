@@ -12,6 +12,7 @@ export class StreamOfLifeSpell extends HealingSpell {
         manaCost: 25,
         cooldown: 4,
         targetType: { allies: 0, enemies: 0 },
+        tier: "A",
       },
       new HealModule({
         min: 12,

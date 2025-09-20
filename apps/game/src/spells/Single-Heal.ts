@@ -12,6 +12,7 @@ export class SingleHealSpell extends HealingSpell {
         manaCost: 10,
         cooldown: 2,
         targetType: { allies: 1, enemies: 0 },
+        tier: "A",
       },
       new HealModule({
         min: 5,

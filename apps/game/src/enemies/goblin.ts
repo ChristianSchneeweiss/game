@@ -9,7 +9,7 @@ export class Goblin extends BaseEnemy {
       type: "goblin",
       name: "Goblin",
       team: "TEAM_B",
-      maxHealth: 200,
+      maxHealth: 20,
       maxMana: 0,
       baseAttributes: {
         intelligence: 1,
@@ -23,11 +23,23 @@ export class Goblin extends BaseEnemy {
       },
       xp: 10,
       loot: {
-        items: [
-          { type: "SPELL", data: { spellType: "fireball" }, dropRate: 0.2 },
-          { type: "SPELL", data: { spellType: "single-heal" }, dropRate: 0.05 },
-        ],
         gold: 10,
+        items: [
+          {
+            type: "ITEM",
+            dropRate: 1,
+            data: {
+              itemType: "int-armor",
+            },
+          },
+          {
+            type: "PASSIVE",
+            dropRate: 1,
+            data: {
+              passiveType: "armor-up",
+            },
+          },
+        ],
       },
       spells: ["basic-attack"],
       passiveSkills: ["armor-up"],

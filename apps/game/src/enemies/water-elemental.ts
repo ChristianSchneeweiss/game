@@ -19,22 +19,6 @@ export class WaterElemental extends BaseEnemy {
       },
       xp: 40,
       loot: {
-        items: [
-          {
-            type: "SPELL",
-            data: {
-              spellType: "tidal-pulse",
-            },
-            dropRate: 0.06,
-          },
-          {
-            type: "SPELL",
-            data: {
-              spellType: "stream-of-life",
-            },
-            dropRate: 0.06,
-          },
-        ],
         gold: 50,
       },
       spells: ["tidal-pulse", "stream-of-life", "basic-attack"],
