@@ -134,6 +134,8 @@ export const BattleRender = ({
       .map((effect) => effectTracking.get(effect))
       .filter((effect) => effect !== undefined);
 
+    console.log(entity.id, entity.name, entity.equipped);
+
     return (
       <div
         key={entity.id}

@@ -31,6 +31,7 @@ export class Goblin extends BaseEnemy {
       },
       spells: ["basic-attack"],
       passiveSkills: ["armor-up"],
+      equipment: ["int-armor"],
     });
   }
 }

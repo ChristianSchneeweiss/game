@@ -1,6 +1,8 @@
 import { Character } from "@loot-game/game/base-entity";
 import type { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
 import type { EnemyType } from "@loot-game/game/enemies/base/enemy-types";
+import type { Equipped } from "@loot-game/game/entity-types";
+import { equipmentFactory } from "@loot-game/game/items/equipment/equipment-factory";
 import { passiveSkillFactory } from "@loot-game/game/passive-skills/base/passive-skill.factory";
 import { createSpellFromType } from "@loot-game/game/spells/base/spell-from-type";
 import { BasicAttackSpell } from "@loot-game/game/spells/basic-attack";
@@ -9,6 +11,7 @@ import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import {
   TB_character,
   TB_dungeonEnemy,
+  TB_equipmentStats,
   TB_passivSkillStats,
   TB_spellStats,
   type Database,
@@ -74,6 +77,11 @@ export class EntityFactory {
       .from(TB_passivSkillStats)
       .where(eq(TB_passivSkillStats.equippedBy, id));
 
+    const equipmentStats = await db
+      .select()
+      .from(TB_equipmentStats)
+      .where(eq(TB_equipmentStats.equippedBy, id));
+
     const baseEntity = new Character(
       character.id,
       character.userId,
@@ -103,6 +111,12 @@ export class EntityFactory {
       .map((passive) =>
         passiveSkillFactory(passive.type, passive.id, baseEntity)
       );
+
+    baseEntity.equipped = equipmentStats.reduce((acc, equip) => {
+      const equipment = equipmentFactory(equip.type, baseEntity, baseEntity.id);
+      acc[equipment.equipmentSlot] = equipment;
+      return acc;
+    }, {} as Equipped);
 
     return baseEntity;
   }

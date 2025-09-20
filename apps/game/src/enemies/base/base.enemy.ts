@@ -3,9 +3,13 @@ import type {
   Affinities,
   Entity,
   EntityAttributes,
+  Equipped,
   SpecialAttributes,
   Team,
 } from "../../entity-types";
+import type { Equipment } from "../../items/equipment/equipment";
+import { equipmentFactory } from "../../items/equipment/equipment-factory";
+import type { EquipmentType } from "../../items/equipment/equipment-types";
 import { passiveSkillFactory } from "../../passive-skills/base/passive-skill.factory";
 import type { PassiveType } from "../../passive-skills/base/passive-types";
 import { createSpellFromType } from "../../spells/base/spell-from-type";
@@ -28,6 +32,7 @@ type EnemyParams = {
   loot: Loot;
   spells: SpellType[];
   passiveSkills?: PassiveType[];
+  equipment?: EquipmentType[];
 };
 
 export class BaseEnemy extends BaseEntity {
@@ -45,6 +50,7 @@ export class BaseEnemy extends BaseEntity {
     baseAttributes,
     baseSpecialAttributes,
     baseAffinities,
+    equipment,
     xp,
     loot,
     spells,
@@ -54,6 +60,14 @@ export class BaseEnemy extends BaseEntity {
     this.type = type;
     this.xp = xp;
     this.loot = loot;
+    const equipments: Equipment[] =
+      equipment?.map((equipment) => equipmentFactory(equipment, this, id)) ??
+      [];
+    this.equipped = equipments.reduce((acc, equipment) => {
+      acc[equipment.equipmentSlot] = equipment;
+      return acc;
+    }, {} as Equipped);
+
     if (baseAffinities) {
       this.baseAffinities = {
         ...this.baseAffinities,

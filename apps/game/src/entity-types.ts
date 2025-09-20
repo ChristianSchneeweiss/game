@@ -1,8 +1,9 @@
+import type { BattleManager } from "./battle-types";
+import type { Equipment } from "./items/equipment/equipment";
 import type {
   RoundLifecycleHooks,
   TurnLifecycleHooks,
 } from "./lifecycle-hooks";
-import type { BattleManager } from "./battle-types";
 import type { AttributeModifier, DamageType, Effect, Spell } from "./types";
 
 export type Team = "TEAM_A" | "TEAM_B";
@@ -41,6 +42,18 @@ export type AllAttributeKeys =
   | keyof SpecialAttributes
   | keyof Affinities;
 
+export type Equipped = Partial<{
+  WEAPON: Equipment;
+  ARMOR: Equipment;
+  RING: Equipment;
+  AMULET: Equipment;
+  BOOTS: Equipment;
+  GLOVES: Equipment;
+  HELMET: Equipment;
+  CLOAK: Equipment;
+  BELT: Equipment;
+}>;
+
 export interface Entity
   extends Pick<RoundLifecycleHooks, "onPreRound" | "onPostRound">,
     TurnLifecycleHooks {
@@ -57,6 +70,7 @@ export interface Entity
   activeEffects: Effect[];
   attributeModifiers: AttributeModifier[];
   spells: Spell[];
+  equipped: Equipped;
   passiveSkills: Effect[];
   battleManager: BattleManager;
   isBot: boolean;

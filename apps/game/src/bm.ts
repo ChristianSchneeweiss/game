@@ -82,6 +82,12 @@ export class BM implements BattleManager, RoundLifecycleHooks {
       this.lifeCycleHooks.push(spell);
     });
 
+    for (const equipment of Object.values(entity.equipped)) {
+      equipment.battleManager = this;
+      this.lifeCycleHooks.push(equipment);
+      equipment.onApply?.();
+    }
+
     if (entity.passiveSkills.length > 0) {
       // we create a fake spell cast event to apply the passive skills
       this.processEvent({

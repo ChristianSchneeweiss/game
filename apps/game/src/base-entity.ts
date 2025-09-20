@@ -1,14 +1,15 @@
+import type { BattleManager } from "./battle-types";
 import { calculator } from "./calculator";
 import type {
   Affinities,
   AllAttributeKeys,
   Entity,
   EntityAttributes,
+  Equipped,
   SpecialAttributes,
   Team,
 } from "./entity-types";
 import type { PassiveSkill } from "./passive-skills/base/passive-types";
-import type { BattleManager } from "./battle-types";
 import type { TimelineEvent } from "./timeline-events";
 import type { AttributeModifier, DamageType, Effect, Spell } from "./types";
 
@@ -27,6 +28,7 @@ export class BaseEntity implements Entity {
   attributeModifiers: AttributeModifier[];
   spells: Spell[];
   passiveSkills: PassiveSkill[];
+  equipped: Equipped;
   battleManager: BattleManager;
   isBot = true;
 
@@ -46,7 +48,7 @@ export class BaseEntity implements Entity {
     this.maxMana = maxMana;
     this.mana = this.maxMana;
     this.baseAttributes = baseAttributes;
-
+    this.equipped = {};
     this.activeEffects = [];
     this.attributeModifiers = [];
     this.spells = [];

@@ -1,5 +1,6 @@
 import { BaseEntity, Character } from "@loot-game/game/base-entity";
 import { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
+import { Equipment } from "@loot-game/game/items/equipment/equipment";
 import type { PassiveSkill } from "@loot-game/game/passive-skills/base/passive-types";
 import type { Effect } from "@loot-game/game/types";
 import superjson from "superjson";
@@ -52,6 +53,9 @@ export const registerRecipes = () => {
         enemy.passiveSkills.forEach((passive) => {
           passive.battleManager = undefined!;
         });
+        Object.values(enemy.equipped).forEach((equipment) => {
+          equipment.battleManager = undefined!;
+        });
         return enemy;
       },
       deserialize: (data) => {
@@ -59,6 +63,22 @@ export const registerRecipes = () => {
       },
     },
     "BaseEnemy"
+  );
+
+  superjson.registerCustom<Equipment, any>(
+    {
+      isApplicable: (data): data is Equipment => {
+        return data instanceof Equipment;
+      },
+      serialize: (equipment) => {
+        equipment.battleManager = undefined!;
+        return equipment;
+      },
+      deserialize: (data) => {
+        return data;
+      },
+    },
+    "Equipment"
   );
 
   superjson.registerClass(Character, { identifier: "Character" });
