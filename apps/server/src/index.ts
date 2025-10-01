@@ -1,9 +1,11 @@
 import { clerkMiddleware, getAuth } from "@hono/clerk-auth";
 import { trpcServer } from "@hono/trpc-server";
+import * as Sentry from "@sentry/cloudflare";
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { HTTPException } from "hono/http-exception";
 import { logger } from "hono/logger";
 import { TB_activeBattle, TB_user } from "./db/schema";
 import { envSchema } from "./env";
@@ -25,11 +27,37 @@ app.use(logger());
 app.use("/*", cors());
 app.use("*", clerkMiddleware());
 
+app.onError((err, c) => {
+  // Report _all_ unhandled errors.
+  console.error(err);
+
+  Sentry.captureException(err);
+  if (err instanceof HTTPException) {
+    return err.getResponse();
+  }
+  return c.json({ error: "Internal server error" }, 500);
+});
+
+// Bind global context via Hono middleware
+app.use((c, next) => {
+  const auth = getAuth(c);
+  if (auth) {
+    Sentry.setUser({
+      email: auth.userId!,
+    });
+  }
+  return next();
+});
+
 app.use(
   "/trpc/*",
   trpcServer({
     // @ts-ignore
     router: appRouter,
+    onError: ({ error, ctx }) => {
+      console.error(error);
+      Sentry.captureException(error);
+    },
     createContext: ({ req }, c) => {
       const auth = getAuth(c);
 
@@ -110,7 +138,16 @@ app.get("/api/battle/:id/chat", async (c) => {
   return await stub.fetch(new Request(url.toString(), c.req.raw));
 });
 
-export default {
-  fetch: app.fetch,
-  idleTimeout: 60,
-};
+export default Sentry.withSentry(
+  (env) => ({
+    dsn: "https://c460906fa7d1cb76b6ee238e4eed1d63@o4510053990334464.ingest.de.sentry.io/4510054011306064",
+
+    // Setting this option to true will send default PII data to Sentry.
+    // For example, automatic IP address collection on events
+    sendDefaultPii: true,
+    enabled: !!process.env.NODE_ENV && process.env.NODE_ENV !== "development",
+  }),
+  {
+    fetch: app.fetch,
+  } satisfies ExportedHandler<Env>
+);

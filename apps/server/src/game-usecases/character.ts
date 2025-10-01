@@ -153,7 +153,7 @@ export const equipEquipment = async (
 
     if (!equipment) throw new Error("Equipment not found");
     if (equipment.userId !== userId) throw new Error("Not your equipment");
-    const equipmentItem = itemFactory(equipment.type, character, equipmentId);
+    const equipmentItem = itemFactory(equipment.type, equipmentId, character);
 
     const currentItemAtSlot = character.equipped[equipmentItem.equipmentSlot];
     if (currentItemAtSlot) {

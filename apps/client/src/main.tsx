@@ -1,9 +1,18 @@
 import { ClerkProvider } from "@clerk/clerk-react";
+import * as Sentry from "@sentry/react";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import ReactDOM from "react-dom/client";
 import { registerRecipes } from "../../server/src/lib/superjson-recipes";
 import Loader from "./components/loader";
 import { routeTree } from "./routeTree.gen";
+
+Sentry.init({
+  dsn: "https://8f3eeafa92a5c43dca0983588439eb9a@o4510053990334464.ingest.de.sentry.io/4510053992169552",
+  // Setting this option to true will send default PII data to Sentry.
+  // For example, automatic IP address collection on events
+  sendDefaultPii: true,
+  enabled: import.meta.env.PROD,
+});
 
 const router = createRouter({
   routeTree,

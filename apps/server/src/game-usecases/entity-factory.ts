@@ -112,7 +112,7 @@ export class EntityFactory {
       );
 
     baseEntity.equipped = equipmentStats.reduce((acc, equip) => {
-      const equipment = itemFactory(equip.type, baseEntity, equip.id);
+      const equipment = itemFactory(equip.type, equip.id, baseEntity);
       acc[equipment.equipmentSlot] = equipment;
       return acc;
     }, {} as Equipped);

@@ -1,7 +1,11 @@
 import { faker } from "@faker-js/faker";
 import { itemFactory } from "@loot-game/game/items/equipment/item-factory";
+import type { PassiveType } from "@loot-game/game/passive-skills/base/passive-types";
 import { createSpellFromType } from "@loot-game/game/spells/base/spell-from-type";
-import { SpellTypeSchema } from "@loot-game/game/spells/base/spell-types";
+import {
+  SpellTypeSchema,
+  type SpellType,
+} from "@loot-game/game/spells/base/spell-types";
 import { TRPCError } from "@trpc/server";
 import { desc, eq, gt } from "drizzle-orm";
 import { z } from "zod";
@@ -67,9 +71,6 @@ export const appRouter = router({
 
   getMySpells: protectedProcedure.query(async ({ ctx }) => {
     const { session, db } = ctx;
-    if (!session) {
-      throw new Error("No session found");
-    }
     const spells = await db
       .select()
       .from(TB_spellStats)
@@ -95,7 +96,21 @@ export const appRouter = router({
         ),
       };
     });
-    return spellClass;
+    const grouped = new Map<
+      SpellType,
+      { spell: (typeof spellClass)[number]; ids: string[] }
+    >();
+
+    for (const spell of spellClass) {
+      const existing = grouped.get(spell.type);
+      if (existing) {
+        existing.ids.push(spell.id);
+      } else {
+        grouped.set(spell.type, { spell: spell, ids: [spell.id] });
+      }
+    }
+
+    return { grouped, all: spellClass };
   }),
 
   getBattle: publicProcedure.input(z.string()).query(async ({ input, ctx }) => {
@@ -144,7 +159,24 @@ export const appRouter = router({
       .from(TB_passivSkillStats)
       .where(eq(TB_passivSkillStats.userId, session.id));
 
-    return passiveSkills;
+    const grouped = new Map<
+      PassiveType,
+      { passiveSkill: (typeof passiveSkills)[number]; ids: string[] }
+    >();
+
+    for (const passiveSkill of passiveSkills) {
+      const existing = grouped.get(passiveSkill.type);
+      if (existing) {
+        existing.ids.push(passiveSkill.id);
+      } else {
+        grouped.set(passiveSkill.type, {
+          passiveSkill: passiveSkill,
+          ids: [passiveSkill.id],
+        });
+      }
+    }
+
+    return { grouped, all: passiveSkills };
   }),
 
   getMyEquipment: protectedProcedure.query(async ({ ctx }) => {
@@ -164,7 +196,7 @@ export const appRouter = router({
         characters.find((character) => character.id === equip.equippedBy) ??
         characters[0];
 
-      const items = itemFactory(equip.type, character, equip.id);
+      const items = itemFactory(equip.type, equip.id, character);
       return {
         ...equip,
         item: items,

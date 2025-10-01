@@ -20,11 +20,12 @@ function RouteComponent() {
       },
     ),
   );
-  const { data: spells, refetch: refetchSpells } = useQuery(
+  const { data: _spells, refetch: refetchSpells } = useQuery(
     trpc.getMySpells.queryOptions(undefined, {
       staleTime: 60_000,
     }),
   );
+  const spells = _spells?.all;
   const { mutateAsync: equipSpell } = useMutation(
     trpc.character.equipSpell.mutationOptions({
       onSuccess: () => {
@@ -52,11 +53,12 @@ function RouteComponent() {
     }),
   );
 
-  const { data: passiveSkills, refetch: refetchPassiveSkills } = useQuery(
+  const { data: _passiveSkills, refetch: refetchPassiveSkills } = useQuery(
     trpc.getMyPassiveSkills.queryOptions(undefined, {
       staleTime: 60_000,
     }),
   );
+  const passiveSkills = _passiveSkills?.all;
 
   const { mutateAsync: equipPassiveSkill } = useMutation(
     trpc.character.equipPassiveSkill.mutationOptions({

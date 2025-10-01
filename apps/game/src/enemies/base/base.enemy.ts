@@ -62,12 +62,16 @@ export class BaseEnemy extends BaseEntity {
     this.xp = xp;
     this.loot = {
       gold: loot.gold,
-      items:
-        loot.items ??
-        defaultSpellDropRate(spells.filter((s) => s !== "basic-attack")),
+      items: loot.items ?? [
+        ...defaultSpellDropRate(spells.filter((s) => s !== "basic-attack")),
+        // ...defaultPassiveDropRate(passiveSkills ?? []),
+        // ...defaultEquipmentDropRate(equipment ?? []),
+      ],
     };
     const equipments: Equipment[] =
-      equipment?.map((equipment) => itemFactory(equipment, this, id)) ?? [];
+      equipment?.map((equipment) =>
+        itemFactory(equipment, `${this.id}-${equipment}`, this)
+      ) ?? [];
     this.equipped = equipments.reduce((acc, equipment) => {
       acc[equipment.equipmentSlot] = equipment;
       return acc;

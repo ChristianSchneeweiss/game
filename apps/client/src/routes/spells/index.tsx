@@ -1,7 +1,6 @@
-import { Button } from "@/components/ui/button";
-import { trpc, trpcClient } from "@/utils/trpc";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { trpc } from "@/utils/trpc";
+import { useQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
 import { Shield, Star, Zap } from "lucide-react";
 
 export const Route = createFileRoute("/spells/")({
@@ -9,31 +8,13 @@ export const Route = createFileRoute("/spells/")({
 });
 
 function RouteComponent() {
-  const { data: spells, refetch: refetchSpells } = useQuery(
-    trpc.getMySpells.queryOptions(),
-  );
-  const { mutateAsync: unequipSpell } = useMutation(
-    trpc.character.unequipSpell.mutationOptions({
-      onSuccess: () => {
-        refetchSpells();
-      },
-    }),
-  );
+  const { data: _spells } = useQuery(trpc.getMySpells.queryOptions());
+  const spells = _spells?.grouped;
 
-  const { data: passiveSkills, refetch: refetchPassiveSkills } = useQuery(
+  const { data: _passiveSkills } = useQuery(
     trpc.getMyPassiveSkills.queryOptions(),
   );
-  const { mutateAsync: unequipPassiveSkill } = useMutation({
-    mutationFn: async (passiveSkillId: string) => {
-      // @ts-ignore - temporary until types are updated
-      return await trpcClient.character.unequipPassiveSkill.mutate({
-        passiveSkillId,
-      });
-    },
-    onSuccess: () => {
-      refetchPassiveSkills();
-    },
-  });
+  const passiveSkills = _passiveSkills?.grouped;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
@@ -52,114 +33,68 @@ function RouteComponent() {
             <Zap className="h-6 w-6" />
             MY SPELLS
           </h2>
-          {spells && spells.length > 0 ? (
+          {spells && spells.size > 0 ? (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {spells
-                .sort((a, b) => a.type.localeCompare(b.type))
-                .map((spell) => (
-                  <div
-                    key={spell.id}
-                    className="group relative rounded-xl border-2 bg-gradient-to-br from-slate-800/90 to-slate-900/90 p-6 shadow-2xl backdrop-blur-sm transition-all duration-300 hover:scale-105"
-                  >
-                    {/* Spell Header */}
-                    <div className="mb-4 flex items-center gap-3">
-                      <span className="text-3xl">🔮</span>
-                      <div className="flex-1">
-                        <h3 className="text-xl font-bold text-white capitalize">
-                          {spell.type.replace("-", " ")}
-                        </h3>
-                      </div>
+              {spells.entries().map(([type, { spell, ids }]) => (
+                <div
+                  key={type}
+                  className="group relative rounded-xl border-2 bg-gradient-to-br from-slate-800/90 to-slate-900/90 p-6 shadow-2xl backdrop-blur-sm transition-all duration-300 hover:scale-105"
+                >
+                  {/* Spell Header */}
+                  <div className="mb-4 flex items-center gap-3">
+                    <span className="text-3xl">🔮</span>
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold text-white capitalize">
+                        {type.replace("-", " ")}{" "}
+                        <span className="text-xs text-gray-400">
+                          ({ids.length})
+                        </span>
+                      </h3>
                     </div>
-
-                    {/* Spell Info */}
-                    <div className="mb-4">
-                      <div className="rounded-lg p-4">
-                        {/* Description */}
-                        <div className="mb-4">
-                          <div className="mb-2 flex items-center gap-2 text-sm">
-                            <span className="text-blue-300">📖</span>
-                            <span className="font-bold text-blue-300">
-                              DESCRIPTION
-                            </span>
-                          </div>
-                          <div className="text-sm text-blue-200">
-                            {spell.description.text}
-                          </div>
-                        </div>
-
-                        {/* Stats Grid */}
-                        <div className="mb-4 grid grid-cols-3 gap-3 text-xs">
-                          <div className="rounded bg-blue-900/40 p-2 text-center">
-                            <div className="text-blue-300">Mana</div>
-                            <div className="font-bold text-blue-100">
-                              {spell.description.manaCost}
-                            </div>
-                          </div>
-                          <div className="rounded bg-blue-900/40 p-2 text-center">
-                            <div className="text-blue-300">Cooldown</div>
-                            <div className="font-bold text-blue-100">
-                              {spell.description.cooldown}
-                            </div>
-                          </div>
-                          <div className="rounded bg-blue-900/40 p-2 text-center">
-                            <div className="text-blue-300">Targets</div>
-                            <div className="font-bold text-blue-100">
-                              {spell.description.targetType.enemies}E/
-                              {spell.description.targetType.allies}A
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Status */}
-                        {spell.equippedBy !== null ? (
-                          <div className="rounded border border-green-600 bg-green-800/30 p-3">
-                            <div className="flex items-center gap-2 text-sm">
-                              <span className="text-green-300">⚡</span>
-                              <span className="font-bold text-green-300">
-                                EQUIPPED
-                              </span>
-                            </div>
-                            <div className="text-sm text-green-200">
-                              <Link
-                                to="/characters/$character-id"
-                                params={{ "character-id": spell.equippedBy }}
-                                className="hover:text-green-100 hover:underline"
-                              >
-                                Character ID: {spell.equippedBy.slice(0, 8)}...
-                              </Link>
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="rounded border border-slate-600 bg-slate-800/50 p-3">
-                            <div className="flex items-center gap-2 text-sm">
-                              <span className="text-gray-400">📦</span>
-                              <span className="font-bold text-gray-400">
-                                INVENTORY
-                              </span>
-                            </div>
-                            <div className="text-sm text-gray-300">
-                              Ready to equip
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Unequip Button */}
-                    {spell.equippedBy !== null && (
-                      <div className="mt-4">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => unequipSpell({ spellId: spell.id })}
-                          className="w-full border-red-500 text-red-300 hover:bg-red-500 hover:text-white"
-                        >
-                          Unequip Spell
-                        </Button>
-                      </div>
-                    )}
                   </div>
-                ))}
+
+                  {/* Spell Info */}
+                  <div className="mb-4">
+                    <div className="rounded-lg p-4">
+                      {/* Description */}
+                      <div className="mb-4">
+                        <div className="mb-2 flex items-center gap-2 text-sm">
+                          <span className="text-blue-300">📖</span>
+                          <span className="font-bold text-blue-300">
+                            DESCRIPTION
+                          </span>
+                        </div>
+                        <div className="text-sm text-blue-200">
+                          {spell.description.text}
+                        </div>
+                      </div>
+
+                      {/* Stats Grid */}
+                      <div className="mb-4 grid grid-cols-3 gap-3 text-xs">
+                        <div className="rounded bg-blue-900/40 p-2 text-center">
+                          <div className="text-blue-300">Mana</div>
+                          <div className="font-bold text-blue-100">
+                            {spell.description.manaCost}
+                          </div>
+                        </div>
+                        <div className="rounded bg-blue-900/40 p-2 text-center">
+                          <div className="text-blue-300">Cooldown</div>
+                          <div className="font-bold text-blue-100">
+                            {spell.description.cooldown}
+                          </div>
+                        </div>
+                        <div className="rounded bg-blue-900/40 p-2 text-center">
+                          <div className="text-blue-300">Targets</div>
+                          <div className="font-bold text-blue-100">
+                            {spell.description.targetType.enemies}E/
+                            {spell.description.targetType.allies}A
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           ) : (
             <div className="text-center">
@@ -182,84 +117,49 @@ function RouteComponent() {
             <Shield className="h-6 w-6" />
             PASSIVE SKILLS
           </h2>
-          {passiveSkills && passiveSkills.length > 0 ? (
+          {passiveSkills && passiveSkills.size > 0 ? (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {passiveSkills
-                .sort((a, b) => a.type.localeCompare(b.type))
-                .map((passive) => (
-                  <div
-                    key={passive.id}
-                    className="group relative rounded-xl border-2 bg-gradient-to-br from-slate-800/90 to-slate-900/90 p-6 shadow-2xl backdrop-blur-sm transition-all duration-300 hover:scale-105"
-                  >
-                    {/* Passive Header */}
-                    <div className="mb-4 flex items-center gap-3">
-                      <span className="text-3xl">🛡️</span>
-                      <div className="flex-1">
-                        <h3 className="text-xl font-bold text-white capitalize">
-                          {passive.type.replace("-", " ")}
-                        </h3>
-                        <div className="flex items-center gap-2">
-                          <Star className="h-4 w-4 text-yellow-400" />
-                          <span className="text-sm font-bold text-yellow-400">
-                            PASSIVE SKILL
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Passive Info */}
-                    <div className="mb-4">
-                      <div className="rounded-lg p-4">
-                        {/* Description */}
-                        <div className="mb-4">
-                          <div className="mb-2 flex items-center gap-2 text-sm">
-                            <span className="text-green-300">📖</span>
-                            <span className="font-bold text-green-300">
-                              DESCRIPTION
-                            </span>
-                          </div>
-                          <div className="text-sm text-green-200">
-                            {getPassiveDescription(passive.type)}
-                          </div>
-                        </div>
-
-                        {/* Status */}
-                        {passive.equippedBy !== null ? (
-                          <div className="rounded border border-green-600 bg-green-800/30 p-3">
-                            <div className="flex items-center gap-2 text-sm">
-                              <span className="text-green-300">⚡</span>
-                              <span className="font-bold text-green-300">
-                                EQUIPPED
-                              </span>
-                            </div>
-                            <div className="text-sm text-green-200">
-                              <Link
-                                to="/characters/$character-id"
-                                params={{ "character-id": passive.equippedBy }}
-                                className="hover:text-green-100 hover:underline"
-                              >
-                                Character ID: {passive.equippedBy.slice(0, 8)}
-                                ...
-                              </Link>
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="rounded border border-slate-600 bg-slate-800/50 p-3">
-                            <div className="flex items-center gap-2 text-sm">
-                              <span className="text-gray-400">📦</span>
-                              <span className="font-bold text-gray-400">
-                                INVENTORY
-                              </span>
-                            </div>
-                            <div className="text-sm text-gray-300">
-                              Ready to equip
-                            </div>
-                          </div>
-                        )}
+              {passiveSkills.entries().map(([type, { passiveSkill, ids }]) => (
+                <div
+                  key={type}
+                  className="group relative rounded-xl border-2 bg-gradient-to-br from-slate-800/90 to-slate-900/90 p-6 shadow-2xl backdrop-blur-sm transition-all duration-300 hover:scale-105"
+                >
+                  {/* Passive Header */}
+                  <div className="mb-4 flex items-center gap-3">
+                    <span className="text-3xl">🛡️</span>
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold text-white capitalize">
+                        {type.replace("-", " ")}{" "}
+                        <span className="text-xs text-gray-400">
+                          ({ids.length})
+                        </span>
+                      </h3>
+                      <div className="flex items-center gap-2">
+                        <Star className="h-4 w-4 text-yellow-400" />
+                        <span className="text-sm font-bold text-yellow-400">
+                          PASSIVE SKILL
+                        </span>
                       </div>
                     </div>
                   </div>
-                ))}
+
+                  {/* Passive Info */}
+                  <div className="mb-4">
+                    <div className="rounded-lg p-4">
+                      {/* Description */}
+                      <div className="mb-4">
+                        <div className="mb-2 flex items-center gap-2 text-sm">
+                          <span className="text-green-300">📖</span>
+                          <span className="font-bold text-green-300">
+                            DESCRIPTION
+                          </span>
+                        </div>
+                        <div className="text-sm text-green-200">MISSING</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           ) : (
             <div className="text-center">

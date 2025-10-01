@@ -1,6 +1,12 @@
+import { nanoid } from "nanoid";
+import { itemFactory } from "../items/equipment/item-factory";
+import type { ItemType } from "../items/item-types";
+import { passiveSkillFactory } from "../passive-skills/base/passive-skill.factory";
+import type { PassiveType } from "../passive-skills/base/passive-types";
 import { createSpellFromType } from "../spells/base/spell-from-type";
 import type { SpellType } from "../spells/base/spell-types";
 import type { LootEntity, Tier } from "../types";
+import { FakeEntity } from "./fake-entity";
 
 export const defaultDropRate = (tier: Tier) => {
   switch (tier) {
@@ -28,6 +34,34 @@ export const defaultSpellDropRate = (spells: SpellType[]): LootEntity[] => {
         spellType: type,
       },
       dropRate: defaultDropRate(spell.config.tier),
+    };
+  });
+};
+
+export const defaultPassiveDropRate = (
+  passives: PassiveType[]
+): LootEntity[] => {
+  const fake = new FakeEntity();
+  return passives.map((passive) => {
+    const p = passiveSkillFactory(passive, nanoid(), fake);
+    return {
+      type: "PASSIVE",
+      data: { passiveType: p.passiveType },
+      dropRate: defaultDropRate(p.tier),
+    };
+  });
+};
+
+export const defaultEquipmentDropRate = (
+  equipments: ItemType[]
+): LootEntity[] => {
+  const fake = new FakeEntity();
+  return equipments.map((equipment) => {
+    const e = itemFactory(equipment, nanoid(), fake);
+    return {
+      type: "ITEM",
+      data: { itemType: equipment },
+      dropRate: defaultDropRate(e.tier),
     };
   });
 };
