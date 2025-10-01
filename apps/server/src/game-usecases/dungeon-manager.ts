@@ -177,7 +177,6 @@ export const dungeonManager = {
         dungeon.round = dungeonBattles.length;
       }
       const totalXp = enemies.reduce((acc, enemy) => acc + enemy.xp, 0);
-
       for (const character of characters) {
         if (character.dead) {
           continue;

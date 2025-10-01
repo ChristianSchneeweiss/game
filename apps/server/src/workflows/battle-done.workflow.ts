@@ -44,13 +44,9 @@ export type BattleResult = z.infer<typeof battleResultSchema>;
 export class BattleDoneWorkflow extends WorkflowEntrypoint<Env, Params> {
   async run(event: WorkflowEvent<Params>, step: WorkflowStep) {
     const { battleId } = event.payload;
-    const battleResult = await step.do("get-battle-result", async () => {
+    await step.do("get-battle-result", async () => {
       const db = drizzle(this.env.DATABASE_URL);
-      return await bmStorage.get(battleId, db);
-    });
-
-    await step.do("update-dungeon", async () => {
-      const db = drizzle(this.env.DATABASE_URL);
+      const battleResult = await bmStorage.get(battleId, db);
       const [dungeonBattle] = await db
         .select()
         .from(TB_dungeonBattle)
@@ -68,7 +64,6 @@ export class BattleDoneWorkflow extends WorkflowEntrypoint<Env, Params> {
         );
         enemies.push(enemyEntity);
       }
-
       await dungeonManager.handleDungeonCleared(
         dungeonBattle.dungeonId,
         battleId,
@@ -77,10 +72,6 @@ export class BattleDoneWorkflow extends WorkflowEntrypoint<Env, Params> {
         battleResult.winner,
         db
       );
-    });
-
-    await step.do("clean-up-battle", async () => {
-      const db = drizzle(this.env.DATABASE_URL);
       const syncFactory = new SyncFactory(db);
       await syncFactory.cleanup(battleId);
 

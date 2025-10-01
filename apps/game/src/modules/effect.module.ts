@@ -1,5 +1,4 @@
 import type { Entity } from "../entity-types";
-import type { BattleManager } from "../battle-types";
 import type { Effect, Spell } from "../types";
 import type { SpellModule, SpellModuleReturn } from "./types";
 
@@ -22,9 +21,9 @@ export class EffectModule implements SpellModule {
     caster: Entity,
     targets: Entity[],
     roll: number,
-    battleManager: BattleManager,
     spell: Spell
   ): SpellModuleReturn {
+    const battleManager = caster.battleManager;
     const effects = targets
       .map((target) => {
         const effect = this.getRawEffect(caster, target, roll);

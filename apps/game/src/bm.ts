@@ -263,7 +263,7 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     caster: Entity,
     spell: Spell,
     targetIds: string[]
-  ): SpellCastEvent | null {
+  ): SpellCastEvent[] | null {
     const targets = targetIds
       .map((id) => this.getEntityById(id))
       .filter((e): e is Entity => e !== undefined);
@@ -291,7 +291,7 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     entityId: string,
     spellId: string,
     targetIds: string[]
-  ): SpellCastEvent | null {
+  ): SpellCastEvent[] | null {
     const currentRound = this.getCurrentRound();
     if (currentRound.orderQueue[0] !== entityId) {
       console.error(
@@ -310,12 +310,12 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     if (!spell) {
       return null;
     }
-    const event = this.castSpell(entity, spell, targetIds);
-    if (event) {
-      this.processEvent(event);
+    const events = this.castSpell(entity, spell, targetIds);
+    if (events) {
+      events.forEach((event) => this.processEvent(event));
     }
 
-    return event;
+    return events;
   }
 
   preTurn() {
@@ -369,6 +369,18 @@ export class BM implements BattleManager, RoundLifecycleHooks {
           .forEach((e) => this.processEvent(e));
 
         return !isStunned;
+      })
+      .filter((e) => {
+        const chargeEffects = e.activeEffects.filter(
+          (ef) => ef.effectType === "CHARGE"
+        );
+        const isCharging = chargeEffects.length > 0;
+        chargeEffects
+          .flatMap((ef) => ef.onEndStep?.())
+          .filter((e) => !!e)
+          .forEach((e) => this.processEvent(e));
+
+        return !isCharging;
       })
       .sort((a, b) => b.getAttribute("agility") - a.getAttribute("agility"))
       .map((e) => e.id);

@@ -44,13 +44,7 @@ export class SoulflareSpell extends BaseSpell {
       undefined,
       () => (damage.totalDamage ?? 0) * 0.5
     );
-    const healing = healModule.applyRawHeal(
-      caster,
-      [caster],
-      roll,
-      battleManager,
-      this
-    );
+    const healing = healModule.applyRawHeal(caster, [caster], roll, this);
 
     return battleManager.handler.mergeHandlerReturns([damage, healing]);
   }

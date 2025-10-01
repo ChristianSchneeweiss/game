@@ -64,7 +64,6 @@ export class VoltLashSpell extends BaseSpell {
           caster,
           [randomEnemy],
           roll,
-          battleManager,
           this
         );
         events.push(effect);

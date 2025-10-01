@@ -35,8 +35,8 @@ export class calculator {
         effect.beforeDealingDamage({
           damage: acc,
           type: damageType,
-          source: attacker,
-          target: defender,
+          attacker: attacker,
+          defender: defender,
         }),
       damage
     );
@@ -67,8 +67,8 @@ export class calculator {
         effect.beforeTakingDamage({
           damage: acc,
           type: damageType,
-          source: attacker,
-          target: defender,
+          attacker: attacker,
+          defender: defender,
         }),
       damage
     );
@@ -92,8 +92,8 @@ export class calculator {
       (acc, effect) =>
         effect.beforeDealingHealing({
           healing: acc,
-          source: attacker,
-          target: defender,
+          attacker: attacker,
+          defender: defender,
         }),
       healing
     );
@@ -103,8 +103,8 @@ export class calculator {
       (acc, effect) =>
         effect.beforeTakingHealing({
           healing: acc,
-          source: attacker,
-          target: defender,
+          attacker: attacker,
+          defender: defender,
         }),
       healing
     );
@@ -129,8 +129,8 @@ export class calculator {
         (acc
           ? effect.beforeTakingEffect({
               effect: acc,
-              source: attacker,
-              target: defender,
+              attacker: attacker,
+              defender: defender,
             })
           : null) as Effect | null,
       effect
@@ -142,8 +142,8 @@ export class calculator {
         (acc
           ? effect.beforeDealingEffect({
               effect: acc,
-              source: attacker,
-              target: defender,
+              attacker: attacker,
+              defender: defender,
             })
           : null) as Effect | null,
       realEffect

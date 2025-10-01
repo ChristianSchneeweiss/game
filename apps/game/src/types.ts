@@ -22,6 +22,7 @@ export type EffectType =
   | "HOT"
   | "CURSE"
   | "STUN"
+  | "CHARGE"
   | "CONTROL"
   | "SHIELD"
   | "PASSIVE";
@@ -71,7 +72,7 @@ export interface Spell
 
   canCast(caster: Entity): boolean;
   getValidTargets(caster: Entity): Entity[];
-  cast(caster: Entity, targets: Entity[]): SpellCastEvent | null;
+  cast(caster: Entity, targets: Entity[]): SpellCastEvent[] | null;
   description(caster: Entity): SpellDescription;
 
   /** allows to override the target type for a spell. So we can have dynamic target types based on stuff */

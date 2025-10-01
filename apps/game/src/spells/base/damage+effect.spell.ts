@@ -47,7 +47,6 @@ export abstract class DamageEffectSpell extends BaseSpell {
       caster,
       targets,
       roll,
-      battleManager,
       this
     );
     return battleManager.handler.mergeHandlerReturns([damage, effects]);

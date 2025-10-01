@@ -1,5 +1,5 @@
-import type { Entity } from "../../entity-types";
 import type { BattleManager } from "../../battle-types";
+import type { Entity } from "../../entity-types";
 import type {
   OptionalSpellCastEvent,
   SpellCastEvent,
@@ -47,7 +47,7 @@ export abstract class BaseSpell implements Spell {
     return targets;
   }
 
-  cast(caster: Entity, targets: Entity[]): SpellCastEvent | null {
+  cast(caster: Entity, targets: Entity[]): SpellCastEvent[] | null {
     if (!this.battleManager) throw new Error("Battle manager not set");
     if (!this.canCast(caster)) {
       console.error("cannot cast", this.config.id, this.config.cooldown);
@@ -65,20 +65,33 @@ export abstract class BaseSpell implements Spell {
       targets = [caster];
     }
 
+    const roll = this.getRoll(caster);
     this.processCasting(caster);
-    let roll = Math.round(this.battleManager.getRNG() * 20);
-    const blessed = caster.getAttribute("blessed");
-    roll = Math.min(roll + blessed, 20);
     const result = this._cast(caster, targets, this.battleManager, roll);
     if (!result) return null;
-    return {
-      eventType: "SPELL_CAST",
-      data: {
-        ...result,
-        spellId: this.config.id,
-        roll,
+    if (Array.isArray(result)) {
+      return result
+        .filter((r) => r !== null)
+        .map((r) => ({
+          eventType: "SPELL_CAST",
+          data: {
+            ...r,
+            spellId: this.config.id,
+            roll,
+          },
+        }));
+    }
+
+    return [
+      {
+        eventType: "SPELL_CAST",
+        data: {
+          ...result,
+          spellId: this.config.id,
+          roll,
+        },
       },
-    };
+    ];
   }
 
   description(caster: Entity) {
@@ -97,7 +110,7 @@ export abstract class BaseSpell implements Spell {
     targets: Entity[],
     battleManager: BattleManager,
     roll: number
-  ): OptionalSpellCastEvent;
+  ): OptionalSpellCastEvent | OptionalSpellCastEvent[];
 
   protected validateTargets(caster: Entity, targets: Entity[]): boolean {
     const { enemies, allies } = this.getTargetType();
@@ -127,5 +140,12 @@ export abstract class BaseSpell implements Spell {
 
   getTargetType(): TargetType {
     return this.config.targetType;
+  }
+
+  protected getRoll(caster: Entity) {
+    let roll = Math.round(this.getRNG() * 20);
+    const blessed = caster.getAttribute("blessed");
+    roll = Math.min(roll + blessed, 20);
+    return roll;
   }
 }

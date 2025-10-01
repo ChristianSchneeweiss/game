@@ -29,7 +29,7 @@ app.use("*", clerkMiddleware());
 
 app.onError((err, c) => {
   // Report _all_ unhandled errors.
-  console.error(err);
+  console.error(err, err.stack, err.cause);
 
   Sentry.captureException(err);
   if (err instanceof HTTPException) {
@@ -145,7 +145,8 @@ export default Sentry.withSentry(
     // Setting this option to true will send default PII data to Sentry.
     // For example, automatic IP address collection on events
     sendDefaultPii: true,
-    enabled: !!process.env.NODE_ENV && process.env.NODE_ENV !== "development",
+    // enabled: !!process.env.NODE_ENV && process.env.NODE_ENV !== "development",
+    enabled: true,
   }),
   {
     fetch: app.fetch,

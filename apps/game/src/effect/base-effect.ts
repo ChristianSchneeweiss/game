@@ -1,11 +1,11 @@
 import { nanoid } from "nanoid";
+import type { BattleManager } from "../battle-types";
 import type { Entity } from "../entity-types";
 import type {
   DamageHookArgs,
   EffectHookArgs,
   HealingHookArgs,
 } from "../lifecycle-hooks";
-import type { BattleManager } from "../battle-types";
 import type { Effect, EffectType, Spell } from "../types";
 
 export abstract class BaseEffect implements Effect {
@@ -71,6 +71,9 @@ export abstract class BaseEffect implements Effect {
     return args.effect;
   }
 
+  /**
+   * Removes the effect from the target, calls the onRemove hook and pushes the effect removal event
+   */
   removeEffect(): void {
     if (!this.battleManager) throw new Error("Battle manager not found");
 

@@ -1,13 +1,21 @@
+import { AegisWallSpell } from "../aegis-wall";
 import { AquaWaveSpell } from "../aqua-wave";
+import { ArcaneChannelingSpell } from "../arcane-channeling";
 import { BasicAttackSpell } from "../basic-attack";
 import { BattleRoarSpell } from "../battle-roar";
+import { BladestormRhythmSpell } from "../bladestorm-rythm";
+import { BulwarkBashSpell } from "../bulwark-bash";
 import { CharredChainsSpell } from "../charred-chains";
 import { CinderWispSpell } from "../cinder-wisp";
 import { CinderbrandSpell } from "../cinderbrand";
 import { CrudeStrikeSpell } from "../crude-strike";
 import { CrushingBlowSpell } from "../crushing-blow";
+import { DeflectingStanceSpell } from "../deflecting-stance";
+import { EarthshatterSpell } from "../earthshatter";
 import { FesteringBlowSpell } from "../festering-blow";
+import { FinalVerdictSpell } from "../final-verdict";
 import { FireballSpell } from "../fireball";
+import { IronWillSpell } from "../iron-will";
 import { LightningSurgeSpell } from "../lightning-surge";
 import { NaturesEmbrace } from "../natures-embrace";
 import { OceanBlessingSpell } from "../ocean-blessing";
@@ -92,6 +100,22 @@ export const createSpellFromType = (id: string, type: SpellType) => {
       return new VoltLashSpell(id);
     case "storm-pulse":
       return new StormPulseSpell(id);
+    case "final-verdict":
+      return new FinalVerdictSpell(id);
+    case "aegis-wall":
+      return new AegisWallSpell(id);
+    case "bulwark-bash":
+      return new BulwarkBashSpell(id);
+    case "earthshatter":
+      return new EarthshatterSpell(id);
+    case "deflecting-stance":
+      return new DeflectingStanceSpell(id);
+    case "bladestorm-rhythm":
+      return new BladestormRhythmSpell(id);
+    case "iron-will":
+      return new IronWillSpell(id);
+    case "arcane-channeling":
+      return new ArcaneChannelingSpell(id);
     default:
       throw new Error(`Unknown spell type: ${type}`);
   }

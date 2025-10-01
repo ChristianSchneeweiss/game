@@ -16,6 +16,7 @@ export class MindControlEffect extends BaseEffect {
   }
 
   onRemove(): void {
+    super.onRemove();
     const target = this.getTarget();
     target.team = this.originalTeam;
   }

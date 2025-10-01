@@ -21,6 +21,7 @@ export class StatModifierEffect extends BaseEffect {
   }
 
   onRemove(): void {
+    super.onRemove();
     const target = this.getTarget();
 
     this.modifiers.forEach((mod) => {

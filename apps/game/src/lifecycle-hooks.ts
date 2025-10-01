@@ -18,8 +18,8 @@ export interface TurnLifecycleHooks {
 }
 
 export type BaseEffectHookArgs = {
-  source: Entity;
-  target: Entity;
+  attacker: Entity;
+  defender: Entity;
 };
 
 export type DamageHookArgs = BaseEffectHookArgs & {

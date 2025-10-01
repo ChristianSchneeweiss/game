@@ -31,7 +31,6 @@ export abstract class ApplyStatusSpell extends BaseSpell {
       caster,
       targets,
       roll,
-      battleManager,
       this
     );
 
