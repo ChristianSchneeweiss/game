@@ -567,7 +567,7 @@ export const BattleRender = ({
 
               return (
                 <div
-                  key={entityId}
+                  key={entityId + index}
                   className={cn(
                     "flex items-center gap-1 rounded-md border px-2 py-1 text-sm transition-all duration-300",
                     isCurrentTurn

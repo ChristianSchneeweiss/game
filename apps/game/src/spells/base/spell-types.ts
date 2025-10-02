@@ -39,5 +39,6 @@ export const SpellTypeSchema = z.union([
   z.literal("bladestorm-rhythm"),
   z.literal("iron-will"),
   z.literal("arcane-channeling"),
+  z.literal("fleetfoot-gambit"),
 ]);
 export type SpellType = z.infer<typeof SpellTypeSchema>;

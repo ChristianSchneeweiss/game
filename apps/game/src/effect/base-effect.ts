@@ -79,6 +79,11 @@ export abstract class BaseEffect implements Effect {
 
     const target = this.getTarget();
     target.removeEffect(this);
+    // remove from battle manager life cycle hooks
+    this.battleManager.lifeCycleHooks.splice(
+      this.battleManager.lifeCycleHooks.indexOf(this),
+      1
+    );
     this.battleManager.processEvent({
       eventType: "EFFECT_REMOVAL",
       data: {

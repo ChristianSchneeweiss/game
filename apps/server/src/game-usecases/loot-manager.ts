@@ -10,7 +10,7 @@ import {
   TB_passivSkillStats,
   type Database,
 } from "../db/schema";
-import { createSpellInTransaction } from "./spell-factory";
+import { createSpell } from "./spell-factory";
 
 export class LootManager {
   constructor(
@@ -57,7 +57,7 @@ export class LootManager {
   }
 
   private async claimSpell(userId: string, type: SpellType, tx: Database) {
-    await createSpellInTransaction(userId, type, tx);
+    await createSpell(userId, type, tx);
   }
 
   private async claimItem(userId: string, type: ItemType, tx: Database) {

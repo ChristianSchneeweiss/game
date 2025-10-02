@@ -2,10 +2,7 @@ import { faker } from "@faker-js/faker";
 import { itemFactory } from "@loot-game/game/items/equipment/item-factory";
 import type { PassiveType } from "@loot-game/game/passive-skills/base/passive-types";
 import { createSpellFromType } from "@loot-game/game/spells/base/spell-from-type";
-import {
-  SpellTypeSchema,
-  type SpellType,
-} from "@loot-game/game/spells/base/spell-types";
+import { type SpellType } from "@loot-game/game/spells/base/spell-types";
 import { TRPCError } from "@trpc/server";
 import { desc, eq, gt } from "drizzle-orm";
 import { z } from "zod";
@@ -51,23 +48,27 @@ export const appRouter = router({
   character: characterRouter,
   dungeon: dungeonRouter,
 
-  createSpell: protectedProcedure
-    .input(
-      z.object({
-        type: SpellTypeSchema,
-      })
-    )
-    .mutation(async ({ ctx, input }) => {
-      throw new TRPCError({
-        code: "NOT_IMPLEMENTED",
-        message: "Create spell is not implemented",
-      });
-      const { session, db } = ctx;
-      if (!session) {
-        throw new Error("No session found");
+  createSpell: protectedProcedure.mutation(async ({ ctx }) => {
+    // throw new TRPCError({
+    //   code: "NOT_IMPLEMENTED",
+    //   message: "Create spell is not implemented",
+    // });
+    const spells: SpellType[] = [
+      "arcane-channeling",
+      "bladestorm-rhythm",
+      "final-verdict",
+      "fleetfoot-gambit",
+      "bulwark-bash",
+      "deflecting-stance",
+      "earthshatter",
+    ];
+
+    await ctx.db.transaction(async (tx) => {
+      for (const type of spells) {
+        await createSpell(ctx.session.id, type, tx);
       }
-      await createSpell(session.id, input.type, db);
-    }),
+    });
+  }),
 
   getMySpells: protectedProcedure.query(async ({ ctx }) => {
     const { session, db } = ctx;

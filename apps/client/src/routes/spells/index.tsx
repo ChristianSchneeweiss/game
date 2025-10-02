@@ -1,5 +1,6 @@
-import { trpc } from "@/utils/trpc";
-import { useQuery } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { queryClient, trpc } from "@/utils/trpc";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Shield, Star, Zap } from "lucide-react";
 
@@ -16,6 +17,14 @@ function RouteComponent() {
   );
   const passiveSkills = _passiveSkills?.grouped;
 
+  const { mutateAsync: createSpell } = useMutation(
+    trpc.createSpell.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries(trpc.getMySpells.queryOptions());
+      },
+    }),
+  );
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
       {/* Header Section */}
@@ -24,6 +33,7 @@ function RouteComponent() {
           🔮 SPELL LIBRARY 🔮
         </h1>
         <div className="mx-auto h-1 w-32 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500"></div>
+        <Button onClick={() => createSpell()}>Create Spells</Button>
       </div>
 
       <div className="mx-auto max-w-6xl">

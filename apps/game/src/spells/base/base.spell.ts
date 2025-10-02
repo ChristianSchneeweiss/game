@@ -118,6 +118,7 @@ export abstract class BaseSpell implements Spell {
     if (targets.length === 0) return false;
 
     const validTargets = this.getValidTargets(caster);
+    console.log("valid targets", validTargets);
     return targets.every((target) => validTargets.includes(target));
   }
 

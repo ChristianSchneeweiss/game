@@ -15,6 +15,7 @@ import { EarthshatterSpell } from "../earthshatter";
 import { FesteringBlowSpell } from "../festering-blow";
 import { FinalVerdictSpell } from "../final-verdict";
 import { FireballSpell } from "../fireball";
+import { FleetfootGambitSpell } from "../fleetfoot-gambit";
 import { IronWillSpell } from "../iron-will";
 import { LightningSurgeSpell } from "../lightning-surge";
 import { NaturesEmbrace } from "../natures-embrace";
@@ -116,6 +117,8 @@ export const createSpellFromType = (id: string, type: SpellType) => {
       return new IronWillSpell(id);
     case "arcane-channeling":
       return new ArcaneChannelingSpell(id);
+    case "fleetfoot-gambit":
+      return new FleetfootGambitSpell(id);
     default:
       throw new Error(`Unknown spell type: ${type}`);
   }

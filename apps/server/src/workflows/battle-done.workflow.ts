@@ -46,40 +46,41 @@ export class BattleDoneWorkflow extends WorkflowEntrypoint<Env, Params> {
     const { battleId } = event.payload;
     await step.do("get-battle-result", async () => {
       const db = drizzle(this.env.DATABASE_URL);
-      const battleResult = await bmStorage.get(battleId, db);
-      const [dungeonBattle] = await db
-        .select()
-        .from(TB_dungeonBattle)
-        .where(eq(TB_dungeonBattle.battleId, battleId));
-      if (!dungeonBattle) {
-        console.error("Dungeon battle not found");
-        return;
-      }
+      await db.transaction(async (tx) => {
+        const battleResult = await bmStorage.get(battleId, db);
+        const [dungeonBattle] = await tx
+          .select()
+          .from(TB_dungeonBattle)
+          .where(eq(TB_dungeonBattle.battleId, battleId));
+        if (!dungeonBattle) {
+          console.error("Dungeon battle not found");
+          return;
+        }
 
-      const enemies: BaseEnemy[] = [];
-      for (const enemy of battleResult.teamB.filter((e) => e.dead)) {
-        const enemyEntity = EntityFactory.createEnemyFromType(
-          enemy.type,
-          enemy.id
+        const enemies: BaseEnemy[] = [];
+        for (const enemy of battleResult.teamB.filter((e) => e.dead)) {
+          const enemyEntity = EntityFactory.createEnemyFromType(
+            enemy.type,
+            enemy.id
+          );
+          enemies.push(enemyEntity);
+        }
+        await dungeonManager.handleDungeonCleared(
+          dungeonBattle.dungeonId,
+          battleId,
+          enemies,
+          battleResult.teamA,
+          battleResult.winner,
+          tx
         );
-        enemies.push(enemyEntity);
-      }
-      await dungeonManager.handleDungeonCleared(
-        dungeonBattle.dungeonId,
-        battleId,
-        enemies,
-        battleResult.teamA,
-        battleResult.winner,
-        db
-      );
-      const syncFactory = new SyncFactory(db);
-      await syncFactory.cleanup(battleId);
+        const syncFactory = new SyncFactory(tx);
+        await syncFactory.cleanup(battleId);
 
-      await db
-        .delete(TB_activeBattle)
-        .where(eq(TB_activeBattle.battleId, battleId));
+        await tx
+          .delete(TB_activeBattle)
+          .where(eq(TB_activeBattle.battleId, battleId));
+      });
+      console.log("Battle cleared workflow done");
     });
-
-    console.log("Battle cleared workflow done");
   }
 }

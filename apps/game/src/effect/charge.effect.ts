@@ -18,7 +18,7 @@ export class ChargeEffect extends BaseEffect {
         // so we need to add it to the spell cast buffer
         this.duration--;
         if (this.duration <= 0) {
-          this.safeRemoveEffect();
+          this.removeEffect();
         }
         return currentOrder.filter((id) => id !== this.targetId);
       }
@@ -26,16 +26,8 @@ export class ChargeEffect extends BaseEffect {
     });
   }
 
-  safeRemoveEffect(): void {
-    const target = this.getTarget();
-    target.removeEffect(this);
-    this.battleManager.addEventToSpellCastBuffer({
-      eventType: "EFFECT_REMOVAL",
-      data: {
-        effectId: this.id,
-      },
-    });
-
+  removeEffect(): void {
+    super.removeEffect();
     this.action();
   }
 

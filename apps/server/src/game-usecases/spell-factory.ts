@@ -11,14 +11,3 @@ export const createSpell = async (
     type,
   });
 };
-
-export const createSpellInTransaction = async (
-  userId: string,
-  type: SpellType,
-  tx: Database
-) => {
-  await tx.insert(TB_spellStats).values({
-    userId,
-    type,
-  });
-};
