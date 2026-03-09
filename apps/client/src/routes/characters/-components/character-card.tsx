@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { RpgBadge, RpgInset, RpgMeter, RpgPanel } from "@/components/rpg-ui";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/utils/trpc";
 import type { Character } from "@loot-game/game/base-entity";
@@ -99,7 +100,15 @@ const equipmentSlots = [
   { slot: "BELT", icon: "🪢", label: "Belt" },
 ] as const;
 
-export const CharacterCard = ({ character }: { character: Character }) => {
+export type CharacterDetailTab = "stats" | "spells" | "equipment";
+
+export const CharacterCard = ({
+  character,
+  tab = "stats",
+}: {
+  character: Character;
+  tab?: CharacterDetailTab;
+}) => {
   const queryClient = useQueryClient();
   const { mutateAsync: unequipSpell } = useMutation(
     trpc.character.unequipSpell.mutationOptions({
@@ -145,28 +154,25 @@ export const CharacterCard = ({ character }: { character: Character }) => {
 
   const xpNeeded = xpNeededForLevelUp(character.level);
   const [statToAdd, setStatToAdd] = useState<(keyof EntityAttributes)[]>([]);
-  const xpProgress = Math.min(100, ((character.xp ?? 0) / xpNeeded) * 100);
   const remainingPoints = character.statPointsAvailable - statToAdd.length;
+  const showStats = tab === "stats";
+  const showSpells = tab === "spells";
+  const showEquipment = tab === "equipment";
 
   return (
-    <article className="relative overflow-hidden rounded-4xl border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.96),rgba(2,6,23,0.98))] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.45)]">
-      <div
-        aria-hidden="true"
-        className="absolute inset-x-0 top-0 h-32 bg-[radial-gradient(circle_at_top,rgba(251,191,36,0.16),transparent_70%)] opacity-90"
-      />
-
-      <div className="relative">
+    <RpgPanel className="p-6">
+      <div className="rpg-panel-content">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex items-start gap-4">
-            <div className="flex h-16 w-16 items-center justify-center rounded-3xl border border-amber-300/15 bg-amber-300/10 text-3xl shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
-              🧙‍♂️
+            <div className="rpg-icon-frame h-16 w-16">
+              <Shield className="h-7 w-7" />
             </div>
             <div>
-              <p className="text-[0.7rem] font-semibold uppercase tracking-[0.24em] text-amber-100/70">
+              <p className="rpg-title text-[0.58rem] text-[#cfbf97]/70">
                 Active adventurer
               </p>
               <div className="mt-1 flex items-center gap-3">
-                <h2 className="font-['Iowan_Old_Style','Palatino_Linotype','Book_Antiqua',Palatino,Georgia,serif] text-4xl leading-none text-stone-50">
+                <h2 className="rpg-heading text-4xl leading-none font-semibold uppercase tracking-[0.05em]">
                   {character.name}
                 </h2>
                 <RenameDialog character={character} />
@@ -174,28 +180,19 @@ export const CharacterCard = ({ character }: { character: Character }) => {
             </div>
           </div>
 
-          <div className="rounded-full border border-amber-300/20 bg-amber-300/12 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.22em] text-amber-100">
+          <RpgBadge>
             Level {character.level}
-          </div>
+          </RpgBadge>
         </div>
 
-        <div className="mt-6 rounded-3xl border border-white/8 bg-white/4 p-5">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-yellow-200/80">
-              <Sparkles className="h-4 w-4" />
-              Experience
-            </div>
-            <p className="font-mono text-sm text-stone-100">
-              {character.xp ?? 0}/{xpNeeded}
-            </p>
-          </div>
-          <div className="mt-3 h-3 overflow-hidden rounded-full border border-white/8 bg-black/20">
-            <div
-              className="h-full rounded-full bg-[linear-gradient(90deg,#facc15_0%,#fb923c_100%)] transition-all duration-500"
-              style={{ width: `${xpProgress}%` }}
-            />
-          </div>
-        </div>
+        <RpgInset variant="parchment" className="mt-6 p-5">
+          <RpgMeter
+            label="Experience"
+            value={character.xp ?? 0}
+            max={xpNeeded}
+            tone="xp"
+          />
+        </RpgInset>
 
         <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
           <OverviewStat
@@ -218,263 +215,272 @@ export const CharacterCard = ({ character }: { character: Character }) => {
           />
         </div>
 
-        <SectionTitle
-          className="mt-8"
-          icon={<Shield className="h-5 w-5" />}
-          title="Core attributes"
-        />
-        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {coreAttributes.map((attr) => {
-            const queuedPoints = statToAdd.filter((entry) => entry === attr).length;
+        {showStats && (
+          <>
+            <SectionTitle
+              className="mt-8"
+              icon={<Shield className="h-5 w-5" />}
+              title="Core attributes"
+            />
+            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {coreAttributes.map((attr) => {
+                const queuedPoints = statToAdd.filter((entry) => entry === attr).length;
 
-            return (
-              <div
-                key={attr}
-                className="rounded-3xl border border-white/8 bg-white/4 p-4"
+                return (
+                  <div
+                    key={attr}
+                    className="rpg-parchment p-4"
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <p className="text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-[#ac9f85]">
+                          {formatLabel(attr)}
+                        </p>
+                        <p className="mt-1 text-2xl font-semibold text-[#f1e8d4]">
+                          {character.baseAttributes[attr as keyof EntityAttributes]}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        {queuedPoints > 0 && (
+                          <span className="rounded-full border border-[#5c8f3a]/35 bg-[#5c8f3a]/12 px-2 py-1 text-xs font-semibold text-[#b2d58e]">
+                            +{queuedPoints}
+                          </span>
+                        )}
+                        <button
+                          type="button"
+                          disabled={remainingPoints <= 0}
+                          onClick={() => {
+                            if (remainingPoints > 0) {
+                              setStatToAdd((prev) => [...prev, attr]);
+                            }
+                          }}
+                          className={cn(
+                            "flex h-8 w-8 items-center justify-center rounded-full border transition-all duration-200",
+                            remainingPoints > 0
+                              ? "border-[#8a7753]/35 bg-[#8a7753]/12 text-[#ead7aa] hover:bg-[#8a7753]/20"
+                              : "cursor-not-allowed border-[#5d503b]/40 bg-[#2a241c] text-[#7d725d]",
+                          )}
+                        >
+                          <PlusIcon className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {statToAdd.length > 0 && (
+              <Button
+                variant="relic"
+                className="mt-4 w-full"
+                onClick={async () => {
+                  try {
+                    await applyStatIncrease({
+                      characterId: character.id,
+                      stats: statToAdd,
+                    });
+                    setStatToAdd([]);
+                    toast.success("Applied stat changes.");
+                  } catch (error) {
+                    toast.error(getErrorMessage(error, "Failed to apply stat changes."));
+                  }
+                }}
               >
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <p className="text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-stone-500">
-                      {formatLabel(attr)}
-                    </p>
-                    <p className="mt-1 text-2xl font-semibold text-stone-50">
-                      {character.baseAttributes[attr as keyof EntityAttributes]}
-                    </p>
-                  </div>
+                Apply stat changes
+              </Button>
+            )}
 
-                  <div className="flex items-center gap-2">
-                    {queuedPoints > 0 && (
-                      <span className="rounded-full border border-emerald-300/14 bg-emerald-300/10 px-2 py-1 text-xs font-semibold text-emerald-100">
-                        +{queuedPoints}
-                      </span>
-                    )}
-                    <button
-                      type="button"
-                      disabled={remainingPoints <= 0}
-                      onClick={() => {
-                        if (remainingPoints > 0) {
-                          setStatToAdd((prev) => [...prev, attr]);
-                        }
-                      }}
-                      className={cn(
-                        "flex h-8 w-8 items-center justify-center rounded-full border transition-all duration-200",
-                        remainingPoints > 0
-                          ? "border-amber-300/20 bg-amber-300/12 text-amber-100 hover:bg-amber-300/20"
-                          : "cursor-not-allowed border-white/8 bg-white/4 text-stone-500",
-                      )}
+            <div className="mt-8 grid gap-8 lg:grid-cols-2">
+              <div>
+                <SectionTitle
+                  icon={<Sparkles className="h-5 w-5" />}
+                  title="Affinities"
+                />
+                <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  {affinityItems.map(({ key, label, icon, accent }) => (
+                    <div
+                      key={key}
+                      className="rpg-parchment p-4"
                     >
-                      <PlusIcon className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3">
+                          <span className="text-xl">{icon}</span>
+                          <p className={`text-sm font-semibold ${accent}`}>{label}</p>
+                        </div>
+                        <p className="text-xl font-semibold text-stone-50">
+                          {
+                            character.baseAffinities[
+                              key as keyof typeof character.baseAffinities
+                            ]
+                          }
+                        </p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-            );
-          })}
-        </div>
 
-        {statToAdd.length > 0 && (
-          <Button
-            className="mt-4 h-11 w-full rounded-full border border-emerald-300/20 bg-emerald-300 px-6 text-sm font-semibold tracking-[0.18em] text-slate-950 uppercase shadow-[0_12px_40px_rgba(74,222,128,0.24)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-emerald-200"
-            onClick={async () => {
-              try {
-                await applyStatIncrease({
-                  characterId: character.id,
-                  stats: statToAdd,
-                });
-                setStatToAdd([]);
-                toast.success("Applied stat changes.");
-              } catch (error) {
-                toast.error(getErrorMessage(error, "Failed to apply stat changes."));
-              }
-            }}
-          >
-            Apply stat changes
-          </Button>
+              <div>
+                <SectionTitle
+                  icon={<Shield className="h-5 w-5" />}
+                  title="Special attributes"
+                />
+                <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  {specialAttributeItems.map(({ key, label, icon, accent }) => (
+                    <div
+                      key={key}
+                      className="rpg-parchment p-4"
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-2">
+                          <span>{icon}</span>
+                          <p className={`text-xs font-semibold uppercase tracking-[0.14em] ${accent}`}>
+                            {label}
+                          </p>
+                        </div>
+                        <p className="text-sm font-semibold text-stone-50">
+                          {
+                            character.baseSpecialAttributes[
+                              key as keyof typeof character.baseSpecialAttributes
+                            ]
+                          }
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </>
         )}
 
-        <div className="mt-8 grid gap-8 lg:grid-cols-2">
-          <div>
-            <SectionTitle
-              icon={<Sparkles className="h-5 w-5" />}
-              title="Affinities"
-            />
-            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-              {affinityItems.map(({ key, label, icon, accent }) => (
-                <div
-                  key={key}
-                  className="rounded-3xl border border-white/8 bg-white/4 p-4"
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                      <span className="text-xl">{icon}</span>
-                      <p className={`text-sm font-semibold ${accent}`}>{label}</p>
-                    </div>
-                    <p className="text-xl font-semibold text-stone-50">
-                      {
-                        character.baseAffinities[
-                          key as keyof typeof character.baseAffinities
-                        ]
-                      }
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div>
+        {showEquipment && (
+          <div className="mt-8">
             <SectionTitle
               icon={<Shield className="h-5 w-5" />}
-              title="Special attributes"
+              title="Equipped gear"
             />
-            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-              {specialAttributeItems.map(({ key, label, icon, accent }) => (
-                <div
-                  key={key}
-                  className="rounded-3xl border border-white/8 bg-white/4 p-4"
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2">
-                      <span>{icon}</span>
-                      <p className={`text-xs font-semibold uppercase tracking-[0.14em] ${accent}`}>
-                        {label}
-                      </p>
+            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {equipmentSlots.map(({ slot, icon, label }) => {
+                const equipped =
+                  character.equipped[slot as keyof typeof character.equipped];
+
+                return (
+                  <div
+                    key={slot}
+                    className="rpg-parchment p-4"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xl">{icon}</span>
+                      {equipped && (
+                        <Button
+                          size="icon"
+                          variant="ghostRelic"
+                          className="h-7 w-7 border-[#8f342a]/30 bg-[#8f342a]/10 text-[#f0c8be] hover:bg-[#8f342a]/16 hover:text-[#f4dbd4]"
+                          onClick={async () => {
+                            try {
+                              await unequipEquipment({ equipmentId: equipped.id });
+                              toast.success(`Unequipped ${equipped.name}.`);
+                            } catch (error) {
+                              toast.error(
+                                getErrorMessage(error, `Failed to unequip ${equipped.name}.`),
+                              );
+                            }
+                          }}
+                        >
+                          <XIcon className="h-3 w-3" />
+                        </Button>
+                      )}
                     </div>
-                    <p className="text-sm font-semibold text-stone-50">
-                      {
-                        character.baseSpecialAttributes[
-                          key as keyof typeof character.baseSpecialAttributes
-                        ]
-                      }
+                    <p className="mt-3 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-stone-500">
+                      {label}
+                    </p>
+                    <p className="mt-1 text-sm font-semibold text-stone-100">
+                      {equipped?.name ?? "Empty"}
                     </p>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
-        </div>
+        )}
 
-        <div className="mt-8">
-          <SectionTitle
-            icon={<Shield className="h-5 w-5" />}
-            title="Equipped gear"
-          />
-          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {equipmentSlots.map(({ slot, icon, label }) => {
-              const equipped =
-                character.equipped[slot as keyof typeof character.equipped];
+        {showSpells && (
+          <div className="mt-8 grid gap-8 lg:grid-cols-2">
+            <div>
+              <SectionTitle
+                icon={<Sparkles className="h-5 w-5" />}
+                title="Passive skills"
+              />
+              <div className="mt-4 space-y-3">
+                {character.passiveSkills.length > 0 ? (
+                  character.passiveSkills.map((passive) => (
+                    <ActionRow
+                      key={passive.id}
+                      icon="🌟"
+                      title={formatLabel(passive.passiveType)}
+                      onRemove={async () => {
+                        try {
+                          await unequipPassiveSkill({ passiveSkillId: passive.id });
+                          toast.success(
+                            `Unequipped ${formatLabel(passive.passiveType)}.`,
+                          );
+                        } catch (error) {
+                          toast.error(
+                            getErrorMessage(
+                              error,
+                              `Failed to unequip ${formatLabel(passive.passiveType)}.`,
+                            ),
+                          );
+                        }
+                      }}
+                    />
+                  ))
+                ) : (
+                  <EmptyInline copy="No passive skills equipped." />
+                )}
+              </div>
+            </div>
 
-              return (
-                <div
-                  key={slot}
-                  className="rounded-3xl border border-white/8 bg-white/4 p-4"
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-xl">{icon}</span>
-                    {equipped && (
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-7 w-7 rounded-full bg-red-500/12 text-red-200 hover:bg-red-500/18 hover:text-red-100"
-                        onClick={async () => {
-                          try {
-                            await unequipEquipment({ equipmentId: equipped.id });
-                            toast.success(`Unequipped ${equipped.name}.`);
-                          } catch (error) {
-                            toast.error(
-                              getErrorMessage(error, `Failed to unequip ${equipped.name}.`),
-                            );
-                          }
-                        }}
-                      >
-                        <XIcon className="h-3 w-3" />
-                      </Button>
-                    )}
-                  </div>
-                  <p className="mt-3 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-stone-500">
-                    {label}
-                  </p>
-                  <p className="mt-1 text-sm font-semibold text-stone-100">
-                    {equipped?.name ?? "Empty"}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="mt-8 grid gap-8 lg:grid-cols-2">
-          <div>
-            <SectionTitle
-              icon={<Sparkles className="h-5 w-5" />}
-              title="Passive skills"
-            />
-            <div className="mt-4 space-y-3">
-              {character.passiveSkills.length > 0 ? (
-                character.passiveSkills.map((passive) => (
-                  <ActionRow
-                    key={passive.id}
-                    icon="🌟"
-                    title={formatLabel(passive.passiveType)}
-                    onRemove={async () => {
-                      try {
-                        await unequipPassiveSkill({ passiveSkillId: passive.id });
-                        toast.success(
-                          `Unequipped ${formatLabel(passive.passiveType)}.`,
-                        );
-                      } catch (error) {
-                        toast.error(
-                          getErrorMessage(
-                            error,
-                            `Failed to unequip ${formatLabel(passive.passiveType)}.`,
-                          ),
-                        );
-                      }
-                    }}
-                  />
-                ))
-              ) : (
-                <EmptyInline copy="No passive skills equipped." />
-              )}
+            <div>
+              <SectionTitle
+                icon={<Sword className="h-5 w-5" />}
+                title="Equipped spells"
+              />
+              <div className="mt-4 space-y-3">
+                {character.spells.length > 0 ? (
+                  character.spells.map((spell) => (
+                    <ActionRow
+                      key={spell.config.id}
+                      icon="⚡"
+                      title={spell.config.name}
+                      locked={spell.config.type === "basic-attack"}
+                      onRemove={async () => {
+                        try {
+                          await unequipSpell({ spellId: spell.config.id });
+                          toast.success(`Unequipped ${spell.config.name}.`);
+                        } catch (error) {
+                          toast.error(
+                            getErrorMessage(
+                              error,
+                              `Failed to unequip ${spell.config.name}.`,
+                            ),
+                          );
+                        }
+                      }}
+                    />
+                  ))
+                ) : (
+                  <EmptyInline copy="No spells equipped." />
+                )}
+              </div>
             </div>
           </div>
-
-          <div>
-            <SectionTitle
-              icon={<Sword className="h-5 w-5" />}
-              title="Equipped spells"
-            />
-            <div className="mt-4 space-y-3">
-              {character.spells.length > 0 ? (
-                character.spells.map((spell) => (
-                  <ActionRow
-                    key={spell.config.id}
-                    icon="⚡"
-                    title={spell.config.name}
-                    locked={spell.config.type === "basic-attack"}
-                    onRemove={async () => {
-                      try {
-                        await unequipSpell({ spellId: spell.config.id });
-                        toast.success(`Unequipped ${spell.config.name}.`);
-                      } catch (error) {
-                        toast.error(
-                          getErrorMessage(
-                            error,
-                            `Failed to unequip ${spell.config.name}.`,
-                          ),
-                        );
-                      }
-                    }}
-                  />
-                ))
-              ) : (
-                <EmptyInline copy="No spells equipped." />
-              )}
-            </div>
-          </div>
-        </div>
+        )}
       </div>
-    </article>
+    </RpgPanel>
   );
 };
 
@@ -490,12 +496,12 @@ function OverviewStat({
   accent: string;
 }) {
   return (
-    <div className="rounded-3xl border border-white/8 bg-white/4 p-4">
+    <div className="rpg-stat-tile">
       <div className={`flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] ${accent}`}>
         {icon}
         {label}
       </div>
-      <p className="mt-3 text-3xl font-semibold text-stone-50">{value}</p>
+      <p className="mt-3 text-3xl font-semibold text-[#f1e8d4]">{value}</p>
     </div>
   );
 }
@@ -511,10 +517,10 @@ function SectionTitle({
 }) {
   return (
     <div className={cn("flex items-center gap-3", className)}>
-      <div className="flex h-10 w-10 items-center justify-center rounded-3xl border border-white/8 bg-white/4 text-blue-100">
+      <div className="rpg-icon-frame h-10 w-10 text-[#ead7aa]">
         {icon}
       </div>
-      <h3 className="text-2xl font-semibold tracking-[-0.04em] text-stone-50">
+      <h3 className="rpg-heading text-2xl font-semibold uppercase tracking-[0.05em]">
         {title}
       </h3>
     </div>
@@ -533,21 +539,21 @@ function ActionRow({
   locked?: boolean;
 }) {
   return (
-    <div className="flex items-center justify-between gap-4 rounded-3xl border border-white/8 bg-white/4 p-4">
+    <div className="rpg-parchment flex items-center justify-between gap-4 p-4">
       <div className="flex min-w-0 items-center gap-3">
         <span className="text-lg">{icon}</span>
-        <p className="truncate text-sm font-semibold text-stone-100">{title}</p>
+        <p className="truncate text-sm font-semibold text-[#f1e8d4]">{title}</p>
       </div>
 
       {locked ? (
-        <span className="rounded-full border border-white/8 bg-black/20 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-stone-400">
+        <span className="rounded-full border border-[#8a7753]/28 bg-[#2b241b]/85 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-[#b8aa89]">
           Locked
         </span>
       ) : (
         <Button
           size="icon"
-          variant="ghost"
-          className="h-8 w-8 rounded-full bg-red-500/12 text-red-200 hover:bg-red-500/18 hover:text-red-100"
+          variant="ghostRelic"
+          className="h-8 w-8 border-[#8f342a]/30 bg-[#8f342a]/10 text-[#f0c8be] hover:bg-[#8f342a]/16 hover:text-[#f4dbd4]"
           onClick={() => {
             void onRemove();
           }}
@@ -561,7 +567,7 @@ function ActionRow({
 
 function EmptyInline({ copy }: { copy: string }) {
   return (
-    <div className="rounded-3xl border border-dashed border-white/10 bg-white/4 px-4 py-10 text-center text-sm text-stone-400">
+    <div className="rpg-empty-state px-4 py-10 text-sm text-[#b6ab92]">
       {copy}
     </div>
   );

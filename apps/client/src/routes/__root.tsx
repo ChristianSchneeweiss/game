@@ -44,10 +44,18 @@ function RootComponent() {
       <TRPCProvider>
         <RainbowKitProvider>
           <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-            <Header />
-            {isFetching && <Loader />}
-            <Outlet />
-            <Toaster richColors />
+            <div className="relative min-h-screen overflow-x-clip">
+              <div
+                aria-hidden="true"
+                className="pointer-events-none fixed inset-x-0 top-0 z-0 h-64 bg-[radial-gradient(circle_at_top,rgba(244,180,86,0.08),transparent_48%)]"
+              />
+              <Header />
+              {isFetching && <Loader />}
+              <div className="relative z-10">
+                <Outlet />
+              </div>
+              <Toaster richColors />
+            </div>
           </ThemeProvider>
           {import.meta.env.DEV && (
             <ReactQueryDevtools

@@ -43,6 +43,11 @@ export const appRouter = router({
       .onConflictDoNothing();
 
     await createCharacter(faker.internet.username(), session.id, db);
+
+    // just for now
+    await createSpell(session.id, "cinder-wisp", db);
+    await createSpell(session.id, "aqua-wave", db);
+    await createSpell(session.id, "battle-roar", db);
   }),
 
   character: characterRouter,

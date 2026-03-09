@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Spectral:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
 @plugin 'tailwindcss-animate';
@@ -11,117 +12,395 @@
 
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
-
   --color-card: hsl(var(--card));
   --color-card-foreground: hsl(var(--card-foreground));
-
   --color-popover: hsl(var(--popover));
   --color-popover-foreground: hsl(var(--popover-foreground));
-
   --color-primary: hsl(var(--primary));
   --color-primary-foreground: hsl(var(--primary-foreground));
-
   --color-secondary: hsl(var(--secondary));
   --color-secondary-foreground: hsl(var(--secondary-foreground));
-
   --color-muted: hsl(var(--muted));
   --color-muted-foreground: hsl(var(--muted-foreground));
-
   --color-accent: hsl(var(--accent));
   --color-accent-foreground: hsl(var(--accent-foreground));
-
   --color-destructive: hsl(var(--destructive));
   --color-destructive-foreground: hsl(var(--destructive-foreground));
-
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
-
-  --color-chart-1: hsl(var(--chart-1));
-  --color-chart-2: hsl(var(--chart-2));
-  --color-chart-3: hsl(var(--chart-3));
-  --color-chart-4: hsl(var(--chart-4));
-  --color-chart-5: hsl(var(--chart-5));
 }
 
-/*
-  The default border color has changed to `currentColor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
 @layer base {
   *,
   ::after,
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentColor);
+    border-color: var(--color-border, currentColor);
   }
 }
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
+    --rpg-bg-0: #0f1115;
+    --rpg-bg-1: #1a1d23;
+    --rpg-panel-stone: #2a2f38;
+    --rpg-panel-stone-soft: #343a44;
+    --rpg-panel-parchment: #252017;
+    --rpg-panel-parchment-soft: #342d22;
+    --rpg-text-main: #e5e1d8;
+    --rpg-text-muted: #cfc9bb;
+    --rpg-text-faint: #9a907c;
+    --rpg-border-gold: #8a7753;
+    --rpg-border-bronze: #6c5a3c;
+    --rpg-fire: #ff6a2a;
+    --rpg-water: #3ca6ff;
+    --rpg-earth: #5c8f3a;
+    --rpg-lightning: #e8d24a;
+    --rpg-dark: #6b3fa0;
+    --rpg-blood: #7e231d;
+    --rpg-mana: #1f4a86;
+    --rpg-shadow-deep: 0 24px 80px rgba(0, 0, 0, 0.52);
+    --rpg-shadow-panel:
+      inset 0 1px 0 rgba(255, 244, 219, 0.05),
+      inset 0 -16px 36px rgba(0, 0, 0, 0.24),
+      0 24px 80px rgba(0, 0, 0, 0.42);
+    --rpg-shadow-inset:
+      inset 0 1px 0 rgba(255, 243, 214, 0.05),
+      inset 0 0 26px rgba(0, 0, 0, 0.28);
+    --rpg-font-display: "Cinzel", "Iowan Old Style", "Palatino Linotype", serif;
+    --rpg-font-body: "Spectral", Georgia, serif;
+    --background: 221 16% 9%;
+    --foreground: 35 23% 88%;
+    --card: 221 15% 18%;
+    --card-foreground: 35 23% 88%;
+    --popover: 34 25% 15%;
+    --popover-foreground: 35 23% 88%;
+    --primary: 39 25% 43%;
+    --primary-foreground: 29 52% 11%;
+    --secondary: 219 12% 24%;
+    --secondary-foreground: 35 23% 88%;
+    --muted: 220 11% 22%;
+    --muted-foreground: 36 16% 69%;
+    --accent: 219 12% 24%;
+    --accent-foreground: 35 23% 88%;
+    --destructive: 4 55% 34%;
+    --destructive-foreground: 35 23% 92%;
+    --border: 36 25% 40%;
+    --input: 34 22% 18%;
+    --ring: 39 34% 56%;
+    --radius: 0.85rem;
   }
+
   .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --background: 221 16% 9%;
+    --foreground: 35 23% 88%;
+    --card: 221 15% 18%;
+    --card-foreground: 35 23% 88%;
+    --popover: 34 25% 15%;
+    --popover-foreground: 35 23% 88%;
+    --primary: 39 25% 43%;
+    --primary-foreground: 29 52% 11%;
+    --secondary: 219 12% 24%;
+    --secondary-foreground: 35 23% 88%;
+    --muted: 220 11% 22%;
+    --muted-foreground: 36 16% 69%;
+    --accent: 219 12% 24%;
+    --accent-foreground: 35 23% 88%;
+    --destructive: 4 55% 34%;
+    --destructive-foreground: 35 23% 92%;
+    --border: 36 25% 40%;
+    --input: 34 22% 18%;
+    --ring: 39 34% 56%;
   }
-}
-@layer base {
+
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    min-height: 100vh;
+    color: var(--rpg-text-main);
+    font-family: var(--rpg-font-body);
+    background:
+      radial-gradient(circle at top, rgba(244, 176, 77, 0.09), transparent 20%),
+      radial-gradient(circle at 18% 12%, rgba(255, 129, 61, 0.07), transparent 16%),
+      radial-gradient(circle at 82% 18%, rgba(107, 63, 160, 0.08), transparent 18%),
+      linear-gradient(180deg, var(--rpg-bg-0) 0%, var(--rpg-bg-1) 48%, #090a0d 100%);
+    background-attachment: fixed;
+    text-rendering: optimizeLegibility;
+  }
+
+  body::before,
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  body::before {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(255, 220, 148, 0.035),
+        transparent 18%,
+        transparent 82%,
+        rgba(0, 0, 0, 0.24)
+      ),
+      radial-gradient(circle at center, transparent 54%, rgba(0, 0, 0, 0.42) 100%);
+  }
+
+  body::after {
+    opacity: 0.12;
+    background-image:
+      linear-gradient(rgba(255, 244, 219, 0.16) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 244, 219, 0.14) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.8), transparent 92%);
+  }
+
   * {
     @apply border-border;
   }
-  body {
-    @apply bg-background text-foreground;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--rpg-font-display);
+    color: var(--rpg-text-main);
+  }
+
+  a,
+  button,
+  input,
+  textarea,
+  select {
+    outline-color: transparent;
+  }
+
+  button,
+  [role="button"] {
+    cursor: pointer;
+  }
+
+  ::selection {
+    background: rgba(232, 210, 74, 0.28);
+    color: #fff6da;
+  }
+
+  input,
+  textarea,
+  select {
+    color: var(--rpg-text-main);
+    background-color: rgba(36, 31, 24, 0.88);
+    font-family: var(--rpg-font-body);
+  }
+
+  input[type="range"] {
+    accent-color: #b89656;
+  }
+}
+
+@layer components {
+  .rpg-page {
+    @apply relative min-h-screen px-4 py-6 sm:px-6 sm:py-8 lg:px-8;
+  }
+
+  .rpg-shell {
+    @apply mx-auto w-full max-w-7xl;
+  }
+
+  .rpg-panel {
+    position: relative;
+    overflow: hidden;
+    border: 2px solid rgba(138, 119, 83, 0.9);
+    border-radius: 1.4rem;
+    background:
+      linear-gradient(180deg, rgba(52, 58, 68, 0.92), rgba(26, 29, 35, 0.98)),
+      linear-gradient(145deg, rgba(255, 221, 152, 0.05), transparent 22%);
+    box-shadow: var(--rpg-shadow-panel);
+  }
+
+  .rpg-panel::before {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    border: 1px solid rgba(217, 186, 124, 0.18);
+    border-radius: 1rem;
+    pointer-events: none;
+  }
+
+  .rpg-panel::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at top, rgba(255, 201, 97, 0.1), transparent 26%),
+      linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.18));
+    pointer-events: none;
+  }
+
+  .rpg-panel-content {
+    @apply relative z-10;
+  }
+
+  .rpg-parchment {
+    border: 1px solid rgba(164, 133, 87, 0.52);
+    border-radius: 1rem;
+    background:
+      linear-gradient(180deg, rgba(60, 51, 37, 0.98), rgba(36, 30, 22, 0.98)),
+      linear-gradient(90deg, rgba(255, 235, 188, 0.03), rgba(255, 235, 188, 0));
+    box-shadow: var(--rpg-shadow-inset);
+  }
+
+  .rpg-stone {
+    border: 1px solid rgba(120, 101, 71, 0.34);
+    border-radius: 1rem;
+    background:
+      linear-gradient(180deg, rgba(50, 55, 65, 0.94), rgba(29, 32, 39, 0.98));
+    box-shadow: var(--rpg-shadow-inset);
+  }
+
+  .rpg-section-divider {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(138, 119, 83, 0.7),
+      transparent
+    );
+  }
+
+  .rpg-title {
+    font-family: var(--rpg-font-display);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #ead9ad;
+  }
+
+  .rpg-heading {
+    font-family: var(--rpg-font-display);
+    color: var(--rpg-text-main);
+    text-wrap: balance;
+  }
+
+  .rpg-copy {
+    color: var(--rpg-text-muted);
+    font-family: var(--rpg-font-body);
+  }
+
+  .rpg-icon-frame {
+    @apply flex items-center justify-center;
+    position: relative;
+    border: 2px solid rgba(138, 119, 83, 0.85);
+    border-radius: 0.95rem;
+    background:
+      linear-gradient(180deg, rgba(58, 47, 30, 0.95), rgba(31, 26, 20, 0.98)),
+      linear-gradient(180deg, rgba(255, 228, 161, 0.07), transparent);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 241, 210, 0.08),
+      0 10px 24px rgba(0, 0, 0, 0.28);
+    color: #ecd7a4;
+  }
+
+  .rpg-icon-frame::before {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    border: 1px solid rgba(255, 225, 163, 0.12);
+    border-radius: 0.7rem;
+    pointer-events: none;
+  }
+
+  .rpg-badge {
+    @apply inline-flex items-center gap-2 px-3 py-1.5 text-[0.65rem] font-semibold uppercase;
+    letter-spacing: 0.18em;
+    border: 1px solid rgba(138, 119, 83, 0.48);
+    border-radius: 999px;
+    background: rgba(53, 45, 33, 0.84);
+    color: #e5d5ab;
+    box-shadow: inset 0 1px 0 rgba(255, 238, 204, 0.05);
+  }
+
+  .rpg-stat-tile {
+    @apply px-4 py-4;
+    border: 1px solid rgba(138, 119, 83, 0.32);
+    border-radius: 1rem;
+    background:
+      linear-gradient(180deg, rgba(46, 40, 31, 0.92), rgba(29, 24, 19, 0.98));
+    box-shadow: var(--rpg-shadow-inset);
+  }
+
+  .rpg-empty-state {
+    @apply px-6 py-14 text-center;
+    border: 2px dashed rgba(138, 119, 83, 0.34);
+    border-radius: 1.35rem;
+    background:
+      linear-gradient(180deg, rgba(42, 35, 26, 0.72), rgba(23, 20, 17, 0.92));
+    box-shadow: var(--rpg-shadow-inset);
+  }
+
+  .rpg-meter {
+    height: 0.9rem;
+    overflow: hidden;
+    border: 1px solid rgba(138, 119, 83, 0.55);
+    border-radius: 999px;
+    background:
+      linear-gradient(180deg, rgba(16, 14, 13, 0.98), rgba(39, 31, 23, 0.9));
+    box-shadow:
+      inset 0 3px 8px rgba(0, 0, 0, 0.54),
+      inset 0 1px 0 rgba(255, 232, 187, 0.06);
+  }
+
+  .rpg-meter-fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 320ms ease;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      0 0 14px rgba(0, 0, 0, 0.18);
+  }
+
+  .rpg-link {
+    @apply inline-flex items-center gap-2 transition-colors duration-200;
+    color: #d8c9a3;
+  }
+
+  .rpg-link:hover {
+    color: #f3e1b0;
+  }
+
+  .rpg-scroll-frame {
+    border: 1px solid rgba(138, 119, 83, 0.36);
+    border-radius: 1rem;
+    background:
+      linear-gradient(180deg, rgba(40, 34, 26, 0.96), rgba(26, 23, 19, 0.98));
+    box-shadow: var(--rpg-shadow-inset);
+  }
+
+  .rpg-affinity-fire {
+    color: var(--rpg-fire);
+  }
+
+  .rpg-affinity-water {
+    color: var(--rpg-water);
+  }
+
+  .rpg-affinity-earth {
+    color: var(--rpg-earth);
+  }
+
+  .rpg-affinity-lightning {
+    color: var(--rpg-lightning);
+  }
+
+  .rpg-affinity-dark {
+    color: var(--rpg-dark);
   }
 }

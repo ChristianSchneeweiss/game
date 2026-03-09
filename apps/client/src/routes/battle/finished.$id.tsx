@@ -1,9 +1,17 @@
 import { trpc } from "@/utils/trpc";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { ArrowLeft, ScrollText, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { serialize } from "superjson";
+import {
+  RpgBackLink,
+  RpgInset,
+  RpgPage,
+  RpgPanel,
+  RpgSectionHeading,
+  RpgStatTile,
+} from "@/components/rpg-ui";
 import { BattleRender } from "./-battle-render";
 import { useStatsTimeline } from "./-hooks/use-stats-timeline";
 
@@ -26,96 +34,74 @@ function RouteComponent() {
   const currentEvent = data.timelineData[visibleEvents];
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(251,191,36,0.12),transparent_20%),radial-gradient(circle_at_82%_16%,rgba(96,165,250,0.08),transparent_18%),linear-gradient(180deg,#030712_0%,#111827_46%,#020617_100%)] px-6 py-8 text-stone-100">
-      <div className="mx-auto max-w-7xl">
-        <Link
-          to="/dungeons"
-          className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-stone-300 transition-all duration-300 hover:border-white/20 hover:bg-white/8 hover:text-white"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to dungeons
-        </Link>
+    <RpgPage>
+      <div className="space-y-8">
+        <RpgBackLink to="/dungeons">Back to dungeons</RpgBackLink>
 
-        <section className="relative overflow-hidden rounded-4xl border border-white/10 bg-black/25 p-8 shadow-[0_30px_120px_rgba(0,0,0,0.45)] backdrop-blur-xl sm:p-10">
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 bg-[linear-gradient(rgba(248,250,252,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(248,250,252,0.04)_1px,transparent_1px)] bg-size-[64px_64px] opacity-15"
-          />
-          <div
-            aria-hidden="true"
-            className="absolute right-0 top-0 h-56 w-56 rounded-full bg-amber-300/10 blur-3xl"
-          />
-
-          <div className="relative grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-end">
+        <RpgPanel className="px-6 py-6 sm:px-8 sm:py-8">
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-end">
             <div className="max-w-3xl">
-              <div className="inline-flex items-center gap-3 rounded-full border border-amber-300/18 bg-amber-300/10 px-4 py-2 text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-amber-100/85">
+              <div className="rpg-badge">
                 <Sparkles className="h-3.5 w-3.5" />
                 Battle replay
               </div>
-              <h1 className="mt-5 font-['Iowan_Old_Style','Palatino_Linotype','Book_Antiqua',Palatino,Georgia,serif] text-5xl leading-[0.92] font-semibold tracking-[-0.05em] text-stone-50 sm:text-6xl">
-                Replay the encounter.
+              <h1 className="rpg-heading mt-5 text-4xl font-semibold uppercase tracking-[0.06em] sm:text-5xl lg:text-6xl">
+                Replay the encounter
               </h1>
-              <p className="mt-5 max-w-2xl font-['Avenir_Next','Segoe_UI',sans-serif] text-base leading-8 text-stone-300 sm:text-lg">
-                Scrub through the event timeline, inspect the arena state, and
-                see exactly how the fight resolved.
+              <p className="rpg-copy mt-5 max-w-2xl text-base leading-8 sm:text-lg">
+                Scrub the battle ledger, inspect the current event payload, and
+                trace the exact state that produced the final result.
               </p>
             </div>
 
-            <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-stone-400">
+            <RpgInset variant="parchment" className="p-5">
+              <p className="rpg-title text-[0.62rem] text-[#cfbf97]/75">
                 Replay pulse
               </p>
               <div className="mt-4 grid grid-cols-2 gap-3">
-                <ReplayPill label="Step" value={`${visibleEvents + 1}`} />
-                <ReplayPill label="Total" value={`${data.timelineData.length}`} />
+                <RpgStatTile label="Step" value={`${visibleEvents + 1}`} />
+                <RpgStatTile label="Total" value={`${data.timelineData.length}`} />
               </div>
-              <div className="mt-5 rounded-3xl border border-white/8 bg-black/20 p-4">
-                <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">
+              <RpgInset variant="stone" className="mt-4 p-4">
+                <div className="flex items-center gap-2 text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-[#b6ab92]">
                   <ScrollText className="h-4 w-4" />
                   Battle ID
                 </div>
-                <p className="mt-2 font-mono text-sm text-stone-100">{id}</p>
-              </div>
-            </div>
+                <p className="mt-2 font-mono text-sm text-[#f1e8d4]">{id}</p>
+              </RpgInset>
+            </RpgInset>
           </div>
-        </section>
+        </RpgPanel>
 
-        <section className="mt-8 rounded-4xl border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.96),rgba(2,6,23,0.98))] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.45)]">
-          <div className="flex flex-col gap-4">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-200/70">
-                Timeline scrubber
-              </p>
-              <h2 className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-stone-50">
-                Visible event {visibleEvents + 1} of {data.timelineData.length}
-              </h2>
-            </div>
+        <RpgPanel className="px-6 py-6">
+          <RpgSectionHeading
+            icon={<ArrowLeft className="h-5 w-5" />}
+            eyebrow="Timeline control"
+            title={`Visible event ${visibleEvents + 1} of ${data.timelineData.length}`}
+          />
+          <RpgInset variant="parchment" className="mt-5 p-5">
             <input
               type="range"
               min={0}
               max={data.timelineData.length - 1}
               value={visibleEvents}
               onChange={(e) => setVisibleEvents(Number(e.target.value))}
-              className="w-full accent-amber-300"
+              className="w-full"
             />
-          </div>
-        </section>
+          </RpgInset>
+        </RpgPanel>
 
-        <section className="mt-8 rounded-4xl border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.96),rgba(2,6,23,0.98))] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.45)]">
-          <div className="mb-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-200/70">
-              Event snapshot
-            </p>
-            <h2 className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-stone-50">
-              Current event payload
-            </h2>
-          </div>
-          <pre className="overflow-x-auto rounded-3xl border border-white/8 bg-black/20 p-4 text-xs leading-6 text-stone-300">
+        <RpgPanel className="px-6 py-6">
+          <RpgSectionHeading
+            icon={<ScrollText className="h-5 w-5" />}
+            eyebrow="Event snapshot"
+            title="Current event payload"
+          />
+          <pre className="rpg-scroll-frame mt-5 overflow-x-auto p-4 text-xs leading-6 text-[#e7dcc7]">
             {JSON.stringify(serialize(currentEvent).json, null, 2)}
           </pre>
-        </section>
+        </RpgPanel>
 
-        <div className="mt-8 flex flex-col gap-4">
         <BattleRender
           participants={data.participants}
           stats={stats}
@@ -123,19 +109,7 @@ function RouteComponent() {
           battleId={id}
           mode="replay"
         />
-        </div>
       </div>
-    </main>
-  );
-}
-
-function ReplayPill({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-3xl border border-white/8 bg-black/20 p-4 text-center">
-      <p className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-stone-500">
-        {label}
-      </p>
-      <p className="mt-2 text-lg font-semibold text-stone-50">{value}</p>
-    </div>
+    </RpgPage>
   );
 }

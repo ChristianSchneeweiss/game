@@ -3,6 +3,14 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
+import {
+  RpgBadge,
+  RpgInset,
+  RpgMeter,
+  RpgPage,
+  RpgPanel,
+  RpgSectionHeading,
+} from "@/components/rpg-ui";
 import { cn } from "@/lib/utils";
 import { useUser } from "@clerk/clerk-react";
 import { Character } from "@loot-game/game/base-entity";
@@ -22,17 +30,16 @@ import {
   Droplets,
   Eye,
   Flame,
-  Heart,
   Lock,
   PersonStandingIcon,
   Shield,
   ShieldCheck,
   SkullIcon,
   Sparkles,
-  Swords,
   TargetIcon,
   TrendingDown,
   TrendingUp,
+  SwordsIcon,
   Zap,
   Zap as ZapIcon,
 } from "lucide-react";
@@ -106,6 +113,7 @@ export const BattleRender = ({
   const currentRound = battleState?.round.round ?? 0;
   const orderQueue = battleState?.round.orderQueue ?? [];
   const isLiveMode = mode === "live";
+  const activeEntityId = battleState?.round.orderQueue[0];
 
   const EntityCard = ({ entity, team }: { entity: Entity; team: Team }) => {
     const setHoverCharacterOpen = (open: boolean | undefined) => {
@@ -118,9 +126,8 @@ export const BattleRender = ({
     };
 
     const currentStats = stats.get(entity.id)!;
-    const activeEntity = battleState?.round.orderQueue[0];
     const myTurn =
-      activeEntity === entity.id &&
+      activeEntityId === entity.id &&
       entity instanceof Character &&
       entity.userId === user.user?.id;
 
@@ -128,10 +135,8 @@ export const BattleRender = ({
       0,
       Math.min(currentStats?.health, entity.maxHealth),
     );
-    const healthPercent = (displayHealth / entity.maxHealth) * 100;
     const maxMana = entity.maxMana;
     const displayMana = Math.max(0, Math.min(currentStats?.mana, maxMana));
-    const manaPercent = (displayMana / maxMana) * 100;
 
     const isValidTarget = validTargets?.includes(entity.id);
     const isChosenTarget = chosenTargets?.includes(entity.id);
@@ -139,226 +144,173 @@ export const BattleRender = ({
     const activeEffects = (stats.get(entity.id)?.activeEffects ?? [])
       .map((effect) => effectTracking.get(effect))
       .filter((effect) => effect !== undefined);
+    const statusTone =
+      currentStats?.flags.dead
+        ? "border-[#7b2f27]/90"
+        : myTurn && isLive
+          ? "border-[#b89656] shadow-[0_0_0_1px_rgba(184,150,86,0.35),0_22px_48px_rgba(0,0,0,0.45)]"
+          : currentStats?.flags.casting
+            ? "border-[#3ca6ff]/80"
+            : currentStats?.deltaHealth > 0
+              ? "border-emerald-500/70"
+              : currentStats?.deltaHealth < 0
+                ? "border-[#ff6a2a]/70"
+                : "";
 
     return (
-      <div
+      <RpgPanel
         key={entity.id}
         className={cn(
-          "relative rounded-xl border-2 bg-linear-to-br from-slate-800/90 to-slate-900/90 p-6 shadow-2xl backdrop-blur-sm transition-all duration-300",
-          currentStats?.flags.casting &&
-            "border-blue-400 shadow-2xl shadow-blue-400/20",
-          currentStats?.deltaHealth > 0 &&
-            "border-green-400 shadow-2xl shadow-green-400/20",
-          currentStats?.deltaHealth < 0 &&
-            "border-red-400 shadow-2xl shadow-red-400/20",
-          myTurn &&
-            isLive &&
-            "scale-105 border-yellow-400 shadow-2xl ring-4 shadow-yellow-400/30 ring-yellow-400/20",
+          "p-5 transition-all duration-300",
+          statusTone,
+          isChosenTarget && "shadow-[0_0_0_1px_rgba(184,150,86,0.4),0_0_26px_rgba(184,150,86,0.16)]",
         )}
       >
-        {/* Turn Indicator */}
-        {myTurn && isLive && (
-          <div className="absolute -top-3 -right-3 animate-pulse rounded-full bg-linear-to-r from-yellow-400 to-orange-500 px-3 py-1 text-sm font-bold text-black">
-            YOUR TURN
+        <div className="mb-5 flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <div className="flex items-start gap-3">
+              <div className="rpg-icon-frame h-12 w-12 text-lg">
+                {team === "TEAM_A" ? <Shield className="h-5 w-5" /> : <SkullIcon className="h-5 w-5" />}
+              </div>
+              <div className="min-w-0">
+                <p className="rpg-title text-[0.58rem] text-[#cfbf97]/70">
+                  {team === "TEAM_A" ? "Ally dossier" : "Enemy dossier"}
+                </p>
+                <div className="mt-1 flex flex-wrap items-center gap-2">
+                  <h3 className="rpg-heading text-2xl leading-none font-semibold tracking-[0.05em]">
+                    {entity.name}
+                  </h3>
+                  {myTurn && isLive && (
+                    <RpgBadge className="border-[#b89656]/60 bg-[#5d4522]/95 text-[#f6e4ba]">
+                      Your turn
+                    </RpgBadge>
+                  )}
+                  {entity.isBot && (
+                    <BotIcon className="h-4 w-4 text-[#b9a980]" />
+                  )}
+                  {currentStats?.flags.dead && (
+                    <RpgBadge className="border-[#8f342a]/40 bg-[#431914]/90 text-[#f0c8be]">
+                      Fallen
+                    </RpgBadge>
+                  )}
+                  {currentStats?.flags.isCrit && (
+                    <RpgBadge className="border-[#e8d24a]/45 bg-[#5c4b1b]/95 text-[#faefb0]">
+                      Critical
+                    </RpgBadge>
+                  )}
+                  {currentStats.roll !== undefined && (
+                    <RpgBadge className="border-[#8a7753]/40 bg-[#251f18]/92 text-[#e6d9bc]">
+                      Roll {currentStats.roll}
+                    </RpgBadge>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
-        )}
 
-        {/* Character Header */}
-        <div className="mb-4 flex items-start justify-between">
-          <h3
-            className={cn(
-              "flex items-center gap-2 text-xl font-bold text-white",
-            )}
-            onClick={() => {
-              if (isValidTarget && activeSpell) {
-                if (isChosenTarget) {
-                  setChosenTargets?.([
-                    ...(chosenTargets ?? []).filter((t) => t !== entity.id),
-                  ]);
-                } else {
+          <div className="flex shrink-0 items-start gap-2">
+            {isValidTarget && activeSpell ? (
+              <button
+                type="button"
+                onClick={() => {
+                  if (!activeSpell) return;
+                  if (isChosenTarget) {
+                    setChosenTargets?.(
+                      (chosenTargets ?? []).filter((target) => target !== entity.id),
+                    );
+                    return;
+                  }
+
                   setChosenTargets?.([...(chosenTargets ?? []), entity.id]);
-                }
-              }
-            }}
-          >
-            {isValidTarget && activeSpell && !isChosenTarget && (
-              <TargetIcon className="h-5 w-5 cursor-pointer text-red-400" />
-            )}
-            {isChosenTarget && <CheckIcon className="h-5 w-5 text-green-400" />}
-            <span className="text-2xl">{team === "TEAM_A" ? "🧙‍♂️" : "👹"}</span>
-            {entity.name}
-            {entity.isBot && <BotIcon className="h-5 w-5 text-gray-400" />}
-            {currentStats?.flags.isCrit && (
-              <span className="flex animate-pulse items-center gap-1 rounded-lg border-2 border-yellow-300 bg-linear-to-r from-red-600 via-yellow-400 to-red-600 px-3 py-1 text-base font-extrabold text-white shadow-lg">
-                <svg
-                  className="h-5 w-5 text-yellow-300 drop-shadow"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <polygon
-                    points="12,2 15,10 23,10 17,15 19,23 12,18 5,23 7,15 1,10 9,10"
-                    fill="currentColor"
-                  />
-                </svg>
-                CRIT!
-              </span>
-            )}
-            {currentStats.roll !== undefined && (
-              <span className="rounded bg-slate-700 px-2 py-1 text-sm text-yellow-300">
-                {currentStats.roll}
-              </span>
-            )}
-            {currentStats?.flags.dead && (
-              <SkullIcon className="h-5 w-5 text-red-500" />
-            )}
+                }}
+                className={cn(
+                  "rpg-badge transition-all duration-200",
+                  isChosenTarget
+                    ? "border-emerald-500/40 bg-emerald-500/12 text-emerald-100"
+                    : "border-[#b89656]/40 bg-[#372d22]/92 text-[#ecd8ab] hover:border-[#d8b56d]/55 hover:text-[#fff0c8]",
+                )}
+              >
+                {isChosenTarget ? (
+                  <CheckIcon className="h-4 w-4" />
+                ) : (
+                  <TargetIcon className="h-4 w-4" />
+                )}
+                {isChosenTarget ? "Marked" : "Target"}
+              </button>
+            ) : null}
 
             <HoverCard
               open={hoverCharacterOpen === entity.id}
               onOpenChange={setHoverCharacterOpen}
-              openDelay={700}
+              openDelay={350}
               closeDelay={100}
             >
               <HoverCardTrigger asChild>
-                <CircleQuestionMarkIcon className="size-5 cursor-help text-blue-400 hover:text-blue-300" />
+                <button
+                  type="button"
+                  className="rpg-icon-frame h-10 w-10 text-[#d3c49b] transition-colors duration-200 hover:text-[#f5e3b8]"
+                >
+                  <CircleQuestionMarkIcon className="h-4 w-4" />
+                </button>
               </HoverCardTrigger>
-              {entityAttributes && (
-                <HoverCardContent className="w-[600px] border-slate-600 bg-slate-800">
-                  <div className="space-y-2 text-sm">
-                    <h4 className="mb-2 font-bold text-white">
-                      Character Attributes
-                    </h4>
-                    {Object.entries(entityAttributes.baseAttributes).map(
-                      ([key, value]) => (
-                        <div key={key} className="flex justify-between">
-                          <span className="font-mono text-gray-400">{key}</span>
-                          <span className="font-mono text-white">
-                            {String(value)}
-                          </span>
-                        </div>
-                      ),
-                    )}
-                    <hr />
-                    <h4 className="mb-2 font-bold text-white">
-                      Special Attributes
-                    </h4>
-                    <div className="grid grid-cols-3 gap-3">
-                      {Object.entries(entityAttributes.specialAttributes).map(
-                        ([key, value]) => (
-                          <div
-                            key={key}
-                            className="flex justify-between text-xs"
-                          >
-                            <span className="font-mono text-gray-400">
-                              {key}
-                            </span>
-                            <span className="font-mono text-white">
-                              {String(value)}
-                            </span>
-                          </div>
-                        ),
-                      )}
+              {entityAttributes ? (
+                <HoverCardContent className="w-[min(38rem,calc(100vw-2rem))] p-5">
+                  <div className="space-y-4 text-sm">
+                    <div>
+                      <p className="rpg-title text-[0.58rem] text-[#cfbf97]/70">
+                        Character ledger
+                      </p>
+                      <h4 className="rpg-heading mt-1 text-lg uppercase tracking-[0.08em]">
+                        Attributes
+                      </h4>
                     </div>
-                    <hr />
-                    <h4 className="mb-2 font-bold text-white">Affinities</h4>
-                    <div className="grid grid-cols-3 gap-3">
-                      {Object.entries(entityAttributes.affinities).map(
-                        ([key, value]) => (
-                          <div
-                            key={key}
-                            className="flex justify-between text-xs"
-                          >
-                            <span className="font-mono text-gray-400">
-                              {key}
-                            </span>
-                            <span className="font-mono text-white">
-                              {String(value)}
-                            </span>
-                          </div>
-                        ),
-                      )}
+                    <div className="grid gap-3 md:grid-cols-3">
+                      <AttributeColumn
+                        title="Core"
+                        entries={Object.entries(entityAttributes.baseAttributes)}
+                      />
+                      <AttributeColumn
+                        title="Special"
+                        entries={Object.entries(entityAttributes.specialAttributes)}
+                      />
+                      <AttributeColumn
+                        title="Affinity"
+                        entries={Object.entries(entityAttributes.affinities)}
+                      />
                     </div>
                   </div>
                 </HoverCardContent>
-              )}
+              ) : null}
             </HoverCard>
-          </h3>
-        </div>
-
-        {/* Health Bar */}
-        <div className="mb-4">
-          <div className="mb-2 flex justify-between text-sm">
-            <span className="flex items-center gap-1 text-red-300">
-              <Heart className="h-4 w-4" />
-              Health
-            </span>
-            <span className="font-mono text-white">
-              {displayHealth}/{entity.maxHealth}
-              {currentStats.deltaHealth !== 0 && (
-                <span
-                  className={cn(
-                    "ml-2 rounded px-2 py-0.5 text-xs font-bold",
-                    currentStats.deltaHealth > 0
-                      ? "bg-green-500/20 text-green-300"
-                      : "bg-red-500/20 text-red-300",
-                  )}
-                >
-                  {currentStats.deltaHealth > 0
-                    ? `+${currentStats.deltaHealth}`
-                    : currentStats.deltaHealth}
-                </span>
-              )}
-            </span>
-          </div>
-          <div className="h-3 w-full overflow-hidden rounded-full border border-slate-600 bg-slate-700">
-            <div
-              className="h-full bg-linear-to-r from-red-500 to-red-400 transition-all duration-500 ease-out"
-              style={{ width: `${healthPercent}%` }}
-            ></div>
           </div>
         </div>
 
-        {/* Mana Bar */}
-        <div className="mb-6">
-          <div className="mb-2 flex justify-between text-sm">
-            <span className="flex items-center gap-1 text-blue-300">
-              <Zap className="h-4 w-4" />
-              Mana
-            </span>
-            <span className="font-mono text-white">
-              {displayMana}/{maxMana}
-              {currentStats.deltaMana !== 0 && (
-                <span
-                  className={cn(
-                    "ml-2 rounded px-2 py-0.5 text-xs font-bold",
-                    currentStats.deltaMana > 0
-                      ? "bg-blue-500/20 text-blue-300"
-                      : "bg-orange-500/20 text-orange-300",
-                  )}
-                >
-                  {currentStats.deltaMana > 0
-                    ? `+${currentStats.deltaMana}`
-                    : currentStats.deltaMana}
-                </span>
-              )}
-            </span>
-          </div>
-          <div className="h-3 w-full overflow-hidden rounded-full border border-slate-600 bg-slate-700">
-            <div
-              className="h-full bg-linear-to-r from-blue-500 to-blue-400 transition-all duration-500 ease-out"
-              style={{ width: `${manaPercent}%` }}
-            ></div>
-          </div>
+        <div className="space-y-4">
+          <RpgMeter
+            label="Health"
+            value={displayHealth}
+            max={entity.maxHealth}
+            tone="health"
+            delta={currentStats.deltaHealth}
+          />
+          <RpgMeter
+            label="Mana"
+            value={displayMana}
+            max={maxMana}
+            tone="mana"
+            delta={currentStats.deltaMana}
+          />
         </div>
 
-        {/* Active Effects */}
         {activeEffects.length > 0 && (
-          <div className="mb-4">
-            <h4 className="mb-3 flex items-center gap-1 text-sm font-bold text-purple-300">
-              <Sparkles className="h-4 w-4" />
-              Active Effects
-            </h4>
-            <div className="flex flex-wrap gap-2">
+          <RpgInset variant="stone" className="mt-5 p-4">
+            <div className="mb-3 flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-[#d8c48e]" />
+              <p className="rpg-title text-[0.62rem] text-[#cfbf97]/80">
+                Active effects
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2.5">
               {activeEffects.map((effect) => {
                 const roundsLeft =
                   effect.round + effect.duration - currentRound;
@@ -369,25 +321,24 @@ export const BattleRender = ({
                 return (
                   <div
                     key={effect.id}
-                    className="group relative flex items-center gap-2 rounded-lg border border-slate-600/50 bg-slate-700/30 px-3 py-2 backdrop-blur-sm transition-all duration-200 hover:border-slate-500/70 hover:bg-slate-600/40"
+                    className="group relative flex items-center gap-2 rounded-[0.9rem] border border-[#8a7753]/28 bg-[#251f18]/78 px-3 py-2.5 transition-all duration-200 hover:border-[#b89656]/40 hover:bg-[#302820]/96"
                   >
                     {getEffectIcon(effect.effectType)}
                     <div className="flex flex-col">
-                      <span className="text-xs font-medium text-white">
+                      <span className="text-xs font-semibold text-[#efe5d1]">
                         {effect.effectType}
                       </span>
                       {effect.effectType !== "PASSIVE" && (
-                        <div className="flex items-center gap-1 text-xs text-slate-400">
-                          <span className="rounded-full bg-orange-500/20 px-1.5 py-0.5 text-orange-300">
+                        <div className="flex items-center gap-1 text-xs text-[#ac9f85]">
+                          <span className="rounded-full border border-[#8a7753]/28 bg-[#3a2f24] px-1.5 py-0.5 text-[#f0dfb0]">
                             {roundsLeft}
                           </span>
                         </div>
                       )}
                     </div>
-                    {/* Tooltip with description */}
                     <div className="absolute bottom-full left-1/2 z-10 mb-2 hidden -translate-x-1/2 transform group-hover:block">
                       <div
-                        className="min-w-[260px] max-w-[420px] rounded-lg border border-slate-500 bg-slate-800 px-4 py-3 text-xs wrap-break-word whitespace-pre-line text-slate-200 shadow-lg"
+                        className="min-w-[260px] max-w-[420px] rounded-[0.95rem] border border-[#8a7753]/45 bg-[linear-gradient(180deg,rgba(56,46,34,0.98),rgba(30,25,19,0.99))] px-4 py-3 text-xs wrap-break-word whitespace-pre-line text-[#eadfc8] shadow-[0_18px_40px_rgba(0,0,0,0.42)]"
                         style={{ whiteSpace: "pre-line" }}
                       >
                         {effect.description}
@@ -397,23 +348,24 @@ export const BattleRender = ({
                             from {sourceName}
                           </span>
                         )}
-                        <div className="absolute top-full left-1/2 h-0 w-0 -translate-x-1/2 transform border-t-4 border-r-4 border-l-4 border-transparent border-t-slate-800"></div>
+                        <div className="absolute top-full left-1/2 h-0 w-0 -translate-x-1/2 transform border-t-4 border-r-4 border-l-4 border-transparent border-t-[#32291f]"></div>
                       </div>
                     </div>
                   </div>
                 );
               })}
             </div>
-          </div>
+          </RpgInset>
         )}
 
-        {/* Spells */}
-        <div className="space-y-2">
-          <h4 className="flex items-center gap-1 text-sm font-bold text-purple-300">
-            <Sparkles className="h-4 w-4" />
-            Spells
-          </h4>
-          <div className="grid grid-cols-2 gap-2">
+        <div className="mt-5 space-y-3">
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-4 w-4 text-[#d8c48e]" />
+            <p className="rpg-title text-[0.62rem] text-[#cfbf97]/80">
+              Spell actions
+            </p>
+          </div>
+          <div className="grid grid-cols-1 gap-2.5">
             {entity.spells.map((spell) => {
               const setHoverSpellOpen = (open: boolean | undefined) => {
                 _setHoverSpellOpen(open ? spell.config.id : null);
@@ -427,18 +379,17 @@ export const BattleRender = ({
               const cooldown = currentStats.cooldowns.get(spell.config.id);
               const isReady = cooldown === 0 || !cooldown;
               const desc = spellDescription?.get(spell.config.id);
-              const hasEnoughMana = entity.mana >= spell.config.manaCost;
-
+              const hasEnoughMana = displayMana >= spell.config.manaCost;
               return (
                 <div
                   key={spell.config.id}
                   className={cn(
-                    "flex flex-col rounded-lg border p-2 transition-all duration-200",
+                    "relative rounded-xl border px-2.5 py-2 transition-all duration-200",
                     isReady && myTurn && hasEnoughMana
-                      ? "cursor-pointer border-slate-500 bg-slate-700/50 hover:border-slate-400 hover:bg-slate-600/50"
-                      : "border-slate-600 bg-slate-800/50",
+                      ? "cursor-pointer border-[#8a7753]/40 bg-[linear-gradient(180deg,rgba(56,47,34,0.94),rgba(27,23,18,0.98))] hover:border-[#b89656]/48 hover:bg-[linear-gradient(180deg,rgba(64,54,39,0.98),rgba(31,26,20,0.98))]"
+                      : "border-[#65563d]/35 bg-[linear-gradient(180deg,rgba(37,31,24,0.95),rgba(24,20,17,0.98))]",
                     activeSpell === spell.config.id &&
-                      "border-blue-400 bg-blue-600/20 ring-2 ring-blue-400/30",
+                      "border-[#b89656]/68 bg-[linear-gradient(180deg,rgba(80,63,35,0.98),rgba(34,28,21,0.98))] shadow-[0_0_0_1px_rgba(184,150,86,0.28)]",
                   )}
                   onClick={() => {
                     if (!myTurn) return;
@@ -452,25 +403,32 @@ export const BattleRender = ({
                     }
                   }}
                 >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1">
-                      <span className="text-sm">⚡</span>
+                  <div className="flex items-start justify-between gap-2.5">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        {cooldown !== undefined && cooldown > 0 ? (
+                          <RpgBadge className="border-[#8a7753]/36 bg-[#251f18]/92 px-2 py-0.5 text-[0.6rem] text-[#dbcaa6]">
+                            CD {cooldown}
+                          </RpgBadge>
+                        ) : null}
+                      </div>
                       <span
                         className={cn(
-                          "truncate text-xs font-medium",
-                          isReady && myTurn ? "text-white" : "text-gray-400",
-                          activeSpell === spell.config.id && "text-blue-300",
+                          "mt-2 block overflow-hidden text-[1rem] leading-none font-semibold tracking-[0.02em] whitespace-nowrap",
+                          isReady && myTurn && hasEnoughMana
+                            ? "text-[#f1e6cf]"
+                            : "text-[#9c9079]",
+                          activeSpell === spell.config.id && "text-[#f9ebc8]",
                         )}
                       >
                         {spell.config.name}
                       </span>
+                      <div className="mt-1.5 flex items-center gap-2 text-[0.62rem] uppercase tracking-[0.16em] text-[#a99a7e]">
+                        <span>Mana {spell.config.manaCost}</span>
+                        {!hasEnoughMana ? <span>Insufficient</span> : null}
+                      </div>
                     </div>
-                    <div className="flex items-center gap-1">
-                      {cooldown !== undefined && cooldown > 0 && (
-                        <span className="rounded-full bg-orange-600/20 px-1.5 py-0.5 text-xs font-bold text-orange-300">
-                          {cooldown}
-                        </span>
-                      )}
+                    <div className="flex shrink-0 items-center gap-1 self-start">
                       <HoverCard
                         open={hoverSpellOpen === spell.config.id}
                         onOpenChange={setHoverSpellOpen}
@@ -479,32 +437,37 @@ export const BattleRender = ({
                         closeDelay={50}
                       >
                         <HoverCardTrigger asChild>
-                          <CircleQuestionMarkIcon className="size-3 cursor-help text-blue-400 hover:text-blue-300" />
+                          <button
+                            type="button"
+                            className="rpg-icon-frame h-8 w-8 text-[#d3c49b] transition-colors duration-200 hover:text-[#f5e3b8]"
+                          >
+                            <CircleQuestionMarkIcon className="size-3.5" />
+                          </button>
                         </HoverCardTrigger>
                         {desc && (
-                          <HoverCardContent className="min-w-[400px] border-slate-600 bg-slate-800 p-4">
+                          <HoverCardContent className="min-w-[360px] max-w-[440px] p-4">
                             <div className="space-y-3">
-                              <h4 className="text-lg font-bold text-white">
+                              <h4 className="rpg-heading text-lg uppercase tracking-[0.06em]">
                                 {spell.config.name}
                               </h4>
-                              <p className="text-sm leading-relaxed text-slate-300">
+                              <p className="rpg-copy text-sm leading-relaxed">
                                 {desc.text}
                               </p>
                               <div className="flex flex-wrap gap-2">
                                 {desc?.manaCost !== undefined && (
-                                  <span className="flex items-center gap-1 rounded-full border border-blue-500/30 bg-blue-600/20 px-3 py-1 text-sm font-medium text-blue-300">
+                                  <span className="inline-flex items-center gap-1 rounded-full border border-[#3ca6ff]/30 bg-[#3ca6ff]/10 px-3 py-1 text-sm font-medium text-[#92ccff]">
                                     <Zap className="h-3 w-3" />
                                     {desc.manaCost} Mana
                                   </span>
                                 )}
                                 {desc?.cooldown !== undefined && (
-                                  <span className="flex items-center gap-1 rounded-full border border-orange-500/30 bg-orange-600/20 px-3 py-1 text-sm font-medium text-orange-300">
+                                  <span className="inline-flex items-center gap-1 rounded-full border border-[#e8d24a]/26 bg-[#e8d24a]/10 px-3 py-1 text-sm font-medium text-[#f4e89a]">
                                     <span className="text-xs">⏱️</span>
                                     {desc.cooldown} CD
                                   </span>
                                 )}
                                 {desc?.targetType && (
-                                  <span className="flex items-center gap-1 rounded-full border border-purple-500/30 bg-purple-600/20 px-3 py-1 text-sm font-medium text-purple-300">
+                                  <span className="inline-flex items-center gap-1 rounded-full border border-[#8a7753]/28 bg-[#261f18]/90 px-3 py-1 text-sm font-medium text-[#ddcfad]">
                                     <span className="text-xs">🎯</span>
                                     {desc.targetType.enemies > 0 &&
                                       `Enemies: ${desc.targetType.enemies}`}
@@ -527,7 +490,7 @@ export const BattleRender = ({
             })}
           </div>
         </div>
-      </div>
+      </RpgPanel>
     );
   };
 
@@ -540,48 +503,14 @@ export const BattleRender = ({
     : "Replay";
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(251,191,36,0.12),transparent_20%),radial-gradient(circle_at_82%_16%,rgba(96,165,250,0.08),transparent_18%),linear-gradient(180deg,#030712_0%,#111827_46%,#020617_100%)] px-6 py-8 text-stone-100">
-      <div className="mx-auto max-w-7xl">
-        <section className="mt-8 rounded-4xl border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.96),rgba(2,6,23,0.98))] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.45)]">
-          <ArenaSectionHeader
-            icon={<Zap className="h-5 w-5" />}
-            eyebrow="Tempo"
-            title="Turn Order"
-          />
-          <div className="mt-6 flex flex-wrap gap-2">
-            {orderQueue.map((entityId, index) => {
-              const entity = participants.find((p) => p.id === entityId);
-              if (!entity) return null;
+    <RpgPage>
+      <div className="space-y-8">
+      
 
-              const isCurrentTurn = index === 0;
-              const isAlly = entity.team === "TEAM_A";
-
-              return (
-                <div
-                  key={entityId + index}
-                  className={cn(
-                    "flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition-all duration-300",
-                    isCurrentTurn
-                      ? "scale-105 border-yellow-400 bg-yellow-400/20 shadow-md shadow-yellow-400/30"
-                      : "border-white/8 bg-white/4",
-                    isAlly ? "text-blue-200" : "text-red-200",
-                  )}
-                >
-                  <span>{isAlly ? "🧙‍♂️" : "👹"}</span>
-                  <span className="font-medium">{entity.name}</span>
-                  {isCurrentTurn && (
-                    <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-yellow-300" />
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </section>
-
-        <section className="mt-8 rounded-4xl border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.96),rgba(2,6,23,0.98))] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.45)]">
-          <ArenaSectionHeader
+      <RpgPanel className="px-6 py-6">
+          <RpgSectionHeading
             icon={<Shield className="h-5 w-5" />}
-            eyebrow="Team side"
+            eyebrow="Vanguard entries"
             title="Allies"
           />
           <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
@@ -589,12 +518,12 @@ export const BattleRender = ({
               <EntityCard key={entity.id} entity={entity} team="TEAM_A" />
             ))}
           </div>
-        </section>
+        </RpgPanel>
 
-        <section className="mt-8 rounded-4xl border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.96),rgba(2,6,23,0.98))] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.45)]">
-          <ArenaSectionHeader
-            icon={<SkullIcon className="h-5 w-5" />}
-            eyebrow="Threat side"
+        <RpgPanel className="px-6 py-6">
+          <RpgSectionHeading
+            icon={<SwordsIcon className="h-5 w-5" />}
+            eyebrow="Hostile entries"
             title="Enemies"
           />
           <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
@@ -602,73 +531,84 @@ export const BattleRender = ({
               <EntityCard key={entity.id} entity={entity} team="TEAM_B" />
             ))}
           </div>
-        </section>
+        </RpgPanel>
       </div>
-    </main>
+    </RpgPage>
   );
 };
 
-function ArenaPill({ label, value }: { label: string; value: string }) {
+function BattleOverviewTile({
+  label,
+  value,
+  className,
+}: {
+  label: string;
+  value: string;
+  className?: string;
+}) {
   return (
-    <div className="rounded-3xl border border-white/8 bg-black/20 p-4 text-center">
-      <p className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-stone-500">
+    <div className={cn("rpg-stat-tile min-w-[110px] text-center", className)}>
+      <p className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-[#b6ab92]">
         {label}
       </p>
-      <p className="mt-2 text-sm font-semibold uppercase tracking-[0.12em] text-stone-50">
+      <p className="mt-2 text-sm font-semibold uppercase tracking-[0.12em] text-[#f1e6cf]">
         {value}
       </p>
     </div>
   );
 }
 
-function ArenaSectionHeader({
-  icon,
-  eyebrow,
+function AttributeColumn({
   title,
+  entries,
 }: {
-  icon: React.ReactNode;
-  eyebrow: string;
   title: string;
+  entries: [string, unknown][];
 }) {
   return (
-    <div className="flex items-center gap-3">
-      <div className="flex h-11 w-11 items-center justify-center rounded-3xl border border-white/8 bg-white/4 text-amber-100">
-        {icon}
+    <RpgInset variant="stone" className="p-3">
+      <p className="rpg-title text-[0.58rem] text-[#cfbf97]/70">{title}</p>
+      <div className="mt-3 space-y-2">
+        {entries.map(([key, value]) => (
+          <div key={key} className="flex items-center justify-between gap-3">
+            <span className="text-[0.7rem] uppercase tracking-[0.12em] text-[#aea182]">
+              {formatStatLabel(key)}
+            </span>
+            <span className="font-mono text-xs text-[#f0e6d2]">
+              {String(value)}
+            </span>
+          </div>
+        ))}
       </div>
-      <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-amber-200/70">
-          {eyebrow}
-        </p>
-        <h2 className="text-2xl font-semibold tracking-[-0.04em] text-stone-50">
-          {title}
-        </h2>
-      </div>
-    </div>
+    </RpgInset>
   );
 }
 
-// Helper function to get icon for effect type
+function formatStatLabel(value: string) {
+  return value.replace(/([A-Z])/g, " $1").replaceAll("_", " ").trim();
+}
+
 const getEffectIcon = (effectType: EffectType) => {
   switch (effectType) {
     case "DOT":
-      return <Flame className="h-4 w-4 text-red-400" />;
+      return <Flame className="h-4 w-4 text-[#ff8c64]" />;
     case "HOT":
-      return <Droplets className="h-4 w-4 text-green-400" />;
+      return <Droplets className="h-4 w-4 text-[#9ad26d]" />;
     case "SHIELD":
-      return <ShieldCheck className="h-4 w-4 text-blue-400" />;
+      return <ShieldCheck className="h-4 w-4 text-[#88cbff]" />;
     case "BUFF":
-      return <TrendingUp className="h-4 w-4 text-green-300" />;
+      return <TrendingUp className="h-4 w-4 text-[#abd989]" />;
     case "DEBUFF":
-      return <TrendingDown className="h-4 w-4 text-red-300" />;
+      return <TrendingDown className="h-4 w-4 text-[#f29e81]" />;
     case "CURSE":
-      return <ZapIcon className="h-4 w-4 text-purple-400" />;
+      return <ZapIcon className="h-4 w-4 text-[#b691e2]" />;
     case "STUN":
-      return <Lock className="h-4 w-4 text-yellow-400" />;
+      return <Lock className="h-4 w-4 text-[#f5e487]" />;
     case "CONTROL":
-      return <Eye className="h-4 w-4 text-pink-400" />;
+      return <Eye className="h-4 w-4 text-[#d8a2ee]" />;
     case "PASSIVE":
-      return <PersonStandingIcon className="h-4 w-4 text-blue-400" />;
+      return <PersonStandingIcon className="h-4 w-4 text-[#88cbff]" />;
     default:
-      return <Sparkles className="h-4 w-4 text-purple-300" />;
+      return <Sparkles className="h-4 w-4 text-[#e2d39d]" />;
   }
 };
