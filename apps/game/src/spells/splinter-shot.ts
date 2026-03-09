@@ -27,10 +27,10 @@ export class SplinterShotSpell extends DamageEffectSpell {
               value: 0.9,
               operation: "MULTIPLY",
             },
-            1
-          )
+            1,
+          ),
       ),
-      0.2
+      0.2,
     );
   }
 

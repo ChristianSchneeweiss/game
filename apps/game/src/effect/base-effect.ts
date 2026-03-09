@@ -82,7 +82,7 @@ export abstract class BaseEffect implements Effect {
     // remove from battle manager life cycle hooks
     this.battleManager.lifeCycleHooks.splice(
       this.battleManager.lifeCycleHooks.indexOf(this),
-      1
+      1,
     );
     this.battleManager.processEvent({
       eventType: "EFFECT_REMOVAL",

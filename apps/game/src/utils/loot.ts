@@ -39,7 +39,7 @@ export const defaultSpellDropRate = (spells: SpellType[]): LootEntity[] => {
 };
 
 export const defaultPassiveDropRate = (
-  passives: PassiveType[]
+  passives: PassiveType[],
 ): LootEntity[] => {
   const fake = new FakeEntity();
   return passives.map((passive) => {
@@ -53,7 +53,7 @@ export const defaultPassiveDropRate = (
 };
 
 export const defaultEquipmentDropRate = (
-  equipments: ItemType[]
+  equipments: ItemType[],
 ): LootEntity[] => {
   const fake = new FakeEntity();
   return equipments.map((equipment) => {

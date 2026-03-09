@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -11,7 +12,7 @@ import type { Character } from "@loot-game/game/base-entity";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Edit2Icon, Edit3, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 
 type Props = {
   character: Character;
@@ -24,10 +25,17 @@ export const RenameDialog = ({ character }: Props) => {
 
   const queryClient = useQueryClient();
 
+  useEffect(() => {
+    if (!isOpen) {
+      setNewName(character.name);
+      setError(null);
+    }
+  }, [character.name, isOpen]);
+
   const { mutateAsync: renameCharacter, isPending } = useMutation(
     trpc.character.renameCharacter.mutationOptions({
-      onSuccess: () => {
-        queryClient.invalidateQueries(
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(
           trpc.character.getCharacter.queryOptions({ id: character.id }),
         );
         setIsOpen(false);
@@ -39,7 +47,7 @@ export const RenameDialog = ({ character }: Props) => {
     }),
   );
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     if (!newName.trim()) {
@@ -69,22 +77,31 @@ export const RenameDialog = ({ character }: Props) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogTrigger>
-        <Edit2Icon className="size-4 text-gray-400" />
+      <DialogTrigger asChild>
+        <button
+          type="button"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/8 bg-white/5 text-stone-300 transition-all duration-300 hover:border-amber-300/20 hover:bg-white/10 hover:text-white"
+        >
+          <Edit2Icon className="size-4" />
+        </button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="overflow-hidden border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.98),rgba(2,6,23,1))] text-stone-100 shadow-[0_24px_80px_rgba(0,0,0,0.45)] sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-xl">
-            <Edit3 className="h-5 w-5 text-blue-400" />
+          <DialogTitle className="flex items-center gap-2 text-2xl text-stone-50">
+            <Edit3 className="h-5 w-5 text-amber-200" />
             Rename Character
           </DialogTitle>
+          <DialogDescription className="text-sm leading-6 text-stone-400">
+            Update the dossier name shown across your roster and character
+            detail screens.
+          </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <label
               htmlFor="character-name"
-              className="text-sm font-medium text-gray-300"
+              className="text-sm font-medium text-stone-300"
             >
               Character Name
             </label>
@@ -96,7 +113,7 @@ export const RenameDialog = ({ character }: Props) => {
                 if (error) setError(null);
               }}
               placeholder="Enter character name..."
-              className="border-slate-600 bg-slate-800/50 text-white placeholder:text-gray-400 focus:border-blue-400 focus:ring-blue-400/20"
+              className="h-12 rounded-2xl border-white/10 bg-white/5 text-white placeholder:text-stone-500 focus:border-amber-300/20 focus:ring-amber-300/15"
               disabled={isPending}
             />
             {error && <p className="text-sm text-red-400">{error}</p>}
@@ -108,7 +125,7 @@ export const RenameDialog = ({ character }: Props) => {
               variant="outline"
               onClick={() => handleOpenChange(false)}
               disabled={isPending}
-              className="flex-1 border-slate-600 text-gray-300 hover:bg-slate-700 hover:text-white"
+              className="h-11 flex-1 rounded-full border-white/10 bg-white/5 text-stone-200 hover:bg-white/10 hover:text-white"
             >
               Cancel
             </Button>
@@ -119,7 +136,7 @@ export const RenameDialog = ({ character }: Props) => {
                 !newName.trim() ||
                 newName.trim() === character.name
               }
-              className="flex-1 bg-gradient-to-r from-blue-600 to-blue-500 text-white hover:from-blue-500 hover:to-blue-400 disabled:opacity-50"
+              className="h-11 flex-1 rounded-full border border-amber-300/20 bg-amber-300 text-slate-950 hover:bg-amber-200 disabled:opacity-50"
             >
               {isPending ? (
                 <>

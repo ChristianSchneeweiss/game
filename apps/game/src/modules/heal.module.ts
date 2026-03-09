@@ -19,7 +19,7 @@ export class HealModule implements SpellModule {
       caster: Entity;
       target: Entity;
       roll: number;
-    }) => number
+    }) => number,
   ) {}
 
   getRawHeal(caster: Entity, target: Entity, roll: number): number {
@@ -39,7 +39,7 @@ export class HealModule implements SpellModule {
     caster: Entity,
     targets: Entity[],
     roll: number,
-    spell: Spell
+    spell: Spell,
   ): SpellModuleReturn {
     const battleManager = caster.battleManager;
     const heals = targets.map((target) => {

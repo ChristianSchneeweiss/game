@@ -38,7 +38,7 @@ export class BaseEntity implements Entity {
     team: Team,
     maxHealth: number,
     maxMana: number,
-    baseAttributes: EntityAttributes
+    baseAttributes: EntityAttributes,
   ) {
     this.id = id;
     this.name = name;
@@ -84,7 +84,7 @@ export class BaseEntity implements Entity {
     const realHealthRegen = calculator.calculateRealHealing(
       this,
       this,
-      healthRegen
+      healthRegen,
     );
     this.applyHealing(realHealthRegen, this);
 
@@ -92,7 +92,7 @@ export class BaseEntity implements Entity {
     const realManaRegen = calculator.calculateRealHealing(
       this,
       this,
-      manaRegen
+      manaRegen,
     );
     this.mana = Math.min(this.maxMana, this.mana + realManaRegen);
 
@@ -114,7 +114,7 @@ export class BaseEntity implements Entity {
       console.log(
         `${this.name} has ${effects
           .map((e) => `${e.effectType}(${e.duration})`)
-          .join(", ")} effects`
+          .join(", ")} effects`,
       );
     }
   }
@@ -251,7 +251,7 @@ export class Character extends BaseEntity {
     baseAttributes: EntityAttributes,
     public xp: number,
     public level: number,
-    public statPointsAvailable: number
+    public statPointsAvailable: number,
   ) {
     super(id, name, team, maxHealth, maxMana, baseAttributes);
     this.isBot = false;

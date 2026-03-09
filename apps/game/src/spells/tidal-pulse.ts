@@ -35,10 +35,10 @@ export class TidalPulseSpell extends DamageEffectSpell {
                 operation: "ADD",
               },
             ],
-            1
-          )
+            1,
+          ),
       ),
-      0.25
+      0.25,
     );
   }
 

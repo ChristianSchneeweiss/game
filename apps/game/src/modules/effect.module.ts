@@ -8,7 +8,7 @@ export class EffectModule implements SpellModule {
       caster: Entity;
       target: Entity;
       roll: number;
-    }) => Effect
+    }) => Effect,
   ) {}
 
   getRawEffect(caster: Entity, target: Entity, roll: number): Effect {
@@ -21,7 +21,7 @@ export class EffectModule implements SpellModule {
     caster: Entity,
     targets: Entity[],
     roll: number,
-    spell: Spell
+    spell: Spell,
   ): SpellModuleReturn {
     const battleManager = caster.battleManager;
     const effects = targets

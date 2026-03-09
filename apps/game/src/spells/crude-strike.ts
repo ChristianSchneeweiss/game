@@ -33,10 +33,10 @@ export class CrudeStrikeSpell extends DamageEffectSpell {
                 operation: "ADD",
               },
             ],
-            1
-          )
+            1,
+          ),
       ),
-      0.1
+      0.1,
     );
   }
 

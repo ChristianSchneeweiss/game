@@ -23,7 +23,7 @@ export class LightningSurgeSpell extends DamageEffectSpell {
           caster.getAttribute("intelligence") * 0.6,
       }),
       new EffectModule(() => new StunEffect(1)),
-      0.25
+      0.25,
     );
   }
 

@@ -9,7 +9,7 @@ export class WeakendEffect extends BaseEffect {
   constructor(
     duration: number,
     private bonusDamage: number,
-    private modifier: ModifierOperation
+    private modifier: ModifierOperation,
   ) {
     super("CURSE", duration);
   }

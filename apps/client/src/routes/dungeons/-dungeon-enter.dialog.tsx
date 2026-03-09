@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -14,7 +13,15 @@ import type { Character } from "@loot-game/game/base-entity";
 import type { DungeonKey } from "@loot-game/game/dungeons/dungeon-keys";
 import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
-import { Heart, Search, Shield, Sword, Users, Zap } from "lucide-react";
+import {
+  Heart,
+  Search,
+  Shield,
+  Sword,
+  Users,
+  X,
+  Zap,
+} from "lucide-react";
 import { useState } from "react";
 import { dungeonManager } from "../../../../server/src/game-usecases/dungeon-manager";
 
@@ -30,14 +37,14 @@ export const DungeonEnterDialog = ({
   onOpenChange,
 }: Props) => {
   const router = useRouter();
-  const [selectedCharacters, setSelectedCharacters] = useState<Set<Character>>(
+  const [selectedCharacterIds, setSelectedCharacterIds] = useState<Set<string>>(
     new Set(),
   );
 
   const { data: characters } = useSuspenseQuery(
     trpc.character.getCharacters.queryOptions(),
   );
-  const { mutate: enterDungeon } = useMutation(
+  const { mutate: enterDungeon, isPending } = useMutation(
     trpc.dungeon.enterDungeon.mutationOptions({
       onSuccess: (data) => {
         router.navigate({ to: "/dungeons/$id", params: { id: data.id } });
@@ -58,34 +65,43 @@ export const DungeonEnterDialog = ({
   const dungeonConfig = dungeonManager.getDungeonConfig(dungeonKey);
 
   const toggleCharacter = (character: Character) => {
-    setSelectedCharacters((prev) => {
-      if (prev.has(character)) {
-        prev.delete(character);
-      } else if (prev.size < dungeonConfig.maxPartySize) {
-        prev.add(character);
+    setSelectedCharacterIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(character.id)) {
+        next.delete(character.id);
+      } else if (next.size < dungeonConfig.maxPartySize) {
+        next.add(character.id);
       }
-      return new Set(prev);
+      return next;
     });
   };
 
   const handleEnterDungeon = () => {
-    if (selectedCharacters.size === 0) return;
+    if (selectedCharacterIds.size === 0) return;
     enterDungeon({
       key: dungeonKey,
-      characters: Array.from(selectedCharacters).map(
-        (character) => character.id,
-      ),
+      characters: Array.from(selectedCharacterIds),
     });
   };
 
-  const minCharacters = Array.from(
-    new Set([...characters, ...selectedCharacters]),
+  const characterById = new Map(characters.map((character) => [character.id, character]));
+  const selectedCharacters = Array.from(selectedCharacterIds)
+    .map((id) => characterById.get(id))
+    .filter((character): character is Character => Boolean(character));
+
+  const visibleCharacters = Array.from(
+    new Map(
+      [...characters, ...(searchCharacters ?? [])].map((character) => [
+        character.id,
+        character,
+      ]),
+    ).values(),
   );
 
   const handleOpenChange = (open: boolean) => {
     if (!open) {
       setSearchQuery("");
-      setSelectedCharacters(new Set());
+      setSelectedCharacterIds(new Set());
     }
     onOpenChange(open);
   };
@@ -98,35 +114,38 @@ export const DungeonEnterDialog = ({
   };
 
   const renderCharacterCard = (character: Character) => {
-    const isSelected = selectedCharacters.has(character);
+    const isSelected = selectedCharacterIds.has(character.id);
     const canSelect =
-      isSelected || selectedCharacters.size < dungeonConfig.maxPartySize;
+      isSelected || selectedCharacterIds.size < dungeonConfig.maxPartySize;
 
     return (
-      <Card
+      <button
+        type="button"
         key={character.id}
-        className={`cursor-pointer p-3 transition-all duration-200 ${
+        className={`w-full rounded-3xl border p-4 text-left transition-all duration-200 ${
           isSelected
-            ? "border-green-500 bg-gradient-to-r from-green-600/30 to-green-500/30"
+            ? "border-emerald-300/20 bg-emerald-300/10"
             : canSelect
-              ? "border-slate-600 bg-slate-800/50 hover:border-blue-500 hover:bg-slate-700/50"
-              : "cursor-not-allowed border-slate-700 bg-slate-800/30 opacity-50"
+              ? "border-white/8 bg-white/4 hover:border-blue-300/18 hover:bg-white/6"
+              : "cursor-not-allowed border-white/6 bg-white/3 opacity-50"
         }`}
         onClick={() => canSelect && toggleCharacter(character)}
       >
         <div className="flex items-center gap-2">
           <div
-            className={`flex h-4 w-4 items-center justify-center rounded border-2 ${
-              isSelected ? "border-green-500 bg-green-500" : "border-slate-400"
+            className={`flex h-4 w-4 items-center justify-center rounded border ${
+              isSelected
+                ? "border-emerald-300 bg-emerald-300 text-slate-950"
+                : "border-stone-500"
             }`}
           >
-            {isSelected && <span className="text-xs text-white">✓</span>}
+            {isSelected && <span className="text-[10px] font-bold">✓</span>}
           </div>
           <div className="flex-1">
             <div className="mb-1 flex items-center gap-2">
               <span className="text-sm">🧙‍♂️</span>
               <h4 className="text-sm font-bold text-white">{character.name}</h4>
-              <span className="rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 px-1.5 py-0.5 text-xs font-bold text-black">
+              <span className="rounded-full border border-amber-300/20 bg-amber-300/12 px-1.5 py-0.5 text-xs font-bold text-amber-100">
                 L{character.level}
               </span>
             </div>
@@ -168,47 +187,60 @@ export const DungeonEnterDialog = ({
             </div>
           </div>
         </div>
-      </Card>
+      </button>
     );
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-5xl border-2 border-purple-600 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
+      <DialogContent className="max-w-5xl overflow-hidden border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.98),rgba(2,6,23,1))] text-white shadow-[0_30px_120px_rgba(0,0,0,0.45)]">
         <DialogHeader className="pb-4">
-          <DialogTitle className="bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-xl font-bold text-transparent">
-            🏰 Enter {dungeonConfig.name} 🏰
+          <DialogTitle className="font-['Iowan_Old_Style','Palatino_Linotype','Book_Antiqua',Palatino,Georgia,serif] text-3xl text-stone-50">
+            Enter {dungeonConfig.name}
           </DialogTitle>
-          <DialogDescription className="text-sm text-gray-300">
+          <DialogDescription className="text-sm leading-7 text-stone-400">
             {dungeonConfig.description}
           </DialogDescription>
         </DialogHeader>
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          {/* Character Selection */}
           <div>
-            <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-blue-300">
+            <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-blue-200">
               <Users className="h-4 w-4" />
-              Select Party Members ({selectedCharacters.size}/
+              Select Party Members ({selectedCharacterIds.size}/
               {dungeonConfig.maxPartySize})
             </h3>
 
-            {/* Search Input */}
+            {selectedCharacters.length > 0 && (
+              <div className="mb-3 flex flex-wrap gap-2">
+                {selectedCharacters.map((character) => (
+                  <button
+                    key={character.id}
+                    type="button"
+                    onClick={() => toggleCharacter(character)}
+                    className="inline-flex items-center gap-2 rounded-full border border-emerald-300/18 bg-emerald-300/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-emerald-100"
+                  >
+                    {character.name}
+                    <X className="h-3 w-3" />
+                  </button>
+                ))}
+              </div>
+            )}
+
             <div className="mb-3">
               <div className="relative">
-                <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-stone-500" />
                 <Input
                   placeholder="Search characters..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="border-slate-600 bg-slate-800/50 pl-10 text-white placeholder:text-gray-400 focus:border-blue-500"
+                  className="h-12 rounded-2xl border-white/10 bg-white/5 pl-10 text-white placeholder:text-stone-500 focus:border-blue-300/18"
                 />
               </div>
             </div>
 
             <div className="max-h-80 space-y-2 overflow-y-auto">
               {searchQuery.length > 0 ? (
-                // Show search results
                 <>
                   {searchCharacters && searchCharacters.length > 0 ? (
                     searchCharacters.map((character) =>
@@ -221,27 +253,25 @@ export const DungeonEnterDialog = ({
                   )}
                 </>
               ) : (
-                // Show all characters
-                minCharacters.map((character) => renderCharacterCard(character))
+                visibleCharacters.map((character) => renderCharacterCard(character))
               )}
             </div>
           </div>
 
-          {/* Dungeon Information */}
           <div>
-            <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-purple-300">
+            <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-purple-200">
               <Sword className="h-4 w-4" />
               Dungeon Stages & Enemies
             </h3>
             <div className="space-y-2">
               {dungeonConfig.availableEnemies.map((stage, stageIndex) => (
-                <Card
+                <div
                   key={stageIndex}
-                  className="gap-1 border-slate-600 bg-slate-800/50 p-3"
+                  className="rounded-3xl border border-white/8 bg-white/4 p-4"
                 >
                   <div className="mb-2 flex items-center gap-2">
-                    <Shield className="h-3 w-3 text-yellow-400" />
-                    <h4 className="text-sm font-bold text-yellow-400">
+                    <Shield className="h-3 w-3 text-amber-200" />
+                    <h4 className="text-sm font-bold text-amber-200">
                       Stage {stageIndex + 1}
                     </h4>
                   </div>
@@ -258,7 +288,7 @@ export const DungeonEnterDialog = ({
                       </div>
                     ))}
                   </div>
-                </Card>
+                </div>
               ))}
             </div>
           </div>
@@ -268,16 +298,16 @@ export const DungeonEnterDialog = ({
           <Button
             variant="outline"
             onClick={() => handleOpenChange(false)}
-            className="border-slate-600 text-slate-300 hover:bg-slate-800"
+            className="h-11 rounded-full border-white/10 bg-white/5 text-stone-200 hover:bg-white/10"
           >
             Cancel
           </Button>
           <Button
             onClick={handleEnterDungeon}
-            disabled={selectedCharacters.size === 0}
-            className="bg-gradient-to-r from-green-600 to-green-500 text-white hover:from-green-500 hover:to-green-400 disabled:cursor-not-allowed disabled:opacity-50"
+            disabled={selectedCharacterIds.size === 0 || isPending}
+            className="h-11 rounded-full border border-emerald-300/20 bg-emerald-300 text-slate-950 hover:bg-emerald-200 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Enter Dungeon ({selectedCharacters.size} characters)
+            Enter Dungeon ({selectedCharacterIds.size} characters)
           </Button>
         </DialogFooter>
       </DialogContent>

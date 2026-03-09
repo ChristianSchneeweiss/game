@@ -25,12 +25,12 @@ export class IronWillSpell extends BaseSpell {
     caster: Entity,
     targets: Entity[],
     battleManager: BattleManager,
-    roll: number
+    roll: number,
   ): OptionalSpellCastEvent {
     const results: HandlerReturn[] = [];
     for (const target of targets) {
       const debuffs = target.activeEffects.filter(
-        (e) => e.effectType === "DEBUFF"
+        (e) => e.effectType === "DEBUFF",
       );
 
       for (const debuff of debuffs) {
@@ -56,7 +56,7 @@ export class IronWillSpell extends BaseSpell {
             operation: "ADD",
           },
         ],
-        duration
+        duration,
       );
 
       const buffModule = new EffectModule(() => buff);
@@ -64,7 +64,7 @@ export class IronWillSpell extends BaseSpell {
         caster,
         [target],
         roll,
-        this
+        this,
       );
       results.push(buffResult);
 
@@ -83,7 +83,7 @@ export class IronWillSpell extends BaseSpell {
           caster,
           [target],
           roll,
-          this
+          this,
         );
         results.push(healResult);
       }

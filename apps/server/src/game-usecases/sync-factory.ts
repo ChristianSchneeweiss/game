@@ -47,13 +47,15 @@ export class SyncFactory {
       .map((p) => p.entityId);
 
     const characters = await Promise.all(
-      characterIds.map((p) => EntityFactory.createCharacter(p, this.db))
+      characterIds.map((p) => EntityFactory.createCharacter(p, this.db)),
     );
     const enemies = await Promise.all(
       participants
         .filter((p) => p.isBot)
         .filter((p) => p.enemyType)
-        .map((p) => EntityFactory.createEnemyFromType(p.enemyType!, p.entityId))
+        .map((p) =>
+          EntityFactory.createEnemyFromType(p.enemyType!, p.entityId),
+        ),
     );
 
     return {

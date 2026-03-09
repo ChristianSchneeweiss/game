@@ -70,7 +70,7 @@ export class BaseEnemy extends BaseEntity {
     };
     const equipments: Equipment[] =
       equipment?.map((equipment) =>
-        itemFactory(equipment, `${this.id}-${equipment}`, this)
+        itemFactory(equipment, `${this.id}-${equipment}`, this),
       ) ?? [];
     this.equipped = equipments.reduce((acc, equipment) => {
       acc[equipment.equipmentSlot] = equipment;
@@ -91,11 +91,11 @@ export class BaseEnemy extends BaseEntity {
     }
 
     this.spells = spells.map((spell) =>
-      createSpellFromType(`${this.id}-${spell}`, spell)
+      createSpellFromType(`${this.id}-${spell}`, spell),
     );
     this.passiveSkills =
       passiveSkills?.map((passive) =>
-        passiveSkillFactory(passive, `${this.id}-${passive}`, this)
+        passiveSkillFactory(passive, `${this.id}-${passive}`, this),
       ) ?? [];
   }
 
@@ -109,7 +109,7 @@ export class BaseEnemy extends BaseEntity {
     const validTargets = spell.getValidTargets(this);
     if (validTargets === null) {
       throw new Error(
-        `No valid targets found for ${this.name} to cast spell ${spell.config.id}`
+        `No valid targets found for ${this.name} to cast spell ${spell.config.id}`,
       );
     }
     const targets = this.getTargets(spell, validTargets);
@@ -132,11 +132,11 @@ export class BaseEnemy extends BaseEntity {
     const maxEnemies = Math.min(
       targetType.enemies,
       this.battleManager.getAliveEntities().filter((e) => e.team !== this.team)
-        .length
+        .length,
     );
     const maxAllies = Math.min(
       targetType.allies,
-      this.battleManager.getTeam(this.team).length
+      this.battleManager.getTeam(this.team).length,
     );
     const validEnemies = validTargets.filter((e) => e.team !== this.team);
     const validAllies = validTargets.filter((e) => e.team === this.team);
@@ -144,12 +144,12 @@ export class BaseEnemy extends BaseEntity {
       ...uniqueRandomFromArray(
         validEnemies,
         maxEnemies,
-        this.battleManager.getPRNG()
+        this.battleManager.getPRNG(),
       ),
       ...uniqueRandomFromArray(
         validAllies,
         maxAllies,
-        this.battleManager.getPRNG()
+        this.battleManager.getPRNG(),
       ),
     ];
   }

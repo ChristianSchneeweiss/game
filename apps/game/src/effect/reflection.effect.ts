@@ -4,7 +4,7 @@ import { BaseEffect } from "./base-effect";
 export class ReflectionEffect extends BaseEffect {
   constructor(
     duration: number,
-    private reflectionPercentage: number
+    private reflectionPercentage: number,
   ) {
     super("BUFF", duration);
   }
@@ -15,7 +15,7 @@ export class ReflectionEffect extends BaseEffect {
       args.damage * this.reflectionPercentage,
       args.type,
       this.getTarget(), // this is us the person buffed. because we are the target of the effect
-      args.attacker // this is the attacker. as is it the source of the damage
+      args.attacker, // this is the attacker. as is it the source of the damage
     );
     this.battleManager.addEventToSpellCastBuffer({
       eventType: "EFFECT_TRIGGER",

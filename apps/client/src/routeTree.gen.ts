@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LootRouteImport } from './routes/loot'
+import { Route as ConnectRouteImport } from './routes/connect'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SpellsIndexRouteImport } from './routes/spells/index'
 import { Route as ItemsIndexRouteImport } from './routes/items/index'
@@ -23,6 +24,11 @@ import { Route as BattleFinishedIdRouteImport } from './routes/battle/finished.$
 const LootRoute = LootRouteImport.update({
   id: '/loot',
   path: '/loot',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConnectRoute = ConnectRouteImport.update({
+  id: '/connect',
+  path: '/connect',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -73,6 +79,7 @@ const BattleFinishedIdRoute = BattleFinishedIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/connect': typeof ConnectRoute
   '/loot': typeof LootRoute
   '/battle/$id': typeof BattleIdRoute
   '/characters/$character-id': typeof CharactersCharacterIdRoute
@@ -85,6 +92,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/connect': typeof ConnectRoute
   '/loot': typeof LootRoute
   '/battle/$id': typeof BattleIdRoute
   '/characters/$character-id': typeof CharactersCharacterIdRoute
@@ -98,6 +106,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/connect': typeof ConnectRoute
   '/loot': typeof LootRoute
   '/battle/$id': typeof BattleIdRoute
   '/characters/$character-id': typeof CharactersCharacterIdRoute
@@ -112,6 +121,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/connect'
     | '/loot'
     | '/battle/$id'
     | '/characters/$character-id'
@@ -124,6 +134,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/connect'
     | '/loot'
     | '/battle/$id'
     | '/characters/$character-id'
@@ -136,6 +147,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/connect'
     | '/loot'
     | '/battle/$id'
     | '/characters/$character-id'
@@ -149,6 +161,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ConnectRoute: typeof ConnectRoute
   LootRoute: typeof LootRoute
   BattleIdRoute: typeof BattleIdRoute
   CharactersCharacterIdRoute: typeof CharactersCharacterIdRoute
@@ -167,6 +180,13 @@ declare module '@tanstack/react-router' {
       path: '/loot'
       fullPath: '/loot'
       preLoaderRoute: typeof LootRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/connect': {
+      id: '/connect'
+      path: '/connect'
+      fullPath: '/connect'
+      preLoaderRoute: typeof ConnectRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -237,6 +257,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ConnectRoute: ConnectRoute,
   LootRoute: LootRoute,
   BattleIdRoute: BattleIdRoute,
   CharactersCharacterIdRoute: CharactersCharacterIdRoute,

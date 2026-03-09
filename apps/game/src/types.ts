@@ -42,9 +42,7 @@ export interface AttributeModifier {
 }
 
 export interface Effect
-  extends RoundLifecycleHooks,
-    TurnLifecycleHooks,
-    InteractionHooks {
+  extends RoundLifecycleHooks, TurnLifecycleHooks, InteractionHooks {
   id: string;
   effectType: EffectType;
   duration: number;
@@ -64,7 +62,8 @@ export interface SpellDescription {
 }
 
 export interface Spell
-  extends Pick<RoundLifecycleHooks, "onPreRound" | "onPostRound">,
+  extends
+    Pick<RoundLifecycleHooks, "onPreRound" | "onPostRound">,
     TurnLifecycleHooks {
   config: SpellConfig;
   currentCooldown: number;

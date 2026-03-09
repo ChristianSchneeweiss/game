@@ -11,7 +11,7 @@ export abstract class ApplyStatusSpell extends BaseSpell {
   constructor(
     config: SpellConfig,
     effectModule: EffectModule,
-    effectChance?: number
+    effectChance?: number,
   ) {
     super(config);
     this.effectModule = effectModule;
@@ -22,7 +22,7 @@ export abstract class ApplyStatusSpell extends BaseSpell {
     caster: Entity,
     targets: Entity[],
     battleManager: BattleManager,
-    roll: number
+    roll: number,
   ) {
     const rng = this.getRNG();
     if (rng >= this.effectChance) return null;
@@ -31,7 +31,7 @@ export abstract class ApplyStatusSpell extends BaseSpell {
       caster,
       targets,
       roll,
-      this
+      this,
     );
 
     return effects;

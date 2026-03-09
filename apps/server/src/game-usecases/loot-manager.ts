@@ -15,7 +15,7 @@ import { createSpell } from "./spell-factory";
 export class LootManager {
   constructor(
     private userId: string,
-    private db: Database
+    private db: Database,
   ) {}
 
   async drop(rng: seedrandom.PRNG, loot: Loot) {

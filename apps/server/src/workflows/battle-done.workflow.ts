@@ -61,7 +61,7 @@ export class BattleDoneWorkflow extends WorkflowEntrypoint<Env, Params> {
         for (const enemy of battleResult.teamB.filter((e) => e.dead)) {
           const enemyEntity = EntityFactory.createEnemyFromType(
             enemy.type,
-            enemy.id
+            enemy.id,
           );
           enemies.push(enemyEntity);
         }
@@ -71,7 +71,7 @@ export class BattleDoneWorkflow extends WorkflowEntrypoint<Env, Params> {
           enemies,
           battleResult.teamA,
           battleResult.winner,
-          tx
+          tx,
         );
         const syncFactory = new SyncFactory(tx);
         await syncFactory.cleanup(battleId);

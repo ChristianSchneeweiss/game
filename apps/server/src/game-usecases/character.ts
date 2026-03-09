@@ -19,7 +19,7 @@ import { EntityFactory } from "./entity-factory";
 export const createCharacter = async (
   name: string,
   userId: string,
-  db: PostgresJsDatabase
+  db: PostgresJsDatabase,
 ) => {
   const character = await db.insert(TB_character).values({
     name,
@@ -38,7 +38,7 @@ export const renameCharacter = async (
   userId: string,
   characterId: string,
   name: string,
-  db: PostgresJsDatabase
+  db: PostgresJsDatabase,
 ) => {
   await db.transaction(async (tx) => {
     const [character] = await tx
@@ -59,7 +59,7 @@ export const renameCharacter = async (
 export const equipSpell = async (
   characterId: string,
   spellId: string,
-  db: PostgresJsDatabase
+  db: PostgresJsDatabase,
 ) => {
   await db.transaction(async (tx) => {
     const [character] = await tx
@@ -95,7 +95,7 @@ export const equipPassiveSkill = async (
   characterId: string,
   passiveSkillId: string,
   userId: string,
-  db: Database
+  db: Database,
 ) => {
   await db.transaction(async (tx) => {
     const [passiveSkill] = await tx
@@ -117,7 +117,7 @@ export const equipPassiveSkill = async (
 export const unequipPassiveSkill = async (
   passiveSkillId: string,
   userId: string,
-  db: Database
+  db: Database,
 ) => {
   await db.transaction(async (tx) => {
     const [passiveSkill] = await tx
@@ -140,7 +140,7 @@ export const equipEquipment = async (
   characterId: string,
   equipmentId: string,
   userId: string,
-  db: Database
+  db: Database,
 ) => {
   await db.transaction(async (tx) => {
     const character = await EntityFactory.createCharacter(characterId, tx);
@@ -173,7 +173,7 @@ export const equipEquipment = async (
 export const unequipEquipment = async (
   equipmentId: string,
   userId: string,
-  db: Database
+  db: Database,
 ) => {
   await db.transaction(async (tx) => {
     const [equipment] = await tx
@@ -194,7 +194,7 @@ export const unequipEquipment = async (
 export const applyStatIncrease = async (
   characterId: string,
   stats: (keyof EntityAttributes)[],
-  db: PostgresJsDatabase
+  db: PostgresJsDatabase,
 ) => {
   await db.transaction(async (tx) => {
     const [character] = await tx
@@ -235,7 +235,7 @@ export const applyStatIncrease = async (
 export const handleXpReceived = async (
   characterId: string,
   totalXp: number,
-  tx: PgTransaction<any, any, any>
+  tx: PgTransaction<any, any, any>,
 ) => {
   const [character] = await tx
     .select()

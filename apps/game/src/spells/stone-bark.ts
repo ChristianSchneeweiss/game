@@ -28,9 +28,9 @@ export class StoneBarkSpell extends ApplyStatusSpell {
                 operation: "MULTIPLY",
               },
             ],
-            2
-          )
-      )
+            2,
+          ),
+      ),
     );
   }
 

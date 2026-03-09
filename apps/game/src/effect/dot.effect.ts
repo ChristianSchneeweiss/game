@@ -16,7 +16,7 @@ export class DamageOverTimeEffect
   constructor(
     duration: number,
     damagePerRound: number,
-    damageType: DamageType
+    damageType: DamageType,
   ) {
     super("DOT", duration);
     this.damagePerRound = damagePerRound;
@@ -33,10 +33,10 @@ export class DamageOverTimeEffect
       this.damagePerRound,
       this.damageType,
       source,
-      target
+      target,
     );
     console.log(
-      `${source.name} deals ${damage} damage to ${target.name} with ${spellSource.config.name}`
+      `${source.name} deals ${damage} damage to ${target.name} with ${spellSource.config.name}`,
     );
     this.battleManager.addEventToSpellCastBuffer({
       eventType: "EFFECT_TRIGGER",

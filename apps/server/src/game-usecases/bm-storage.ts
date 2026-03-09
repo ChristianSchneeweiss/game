@@ -26,7 +26,7 @@ const storageSchema = z.object({
       duration: z.number(),
       description: z.string(),
       effectType: z.string(),
-    })
+    }),
   ),
   ...battleResultSchema.shape,
 });
@@ -39,10 +39,10 @@ export const bmStorage = {
         ent.battleManager = undefined!;
         ent.spells.forEach((spells) => (spells.battleManager = undefined!));
         ent.activeEffects.forEach(
-          (effect) => (effect.battleManager = undefined!)
+          (effect) => (effect.battleManager = undefined!),
         );
         ent.passiveSkills.forEach(
-          (passive) => (passive.battleManager = undefined!)
+          (passive) => (passive.battleManager = undefined!),
         );
         Object.values(ent.equipped).forEach((equipment) => {
           equipment.battleManager = undefined!;
@@ -60,7 +60,7 @@ export const bmStorage = {
       timelineData: bm.events,
       participants: entities as BaseEntity[],
       effectTracking: storageSchema.shape.effectTracking.parse(
-        bm.effectTracking
+        bm.effectTracking,
       ),
       winner: bm.getWinningTeam()!,
       teamA: bm.getTeam("TEAM_A").map((ent) => ({
@@ -97,11 +97,11 @@ export const bmStorage = {
     const y = {
       timelineData: deserialize(storageData.timelineData as SuperJSONResult),
       startEntityData: deserialize(
-        storageData.startEntityData as SuperJSONResult
+        storageData.startEntityData as SuperJSONResult,
       ),
       participants: deserialize(storageData.participants as SuperJSONResult),
       effectTracking: deserialize(
-        storageData.effectTracking as SuperJSONResult
+        storageData.effectTracking as SuperJSONResult,
       ),
       winner: storageData.winner,
       teamA: deserialize(storageData.teamA as SuperJSONResult),
@@ -121,7 +121,7 @@ export const bmStorage = {
             id: id,
             effectType: effect.effectType as EffectType,
           },
-        ])
+        ]),
       ),
     };
   },

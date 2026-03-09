@@ -29,7 +29,7 @@ export abstract class BaseSpell implements Spell {
     if (!this.battleManager) throw new Error("Battle manager not set");
     const allEntities = this.battleManager.getAliveEntities();
     const enemies = allEntities.filter(
-      (e) => e.team !== caster.team && !e.isDead()
+      (e) => e.team !== caster.team && !e.isDead(),
     );
     const allies = this.battleManager
       .getTeam(caster.team)
@@ -109,7 +109,7 @@ export abstract class BaseSpell implements Spell {
     caster: Entity,
     targets: Entity[],
     battleManager: BattleManager,
-    roll: number
+    roll: number,
   ): OptionalSpellCastEvent | OptionalSpellCastEvent[];
 
   protected validateTargets(caster: Entity, targets: Entity[]): boolean {

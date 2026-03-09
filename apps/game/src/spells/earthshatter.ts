@@ -22,7 +22,7 @@ export class EarthshatterSpell extends DamageEffectSpell {
         attributeScaling: ({ caster }) => caster.getAttribute("vitality") * 0.6,
       }),
       new EffectModule(() => new StunEffect(1)),
-      0.5
+      0.5,
     );
   }
 

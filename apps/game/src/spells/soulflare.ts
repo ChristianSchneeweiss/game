@@ -30,19 +30,19 @@ export class SoulflareSpell extends BaseSpell {
     caster: Entity,
     targets: Entity[],
     battleManager: BattleManager,
-    roll: number
+    roll: number,
   ): OptionalSpellCastEvent {
     const damage = this.damageModule.applyRawDamage(
       caster,
       targets,
       roll,
       battleManager,
-      this
+      this,
     );
 
     const healModule = new HealModule(
       undefined,
-      () => (damage.totalDamage ?? 0) * 0.5
+      () => (damage.totalDamage ?? 0) * 0.5,
     );
     const healing = healModule.applyRawHeal(caster, [caster], roll, this);
 

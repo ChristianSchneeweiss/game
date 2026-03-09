@@ -60,14 +60,13 @@ export const BattleChatBar = ({
 
   return (
     <div className="fixed right-4 bottom-4 z-50">
-      {/* Chat Toggle Button */}
       <div className="relative">
         <Button
           onClick={toggleChat}
           variant="outline"
           size="icon"
-          className={`h-14 w-14 rounded-full border-slate-600 bg-slate-800/95 text-white shadow-xl backdrop-blur-sm transition-all duration-200 hover:scale-105 hover:bg-slate-700/95 ${
-            isOpen ? "bg-blue-600/90 hover:bg-blue-700/90" : ""
+          className={`h-14 w-14 rounded-full border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.96),rgba(2,6,23,0.98))] text-white shadow-[0_18px_50px_rgba(0,0,0,0.45)] backdrop-blur-sm transition-all duration-200 hover:scale-105 hover:bg-white/10 ${
+            isOpen ? "border-blue-300/18 bg-blue-400/14 hover:bg-blue-400/18" : ""
           }`}
         >
           <MessageCircle
@@ -75,7 +74,6 @@ export const BattleChatBar = ({
           />
         </Button>
 
-        {/* Unread Message Badge */}
         {unreadCount > 0 && (
           <div className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white shadow-lg">
             {unreadCount > 9 ? "9+" : unreadCount}
@@ -83,7 +81,6 @@ export const BattleChatBar = ({
         )}
       </div>
 
-      {/* Chat Panel */}
       <div
         className={`absolute right-0 bottom-16 transition-all duration-300 ease-in-out ${
           isOpen
@@ -91,11 +88,12 @@ export const BattleChatBar = ({
             : "pointer-events-none translate-y-2 opacity-0"
         }`}
       >
-        <div className="h-96 w-80 rounded-lg border border-slate-600 bg-slate-800/95 shadow-xl backdrop-blur-sm">
-          {/* Header */}
-          <div className="flex items-center justify-between border-b border-slate-600 p-3">
+        <div className="h-96 w-80 overflow-hidden rounded-4xl border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.98),rgba(2,6,23,1))] shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-sm">
+          <div className="flex items-center justify-between border-b border-white/8 p-4">
             <div className="flex items-center gap-2">
-              <h3 className="text-sm font-semibold text-white">Battle Chat</h3>
+              <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-white">
+                Battle Chat
+              </h3>
               <div
                 className={`h-2 w-2 rounded-full ${isConnected ? "bg-green-400" : "bg-red-400"}`}
               />
@@ -104,13 +102,12 @@ export const BattleChatBar = ({
               onClick={() => setIsOpen(false)}
               variant="ghost"
               size="icon"
-              className="h-6 w-6 text-gray-400 hover:bg-slate-700/50 hover:text-white"
+              className="h-7 w-7 rounded-full text-gray-400 hover:bg-white/8 hover:text-white"
             >
               <X className="h-4 w-4" />
             </Button>
           </div>
 
-          {/* Messages */}
           <div className="h-64 flex-1 space-y-2 overflow-y-auto p-3">
             {messages.length === 0 ? (
               <p className="py-4 text-center text-sm text-gray-400">
@@ -119,10 +116,10 @@ export const BattleChatBar = ({
             ) : (
               messages.map((msg, index) => (
                 <div key={index} className="flex flex-col space-y-1">
-                  <span className="text-xs font-medium text-blue-400">
+                  <span className="text-xs font-medium text-blue-300">
                     {msg.user}
                   </span>
-                  <div className="rounded-lg bg-slate-700/50 px-3 py-2">
+                  <div className="rounded-2xl border border-white/8 bg-white/5 px-3 py-2">
                     <p className="text-sm text-white">{msg.message}</p>
                   </div>
                 </div>
@@ -131,8 +128,7 @@ export const BattleChatBar = ({
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Input */}
-          <div className="border-t border-slate-600 p-3">
+          <div className="border-t border-white/8 p-3">
             <div className="flex space-x-2">
               <Input
                 value={message}
@@ -140,13 +136,13 @@ export const BattleChatBar = ({
                 onKeyPress={handleKeyPress}
                 placeholder="Type a message..."
                 disabled={!isConnected}
-                className="flex-1 border-slate-600 bg-slate-700/50 text-white placeholder:text-gray-400 focus:border-blue-400"
+                className="h-11 flex-1 rounded-2xl border-white/10 bg-white/5 text-white placeholder:text-stone-500 focus:border-blue-300/18"
               />
               <Button
                 onClick={handleSendMessage}
                 disabled={!message.trim() || !isConnected}
                 size="icon"
-                className="bg-blue-600 text-white hover:bg-blue-700"
+                className="h-11 w-11 rounded-2xl bg-blue-400 text-slate-950 hover:bg-blue-300"
               >
                 <Send className="h-4 w-4" />
               </Button>

@@ -18,7 +18,7 @@ export abstract class DamageEffectSpell extends BaseSpell {
     config: SpellConfig,
     damageModule: DamageModule,
     effectModule: EffectModule,
-    effectChance: number
+    effectChance: number,
   ) {
     super(config);
     this.damageModule = damageModule;
@@ -30,14 +30,14 @@ export abstract class DamageEffectSpell extends BaseSpell {
     caster: Entity,
     targets: Entity[],
     battleManager: BattleManager,
-    roll: number
+    roll: number,
   ): OptionalSpellCastEvent {
     const damage = this.damageModule.applyRawDamage(
       caster,
       targets,
       roll,
       battleManager,
-      this
+      this,
     );
     const rng = this.getRNG();
     console.log("rng", rng, this.effectChance);
@@ -47,7 +47,7 @@ export abstract class DamageEffectSpell extends BaseSpell {
       caster,
       targets,
       roll,
-      this
+      this,
     );
     return battleManager.handler.mergeHandlerReturns([damage, effects]);
   }

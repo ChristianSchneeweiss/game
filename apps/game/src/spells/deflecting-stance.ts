@@ -18,7 +18,7 @@ export class DeflectingStanceSpell extends ApplyStatusSpell {
       new EffectModule(({ caster }) => {
         const reflectionPercentage = this.scaling(caster);
         return new ReflectionEffect(1, reflectionPercentage);
-      })
+      }),
     );
   }
 

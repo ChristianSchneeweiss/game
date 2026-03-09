@@ -16,6 +16,7 @@ apps/
 ## Tech Stack
 
 ### Client (`@loot-game/client`)
+
 - **Framework**: React 19 with Vite
 - **Routing**: TanStack Router (file-based routes in `src/routes/`)
 - **State**: Zustand, TanStack Query
@@ -24,6 +25,7 @@ apps/
 - **Auth**: Clerk
 
 ### Server (`@loot-game/server`)
+
 - **Runtime**: Cloudflare Workers with Wrangler
 - **Framework**: Hono
 - **API**: tRPC with Hono adapter
@@ -32,6 +34,7 @@ apps/
 - **Real-time**: Durable Objects for battle WebSockets
 
 ### Game (`@loot-game/game`)
+
 - Pure TypeScript game logic, shared between client and server
 - Battle system with turn-based combat
 - Spell, effect, enemy, and item definitions
@@ -77,19 +80,24 @@ bun run deploy        # Build client + deploy server to Cloudflare
 ## Game Concepts
 
 ### Entities
+
 Characters and enemies are both `Entity` types with stats:
+
 - Health, Mana
 - Intelligence, Vitality, Agility, Strength
 - Level, XP
 
 ### Battle System
+
 - Turn-based combat managed by `BattleManager`
 - Timeline events track all battle actions
 - Seeded RNG via seedrandom for deterministic replays
 - Effects: DOT, HOT, Shield, Stun, Armor debuff, etc.
 
 ### Spells
+
 Located in `apps/game/src/spells/`. Each spell has:
+
 - Type identifier
 - Mana cost
 - Target selection (self, enemy, ally, AOE)
@@ -97,11 +105,13 @@ Located in `apps/game/src/spells/`. Each spell has:
 - Optional effect application
 
 ### Dungeons
+
 Multiple rounds of enemies. Character progress persists between rounds.
 
 ## Database Schema
 
 Key tables (defined in `apps/server/src/db/schema.ts`):
+
 - `user` - Clerk user data
 - `character` - Player characters with stats
 - `spell_stats`, `passive_skill_stats`, `equipment_stats` - Owned/equipped items

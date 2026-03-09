@@ -26,7 +26,7 @@ export class FinalVerdictSpell extends DamageSpell {
 
           return caster.getAttribute("strength") * 0.8;
         },
-      })
+      }),
     );
   }
 }

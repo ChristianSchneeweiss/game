@@ -21,7 +21,7 @@ export class calculator {
     defender: Entity,
     damage: number,
     damageType: DamageType,
-    rng: seedrandom.PRNG
+    rng: seedrandom.PRNG,
   ): {
     damage: number;
     isCrit: boolean;
@@ -38,7 +38,7 @@ export class calculator {
           attacker: attacker,
           defender: defender,
         }),
-      damage
+      damage,
     );
 
     const critChance = attacker.getAttribute("critChance");
@@ -70,7 +70,7 @@ export class calculator {
           attacker: attacker,
           defender: defender,
         }),
-      damage
+      damage,
     );
 
     return {
@@ -82,7 +82,7 @@ export class calculator {
   static calculateRealHealing(
     attacker: Entity,
     defender: Entity,
-    healing: number
+    healing: number,
   ): number {
     // todo add modifiers before from source, after from defender, and resistances
     // before dealing healing and before taking healing hook
@@ -95,7 +95,7 @@ export class calculator {
           attacker: attacker,
           defender: defender,
         }),
-      healing
+      healing,
     );
 
     // defender effects hooks before taking
@@ -106,7 +106,7 @@ export class calculator {
           attacker: attacker,
           defender: defender,
         }),
-      healing
+      healing,
     );
 
     return Math.round(healing);
@@ -114,7 +114,7 @@ export class calculator {
 
   static calculateRealEffect(
     effect: Effect,
-    battleManager: BattleManager
+    battleManager: BattleManager,
   ): Effect | null {
     const attacker = battleManager.getEntityById(effect.sourceId);
     const defender = battleManager.getEntityById(effect.targetId);
@@ -133,7 +133,7 @@ export class calculator {
               defender: defender,
             })
           : null) as Effect | null,
-      effect
+      effect,
     );
 
     // defender effects hooks before dealing
@@ -146,7 +146,7 @@ export class calculator {
               defender: defender,
             })
           : null) as Effect | null,
-      realEffect
+      realEffect,
     );
   }
 }
@@ -166,14 +166,14 @@ export class Handler implements BattleHandler {
     amount: number,
     type: DamageType,
     source: Entity,
-    target: Entity
+    target: Entity,
   ) {
     const { damage, isCrit } = calculator.calculateRealDamage(
       source,
       target,
       amount,
       type,
-      this.battleManager.getPRNG()
+      this.battleManager.getPRNG(),
     );
     target.applyDamage(damage, type, source);
 
@@ -215,7 +215,7 @@ export class Handler implements BattleHandler {
     spell: Spell | Effect,
     amount: number,
     source: Entity,
-    target: Entity
+    target: Entity,
   ) {
     const healing = calculator.calculateRealHealing(source, target, amount);
     target.applyHealing(healing, source);
@@ -231,7 +231,7 @@ export class Handler implements BattleHandler {
     spell: Spell | Effect,
     effect: Effect,
     source: Entity,
-    target: Entity
+    target: Entity,
   ) {
     effect.spellSourceId = spell.config.id;
     effect.sourceId = source.id;
@@ -239,11 +239,11 @@ export class Handler implements BattleHandler {
 
     const realEffect = calculator.calculateRealEffect(
       effect,
-      this.battleManager
+      this.battleManager,
     );
     if (!realEffect) return null;
     console.log(
-      `${source.name} applies ${realEffect.effectType} to ${target.name}`
+      `${source.name} applies ${realEffect.effectType} to ${target.name}`,
     );
     realEffect.battleManager = this.battleManager;
     this.battleManager.addEffect(realEffect);

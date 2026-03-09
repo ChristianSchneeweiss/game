@@ -22,7 +22,7 @@ export class StunningStrikeSpell extends DamageEffectSpell {
         attributeScaling: ({ caster }) => caster.getAttribute("strength") * 0.4,
       }),
       new EffectModule(() => new StunEffect(1)),
-      0.3
+      0.3,
     );
   }
 

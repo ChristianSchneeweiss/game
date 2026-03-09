@@ -19,7 +19,7 @@ export class OceanBlessingSpell extends HealingSpell {
         max: 20,
         attributeScaling: ({ caster }) =>
           caster.getAttribute("intelligence") * 0.2,
-      })
+      }),
     );
   }
 

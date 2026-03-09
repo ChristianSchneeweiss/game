@@ -24,7 +24,7 @@ export class EntityFactory {
   }
 
   static createEnemyFromDb(
-    enemies: (typeof TB_dungeonEnemy.$inferSelect)[]
+    enemies: (typeof TB_dungeonEnemy.$inferSelect)[],
   ): BaseEnemy[][] {
     const entitiesByRound: BaseEnemy[][] = [];
     for (const enemy of enemies) {
@@ -39,7 +39,7 @@ export class EntityFactory {
 
   static async createCharactersFromUser(
     userId: string,
-    db: PostgresJsDatabase
+    db: PostgresJsDatabase,
   ): Promise<Character[]> {
     const charactersDb = await db
       .select()
@@ -50,7 +50,7 @@ export class EntityFactory {
       throw new Error("No characters found");
     }
     const characters: Character[] = await Promise.all(
-      charactersDb.map((character) => this.createCharacter(character.id, db))
+      charactersDb.map((character) => this.createCharacter(character.id, db)),
     );
     return characters;
   }
@@ -96,7 +96,7 @@ export class EntityFactory {
       },
       character.xp,
       character.level,
-      character.statPointsAvailable
+      character.statPointsAvailable,
     );
     baseEntity.spells = spells
       .filter((spell) => spell !== null)
@@ -108,7 +108,7 @@ export class EntityFactory {
     baseEntity.passiveSkills = passiveSkills
       .filter((passive) => passive !== null)
       .map((passive) =>
-        passiveSkillFactory(passive.type, passive.id, baseEntity)
+        passiveSkillFactory(passive.type, passive.id, baseEntity),
       );
 
     baseEntity.equipped = equipmentStats.reduce((acc, equip) => {
@@ -127,7 +127,7 @@ export class EntityFactory {
       .where(ilike(TB_character.name, `%${query}%`));
 
     return Promise.all(
-      charactersDb.map((character) => this.createCharacter(character.id, db))
+      charactersDb.map((character) => this.createCharacter(character.id, db)),
     );
   }
 }

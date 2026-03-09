@@ -55,7 +55,8 @@ export type Equipped = Partial<{
 }>;
 
 export interface Entity
-  extends Pick<RoundLifecycleHooks, "onPreRound" | "onPostRound">,
+  extends
+    Pick<RoundLifecycleHooks, "onPreRound" | "onPostRound">,
     TurnLifecycleHooks {
   id: string;
   name: string;

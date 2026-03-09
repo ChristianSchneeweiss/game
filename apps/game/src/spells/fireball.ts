@@ -18,7 +18,7 @@ export class FireballSpell extends DamageSpell {
         max: 20,
         attributeScaling: ({ caster }) =>
           caster.getAttribute("intelligence") * 0.1,
-      })
+      }),
     );
   }
 }

@@ -26,7 +26,7 @@ export class BladestormRhythmSpell extends BaseSpell {
   protected _cast(
     caster: Entity,
     targets: Entity[],
-    battleManager: BattleManager
+    battleManager: BattleManager,
   ): OptionalSpellCastEvent {
     const results: HandlerReturn[] = [];
     for (const target of targets) {
@@ -37,7 +37,7 @@ export class BladestormRhythmSpell extends BaseSpell {
         [target],
         roll,
         battleManager,
-        this
+        this,
       );
       results.push(firstAttack);
 
@@ -48,7 +48,7 @@ export class BladestormRhythmSpell extends BaseSpell {
         [target],
         roll,
         battleManager,
-        this
+        this,
       );
       results.push(secondAttack);
     }

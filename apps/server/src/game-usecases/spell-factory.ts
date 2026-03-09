@@ -4,7 +4,7 @@ import { TB_spellStats, type Database } from "../db/schema";
 export const createSpell = async (
   userId: string,
   type: SpellType,
-  db: Database
+  db: Database,
 ) => {
   await db.insert(TB_spellStats).values({
     userId,

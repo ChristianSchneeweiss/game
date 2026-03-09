@@ -14,7 +14,7 @@ export abstract class BaseItem implements Item {
     name: string,
     description: string,
     tier: Tier,
-    itemType: ItemType
+    itemType: ItemType,
   ) {
     this.id = id;
     this.name = name;

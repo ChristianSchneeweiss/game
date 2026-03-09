@@ -23,7 +23,7 @@ export class CinderbrandSpell extends DamageEffectSpell {
           caster.getAttribute("intelligence") * 0.3,
       }),
       new EffectModule(() => new DamageOverTimeEffect(2, 5, "MAGICAL")),
-      0.3
+      0.3,
     );
   }
 

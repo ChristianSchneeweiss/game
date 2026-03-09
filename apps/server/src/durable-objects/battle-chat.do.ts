@@ -102,7 +102,7 @@ export class BattleChat extends DurableObject {
         JSON.stringify({
           type: "message",
           data: m,
-        } satisfies ResponseMessage)
+        } satisfies ResponseMessage),
       );
     });
   }
@@ -111,7 +111,7 @@ export class BattleChat extends DurableObject {
     ws: WebSocket,
     code: number,
     reason: string,
-    wasClean: boolean
+    wasClean: boolean,
   ) {
     if (code !== 1005) {
       ws.close(code, "Durable Object is closing WebSocket");

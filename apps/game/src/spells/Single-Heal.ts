@@ -19,7 +19,7 @@ export class SingleHealSpell extends HealingSpell {
         max: 10,
         attributeScaling: ({ caster }) =>
           caster.getAttribute("intelligence") * 0.05,
-      })
+      }),
     );
   }
 

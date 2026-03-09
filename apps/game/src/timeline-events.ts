@@ -53,7 +53,7 @@ const reduceCooldownEvent = z.object({
     z.object({
       spellId: z.string(),
       amount: z.number().int(),
-    })
+    }),
   ),
 });
 

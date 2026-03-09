@@ -38,7 +38,7 @@ export class VoltLashSpell extends BaseSpell {
     caster: Entity,
     targets: Entity[],
     battleManager: BattleManager,
-    roll: number
+    roll: number,
   ): OptionalSpellCastEvent {
     if (!this.battleManager) throw new Error("Battle manager not set");
 
@@ -56,7 +56,7 @@ export class VoltLashSpell extends BaseSpell {
         [randomEnemy],
         roll,
         battleManager,
-        this
+        this,
       );
       events.push(damage);
       if (this.getRNG() < this.effectChance) {
@@ -64,7 +64,7 @@ export class VoltLashSpell extends BaseSpell {
           caster,
           [randomEnemy],
           roll,
-          this
+          this,
         );
         events.push(effect);
       }

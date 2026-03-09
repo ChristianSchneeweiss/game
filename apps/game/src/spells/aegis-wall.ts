@@ -18,7 +18,7 @@ export class AegisWallSpell extends ApplyStatusSpell {
       new EffectModule(({ caster }) => {
         const percentage = this.scaling(caster);
         return new MaxHpShieldEffect(2, percentage);
-      })
+      }),
     );
   }
 

@@ -16,7 +16,7 @@ export class BasicAttackSpell extends DamageSpell {
       new MinMaxDamageModule("PHYSICAL", {
         min: 0,
         max: 15,
-      })
+      }),
     );
   }
 }

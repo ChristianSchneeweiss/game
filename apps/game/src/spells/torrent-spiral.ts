@@ -22,7 +22,7 @@ export class TorrentSpiralSpell extends DamageEffectSpell {
         attributeScaling: ({ caster }) => caster.getAttribute("strength") * 0.5,
       }),
       new EffectModule(() => new WeakendEffect(2, 1.25, "MULTIPLY")),
-      0.25
+      0.25,
     );
   }
 

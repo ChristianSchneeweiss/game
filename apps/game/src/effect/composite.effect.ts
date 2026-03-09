@@ -15,7 +15,7 @@ export class CompositeEffect extends BaseEffect {
   constructor(
     effectType: EffectType,
     duration: number,
-    childEffects: Effect[]
+    childEffects: Effect[],
   ) {
     super(effectType, duration);
     this.childEffects = [...childEffects];
@@ -63,7 +63,7 @@ export class CompositeEffect extends BaseEffect {
           dotEffect.damagePerRound,
           dotEffect.damageType,
           source,
-          target
+          target,
         );
       } else if (effect instanceof HealingOverTimeEffect) {
         const hotEffect = effect as HealingOverTimeEffectExposed;

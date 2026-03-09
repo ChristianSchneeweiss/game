@@ -14,7 +14,7 @@ export class ThornCarapacePassive extends BasePassive {
       args.damage * 0.2,
       args.type,
       this.getHolder(),
-      args.attacker
+      args.attacker,
     );
     this.battleManager.addEventToSpellCastBuffer({
       eventType: "EFFECT_TRIGGER",

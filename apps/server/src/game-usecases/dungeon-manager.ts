@@ -39,7 +39,7 @@ export const dungeonManager = {
     characters: Character[],
     key: DungeonKey,
     userId: string,
-    db: PostgresJsDatabase
+    db: PostgresJsDatabase,
   ) => {
     const config = dungeonManager.getDungeonConfig(key);
     if (characters.length > config.maxPartySize) {
@@ -81,7 +81,7 @@ export const dungeonManager = {
             dungeonId: dungeon.id,
             type: enemy.type,
             inRound: index,
-          }))
+          })),
         );
       }
     });
@@ -119,10 +119,10 @@ export const dungeonManager = {
     for (const participant of participants) {
       const character = await EntityFactory.createCharacter(
         participant.characterId,
-        db
+        db,
       );
       const characterData = dungeon.characterData.find(
-        (c) => c.characterId === character.id
+        (c) => c.characterId === character.id,
       );
       if (!characterData) {
         throw new Error("Character data not found");
@@ -149,7 +149,7 @@ export const dungeonManager = {
     enemies: BaseEnemy[],
     characters: BattleResultCharacterData[],
     winningTeam: "TEAM_A" | "TEAM_B",
-    db: Database
+    db: Database,
   ) => {
     await db.transaction(async (tx) => {
       const [dungeon] = await tx
@@ -192,8 +192,8 @@ export const dungeonManager = {
         .where(
           inArray(
             TB_character.id,
-            characters.map((character) => character.id)
-          )
+            characters.map((character) => character.id),
+          ),
         );
       const userIds = new Set(users.map((user) => user.userId));
 
@@ -214,8 +214,8 @@ export const dungeonManager = {
           gold: Math.round(
             enemies.reduce(
               (acc, enemy) => acc + (rng() + 0.5) * enemy.loot.gold,
-              0
-            )
+              0,
+            ),
           ),
           battleId: battleId,
         });
@@ -279,7 +279,7 @@ export const dungeonManager = {
 
   rollEnemies: (config: DungeonConfig) => {
     return config.availableEnemies.map((enemies) =>
-      enemies.map((enemy) => createEnemyFromType(enemy))
+      enemies.map((enemy) => createEnemyFromType(enemy)),
     );
   },
 

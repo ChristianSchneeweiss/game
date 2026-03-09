@@ -6,7 +6,7 @@ import { BaseEffect } from "./base-effect";
 export class ChargeEffect extends BaseEffect {
   constructor(
     duration: number,
-    private action: () => void
+    private action: () => void,
   ) {
     super("CHARGE", duration);
   }

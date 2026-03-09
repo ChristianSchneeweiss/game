@@ -30,7 +30,7 @@ export const characterRouter = router({
     }
     const characters = await EntityFactory.createCharactersFromUser(
       session.id,
-      db
+      db,
     );
     return characters;
   }),
@@ -56,7 +56,7 @@ export const characterRouter = router({
       z.object({
         characterId: z.string(),
         spellId: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const { db } = ctx;
@@ -78,7 +78,7 @@ export const characterRouter = router({
         input.characterId,
         input.passiveSkillId,
         session.id,
-        db
+        db,
       );
     }),
 
@@ -97,7 +97,7 @@ export const characterRouter = router({
         input.characterId,
         input.equipmentId,
         session.id,
-        db
+        db,
       );
     }),
 
@@ -120,9 +120,9 @@ export const characterRouter = router({
       z.object({
         characterId: z.string(),
         stats: z.array(
-          z.enum(["vitality", "intelligence", "agility", "strength"])
+          z.enum(["vitality", "intelligence", "agility", "strength"]),
         ),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const { db } = ctx;

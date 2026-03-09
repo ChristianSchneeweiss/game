@@ -23,7 +23,7 @@ export class CharredChainsSpell extends DamageEffectSpell {
           caster.getAttribute("intelligence") * 0.4,
       }),
       new EffectModule(() => new WeakendEffect(2, 1.1, "MULTIPLY")),
-      0.25
+      0.25,
     );
   }
 

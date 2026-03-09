@@ -16,7 +16,7 @@ export class BattleRoarSpell extends ApplyStatusSpell {
         tier: "A",
       },
       new EffectModule(() => new StunEffect(1)),
-      0.6
+      0.6,
     );
   }
 

@@ -16,14 +16,14 @@ export class DamageSpell extends BaseSpell {
     caster: Entity,
     targets: Entity[],
     battleManager: BattleManager,
-    roll: number
+    roll: number,
   ) {
     return this.damageModule.applyRawDamage(
       caster,
       targets,
       roll,
       battleManager,
-      this
+      this,
     );
   }
 

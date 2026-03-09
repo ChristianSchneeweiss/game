@@ -9,7 +9,7 @@ export abstract class DamageModule implements SpellModule {
   public abstract getRawDamage(
     caster: Entity,
     target: Entity,
-    roll: number
+    roll: number,
   ): number;
 
   public applyRawDamage(
@@ -17,7 +17,7 @@ export abstract class DamageModule implements SpellModule {
     targets: Entity[],
     roll: number,
     battleManager: BattleManager,
-    spell: Spell
+    spell: Spell,
   ): SpellModuleReturn {
     const returns = targets.map((target) => {
       const damage = Math.round(this.getRawDamage(caster, target, roll));
@@ -26,7 +26,7 @@ export abstract class DamageModule implements SpellModule {
         damage,
         this.type,
         caster,
-        target
+        target,
       );
     });
     return battleManager.handler.mergeHandlerReturns(returns);
@@ -44,7 +44,7 @@ export class MinMaxDamageModule extends DamageModule {
         target: Entity;
         roll: number;
       }) => number;
-    }
+    },
   ) {
     super();
   }
@@ -56,7 +56,7 @@ export class MinMaxDamageModule extends DamageModule {
     const baseDamage = minMaxRoll(
       this.damageCalc.min,
       this.damageCalc.max,
-      roll
+      roll,
     );
     const scalingDamage =
       this.damageCalc.attributeScaling?.({ caster, target, roll }) ?? 0;
@@ -71,7 +71,7 @@ export class TotalDamageModule extends DamageModule {
       caster: Entity;
       target: Entity;
       roll: number;
-    }) => number
+    }) => number,
   ) {
     super();
   }

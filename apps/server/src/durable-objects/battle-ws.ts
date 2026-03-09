@@ -212,7 +212,7 @@ export class BattleWebsocket extends DurableObject {
       SuperJSON.stringify({
         type: "entities",
         data: { entities: startEntities as BaseEntity[] },
-      } satisfies ResponseMessage)
+      } satisfies ResponseMessage),
     );
 
     if (this.bm.isGameOver()) {
@@ -282,7 +282,7 @@ export class BattleWebsocket extends DurableObject {
         await this.processSpellCast(
           parsed.data.data.entityId,
           parsed.data.data.spellId,
-          parsed.data.data.targetIds
+          parsed.data.data.targetIds,
         );
 
         this.bm.start(); // kinda weird
@@ -308,7 +308,7 @@ export class BattleWebsocket extends DurableObject {
         await this.processGetTargets(
           parsed.data.data.entityId,
           parsed.data.data.spellId,
-          ws
+          ws,
         );
         break;
       case "getCharacterAttributes":
@@ -317,7 +317,7 @@ export class BattleWebsocket extends DurableObject {
         }
         await this.processGetCharacterAttributes(
           parsed.data.data.characterId,
-          ws
+          ws,
         );
         break;
       case "getSpellDescription":
@@ -334,7 +334,7 @@ export class BattleWebsocket extends DurableObject {
   private async processSpellCast(
     entityId: string,
     spellId: string,
-    targetIds: string[]
+    targetIds: string[],
   ) {
     this.bm.safeCastSpell(entityId, spellId, targetIds);
     this.bm.postTurn();
@@ -345,7 +345,7 @@ export class BattleWebsocket extends DurableObject {
 
   private async processBotTurn() {
     const nextEntity = this.bm.getEntityById(
-      this.bm.getCurrentRound().orderQueue[0]
+      this.bm.getCurrentRound().orderQueue[0],
     );
     if (!nextEntity) {
       return false;
@@ -361,7 +361,7 @@ export class BattleWebsocket extends DurableObject {
       this.bm.safeCastSpell(
         nextEntity.id,
         action.spell.config.id,
-        action.targets.map((t) => t.id)
+        action.targets.map((t) => t.id),
       );
       this.bm.postTurn();
 
@@ -391,7 +391,7 @@ export class BattleWebsocket extends DurableObject {
   private async processGetTargets(
     entityId: string,
     spellId: string,
-    ws: WebSocket
+    ws: WebSocket,
   ) {
     const entity = this.bm.getEntityById(entityId);
     if (!entity) {
@@ -426,13 +426,13 @@ export class BattleWebsocket extends DurableObject {
           enemies,
           allies,
         },
-      } satisfies ResponseMessage)
+      } satisfies ResponseMessage),
     );
   }
 
   private async processGetCharacterAttributes(
     characterId: string,
-    ws: WebSocket
+    ws: WebSocket,
   ) {
     const character = this.bm.getEntityById(characterId);
     if (!character) {
@@ -473,13 +473,13 @@ export class BattleWebsocket extends DurableObject {
           affinities,
           entityId: characterId,
         },
-      } satisfies ResponseMessage)
+      } satisfies ResponseMessage),
     );
   }
 
   private async processGetSpellDescription(spellId: string, ws: WebSocket) {
     const caster = this.bm.entities.find((e) =>
-      e.spells.some((s) => s.config.id === spellId)
+      e.spells.some((s) => s.config.id === spellId),
     );
     if (!caster) {
       throw new Error("Caster not found");
@@ -493,7 +493,7 @@ export class BattleWebsocket extends DurableObject {
       SuperJSON.stringify({
         type: "spellDescription",
         data: { description, spellId, entityId: caster.id },
-      } satisfies ResponseMessage)
+      } satisfies ResponseMessage),
     );
   }
 
@@ -522,7 +522,7 @@ export class BattleWebsocket extends DurableObject {
     ws: WebSocket,
     code: number,
     reason: string,
-    wasClean: boolean
+    wasClean: boolean,
   ) {
     if (code !== 1005) {
       ws.close(code, "Durable Object is closing WebSocket");

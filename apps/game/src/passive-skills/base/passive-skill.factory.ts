@@ -14,7 +14,7 @@ import type { PassiveType } from "./passive-types";
 export const passiveSkillFactory = (
   passiveType: PassiveType,
   id: string,
-  entity: Entity
+  entity: Entity,
 ) => {
   switch (passiveType) {
     case "armor-up":

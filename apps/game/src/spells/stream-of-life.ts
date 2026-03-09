@@ -19,7 +19,7 @@ export class StreamOfLifeSpell extends HealingSpell {
         max: 18,
         attributeScaling: ({ caster }) =>
           caster.getAttribute("intelligence") * 0.4,
-      })
+      }),
     );
   }
 

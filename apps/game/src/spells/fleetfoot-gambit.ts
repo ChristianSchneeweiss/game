@@ -17,7 +17,7 @@ export class FleetfootGambitSpell extends ApplyStatusSpell {
       },
       new EffectModule(() => {
         return new ExtraActionEffect(1);
-      })
+      }),
     );
   }
 

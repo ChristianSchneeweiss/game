@@ -5,7 +5,7 @@ import { StatModifierEffect } from "./stat-modifier.effect";
 export class ArmorDebuffEffect extends StatModifierEffect {
   constructor(
     statModifier: Pick<AttributeModifier, "value" | "operation">,
-    duration: number
+    duration: number,
   ) {
     super(
       "DEBUFF",
@@ -17,7 +17,7 @@ export class ArmorDebuffEffect extends StatModifierEffect {
           operation: statModifier.operation,
         },
       ],
-      duration
+      duration,
     );
   }
 }

@@ -68,7 +68,7 @@ app.use(
         auth,
       });
     },
-  })
+  }),
 );
 
 app.get("/api/healthCheck", async (c) => {
@@ -150,5 +150,5 @@ export default Sentry.withSentry(
   }),
   {
     fetch: app.fetch,
-  } satisfies ExportedHandler<Env>
+  } satisfies ExportedHandler<Env>,
 );

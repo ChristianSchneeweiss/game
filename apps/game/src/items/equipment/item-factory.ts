@@ -5,7 +5,7 @@ import { IntArmor } from "./int-armor";
 export const itemFactory = (
   itemType: ItemType,
   id: string,
-  holder: Entity
+  holder: Entity,
 ): IntArmor => {
   switch (itemType) {
     case "int-armor":

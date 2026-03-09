@@ -24,7 +24,7 @@ export class HealingOverTimeEffect
       this,
       this.healingPerRound,
       source,
-      target
+      target,
     );
     this.battleManager.addEventToSpellCastBuffer({
       eventType: "EFFECT_TRIGGER",
@@ -34,7 +34,7 @@ export class HealingOverTimeEffect
       },
     });
     console.log(
-      `${source.name} heals ${healing} to ${target.name} with ${spellSource.config.name}`
+      `${source.name} heals ${healing} to ${target.name} with ${spellSource.config.name}`,
     );
     super.onPostRound();
   }

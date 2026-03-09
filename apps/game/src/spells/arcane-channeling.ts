@@ -7,7 +7,7 @@ import { BaseSpell } from "./base/base.spell";
 
 export class ArcaneChannelingSpell extends BaseSpell {
   damageModule = new TotalDamageModule("MAGICAL", ({ caster, target, roll }) =>
-    this.calculateDamage(caster)
+    this.calculateDamage(caster),
   );
   constructor(id: string) {
     super({
@@ -25,11 +25,11 @@ export class ArcaneChannelingSpell extends BaseSpell {
     caster: Entity,
     targets: Entity[],
     battleManager: BattleManager,
-    roll: number
+    roll: number,
   ) {
     const effectModule = new EffectModule(
       ({ caster, roll }) =>
-        new ChargeEffect(2, () => this.chargeAction({ caster, roll, targets }))
+        new ChargeEffect(2, () => this.chargeAction({ caster, roll, targets })),
     );
 
     return effectModule.applyRawEffect(caster, [caster], roll, this);
@@ -49,7 +49,7 @@ export class ArcaneChannelingSpell extends BaseSpell {
       args.targets,
       args.roll,
       args.caster.battleManager,
-      this
+      this,
     );
     this.battleManager.processEvent({
       eventType: "SPELL_CAST",

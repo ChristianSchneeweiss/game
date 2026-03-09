@@ -53,19 +53,19 @@ export interface BattleHandler {
     amount: number,
     type: DamageType,
     source: Entity,
-    target: Entity
+    target: Entity,
   ): HandlerReturn;
   healing(
     spell: Spell | Effect,
     amount: number,
     source: Entity,
-    target: Entity
+    target: Entity,
   ): HandlerReturn;
   effect(
     spell: Spell | Effect,
     effect: Effect,
     source: Entity,
-    target: Entity
+    target: Entity,
   ): HandlerReturn | null;
 
   mergeHandlerReturns(returns: HandlerReturn[]): HandlerReturn;

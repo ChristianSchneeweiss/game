@@ -2,7 +2,7 @@ import seedrandom from "seedrandom";
 
 export const randomInArray = <T>(
   array: T[],
-  rng: seedrandom.PRNG
+  rng: seedrandom.PRNG,
 ): T | null => {
   if (array.length === 0) {
     console.error("No random element found");
@@ -19,7 +19,7 @@ export const randomInArray = <T>(
 export const uniqueRandomFromArray = <T>(
   array: T[],
   count: number,
-  rng: seedrandom.PRNG
+  rng: seedrandom.PRNG,
 ): T[] => {
   const set = new Set(array);
   while (set.size > count) {

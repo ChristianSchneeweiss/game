@@ -22,7 +22,7 @@ export const registerRecipes = () => {
         return data;
       },
     },
-    "Effect"
+    "Effect",
   );
 
   superjson.registerCustom<PassiveSkill, any>(
@@ -40,7 +40,7 @@ export const registerRecipes = () => {
         return data;
       },
     },
-    "PassiveSkill"
+    "PassiveSkill",
   );
 
   superjson.registerCustom<BaseEnemy, any>(
@@ -62,7 +62,7 @@ export const registerRecipes = () => {
         return data;
       },
     },
-    "BaseEnemy"
+    "BaseEnemy",
   );
 
   superjson.registerCustom<Equipment, any>(
@@ -78,7 +78,7 @@ export const registerRecipes = () => {
         return data;
       },
     },
-    "Equipment"
+    "Equipment",
   );
 
   superjson.registerCustom<BaseEntity, any>(
@@ -89,13 +89,13 @@ export const registerRecipes = () => {
       serialize: (entities) => {
         entities.battleManager = undefined!;
         entities.spells.forEach(
-          (spells) => (spells.battleManager = undefined!)
+          (spells) => (spells.battleManager = undefined!),
         );
         entities.activeEffects.forEach(
-          (effect) => (effect.battleManager = undefined!)
+          (effect) => (effect.battleManager = undefined!),
         );
         entities.passiveSkills.forEach(
-          (passive) => (passive.battleManager = undefined!)
+          (passive) => (passive.battleManager = undefined!),
         );
         Object.values(entities.equipped).forEach((equipment) => {
           equipment.battleManager = undefined!;
@@ -106,7 +106,7 @@ export const registerRecipes = () => {
         return data;
       },
     },
-    "BaseEntity[]"
+    "BaseEntity[]",
   );
   superjson.registerCustom<PassiveSkill, any>(
     {
@@ -123,7 +123,7 @@ export const registerRecipes = () => {
         return data;
       },
     },
-    "PassiveSkill"
+    "PassiveSkill",
   );
   superjson.registerClass(Character, { identifier: "Character" });
 };

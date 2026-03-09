@@ -21,7 +21,7 @@ export class StaggeringJabSpell extends DamageEffectSpell {
         max: 6,
       }),
       new EffectModule(() => new StunEffect(1)),
-      0.2
+      0.2,
     );
   }
 

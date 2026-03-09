@@ -16,7 +16,7 @@ export class HealingSpell extends BaseSpell {
     caster: Entity,
     targets: Entity[],
     battleManager: BattleManager,
-    roll: number
+    roll: number,
   ) {
     return this.healModule.applyRawHeal(caster, targets, roll, this);
   }

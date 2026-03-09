@@ -17,7 +17,7 @@ export class PreciseThrustSpell extends DamageSpell {
         min: 6,
         max: 9,
         attributeScaling: ({ caster }) => caster.getAttribute("agility") * 0.2,
-      })
+      }),
     );
   }
 

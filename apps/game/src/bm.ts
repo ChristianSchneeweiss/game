@@ -170,7 +170,7 @@ export class BM implements BattleManager, RoundLifecycleHooks {
 
   getSpellById(id: string): Spell | undefined {
     const entity = this.entities.find((entity) =>
-      entity.spells.some((spell) => spell.config.id === id)
+      entity.spells.some((spell) => spell.config.id === id),
     );
     if (!entity) return undefined;
     return entity.spells.find((spell) => spell.config.id === id);
@@ -204,10 +204,10 @@ export class BM implements BattleManager, RoundLifecycleHooks {
 
   isGameOver(): boolean {
     const teamAAlive = this.getTeam("TEAM_A").some(
-      (entity) => !entity.isDead()
+      (entity) => !entity.isDead(),
     );
     const teamBAlive = this.getTeam("TEAM_B").some(
-      (entity) => !entity.isDead()
+      (entity) => !entity.isDead(),
     );
 
     return !teamAAlive || !teamBAlive;
@@ -217,7 +217,7 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     if (!this.isGameOver()) return null;
 
     const teamAAlive = this.getTeam("TEAM_A").some(
-      (entity) => !entity.isDead()
+      (entity) => !entity.isDead(),
     );
     return teamAAlive ? "TEAM_A" : "TEAM_B";
   }
@@ -262,7 +262,7 @@ export class BM implements BattleManager, RoundLifecycleHooks {
   private castSpell(
     caster: Entity,
     spell: Spell,
-    targetIds: string[]
+    targetIds: string[],
   ): SpellCastEvent[] | null {
     const targets = targetIds
       .map((id) => this.getEntityById(id))
@@ -274,7 +274,7 @@ export class BM implements BattleManager, RoundLifecycleHooks {
       "casting spell",
       spell.config.id,
       spell.config.cooldown,
-      targets.map((t) => t.id)
+      targets.map((t) => t.id),
     );
     const myTeam = caster.team;
     const targetEnemies = targets
@@ -290,14 +290,14 @@ export class BM implements BattleManager, RoundLifecycleHooks {
   safeCastSpell(
     entityId: string,
     spellId: string,
-    targetIds: string[]
+    targetIds: string[],
   ): SpellCastEvent[] | null {
     const currentRound = this.getCurrentRound();
     if (currentRound.orderQueue[0] !== entityId) {
       console.error(
         "Entity is not the next in round",
         entityId,
-        currentRound.orderQueue
+        currentRound.orderQueue,
       );
       return null;
     }
@@ -360,7 +360,7 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     return this.getAliveEntities()
       .filter((e) => {
         const stunEffects = e.activeEffects.filter(
-          (ef) => ef.effectType === "STUN"
+          (ef) => ef.effectType === "STUN",
         );
         const isStunned = stunEffects.length > 0;
         stunEffects
@@ -372,7 +372,7 @@ export class BM implements BattleManager, RoundLifecycleHooks {
       })
       .filter((e) => {
         const chargeEffects = e.activeEffects.filter(
-          (ef) => ef.effectType === "CHARGE"
+          (ef) => ef.effectType === "CHARGE",
         );
         const isCharging = chargeEffects.length > 0;
         chargeEffects

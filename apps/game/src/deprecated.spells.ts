@@ -15,7 +15,7 @@ export class DotSpell extends ApplyStatusSpell {
     config: SpellConfig,
     damagePerRound: number,
     damageType: DamageType,
-    duration: number
+    duration: number,
   ) {
     super(
       config,
@@ -26,8 +26,8 @@ export class DotSpell extends ApplyStatusSpell {
           source,
           target,
           damagePerRound,
-          damageType
-        )
+          damageType,
+        ),
     );
   }
 
@@ -46,8 +46,8 @@ export class HotSpell extends ApplyStatusSpell {
           duration,
           source,
           target,
-          healingPerRound
-        )
+          healingPerRound,
+        ),
     );
   }
 }
@@ -57,7 +57,7 @@ export class ShieldSpell extends ApplyStatusSpell {
     super(
       config,
       (source, target) =>
-        new ShieldEffect(this, duration, source, target, shieldAmount)
+        new ShieldEffect(this, duration, source, target, shieldAmount),
     );
   }
 }
@@ -66,7 +66,7 @@ export class AoeDamageSpell extends DamageSpell {
   constructor(
     config: Omit<SpellConfig, "targetType">,
     damageAmount: number,
-    damageType: DamageType
+    damageType: DamageType,
   ) {
     super({ ...config, targetType: "ALL_ENEMIES" }, damageAmount, damageType);
   }
@@ -77,7 +77,7 @@ export class SummonSpell extends BaseSpell {
 
   constructor(
     config: Omit<SpellConfig, "targetType">,
-    summonFactory: () => Entity
+    summonFactory: () => Entity,
   ) {
     super({ ...config, targetType: "NO_TARGET" });
     this.summonFactory = summonFactory;
@@ -87,7 +87,7 @@ export class SummonSpell extends BaseSpell {
     caster: Entity,
     targets: Entity[],
     battleManager: BattleManager,
-    roll: number
+    roll: number,
   ): SpellCastEvent["data"] | null {
     const summonedEntity = this.summonFactory();
     summonedEntity.team = caster.team;
@@ -110,7 +110,7 @@ export class ResurrectionSpell extends BaseSpell {
 
   constructor(
     config: Omit<SpellConfig, "targetType">,
-    healthPercentage: number = 50
+    healthPercentage: number = 50,
   ) {
     super({ ...config, targetType: "DEAD_ALLY" });
     this.healthPercentage = healthPercentage;
@@ -120,13 +120,13 @@ export class ResurrectionSpell extends BaseSpell {
     caster: Entity,
     targets: Entity[],
     battleManager: BattleManager,
-    roll: number
+    roll: number,
   ): SpellCastEvent["data"] | null {
     const revivedEntities: Entity[] = [];
 
     targets.forEach((target) => {
       const healthToRestore = Math.floor(
-        target.maxHealth * (this.healthPercentage / 100)
+        target.maxHealth * (this.healthPercentage / 100),
       );
       if (battleManager.reviveEntity(target.id, healthToRestore)) {
         revivedEntities.push(target);
@@ -157,7 +157,7 @@ export class TimeWarpSpell extends BaseSpell {
     caster: Entity,
     targets: Entity[],
     battleState: BattleManager,
-    roll: number
+    roll: number,
   ): SpellCastEvent["data"] | null {
     const currentRound = battleState.getCurrentRound();
     const target = targets[0];

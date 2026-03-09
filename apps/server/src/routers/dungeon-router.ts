@@ -21,14 +21,14 @@ export const dungeonRouter = router({
       const { db, session } = ctx;
       const characters = await Promise.all(
         input.characters.map((characterId) =>
-          EntityFactory.createCharacter(characterId, db)
-        )
+          EntityFactory.createCharacter(characterId, db),
+        ),
       );
       const dungeon = await dungeonManager.enterDungeon(
         characters,
         input.key,
         session.id,
-        db
+        db,
       );
       return dungeon;
     }),
@@ -40,17 +40,17 @@ export const dungeonRouter = router({
       .from(TB_dungeonData)
       .innerJoin(
         TB_dungeonParticipant,
-        eq(TB_dungeonData.id, TB_dungeonParticipant.dungeonId)
+        eq(TB_dungeonData.id, TB_dungeonParticipant.dungeonId),
       )
       .innerJoin(
         TB_character,
-        eq(TB_dungeonParticipant.characterId, TB_character.id)
+        eq(TB_dungeonParticipant.characterId, TB_character.id),
       )
       .where(
         and(
           eq(TB_character.userId, session.id),
-          eq(TB_dungeonData.cleared, false)
-        )
+          eq(TB_dungeonData.cleared, false),
+        ),
       );
 
     const uniques = new Map<string, { id: string; key: string }>();
@@ -76,11 +76,11 @@ export const dungeonRouter = router({
       .from(TB_dungeonData)
       .innerJoin(
         TB_dungeonParticipant,
-        eq(TB_dungeonData.id, TB_dungeonParticipant.dungeonId)
+        eq(TB_dungeonData.id, TB_dungeonParticipant.dungeonId),
       )
       .innerJoin(
         TB_character,
-        eq(TB_dungeonParticipant.characterId, TB_character.id)
+        eq(TB_dungeonParticipant.characterId, TB_character.id),
       )
       .where(and(eq(TB_character.userId, session.id)));
 
@@ -163,7 +163,7 @@ export const dungeonRouter = router({
         await syncFactory.add(
           battleId,
           dungeon.playerTeam,
-          dungeon.actualEnemies[dungeon.round]
+          dungeon.actualEnemies[dungeon.round],
         );
       });
 

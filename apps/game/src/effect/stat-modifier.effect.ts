@@ -7,7 +7,7 @@ export class StatModifierEffect extends BaseEffect {
   constructor(
     effectType: EffectType,
     modifiers: AttributeModifier[],
-    duration: number
+    duration: number,
   ) {
     super(effectType, duration);
     this.modifiers = modifiers;

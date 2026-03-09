@@ -37,14 +37,14 @@ export class StormPulseSpell extends BaseSpell {
     caster: Entity,
     targets: Entity[],
     battleManager: BattleManager,
-    roll: number
+    roll: number,
   ): OptionalSpellCastEvent {
     if (!this.battleManager) throw new Error("Battle manager not set");
 
     const randomTargets = uniqueRandomFromArray(
       this.battleManager.getAliveEntities(),
       3,
-      this.battleManager.getPRNG()
+      this.battleManager.getPRNG(),
     );
 
     const damage = this.damageModule.applyRawDamage(
@@ -52,7 +52,7 @@ export class StormPulseSpell extends BaseSpell {
       randomTargets,
       roll,
       battleManager,
-      this
+      this,
     );
 
     return damage;

@@ -21,7 +21,7 @@ export class RuptureSpell extends DamageEffectSpell {
         max: 12,
       }),
       new EffectModule(() => new DamageOverTimeEffect(2, 4, "PHYSICAL")),
-      0.2
+      0.2,
     );
   }
 

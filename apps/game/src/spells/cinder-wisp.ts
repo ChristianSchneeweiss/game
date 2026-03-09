@@ -18,7 +18,7 @@ export class CinderWispSpell extends DamageSpell {
         max: 12,
         attributeScaling: ({ caster }) =>
           caster.getAttribute("intelligence") * 0.2,
-      })
+      }),
     );
   }
 

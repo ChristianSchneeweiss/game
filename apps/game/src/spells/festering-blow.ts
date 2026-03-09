@@ -22,7 +22,7 @@ export class FesteringBlowSpell extends DamageEffectSpell {
         attributeScaling: ({ caster }) => caster.getAttribute("vitality") * 0.3,
       }),
       new EffectModule(() => new WeakendEffect(2, 1.1, "MULTIPLY")),
-      0.25
+      0.25,
     );
   }
 

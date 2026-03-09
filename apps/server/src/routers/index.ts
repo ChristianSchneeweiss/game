@@ -79,7 +79,7 @@ export const appRouter = router({
 
     const characters = await EntityFactory.createCharactersFromUser(
       session.id,
-      db
+      db,
     );
     if (characters.length === 0) {
       throw new TRPCError({
@@ -93,7 +93,7 @@ export const appRouter = router({
       return {
         ...spell,
         description: createSpellFromType(spell.id, spell.type).description(
-          character
+          character,
         ),
       };
     });
@@ -189,7 +189,7 @@ export const appRouter = router({
 
     const characters = await EntityFactory.createCharactersFromUser(
       session.id,
-      db
+      db,
     );
 
     const equip = equipment.map((equip) => {

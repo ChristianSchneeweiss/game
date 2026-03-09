@@ -18,7 +18,7 @@ export class TidepiercerThrustSpell extends DamageSpell {
         min: 20,
         max: 25,
         attributeScaling: ({ caster }) => caster.getAttribute("strength") * 0.6,
-      })
+      }),
     );
   }
 

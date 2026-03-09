@@ -19,8 +19,8 @@ export class TitansResurgencePassive extends BasePassive {
       holder.applyEffect(
         new HealingOverTimeEffect(
           4,
-          holder.maxHealth * this.healingPerRoundPercentage
-        )
+          holder.maxHealth * this.healingPerRoundPercentage,
+        ),
       );
     }
   }

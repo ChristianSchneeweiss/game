@@ -29,6 +29,7 @@ import {
   ShieldCheck,
   SkullIcon,
   Sparkles,
+  Swords,
   TargetIcon,
   TrendingDown,
   TrendingUp,
@@ -43,6 +44,8 @@ type Params = {
   participants: Entity[];
   stats: Map<string, Stats>;
   effectTracking: EffectTracking;
+  battleId?: string;
+  mode?: "live" | "replay";
 
   battleState?: BattleState;
   validTargets?: string[];
@@ -74,6 +77,8 @@ export const BattleRender = ({
   battleState,
   effectTracking,
   stats,
+  battleId,
+  mode = "replay",
   validTargets,
   activeSpell,
   chosenTargets,
@@ -100,6 +105,7 @@ export const BattleRender = ({
 
   const currentRound = battleState?.round.round ?? 0;
   const orderQueue = battleState?.round.orderQueue ?? [];
+  const isLiveMode = mode === "live";
 
   const EntityCard = ({ entity, team }: { entity: Entity; team: Team }) => {
     const setHoverCharacterOpen = (open: boolean | undefined) => {
@@ -134,13 +140,11 @@ export const BattleRender = ({
       .map((effect) => effectTracking.get(effect))
       .filter((effect) => effect !== undefined);
 
-    console.log(entity.id, entity.name, entity.equipped);
-
     return (
       <div
         key={entity.id}
         className={cn(
-          "relative rounded-xl border-2 bg-gradient-to-br from-slate-800/90 to-slate-900/90 p-6 shadow-2xl backdrop-blur-sm transition-all duration-300",
+          "relative rounded-xl border-2 bg-linear-to-br from-slate-800/90 to-slate-900/90 p-6 shadow-2xl backdrop-blur-sm transition-all duration-300",
           currentStats?.flags.casting &&
             "border-blue-400 shadow-2xl shadow-blue-400/20",
           currentStats?.deltaHealth > 0 &&
@@ -154,7 +158,7 @@ export const BattleRender = ({
       >
         {/* Turn Indicator */}
         {myTurn && isLive && (
-          <div className="absolute -top-3 -right-3 animate-pulse rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 px-3 py-1 text-sm font-bold text-black">
+          <div className="absolute -top-3 -right-3 animate-pulse rounded-full bg-linear-to-r from-yellow-400 to-orange-500 px-3 py-1 text-sm font-bold text-black">
             YOUR TURN
           </div>
         )}
@@ -185,7 +189,7 @@ export const BattleRender = ({
             {entity.name}
             {entity.isBot && <BotIcon className="h-5 w-5 text-gray-400" />}
             {currentStats?.flags.isCrit && (
-              <span className="flex animate-pulse items-center gap-1 rounded-lg border-2 border-yellow-300 bg-gradient-to-r from-red-600 via-yellow-400 to-red-600 px-3 py-1 text-base font-extrabold text-white shadow-lg">
+              <span className="flex animate-pulse items-center gap-1 rounded-lg border-2 border-yellow-300 bg-linear-to-r from-red-600 via-yellow-400 to-red-600 px-3 py-1 text-base font-extrabold text-white shadow-lg">
                 <svg
                   className="h-5 w-5 text-yellow-300 drop-shadow"
                   fill="none"
@@ -308,7 +312,7 @@ export const BattleRender = ({
           </div>
           <div className="h-3 w-full overflow-hidden rounded-full border border-slate-600 bg-slate-700">
             <div
-              className="h-full bg-gradient-to-r from-red-500 to-red-400 transition-all duration-500 ease-out"
+              className="h-full bg-linear-to-r from-red-500 to-red-400 transition-all duration-500 ease-out"
               style={{ width: `${healthPercent}%` }}
             ></div>
           </div>
@@ -341,7 +345,7 @@ export const BattleRender = ({
           </div>
           <div className="h-3 w-full overflow-hidden rounded-full border border-slate-600 bg-slate-700">
             <div
-              className="h-full bg-gradient-to-r from-blue-500 to-blue-400 transition-all duration-500 ease-out"
+              className="h-full bg-linear-to-r from-blue-500 to-blue-400 transition-all duration-500 ease-out"
               style={{ width: `${manaPercent}%` }}
             ></div>
           </div>
@@ -383,7 +387,7 @@ export const BattleRender = ({
                     {/* Tooltip with description */}
                     <div className="absolute bottom-full left-1/2 z-10 mb-2 hidden -translate-x-1/2 transform group-hover:block">
                       <div
-                        className="max-w-[420px] min-w-[260px] rounded-lg border border-slate-500 bg-slate-800 px-4 py-3 text-xs break-words whitespace-pre-line text-slate-200 shadow-lg"
+                        className="min-w-[260px] max-w-[420px] rounded-lg border border-slate-500 bg-slate-800 px-4 py-3 text-xs wrap-break-word whitespace-pre-line text-slate-200 shadow-lg"
                         style={{ whiteSpace: "pre-line" }}
                       >
                         {effect.description}
@@ -527,37 +531,24 @@ export const BattleRender = ({
     );
   };
 
+  const arenaState = isLiveMode
+    ? activeSpell
+      ? "Targeting"
+      : battleState?.round.orderQueue[0]
+        ? "Live"
+        : "Syncing"
+    : "Replay";
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
-      {/* Battle Arena Header */}
-      <div className="mb-8 text-center">
-        <h1 className="mb-2 bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-4xl font-bold text-transparent">
-          ⚔️ BATTLE ARENA ⚔️
-        </h1>
-        <div className="mx-auto h-1 w-32 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500"></div>
-      </div>
-
+    <main className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(251,191,36,0.12),transparent_20%),radial-gradient(circle_at_82%_16%,rgba(96,165,250,0.08),transparent_18%),linear-gradient(180deg,#030712_0%,#111827_46%,#020617_100%)] px-6 py-8 text-stone-100">
       <div className="mx-auto max-w-7xl">
-        {/* Allies Section */}
-        <div className="mb-8">
-          <h2 className="mb-4 flex items-center gap-2 text-2xl font-bold text-blue-300">
-            <Shield className="h-6 w-6" />
-            ALLIES
-          </h2>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {allies.map((entity) => (
-              <EntityCard key={entity.id} entity={entity} team="TEAM_A" />
-            ))}
-          </div>
-        </div>
-
-        {/* Order Queue Section */}
-        <div className="mb-6">
-          <h2 className="mb-2 flex items-center gap-2 text-base font-bold text-yellow-300">
-            <Zap className="h-4 w-4" />
-            TURN ORDER
-          </h2>
-          <div className="flex flex-wrap justify-center gap-1.5">
+        <section className="mt-8 rounded-4xl border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.96),rgba(2,6,23,0.98))] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.45)]">
+          <ArenaSectionHeader
+            icon={<Zap className="h-5 w-5" />}
+            eyebrow="Tempo"
+            title="Turn Order"
+          />
+          <div className="mt-6 flex flex-wrap gap-2">
             {orderQueue.map((entityId, index) => {
               const entity = participants.find((p) => p.id === entityId);
               if (!entity) return null;
@@ -569,40 +560,92 @@ export const BattleRender = ({
                 <div
                   key={entityId + index}
                   className={cn(
-                    "flex items-center gap-1 rounded-md border px-2 py-1 text-sm transition-all duration-300",
+                    "flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition-all duration-300",
                     isCurrentTurn
                       ? "scale-105 border-yellow-400 bg-yellow-400/20 shadow-md shadow-yellow-400/30"
-                      : "border-slate-600 bg-slate-800/50",
-                    isAlly ? "text-blue-300" : "text-red-300",
+                      : "border-white/8 bg-white/4",
+                    isAlly ? "text-blue-200" : "text-red-200",
                   )}
                 >
-                  <span className="text-sm">{isAlly ? "🧙‍♂️" : "👹"}</span>
-                  <span className="truncate font-medium">{entity.name}</span>
+                  <span>{isAlly ? "🧙‍♂️" : "👹"}</span>
+                  <span className="font-medium">{entity.name}</span>
                   {isCurrentTurn && (
-                    <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-yellow-400"></div>
+                    <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-yellow-300" />
                   )}
                 </div>
               );
             })}
           </div>
-        </div>
+        </section>
 
-        {/* Enemies Section */}
-        <div>
-          <h2 className="mb-4 flex items-center gap-2 text-2xl font-bold text-red-300">
-            <SkullIcon className="h-6 w-6" />
-            ENEMIES
-          </h2>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <section className="mt-8 rounded-4xl border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.96),rgba(2,6,23,0.98))] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.45)]">
+          <ArenaSectionHeader
+            icon={<Shield className="h-5 w-5" />}
+            eyebrow="Team side"
+            title="Allies"
+          />
+          <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {allies.map((entity) => (
+              <EntityCard key={entity.id} entity={entity} team="TEAM_A" />
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-8 rounded-4xl border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.96),rgba(2,6,23,0.98))] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.45)]">
+          <ArenaSectionHeader
+            icon={<SkullIcon className="h-5 w-5" />}
+            eyebrow="Threat side"
+            title="Enemies"
+          />
+          <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
             {enemies.map((entity) => (
               <EntityCard key={entity.id} entity={entity} team="TEAM_B" />
             ))}
           </div>
-        </div>
+        </section>
+      </div>
+    </main>
+  );
+};
+
+function ArenaPill({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-3xl border border-white/8 bg-black/20 p-4 text-center">
+      <p className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-stone-500">
+        {label}
+      </p>
+      <p className="mt-2 text-sm font-semibold uppercase tracking-[0.12em] text-stone-50">
+        {value}
+      </p>
+    </div>
+  );
+}
+
+function ArenaSectionHeader({
+  icon,
+  eyebrow,
+  title,
+}: {
+  icon: React.ReactNode;
+  eyebrow: string;
+  title: string;
+}) {
+  return (
+    <div className="flex items-center gap-3">
+      <div className="flex h-11 w-11 items-center justify-center rounded-3xl border border-white/8 bg-white/4 text-amber-100">
+        {icon}
+      </div>
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-amber-200/70">
+          {eyebrow}
+        </p>
+        <h2 className="text-2xl font-semibold tracking-[-0.04em] text-stone-50">
+          {title}
+        </h2>
       </div>
     </div>
   );
-};
+}
 
 // Helper function to get icon for effect type
 const getEffectIcon = (effectType: EffectType) => {

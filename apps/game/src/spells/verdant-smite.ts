@@ -29,10 +29,10 @@ export class VerdantSmiteSpell extends DamageEffectSpell {
               value: 0.85,
               operation: "MULTIPLY",
             },
-            2
-          )
+            2,
+          ),
       ),
-      0.5
+      0.5,
     );
   }
 
