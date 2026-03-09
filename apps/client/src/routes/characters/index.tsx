@@ -140,6 +140,19 @@ function CharactersComponent() {
           }
         />}
 
+         <Button
+                  size="lg"
+                  variant="relic"
+                  disabled={isCreatingCharacter}
+                  className="mt-5 w-full"
+                  onClick={async () => {
+                    await createCharacter();
+                  }}
+                >
+                  <PlusIcon className="h-4 w-4" />
+                  {isCreatingCharacter ? "Forging..." : "Create character"}
+                </Button>
+
         {isLoading ? (
           <section className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
             {Array.from({ length: 3 }).map((_, index) => (

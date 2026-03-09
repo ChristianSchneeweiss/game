@@ -1,4 +1,11 @@
 import {
+  RpgEmptyState,
+  RpgHero,
+  RpgInset,
+  RpgPage,
+  RpgSectionHeading,
+} from "@/components/rpg-ui";
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -9,13 +16,6 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import {
-  RpgEmptyState,
-  RpgHero,
-  RpgInset,
-  RpgPage,
-  RpgSectionHeading,
-} from "@/components/rpg-ui";
 import { cn } from "@/lib/utils";
 import { queryClient, trpc } from "@/utils/trpc";
 import type { DungeonKey } from "@loot-game/game/dungeons/dungeon-keys";
@@ -25,8 +25,8 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import {
   ArrowRight,
-  ChevronDown,
   CheckCircle,
+  ChevronDown,
   Clock,
   MapPin,
   Play,
@@ -49,8 +49,8 @@ const dungeonCatalog: {
 }[] = [
   {
     key: "dungeon1",
-    title: "Dungeon 1",
-    flavor: "A first descent for testing party rhythm and loadout cohesion.",
+    title: "Avalanche Lair",
+    flavor: "Avalanche Lair is a dungeon that is home to the avalanche lizard. It is a dangerous place to explore, and the lizards are known to be aggressive.",
     accent: "from-red-500/20 via-red-400/10 to-transparent",
     recommendedMinLevel: 1,
     recommendedMaxLevel: 2,

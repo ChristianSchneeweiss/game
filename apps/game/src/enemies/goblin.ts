@@ -27,14 +27,14 @@ export class Goblin extends BaseEnemy {
         items: [
           {
             type: "ITEM",
-            dropRate: 1,
+            dropRate: 0.6,
             data: {
               itemType: "int-armor",
             },
           },
           {
             type: "PASSIVE",
-            dropRate: 1,
+            dropRate: 0.6,
             data: {
               passiveType: "armor-up",
             },

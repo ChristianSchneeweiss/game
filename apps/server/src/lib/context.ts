@@ -6,6 +6,7 @@ import type z from "zod";
 import { createClerk } from "../clerk";
 import { TB_user } from "../db/schema";
 import type { envSchema } from "../env";
+import { createSpell } from "../game-usecases/spell-factory";
 
 export async function createContext({
   req,
@@ -56,6 +57,11 @@ export async function createContext({
       id: auth.userId,
       email: user.emailAddresses[0].emailAddress,
     });
+
+    // just for now
+    await createSpell(auth.userId, "cinder-wisp", db);
+    await createSpell(auth.userId, "aqua-wave", db);
+    await createSpell(auth.userId, "battle-roar", db);
   }
 
   return {
