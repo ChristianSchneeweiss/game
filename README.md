@@ -1,4 +1,4 @@
-# Loot Game
+# Shards of Affinity
 
 A turn-based dungeon crawler RPG with real-time battle mechanics.
 
