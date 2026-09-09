@@ -179,7 +179,7 @@ export class Handler implements BattleHandler {
 
     if (target.isDead()) {
       this.battleManager.processEntityDeath(target, {
-        spellId: spell.config!.id,
+        spellId: "config" in spell ? spell.config.id : spell.spellSourceId,
       });
     }
 
@@ -233,7 +233,8 @@ export class Handler implements BattleHandler {
     source: Entity,
     target: Entity,
   ) {
-    effect.spellSourceId = spell.config.id;
+    effect.spellSourceId =
+      "config" in spell ? spell.config.id : spell.spellSourceId;
     effect.sourceId = source.id;
     effect.targetId = target.id;
 

@@ -29,14 +29,14 @@ export const useAttributes = (
   useEffect(() => {
     if (!wsEvents) return;
 
-    return wsEvents.on((response: ResponseMessage) => {
+    const unsubscribe = wsEvents.on((response: ResponseMessage) => {
       if (response.type === "characterAttributes") {
         setAttributes((prev) => {
-          prev.set(response.data.entityId, response.data);
-          return prev;
+          return new Map(prev).set(response.data.entityId, response.data);
         });
       }
     });
+    return () => unsubscribe();
   }, [wsEvents]);
 
   const getCharacterAttributes = (characterId: string) => {

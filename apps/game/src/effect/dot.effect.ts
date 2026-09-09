@@ -38,7 +38,7 @@ export class DamageOverTimeEffect
     console.log(
       `${source.name} deals ${damage} damage to ${target.name} with ${spellSource.config.name}`,
     );
-    this.battleManager.addEventToSpellCastBuffer({
+    this.battleManager.processEvent({
       eventType: "EFFECT_TRIGGER",
       data: {
         effectId: this.id,

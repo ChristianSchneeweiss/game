@@ -1,0 +1,1260 @@
+{
+  "version": 1,
+  "source": "Authenticated localhost WebSocket acceptance on 2026-09-09",
+  "battleId": "e9d4gsje6rx2",
+  "startingBuilds": {
+    "json": [
+      {
+        "id": "6e5x736w6mch",
+        "name": "Araceli_Schroeder7",
+        "team": "TEAM_A",
+        "health": 100,
+        "maxHealth": 100,
+        "mana": 50,
+        "maxMana": 50,
+        "baseAttributes": {
+          "intelligence": 10,
+          "vitality": 10,
+          "agility": 10,
+          "strength": 10
+        },
+        "baseSpecialAttributes": {
+          "lifesteal": 0,
+          "omnivamp": 0,
+          "armor": 0,
+          "magicResistance": 0,
+          "armorPenetration": 0,
+          "magicPenetration": 0,
+          "healthRegen": 0,
+          "manaRegen": 0,
+          "blessed": 0,
+          "critChance": 0,
+          "critDamage": 1
+        },
+        "baseAffinities": {
+          "fire": 0,
+          "lightning": 0,
+          "earth": 0,
+          "water": 0,
+          "dark": 0
+        },
+        "character": {
+          "userId": "fixture-owner",
+          "xp": 140,
+          "level": 2,
+          "statPointsAvailable": 4
+        },
+        "enemy": null,
+        "spells": [
+          {
+            "config": {
+              "id": "91hnwxcvrcho",
+              "type": "bulwark-bash",
+              "name": "Bulwark Bash",
+              "manaCost": 0,
+              "cooldown": 2,
+              "targetType": {
+                "enemies": 1,
+                "allies": 0
+              },
+              "tier": "S"
+            },
+            "currentCooldown": 0
+          },
+          {
+            "config": {
+              "id": "d9wojdbuckgu",
+              "type": "deflecting-stance",
+              "name": "Deflecting Stance",
+              "manaCost": 25,
+              "cooldown": 4,
+              "targetType": {
+                "allies": 1,
+                "enemies": 0
+              },
+              "tier": "B"
+            },
+            "currentCooldown": 0
+          },
+          {
+            "config": {
+              "id": "oxk8nma0oj1l",
+              "type": "earthshatter",
+              "name": "Earthshatter",
+              "manaCost": 0,
+              "cooldown": 4,
+              "targetType": {
+                "enemies": "Infinity",
+                "allies": 0
+              },
+              "tier": "S"
+            },
+            "currentCooldown": 0
+          },
+          {
+            "config": {
+              "id": "yoswa0g5tap1",
+              "type": "cinder-wisp",
+              "name": "Cinder Wisp",
+              "manaCost": 10,
+              "cooldown": 1,
+              "targetType": {
+                "enemies": 1,
+                "allies": 0
+              },
+              "tier": "A"
+            },
+            "currentCooldown": 0
+          },
+          {
+            "config": {
+              "id": "6e5x736w6mch",
+              "type": "basic-attack",
+              "name": "Basic Attack",
+              "manaCost": 0,
+              "cooldown": 0,
+              "targetType": {
+                "enemies": 1,
+                "allies": 0
+              },
+              "tier": "A"
+            },
+            "currentCooldown": 0
+          }
+        ],
+        "passives": [],
+        "equipment": []
+      },
+      {
+        "id": "aq1ay6jf2uom",
+        "name": "Wade.Runolfsdottir",
+        "team": "TEAM_A",
+        "health": 100,
+        "maxHealth": 100,
+        "mana": 50,
+        "maxMana": 50,
+        "baseAttributes": {
+          "intelligence": 10,
+          "vitality": 10,
+          "agility": 10,
+          "strength": 10
+        },
+        "baseSpecialAttributes": {
+          "lifesteal": 0,
+          "omnivamp": 0,
+          "armor": 0,
+          "magicResistance": 0,
+          "armorPenetration": 0,
+          "magicPenetration": 0,
+          "healthRegen": 0,
+          "manaRegen": 0,
+          "blessed": 0,
+          "critChance": 0,
+          "critDamage": 1
+        },
+        "baseAffinities": {
+          "fire": 0,
+          "lightning": 0,
+          "earth": 0,
+          "water": 0,
+          "dark": 0
+        },
+        "character": {
+          "userId": "fixture-owner",
+          "xp": 0,
+          "level": 1,
+          "statPointsAvailable": 0
+        },
+        "enemy": null,
+        "spells": [
+          {
+            "config": {
+              "id": "aq1ay6jf2uom",
+              "type": "basic-attack",
+              "name": "Basic Attack",
+              "manaCost": 0,
+              "cooldown": 0,
+              "targetType": {
+                "enemies": 1,
+                "allies": 0
+              },
+              "tier": "A"
+            },
+            "currentCooldown": 0
+          }
+        ],
+        "passives": [],
+        "equipment": []
+      },
+      {
+        "id": "goblin-wC6GUYe_pztBGoflhC7Z7",
+        "name": "Goblin",
+        "team": "TEAM_B",
+        "health": 20,
+        "maxHealth": 20,
+        "mana": 0,
+        "maxMana": 0,
+        "baseAttributes": {
+          "intelligence": 1,
+          "vitality": 1,
+          "agility": 1,
+          "strength": 2
+        },
+        "baseSpecialAttributes": {
+          "lifesteal": 0,
+          "omnivamp": 0,
+          "armor": 10,
+          "magicResistance": 0,
+          "armorPenetration": 0,
+          "magicPenetration": 0,
+          "healthRegen": 0,
+          "manaRegen": 0,
+          "blessed": 5,
+          "critChance": 0,
+          "critDamage": 1
+        },
+        "baseAffinities": {
+          "fire": 0,
+          "lightning": 0,
+          "earth": 0,
+          "water": 0,
+          "dark": 0
+        },
+        "character": null,
+        "enemy": {
+          "type": "goblin",
+          "xp": 10,
+          "loot": {
+            "gold": 10,
+            "items": [
+              {
+                "type": "ITEM",
+                "dropRate": 0.6,
+                "data": {
+                  "itemType": "int-armor"
+                }
+              },
+              {
+                "type": "PASSIVE",
+                "dropRate": 0.6,
+                "data": {
+                  "passiveType": "armor-up"
+                }
+              }
+            ]
+          }
+        },
+        "spells": [
+          {
+            "config": {
+              "id": "goblin-wC6GUYe_pztBGoflhC7Z7-basic-attack",
+              "type": "basic-attack",
+              "name": "Basic Attack",
+              "manaCost": 0,
+              "cooldown": 0,
+              "targetType": {
+                "enemies": 1,
+                "allies": 0
+              },
+              "tier": "A"
+            },
+            "currentCooldown": 0
+          }
+        ],
+        "passives": [
+          {
+            "id": "goblin-wC6GUYe_pztBGoflhC7Z7-armor-up",
+            "type": "armor-up"
+          }
+        ],
+        "equipment": [
+          {
+            "id": "goblin-wC6GUYe_pztBGoflhC7Z7-int-armor",
+            "type": "int-armor",
+            "modifiers": [
+              {
+                "id": "kOMZqF3vVxTbr-vu0x_W3",
+                "attribute": "intelligence",
+                "value": 10,
+                "operation": "ADD"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "meta": {
+      "values": {
+        "0.enemy": [
+          "undefined"
+        ],
+        "0.spells.2.config.targetType.enemies": [
+          "number"
+        ],
+        "1.enemy": [
+          "undefined"
+        ],
+        "2.character": [
+          "undefined"
+        ]
+      },
+      "v": 1
+    }
+  },
+  "commands": [
+    {
+      "type": "castSpell",
+      "data": {
+        "entityId": "6e5x736w6mch",
+        "spellId": "yoswa0g5tap1",
+        "targetIds": [
+          "goblin-wC6GUYe_pztBGoflhC7Z7"
+        ],
+        "requestId": "950ca67b-c6a2-42c0-9444-e8bf0d0a9b05",
+        "revision": 1
+      }
+    },
+    {
+      "type": "castSpell",
+      "data": {
+        "entityId": "aq1ay6jf2uom",
+        "spellId": "aq1ay6jf2uom",
+        "targetIds": [
+          "goblin-wC6GUYe_pztBGoflhC7Z7"
+        ],
+        "requestId": "920d3be7-c62a-44f0-acaa-b6e98a850e07",
+        "revision": 4
+      }
+    },
+    {
+      "type": "castSpell",
+      "data": {
+        "entityId": "6e5x736w6mch",
+        "spellId": "d9wojdbuckgu",
+        "targetIds": [
+          "aq1ay6jf2uom"
+        ],
+        "requestId": "be709a78-71c4-46f7-bc22-c7a646d9c559",
+        "revision": 10
+      }
+    },
+    {
+      "type": "castSpell",
+      "data": {
+        "entityId": "aq1ay6jf2uom",
+        "spellId": "aq1ay6jf2uom",
+        "targetIds": [
+          "goblin-wC6GUYe_pztBGoflhC7Z7"
+        ],
+        "requestId": "69ad3a0b-1777-4db7-bd3f-8e8d165d261e",
+        "revision": 13
+      }
+    },
+    {
+      "type": "castSpell",
+      "data": {
+        "entityId": "6e5x736w6mch",
+        "spellId": "yoswa0g5tap1",
+        "targetIds": [
+          "goblin-wC6GUYe_pztBGoflhC7Z7"
+        ],
+        "requestId": "9f982eaa-cb54-42ac-b391-e11b2373718c",
+        "revision": 20
+      }
+    }
+  ],
+  "result": {
+    "battle_id": "e9d4gsje6rx2",
+    "timeline_data": {
+      "json": [
+        {
+          "round": 0,
+          "event": {
+            "eventType": "SPELL_CAST",
+            "data": {
+              "spellId": "goblin-wC6GUYe_pztBGoflhC7Z7",
+              "roll": 0,
+              "isCrit": false,
+              "effectsApplied": [
+                [
+                  "goblin-wC6GUYe_pztBGoflhC7Z7",
+                  [
+                    "goblin-wC6GUYe_pztBGoflhC7Z7-armor-up"
+                  ]
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "round": 0,
+          "event": {
+            "eventType": "SPELL_CAST",
+            "data": {
+              "damageApplied": [
+                [
+                  "goblin-wC6GUYe_pztBGoflhC7Z7",
+                  11
+                ]
+              ],
+              "healingApplied": [],
+              "effectsApplied": [],
+              "totalDamage": 11,
+              "isCrit": false,
+              "spellId": "yoswa0g5tap1",
+              "roll": 10
+            }
+          }
+        },
+        {
+          "round": 0,
+          "event": {
+            "eventType": "REDUCE_SPELL_COOLDOWN",
+            "data": [
+              {
+                "spellId": "yoswa0g5tap1",
+                "amount": 1
+              }
+            ]
+          }
+        },
+        {
+          "round": 0,
+          "event": {
+            "eventType": "REGEN",
+            "data": {
+              "entityId": "aq1ay6jf2uom",
+              "healthRegen": 5,
+              "manaRegen": 2
+            }
+          }
+        },
+        {
+          "round": 0,
+          "event": {
+            "eventType": "SPELL_CAST",
+            "data": {
+              "damageApplied": [
+                [
+                  "goblin-wC6GUYe_pztBGoflhC7Z7",
+                  0
+                ]
+              ],
+              "healingApplied": [],
+              "effectsApplied": [],
+              "totalDamage": 0,
+              "isCrit": false,
+              "spellId": "aq1ay6jf2uom",
+              "roll": 10
+            }
+          }
+        },
+        {
+          "round": 0,
+          "event": {
+            "eventType": "REDUCE_SPELL_COOLDOWN",
+            "data": []
+          }
+        },
+        {
+          "round": 0,
+          "event": {
+            "eventType": "REGEN",
+            "data": {
+              "entityId": "goblin-wC6GUYe_pztBGoflhC7Z7",
+              "healthRegen": 2,
+              "manaRegen": 2
+            }
+          }
+        },
+        {
+          "round": 0,
+          "event": {
+            "eventType": "SPELL_CAST",
+            "data": {
+              "damageApplied": [
+                [
+                  "aq1ay6jf2uom",
+                  9
+                ]
+              ],
+              "healingApplied": [],
+              "effectsApplied": [],
+              "totalDamage": 9,
+              "isCrit": false,
+              "spellId": "goblin-wC6GUYe_pztBGoflhC7Z7-basic-attack",
+              "roll": 12
+            }
+          }
+        },
+        {
+          "round": 0,
+          "event": {
+            "eventType": "REDUCE_SPELL_COOLDOWN",
+            "data": []
+          }
+        },
+        {
+          "round": 1,
+          "event": {
+            "eventType": "REGEN",
+            "data": {
+              "entityId": "6e5x736w6mch",
+              "healthRegen": 5,
+              "manaRegen": 2
+            }
+          }
+        },
+        {
+          "round": 1,
+          "event": {
+            "eventType": "SPELL_CAST",
+            "data": {
+              "damageApplied": [],
+              "healingApplied": [],
+              "effectsApplied": [
+                [
+                  "aq1ay6jf2uom",
+                  [
+                    "at-QwpRNbDHWuV4IxtfJ"
+                  ]
+                ]
+              ],
+              "totalDamage": 0,
+              "isCrit": false,
+              "spellId": "d9wojdbuckgu",
+              "roll": 0
+            }
+          }
+        },
+        {
+          "round": 1,
+          "event": {
+            "eventType": "REDUCE_SPELL_COOLDOWN",
+            "data": [
+              {
+                "spellId": "d9wojdbuckgu",
+                "amount": 1
+              },
+              {
+                "spellId": "yoswa0g5tap1",
+                "amount": 1
+              }
+            ]
+          }
+        },
+        {
+          "round": 1,
+          "event": {
+            "eventType": "REGEN",
+            "data": {
+              "entityId": "aq1ay6jf2uom",
+              "healthRegen": 5,
+              "manaRegen": 2
+            }
+          }
+        },
+        {
+          "round": 1,
+          "event": {
+            "eventType": "SPELL_CAST",
+            "data": {
+              "damageApplied": [
+                [
+                  "goblin-wC6GUYe_pztBGoflhC7Z7",
+                  0
+                ]
+              ],
+              "healingApplied": [],
+              "effectsApplied": [],
+              "totalDamage": 0,
+              "isCrit": false,
+              "spellId": "aq1ay6jf2uom",
+              "roll": 14
+            }
+          }
+        },
+        {
+          "round": 1,
+          "event": {
+            "eventType": "EFFECT_REMOVAL",
+            "data": {
+              "effectId": "at-QwpRNbDHWuV4IxtfJ"
+            }
+          }
+        },
+        {
+          "round": 1,
+          "event": {
+            "eventType": "REDUCE_SPELL_COOLDOWN",
+            "data": []
+          }
+        },
+        {
+          "round": 1,
+          "event": {
+            "eventType": "REGEN",
+            "data": {
+              "entityId": "goblin-wC6GUYe_pztBGoflhC7Z7",
+              "healthRegen": 2,
+              "manaRegen": 2
+            }
+          }
+        },
+        {
+          "round": 1,
+          "event": {
+            "eventType": "SPELL_CAST",
+            "data": {
+              "damageApplied": [
+                [
+                  "aq1ay6jf2uom",
+                  5
+                ]
+              ],
+              "healingApplied": [],
+              "effectsApplied": [],
+              "totalDamage": 5,
+              "isCrit": false,
+              "spellId": "goblin-wC6GUYe_pztBGoflhC7Z7-basic-attack",
+              "roll": 6
+            }
+          }
+        },
+        {
+          "round": 1,
+          "event": {
+            "eventType": "REDUCE_SPELL_COOLDOWN",
+            "data": []
+          }
+        },
+        {
+          "round": 2,
+          "event": {
+            "eventType": "REGEN",
+            "data": {
+              "entityId": "6e5x736w6mch",
+              "healthRegen": 5,
+              "manaRegen": 2
+            }
+          }
+        },
+        {
+          "round": 2,
+          "event": {
+            "eventType": "SPELL_CAST",
+            "data": {
+              "damageApplied": [
+                [
+                  "goblin-wC6GUYe_pztBGoflhC7Z7",
+                  14
+                ]
+              ],
+              "healingApplied": [],
+              "effectsApplied": [],
+              "totalDamage": 14,
+              "isCrit": false,
+              "spellId": "yoswa0g5tap1",
+              "roll": 19
+            }
+          }
+        },
+        {
+          "round": 2,
+          "event": {
+            "eventType": "DEATH",
+            "data": {
+              "id": "goblin-wC6GUYe_pztBGoflhC7Z7"
+            }
+          }
+        },
+        {
+          "round": 2,
+          "event": {
+            "eventType": "REDUCE_SPELL_COOLDOWN",
+            "data": [
+              {
+                "spellId": "d9wojdbuckgu",
+                "amount": 1
+              },
+              {
+                "spellId": "yoswa0g5tap1",
+                "amount": 1
+              }
+            ]
+          }
+        }
+      ],
+      "meta": {
+        "values": {
+          "0.event.data.effectsApplied": [
+            "map"
+          ],
+          "1.event.data.damageApplied": [
+            "map"
+          ],
+          "1.event.data.healingApplied": [
+            "map"
+          ],
+          "1.event.data.effectsApplied": [
+            "map"
+          ],
+          "4.event.data.damageApplied": [
+            "map"
+          ],
+          "4.event.data.healingApplied": [
+            "map"
+          ],
+          "4.event.data.effectsApplied": [
+            "map"
+          ],
+          "7.event.data.damageApplied": [
+            "map"
+          ],
+          "7.event.data.healingApplied": [
+            "map"
+          ],
+          "7.event.data.effectsApplied": [
+            "map"
+          ],
+          "10.event.data.damageApplied": [
+            "map"
+          ],
+          "10.event.data.healingApplied": [
+            "map"
+          ],
+          "10.event.data.effectsApplied": [
+            "map"
+          ],
+          "13.event.data.damageApplied": [
+            "map"
+          ],
+          "13.event.data.healingApplied": [
+            "map"
+          ],
+          "13.event.data.effectsApplied": [
+            "map"
+          ],
+          "17.event.data.damageApplied": [
+            "map"
+          ],
+          "17.event.data.healingApplied": [
+            "map"
+          ],
+          "17.event.data.effectsApplied": [
+            "map"
+          ],
+          "20.event.data.damageApplied": [
+            "map"
+          ],
+          "20.event.data.healingApplied": [
+            "map"
+          ],
+          "20.event.data.effectsApplied": [
+            "map"
+          ]
+        },
+        "v": 1
+      }
+    },
+    "start_entity_data": {
+      "json": [
+        {
+          "characterId": "6e5x736w6mch",
+          "health": 100,
+          "mana": 50
+        },
+        {
+          "characterId": "aq1ay6jf2uom",
+          "health": 100,
+          "mana": 50
+        }
+      ]
+    },
+    "participants": {
+      "json": [
+        {
+          "id": "6e5x736w6mch",
+          "name": "Araceli_Schroeder7",
+          "team": "TEAM_A",
+          "health": 100,
+          "maxHealth": 100,
+          "mana": 50,
+          "maxMana": 50,
+          "baseAttributes": {
+            "intelligence": 10,
+            "vitality": 10,
+            "agility": 10,
+            "strength": 10
+          },
+          "baseSpecialAttributes": {
+            "lifesteal": 0,
+            "omnivamp": 0,
+            "armor": 0,
+            "magicResistance": 0,
+            "armorPenetration": 0,
+            "magicPenetration": 0,
+            "healthRegen": 0,
+            "manaRegen": 0,
+            "blessed": 0,
+            "critChance": 0,
+            "critDamage": 1
+          },
+          "baseAffinities": {
+            "fire": 0,
+            "lightning": 0,
+            "earth": 0,
+            "water": 0,
+            "dark": 0
+          },
+          "activeEffects": [],
+          "attributeModifiers": [],
+          "spells": [
+            {
+              "config": {
+                "id": "91hnwxcvrcho",
+                "type": "bulwark-bash",
+                "name": "Bulwark Bash",
+                "manaCost": 0,
+                "cooldown": 2,
+                "targetType": {
+                  "enemies": 1,
+                  "allies": 0
+                },
+                "tier": "S"
+              },
+              "currentCooldown": 0,
+              "damageModule": {
+                "type": "PHYSICAL",
+                "damageCalc": {
+                  "min": 10,
+                  "max": 15
+                }
+              },
+              "effectModule": {},
+              "effectChance": 1
+            },
+            {
+              "config": {
+                "id": "d9wojdbuckgu",
+                "type": "deflecting-stance",
+                "name": "Deflecting Stance",
+                "manaCost": 25,
+                "cooldown": 4,
+                "targetType": {
+                  "allies": 1,
+                  "enemies": 0
+                },
+                "tier": "B"
+              },
+              "currentCooldown": 0,
+              "effectModule": {},
+              "effectChance": 1
+            },
+            {
+              "config": {
+                "id": "oxk8nma0oj1l",
+                "type": "earthshatter",
+                "name": "Earthshatter",
+                "manaCost": 0,
+                "cooldown": 4,
+                "targetType": {
+                  "enemies": null,
+                  "allies": 0
+                },
+                "tier": "S"
+              },
+              "currentCooldown": 0,
+              "damageModule": {
+                "type": "PHYSICAL",
+                "damageCalc": {
+                  "min": 16,
+                  "max": 23
+                }
+              },
+              "effectModule": {},
+              "effectChance": 0.5
+            },
+            {
+              "config": {
+                "id": "yoswa0g5tap1",
+                "type": "cinder-wisp",
+                "name": "Cinder Wisp",
+                "manaCost": 10,
+                "cooldown": 1,
+                "targetType": {
+                  "enemies": 1,
+                  "allies": 0
+                },
+                "tier": "A"
+              },
+              "currentCooldown": 0,
+              "damageModule": {
+                "type": "MAGICAL",
+                "damageCalc": {
+                  "min": 6,
+                  "max": 12
+                }
+              }
+            },
+            {
+              "config": {
+                "id": "6e5x736w6mch",
+                "type": "basic-attack",
+                "name": "Basic Attack",
+                "manaCost": 0,
+                "cooldown": 0,
+                "targetType": {
+                  "enemies": 1,
+                  "allies": 0
+                },
+                "tier": "A"
+              },
+              "currentCooldown": 0,
+              "damageModule": {
+                "type": "PHYSICAL",
+                "damageCalc": {
+                  "min": 0,
+                  "max": 15
+                }
+              }
+            }
+          ],
+          "passiveSkills": [],
+          "equipped": {},
+          "battleManager": null,
+          "isBot": false,
+          "userId": "fixture-owner",
+          "xp": 140,
+          "level": 2,
+          "statPointsAvailable": 4
+        },
+        {
+          "id": "aq1ay6jf2uom",
+          "name": "Wade.Runolfsdottir",
+          "team": "TEAM_A",
+          "health": 100,
+          "maxHealth": 100,
+          "mana": 50,
+          "maxMana": 50,
+          "baseAttributes": {
+            "intelligence": 10,
+            "vitality": 10,
+            "agility": 10,
+            "strength": 10
+          },
+          "baseSpecialAttributes": {
+            "lifesteal": 0,
+            "omnivamp": 0,
+            "armor": 0,
+            "magicResistance": 0,
+            "armorPenetration": 0,
+            "magicPenetration": 0,
+            "healthRegen": 0,
+            "manaRegen": 0,
+            "blessed": 0,
+            "critChance": 0,
+            "critDamage": 1
+          },
+          "baseAffinities": {
+            "fire": 0,
+            "lightning": 0,
+            "earth": 0,
+            "water": 0,
+            "dark": 0
+          },
+          "activeEffects": [],
+          "attributeModifiers": [],
+          "spells": [
+            {
+              "config": {
+                "id": "aq1ay6jf2uom",
+                "type": "basic-attack",
+                "name": "Basic Attack",
+                "manaCost": 0,
+                "cooldown": 0,
+                "targetType": {
+                  "enemies": 1,
+                  "allies": 0
+                },
+                "tier": "A"
+              },
+              "currentCooldown": 0,
+              "damageModule": {
+                "type": "PHYSICAL",
+                "damageCalc": {
+                  "min": 0,
+                  "max": 15
+                }
+              }
+            }
+          ],
+          "passiveSkills": [],
+          "equipped": {},
+          "battleManager": null,
+          "isBot": false,
+          "userId": "fixture-owner",
+          "xp": 0,
+          "level": 1,
+          "statPointsAvailable": 0
+        },
+        {
+          "id": "goblin-wC6GUYe_pztBGoflhC7Z7",
+          "name": "Goblin",
+          "team": "TEAM_B",
+          "health": 20,
+          "maxHealth": 20,
+          "mana": 0,
+          "maxMana": 0,
+          "baseAttributes": {
+            "intelligence": 1,
+            "vitality": 1,
+            "agility": 1,
+            "strength": 2
+          },
+          "baseSpecialAttributes": {
+            "lifesteal": 0,
+            "omnivamp": 0,
+            "armor": 10,
+            "magicResistance": 0,
+            "armorPenetration": 0,
+            "magicPenetration": 0,
+            "healthRegen": 0,
+            "manaRegen": 0,
+            "blessed": 5,
+            "critChance": 0,
+            "critDamage": 1
+          },
+          "baseAffinities": {
+            "fire": 0,
+            "lightning": 0,
+            "earth": 0,
+            "water": 0,
+            "dark": 0
+          },
+          "activeEffects": [
+            {
+              "id": "goblin-wC6GUYe_pztBGoflhC7Z7-armor-up",
+              "effectType": "PASSIVE",
+              "duration": 10000,
+              "sourceId": "goblin-wC6GUYe_pztBGoflhC7Z7",
+              "targetId": "goblin-wC6GUYe_pztBGoflhC7Z7",
+              "spellSourceId": "goblin-wC6GUYe_pztBGoflhC7Z7",
+              "passiveType": "armor-up",
+              "tier": "E"
+            }
+          ],
+          "attributeModifiers": [
+            {
+              "id": "kOMZqF3vVxTbr-vu0x_W3",
+              "attribute": "intelligence",
+              "value": 10,
+              "operation": "ADD"
+            },
+            {
+              "id": "hSsGB7MfWcSpCfGrtCyqB",
+              "attribute": "armor",
+              "value": 1.2,
+              "operation": "MULTIPLY"
+            }
+          ],
+          "spells": [
+            {
+              "config": {
+                "id": "goblin-wC6GUYe_pztBGoflhC7Z7-basic-attack",
+                "type": "basic-attack",
+                "name": "Basic Attack",
+                "manaCost": 0,
+                "cooldown": 0,
+                "targetType": {
+                  "enemies": 1,
+                  "allies": 0
+                },
+                "tier": "A"
+              },
+              "currentCooldown": 0,
+              "damageModule": {
+                "type": "PHYSICAL",
+                "damageCalc": {
+                  "min": 0,
+                  "max": 15
+                }
+              }
+            }
+          ],
+          "passiveSkills": [
+            {
+              "id": "goblin-wC6GUYe_pztBGoflhC7Z7-armor-up",
+              "effectType": "PASSIVE",
+              "duration": 10000,
+              "sourceId": "goblin-wC6GUYe_pztBGoflhC7Z7",
+              "targetId": "goblin-wC6GUYe_pztBGoflhC7Z7",
+              "spellSourceId": "goblin-wC6GUYe_pztBGoflhC7Z7",
+              "passiveType": "armor-up",
+              "tier": "E"
+            }
+          ],
+          "equipped": {
+            "ARMOR": {
+              "id": "goblin-wC6GUYe_pztBGoflhC7Z7-int-armor",
+              "name": "Int Armor",
+              "description": "Increases intelligence by 10.",
+              "tier": "E",
+              "itemType": "int-armor",
+              "equipmentSlot": "ARMOR",
+              "modifiers": [
+                {
+                  "id": "kOMZqF3vVxTbr-vu0x_W3",
+                  "attribute": "intelligence",
+                  "value": 10,
+                  "operation": "ADD"
+                }
+              ],
+              "holderId": "goblin-wC6GUYe_pztBGoflhC7Z7"
+            }
+          },
+          "isBot": true,
+          "type": "goblin",
+          "xp": 10,
+          "loot": {
+            "gold": 10,
+            "items": [
+              {
+                "type": "ITEM",
+                "dropRate": 0.6,
+                "data": {
+                  "itemType": "int-armor"
+                }
+              },
+              {
+                "type": "PASSIVE",
+                "dropRate": 0.6,
+                "data": {
+                  "passiveType": "armor-up"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "meta": {
+        "values": {
+          "0": [
+            [
+              "class",
+              "Character"
+            ],
+            {
+              "battleManager": [
+                "undefined"
+              ]
+            }
+          ],
+          "1": [
+            [
+              "class",
+              "Character"
+            ],
+            {
+              "battleManager": [
+                "undefined"
+              ]
+            }
+          ],
+          "2": [
+            [
+              "custom",
+              "BaseEnemy"
+            ]
+          ]
+        },
+        "v": 1
+      }
+    },
+    "effect_tracking": {
+      "json": [
+        [
+          "goblin-wC6GUYe_pztBGoflhC7Z7-armor-up",
+          {
+            "sourceId": "goblin-wC6GUYe_pztBGoflhC7Z7",
+            "targetId": "goblin-wC6GUYe_pztBGoflhC7Z7",
+            "round": 0,
+            "duration": 10000,
+            "description": "Increases armor by 20%.",
+            "effectType": "PASSIVE",
+            "battleManager": null
+          }
+        ],
+        [
+          "at-QwpRNbDHWuV4IxtfJ",
+          {
+            "sourceId": "6e5x736w6mch",
+            "targetId": "aq1ay6jf2uom",
+            "round": 1,
+            "duration": 1,
+            "description": "Reflects 50% of the damage taken back to the attacker.",
+            "effectType": "BUFF",
+            "battleManager": null
+          }
+        ]
+      ],
+      "meta": {
+        "values": [
+          "map",
+          {
+            "0.1": [
+              [
+                "custom",
+                "Effect"
+              ],
+              {
+                "battleManager": [
+                  "undefined"
+                ]
+              }
+            ],
+            "1.1": [
+              [
+                "custom",
+                "Effect"
+              ],
+              {
+                "battleManager": [
+                  "undefined"
+                ]
+              }
+            ]
+          }
+        ],
+        "v": 1
+      }
+    },
+    "winner": "TEAM_A",
+    "team_a": {
+      "json": [
+        {
+          "id": "6e5x736w6mch",
+          "health": 100,
+          "mana": 9,
+          "dead": false
+        },
+        {
+          "id": "aq1ay6jf2uom",
+          "health": 91,
+          "mana": 50,
+          "dead": false
+        }
+      ]
+    },
+    "team_b": {
+      "json": [
+        {
+          "id": "goblin-wC6GUYe_pztBGoflhC7Z7",
+          "health": 0,
+          "dead": true,
+          "type": "goblin"
+        }
+      ]
+    }
+  }
+}

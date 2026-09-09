@@ -34,11 +34,13 @@ export class BM implements BattleManager, RoundLifecycleHooks {
   lifeCycleHooks: RoundLifecycleHooks[];
   events: TimelineEventFull[] = [];
   battleId: string;
-  rng: seedrandom.PRNG;
+  rng: seedrandom.StatefulPRNG<seedrandom.State.Arc4>;
   effectTracking: EffectTracking = new Map();
   spellCastBuffer: TimelineEvent[] = [];
 
   constructor(entities: Entity[], battleId: string = nanoid(20)) {
+    this.battleId = battleId;
+    this.rng = seedrandom(this.battleId, { state: true });
     this.deadEntities = new Map();
     this.rounds = [];
     this.handler = new Handler(this);
@@ -47,8 +49,6 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     for (const entity of entities) {
       this.join(entity);
     }
-    this.battleId = battleId;
-    this.rng = seedrandom(this.battleId);
   }
 
   getRNG(): number {
@@ -147,9 +147,13 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     const round = this.getCurrentRoundNumber();
     this.events.push({ round, event });
 
-    if (event.eventType === "SPELL_CAST") {
-      this.spellCastBuffer.forEach((event) => this.processEvent(event));
+    if (
+      event.eventType === "SPELL_CAST" ||
+      event.eventType === "EFFECT_TRIGGER"
+    ) {
+      const buffered = this.spellCastBuffer;
       this.spellCastBuffer = [];
+      buffered.forEach((event) => this.processEvent(event));
     }
   }
 
@@ -188,7 +192,7 @@ export class BM implements BattleManager, RoundLifecycleHooks {
   }
 
   processEntityDeath(entity: Entity, cause: { spellId: string }): void {
-    if (!entity.isDead()) return;
+    if (!entity.isDead() || this.deadEntities.has(entity.id)) return;
 
     this.deadEntities.set(entity.id, entity);
     this.addEventToSpellCastBuffer({

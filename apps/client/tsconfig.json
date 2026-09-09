@@ -8,7 +8,7 @@
     "moduleResolution": "Bundler",
     "verbatimModuleSyntax": true,
     "skipLibCheck": true,
-    "types": ["vite/client"],
+    "types": ["vite/client", "../server/worker-configuration.d.ts"],
     "rootDirs": ["."],
     "baseUrl": ".",
     "paths": {

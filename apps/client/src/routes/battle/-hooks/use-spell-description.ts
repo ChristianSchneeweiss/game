@@ -18,14 +18,17 @@ export const useSpellDescription = (
   useEffect(() => {
     if (!wsEvents) return;
 
-    return wsEvents.on((response: ResponseMessage) => {
+    const unsubscribe = wsEvents.on((response: ResponseMessage) => {
       if (response.type === "spellDescription") {
         setAttributes((prev) => {
-          prev.set(response.data.spellId, response.data.description);
-          return prev;
+          return new Map(prev).set(
+            response.data.spellId,
+            response.data.description,
+          );
         });
       }
     });
+    return () => unsubscribe();
   }, [wsEvents]);
 
   const getSpellDescription = (spellId: string) => {

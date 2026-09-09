@@ -1,0 +1,27 @@
+{
+  "renderer": {
+    "frames": 1800,
+    "p50": 16.69999998807907,
+    "p95": 18.30000001192093,
+    "max": 27.600000023841858,
+    "calls": 180,
+    "triangles": 73102,
+    "geometries": 66,
+    "textures": 58
+  },
+  "viewport": [
+    1440,
+    1000
+  ],
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+  "modelReady": [
+    288.7999999523163
+  ],
+  "resources": [
+    {
+      "duration": 7.100000023841858,
+      "transferSize": 300,
+      "encodedBodySize": 4863620
+    }
+  ]
+}

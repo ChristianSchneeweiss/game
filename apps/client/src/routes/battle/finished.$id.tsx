@@ -2,7 +2,7 @@ import { trpc } from "@/utils/trpc";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowLeft, ScrollText, Sparkles } from "lucide-react";
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { serialize } from "superjson";
 import {
   RpgBackLink,
@@ -14,6 +14,11 @@ import {
 } from "@/components/rpg-ui";
 import { BattleRender } from "./-battle-render";
 import { useStatsTimeline } from "./-hooks/use-stats-timeline";
+import { PresentationBoundary } from "./-presentation-boundary";
+
+const RecordedBattle = import.meta.env.DEV
+  ? lazy(() => import("./-presentation/recorded-battle"))
+  : null;
 
 export const Route = createFileRoute("/battle/finished/$id")({
   component: RouteComponent,
@@ -30,13 +35,35 @@ function RouteComponent() {
   );
 
   const [visibleEvents, setVisibleEvents] = useState(0);
+  const [threeD, setThreeD] = useState(false);
   const stats = statsTimeline[visibleEvents]?.stats;
   const currentEvent = data.timelineData[visibleEvents];
+
+  if (threeD && RecordedBattle)
+    return (
+      <>
+        <div className="p-5">
+          <RpgBackLink to="/dungeons">Back to dungeons</RpgBackLink>
+        </div>
+        <PresentationBoundary onFallback={() => setThreeD(false)}>
+          <Suspense
+            fallback={<div className="p-8">Loading recorded 3D playback…</div>}
+          >
+            <RecordedBattle data={data} onFallback={() => setThreeD(false)} />
+          </Suspense>
+        </PresentationBoundary>
+      </>
+    );
 
   return (
     <RpgPage>
       <div className="space-y-8">
         <RpgBackLink to="/dungeons">Back to dungeons</RpgBackLink>
+        {import.meta.env.DEV && (
+          <button className="rpg-badge" onClick={() => setThreeD(true)}>
+            3D replay prototype
+          </button>
+        )}
 
         <RpgPanel className="px-6 py-6 sm:px-8 sm:py-8">
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-end">
@@ -45,7 +72,7 @@ function RouteComponent() {
                 <Sparkles className="h-3.5 w-3.5" />
                 Battle replay
               </div>
-              <h1 className="rpg-heading mt-5 text-4xl font-semibold uppercase tracking-[0.06em] sm:text-5xl lg:text-6xl">
+              <h1 className="rpg-heading mt-5 text-4xl font-semibold tracking-[0.06em] uppercase sm:text-5xl lg:text-6xl">
                 Replay the encounter
               </h1>
               <p className="rpg-copy mt-5 max-w-2xl text-base leading-8 sm:text-lg">
@@ -59,11 +86,14 @@ function RouteComponent() {
                 Replay pulse
               </p>
               <div className="mt-4 grid grid-cols-2 gap-3">
-                <RpgStatTile label="Step" value={`${visibleEvents + 1}`} />
-                <RpgStatTile label="Total" value={`${data.timelineData.length}`} />
+                <RpgStatTile label="Step" value={`${visibleEvents}`} />
+                <RpgStatTile
+                  label="Total"
+                  value={`${data.timelineData.length}`}
+                />
               </div>
               <RpgInset variant="stone" className="mt-4 p-4">
-                <div className="flex items-center gap-2 text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-[#b6ab92]">
+                <div className="flex items-center gap-2 text-[0.68rem] font-semibold tracking-[0.18em] text-[#b6ab92] uppercase">
                   <ScrollText className="h-4 w-4" />
                   Battle ID
                 </div>
@@ -77,13 +107,13 @@ function RouteComponent() {
           <RpgSectionHeading
             icon={<ArrowLeft className="h-5 w-5" />}
             eyebrow="Timeline control"
-            title={`Visible event ${visibleEvents + 1} of ${data.timelineData.length}`}
+            title={`Visible event ${visibleEvents} of ${data.timelineData.length}`}
           />
           <RpgInset variant="parchment" className="mt-5 p-5">
             <input
               type="range"
               min={0}
-              max={data.timelineData.length - 1}
+              max={data.timelineData.length}
               value={visibleEvents}
               onChange={(e) => setVisibleEvents(Number(e.target.value))}
               className="w-full"

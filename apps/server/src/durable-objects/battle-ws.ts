@@ -1,20 +1,15 @@
 import type { ClerkClient } from "@clerk/backend";
 import type { BaseEntity, Character } from "@loot-game/game/base-entity";
-import type { BattleRound } from "@loot-game/game/battle-types";
-import { BM, type EffectTracking } from "@loot-game/game/bm";
-import { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
+import { BM } from "@loot-game/game/bm";
 import type {
   Affinities,
   EntityAttributes,
   SpecialAttributes,
 } from "@loot-game/game/entity-types";
-import type { TimelineEventFull } from "@loot-game/game/timeline-events";
-import type { SpellDescription } from "@loot-game/game/types";
 import { DurableObject } from "cloudflare:workers";
-import { eq } from "drizzle-orm";
 import { drizzle as neonDrizzle } from "drizzle-orm/neon-http";
 import { drizzle as postgresDrizzle } from "drizzle-orm/postgres-js";
-import { produce } from "immer";
+import cloneDeep from "lodash/cloneDeep";
 import SuperJSON from "superjson";
 import z from "zod";
 import { createClerk } from "../clerk";
@@ -22,94 +17,29 @@ import { TB_activeBattle, type Database } from "../db/schema";
 import { bmStorage } from "../game-usecases/bm-storage";
 import { SyncFactory } from "../game-usecases/sync-factory";
 
-const castSpellSchema = z.object({
-  type: z.literal("castSpell"),
-  data: z.object({
-    entityId: z.string(),
-    spellId: z.string(),
-    targetIds: z.array(z.string()),
-  }),
-});
-
-const getTargetsSchema = z.object({
-  type: z.literal("getTargets"),
-  data: z.object({
-    entityId: z.string(),
-    spellId: z.string(),
-  }),
-});
-
-const getCharacterAttributesSchema = z.object({
-  type: z.literal("getCharacterAttributes"),
-  data: z.object({
-    characterId: z.string(),
-  }),
-});
-
-const getSpellDescriptionSchema = z.object({
-  type: z.literal("getSpellDescription"),
-  data: z.object({
-    spellId: z.string(),
-  }),
-});
-
-const messageSchema = z.union([
-  castSpellSchema,
-  getTargetsSchema,
-  getCharacterAttributesSchema,
-  getSpellDescriptionSchema,
-]);
-
-export type BattleMessage = z.infer<typeof messageSchema>;
-
-export type BattleState = {
-  events: TimelineEventFull[];
-  round: BattleRound;
-  effectTracking: EffectTracking;
-};
-
-export type ResponseMessage =
-  | {
-      type: "state";
-      data: BattleState;
-    }
-  | {
-      type: "entities";
-      data: {
-        entities: BaseEntity[];
-      };
-    }
-  | {
-      type: "targets";
-      data: {
-        targets: string[];
-        enemies: number;
-        allies: number;
-      };
-    }
-  | {
-      type: "finished";
-      data: {
-        winner: "TEAM_A" | "TEAM_B";
-      };
-    }
-  | {
-      type: "characterAttributes";
-      data: {
-        baseAttributes: EntityAttributes;
-        specialAttributes: SpecialAttributes;
-        affinities: Affinities;
-        entityId: string;
-      };
-    }
-  | {
-      type: "spellDescription";
-      data: {
-        description: SpellDescription;
-        spellId: string;
-        entityId: string;
-      };
-    };
+import {
+  messageSchema,
+  type BattleMessage,
+  type BattleState,
+  type ResponseMessage,
+} from "../battle/protocol";
+import {
+  castBattleSpell,
+  getBattleTargets,
+  advanceBots,
+  availableSpells,
+  describeBattleSpell,
+} from "../battle/commands";
+import {
+  captureStartingBuilds,
+  restoreStartingBuilds,
+  type StartingBuilds,
+} from "../battle/starting-builds";
+export type {
+  BattleMessage,
+  BattleState,
+  ResponseMessage,
+} from "../battle/protocol";
 
 const sessionSchema = z.object({
   id: z.string(),
@@ -162,28 +92,30 @@ export class BattleWebsocket extends DurableObject {
   private async setupBm() {
     if (this.bm) return;
 
-    const syncFactory = new SyncFactory(this.db);
-    const { characters, enemies } = await syncFactory.get(this.battleId);
-
-    this.bm = new BM(characters, this.battleId);
-    for (const enemy of enemies) {
-      this.bm.join(enemy);
+    let builds = await this.ctx.storage.get<StartingBuilds>("startingBuilds");
+    if (!builds) {
+      const { characters, enemies } = await new SyncFactory(this.db).get(
+        this.battleId,
+      );
+      builds = captureStartingBuilds([...characters, ...enemies]);
+      await this.ctx.storage.put("startingBuilds", builds);
     }
+    this.bm = new BM(restoreStartingBuilds(builds), this.battleId);
     this.bm.start();
-    while (await this.processBotTurn()) {}
+    advanceBots(this.bm);
   }
 
   async setup(clerkSecretKey: string, battleId: string) {
-    this.ctx.storage.put({
+    await this.ctx.storage.put({
       clerkSecretKey,
       battleId,
     });
     this.clerk = createClerk(clerkSecretKey);
     this.battleId = battleId;
 
-    if (!this.bm) {
-      await this.setupBm();
-    }
+    const needsSetup = !this.bm;
+    await this.setupBm();
+    if (needsSetup && this.bm.isGameOver()) await this.finishBattle();
   }
 
   async fetch(request: Request): Promise<Response> {
@@ -201,12 +133,13 @@ export class BattleWebsocket extends DurableObject {
     this.ctx.acceptWebSocket(server);
 
     // we want to send the start entitites as the client is also doing all the hp, mp, ... processing
-    const startEntities = produce(this.bm.startEntityData, (draft) => {
-      draft.forEach((ent) => {
-        ent.battleManager = undefined!;
-        ent.spells.forEach((spells) => (spells.battleManager = undefined!));
+    const startEntities = cloneDeep(this.bm.startEntityData);
+    for (const entity of startEntities) {
+      entity.battleManager = undefined!;
+      entity.spells.forEach((spell) => {
+        spell.battleManager = undefined!;
       });
-    });
+    }
 
     server.send(
       SuperJSON.stringify({
@@ -230,25 +163,47 @@ export class BattleWebsocket extends DurableObject {
   }
 
   async webSocketMessage(ws: WebSocket, message: ArrayBuffer | string) {
-    this.messages.push(message as string);
-    await this.ctx.storage.put({
-      messages: this.messages,
-    });
-    const [activeBattle] = await this.db
-      .select()
-      .from(TB_activeBattle)
-      .where(eq(TB_activeBattle.battleId, this.battleId));
-    if (!activeBattle) {
-      await this.db.insert(TB_activeBattle).values({
-        battleId: this.battleId,
-      });
-    } else {
-      await this.db
-        .update(TB_activeBattle)
-        .set({ lastAction: new Date() })
-        .where(eq(TB_activeBattle.battleId, this.battleId));
+    if (typeof message !== "string") return;
+    let requestId: string | undefined;
+    try {
+      const parsed = messageSchema.parse(SuperJSON.parse(message));
+      requestId =
+        "requestId" in parsed.data ? parsed.data.requestId : undefined;
+      const accepted = await this.handleMessage(message, ws);
+      // Only accepted commands may be replayed after hibernation. Reads and
+      // rejected commands must never become part of the combat command log.
+      if (accepted) {
+        this.messages.push(message);
+        await this.ctx.storage.put({ messages: this.messages });
+        ws.send(
+          SuperJSON.stringify({
+            type: "castAccepted",
+            data: { requestId },
+          } satisfies ResponseMessage),
+        );
+        await this.sendState();
+        await this.db
+          .insert(TB_activeBattle)
+          .values({ battleId: this.battleId })
+          .onConflictDoUpdate({
+            target: TB_activeBattle.battleId,
+            set: { lastAction: new Date() },
+          });
+        if (this.bm.isGameOver()) await this.finishBattle();
+      }
+    } catch (error) {
+      ws.send(
+        SuperJSON.stringify({
+          type: "rejected",
+          data: {
+            requestId,
+            message:
+              error instanceof Error ? error.message : "Command rejected.",
+          },
+        } satisfies ResponseMessage),
+      );
+      await this.sendState();
     }
-    await this.handleMessage(message as string, ws);
   }
 
   private async handleMessage(message: string, ws?: WebSocket) {
@@ -256,59 +211,27 @@ export class BattleWebsocket extends DurableObject {
     if (!parsed.success) {
       throw new Error("Invalid message");
     }
-    // super weird this has to be done. somehow they lose the battle manager reference
-    this.bm.entities.forEach((c) => {
-      c.battleManager = this.bm;
-      c.spells.forEach((s) => {
-        s.battleManager = this.bm;
-      });
-    });
     switch (parsed.data.type) {
-      case "castSpell":
-        if (ws) {
-          const user = this.sessions.get(ws);
-          if (!user) {
-            throw new Error("User not found");
-          }
-          const character = this.bm.getEntityById(parsed.data.data.entityId);
-          if (!character) {
-            throw new Error("Character not found");
-          }
-          // TODO this gonna break asap
-          if ((character as Character).userId !== user.id) {
-            throw new Error("Character not owned by user");
-          }
-        }
-        await this.processSpellCast(
-          parsed.data.data.entityId,
-          parsed.data.data.spellId,
-          parsed.data.data.targetIds,
-        );
-
-        this.bm.start(); // kinda weird
-        await this.sendState();
-
-        if (this.bm.isGameOver()) {
-          const winner = this.bm.getWinningTeam();
-          const ws = this.ctx.getWebSockets();
-          ws.forEach((w) => {
-            w.send(SuperJSON.stringify({ type: "finished", data: { winner } }));
-          });
-
-          await bmStorage.save(this.bm, this.db);
-          await this.env.BATTLE_DONE_WORKFLOW.create({
-            params: { battleId: this.battleId },
-          });
-        }
-        break;
+      case "castSpell": {
+        const character = this.bm.getEntityById(parsed.data.data.entityId);
+        // Without a socket this is an already authenticated, accepted command
+        // being restored from the Durable Object's own command log.
+        const owner = ws
+          ? this.sessions.get(ws)?.id
+          : (character as Character)?.userId;
+        if (!owner) throw new Error("User not found");
+        castBattleSpell(this.bm, parsed.data.data, owner);
+        return true;
+      }
       case "getTargets":
         if (!ws) {
           return;
         }
-        await this.processGetTargets(
-          parsed.data.data.entityId,
-          parsed.data.data.spellId,
-          ws,
+        ws.send(
+          SuperJSON.stringify({
+            type: "targets",
+            data: getBattleTargets(this.bm, parsed.data.data),
+          } satisfies ResponseMessage),
         );
         break;
       case "getCharacterAttributes":
@@ -331,102 +254,20 @@ export class BattleWebsocket extends DurableObject {
     }
   }
 
-  private async processSpellCast(
-    entityId: string,
-    spellId: string,
-    targetIds: string[],
-  ) {
-    this.bm.safeCastSpell(entityId, spellId, targetIds);
-    this.bm.postTurn();
-    // process pre turn of next entity
-    this.bm.preTurn();
-    while (await this.processBotTurn()) {}
-  }
-
-  private async processBotTurn() {
-    const nextEntity = this.bm.getEntityById(
-      this.bm.getCurrentRound().orderQueue[0],
-    );
-    if (!nextEntity) {
-      return false;
-    }
-
-    if (!nextEntity.isBot) {
-      return false;
-    }
-
-    // if the next entity is a bot, cast the spell
-    if (nextEntity instanceof BaseEnemy) {
-      const action = nextEntity.getAction();
-      this.bm.safeCastSpell(
-        nextEntity.id,
-        action.spell.config.id,
-        action.targets.map((t) => t.id),
-      );
-      this.bm.postTurn();
-
-      if (this.bm.isGameOver()) {
-        console.log("Game over");
-        const winner = this.bm.getWinningTeam();
-        const ws = this.ctx.getWebSockets();
-        ws.forEach((w) => {
-          w.send(SuperJSON.stringify({ type: "finished", data: { winner } }));
-        });
-
-        await bmStorage.save(this.bm, this.db);
-        await this.env.BATTLE_DONE_WORKFLOW.create({
-          params: { battleId: this.battleId },
-        });
-
-        return false;
-      }
-
-      this.bm.preTurn();
-
-      return true;
-    }
-    return false;
-  }
-
-  private async processGetTargets(
-    entityId: string,
-    spellId: string,
-    ws: WebSocket,
-  ) {
-    const entity = this.bm.getEntityById(entityId);
-    if (!entity) {
-      throw new Error("Entity not found");
-    }
-    const spell = entity.spells.find((s) => s.config.id === spellId);
-    if (!spell) {
-      throw new Error("Spell not found");
-    }
-    const targets = spell.getValidTargets(entity);
-
-    const targetType = spell.getTargetType();
-
-    let enemies = targetType.enemies;
-    let allies = targetType.allies;
-    if (targetType.enemies === Infinity) {
-      enemies = this.bm
-        .getAliveEntities()
-        .filter((e) => e.team === "TEAM_B").length;
-    }
-    if (targetType.allies === Infinity) {
-      allies = this.bm
-        .getAliveEntities()
-        .filter((e) => e.team === "TEAM_A").length;
-    }
-
-    ws.send(
-      SuperJSON.stringify({
-        type: "targets",
-        data: {
-          targets: targets?.map((t) => t.id) ?? [],
-          enemies,
-          allies,
-        },
-      } satisfies ResponseMessage),
+  private async finishBattle() {
+    // Persist the result before allowing clients to enter the existing replay.
+    await bmStorage.save(this.bm, this.db);
+    await this.env.BATTLE_DONE_WORKFLOW.create({
+      id: this.battleId,
+      params: { battleId: this.battleId },
+    });
+    this.ctx.getWebSockets().forEach((ws) =>
+      ws.send(
+        SuperJSON.stringify({
+          type: "finished",
+          data: { winner: this.bm.getWinningTeam()! },
+        } satisfies ResponseMessage),
+      ),
     );
   }
 
@@ -488,7 +329,7 @@ export class BattleWebsocket extends DurableObject {
     if (!spell) {
       throw new Error("Spell not found");
     }
-    const description = spell.description(caster);
+    const description = describeBattleSpell(this.bm, caster, spell);
     ws.send(
       SuperJSON.stringify({
         type: "spellDescription",
@@ -505,6 +346,8 @@ export class BattleWebsocket extends DurableObject {
         events,
         round: this.bm.getCurrentRound(),
         effectTracking: this.bm.effectTracking,
+        revision: this.bm.events.length,
+        availableSpells: availableSpells(this.bm),
       },
     } satisfies ResponseMessage;
     this.ctx.getWebSockets().forEach((ws) => {

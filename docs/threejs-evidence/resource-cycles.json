@@ -1,0 +1,97 @@
+[
+  {
+    "cycle": 1,
+    "frames": 900,
+    "p50": 16.600000023841858,
+    "p95": 18.600000023841858,
+    "max": 58.69999998807907,
+    "playback": {
+      "frames": 0,
+      "p50": 0,
+      "p95": 0,
+      "max": 0,
+      "kinds": []
+    },
+    "calls": 181,
+    "triangles": 73110,
+    "geometries": 67,
+    "textures": 58,
+    "modelLoads": 2
+  },
+  {
+    "cycle": 2,
+    "frames": 1800,
+    "p50": 16.69999998807907,
+    "p95": 17.5,
+    "max": 20.100000023841858,
+    "playback": {
+      "frames": 0,
+      "p50": 0,
+      "p95": 0,
+      "max": 0,
+      "kinds": []
+    },
+    "calls": 181,
+    "triangles": 73110,
+    "geometries": 67,
+    "textures": 58,
+    "modelLoads": 3
+  },
+  {
+    "cycle": 3,
+    "frames": 1800,
+    "p50": 16.69999998807907,
+    "p95": 17.5,
+    "max": 17.900000035762787,
+    "playback": {
+      "frames": 0,
+      "p50": 0,
+      "p95": 0,
+      "max": 0,
+      "kinds": []
+    },
+    "calls": 181,
+    "triangles": 73110,
+    "geometries": 67,
+    "textures": 58,
+    "modelLoads": 4
+  },
+  {
+    "cycle": 4,
+    "frames": 1800,
+    "p50": 16.69999998807907,
+    "p95": 18.5,
+    "max": 18.80000001192093,
+    "playback": {
+      "frames": 0,
+      "p50": 0,
+      "p95": 0,
+      "max": 0,
+      "kinds": []
+    },
+    "calls": 181,
+    "triangles": 73110,
+    "geometries": 67,
+    "textures": 58,
+    "modelLoads": 5
+  },
+  {
+    "cycle": 5,
+    "frames": 1440,
+    "p50": 16.69999998807907,
+    "p95": 18.5,
+    "max": 57.60000002384186,
+    "playback": {
+      "frames": 0,
+      "p50": 0,
+      "p95": 0,
+      "max": 0,
+      "kinds": []
+    },
+    "calls": 181,
+    "triangles": 73110,
+    "geometries": 67,
+    "textures": 58,
+    "modelLoads": 6
+  }
+]

@@ -139,7 +139,7 @@ app.get("/api/battle/:id/chat", async (c) => {
 });
 
 export default Sentry.withSentry(
-  (env) => ({
+  (env: Env) => ({
     dsn: "https://c460906fa7d1cb76b6ee238e4eed1d63@o4510053990334464.ingest.de.sentry.io/4510054011306064",
 
     // Setting this option to true will send default PII data to Sentry.

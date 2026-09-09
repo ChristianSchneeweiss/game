@@ -5,7 +5,7 @@ import type { Entity } from "@loot-game/game/entity-types";
 import { timelineEventSchema } from "@loot-game/game/timeline-events";
 import type { EffectType } from "@loot-game/game/types";
 import { eq } from "drizzle-orm";
-import { produce } from "immer";
+import cloneDeep from "lodash/cloneDeep";
 import { deserialize, serialize, type SuperJSONResult } from "superjson";
 import { z } from "zod";
 import { COL_characterDungeonDataSchema } from "../db/character-dungeon-data";
@@ -34,19 +34,18 @@ type StorageSchema = z.infer<typeof storageSchema>;
 
 export const bmStorage = {
   save: async (bm: BM, db: Database) => {
-    const entities = produce(bm.entities, (draft) => {
-      draft.forEach((ent) => {
-        ent.battleManager = undefined!;
-        ent.spells.forEach((spells) => (spells.battleManager = undefined!));
-        ent.activeEffects.forEach(
-          (effect) => (effect.battleManager = undefined!),
-        );
-        ent.passiveSkills.forEach(
-          (passive) => (passive.battleManager = undefined!),
-        );
-        Object.values(ent.equipped).forEach((equipment) => {
-          equipment.battleManager = undefined!;
-        });
+    const entities = cloneDeep(bm.startEntityData);
+    entities.forEach((ent) => {
+      ent.battleManager = undefined!;
+      ent.spells.forEach((spells) => (spells.battleManager = undefined!));
+      ent.activeEffects.forEach(
+        (effect) => (effect.battleManager = undefined!),
+      );
+      ent.passiveSkills.forEach(
+        (passive) => (passive.battleManager = undefined!),
+      );
+      Object.values(ent.equipped).forEach((equipment) => {
+        equipment.battleManager = undefined!;
       });
     });
     const storageData = {
@@ -77,16 +76,19 @@ export const bmStorage = {
       })),
     } satisfies StorageSchema;
 
-    await db.insert(TB_battleResult).values({
-      battleId: bm.battleId,
-      timelineData: serialize(storageData.timelineData),
-      startEntityData: serialize(storageData.startEntityData),
-      participants: serialize(storageData.participants),
-      effectTracking: serialize(storageData.effectTracking),
-      winner: storageData.winner,
-      teamA: serialize(storageData.teamA),
-      teamB: serialize(storageData.teamB),
-    });
+    await db
+      .insert(TB_battleResult)
+      .values({
+        battleId: bm.battleId,
+        timelineData: serialize(storageData.timelineData),
+        startEntityData: serialize(storageData.startEntityData),
+        participants: serialize(storageData.participants),
+        effectTracking: serialize(storageData.effectTracking),
+        winner: storageData.winner,
+        teamA: serialize(storageData.teamA),
+        teamB: serialize(storageData.teamB),
+      })
+      .onConflictDoNothing();
   },
   get: async (id: string, db: Database) => {
     const [storageData] = await db

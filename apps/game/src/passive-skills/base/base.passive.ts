@@ -1,7 +1,12 @@
 import type { BattleManager } from "../../battle-types";
 import type { Entity } from "../../entity-types";
+import type {
+  DamageHookArgs,
+  HealingHookArgs,
+  EffectHookArgs,
+} from "../../lifecycle-hooks";
 import type { TimelineEvent } from "../../timeline-events";
-import type { DamageType, Effect, Tier } from "../../types";
+import type { Effect, Tier } from "../../types";
 import type { PassiveSkill, PassiveType } from "./passive-types";
 
 export abstract class BasePassive implements PassiveSkill {
@@ -67,53 +72,27 @@ export abstract class BasePassive implements PassiveSkill {
     return null;
   }
 
-  beforeTakingDamage(args: {
-    damage: number;
-    type: DamageType;
-    source: Entity;
-    target: Entity;
-  }): number {
+  beforeTakingDamage(args: DamageHookArgs): number {
     return args.damage;
   }
 
-  beforeTakingHealing(args: {
-    healing: number;
-    source: Entity;
-    target: Entity;
-  }): number {
+  beforeTakingHealing(args: HealingHookArgs): number {
     return args.healing;
   }
 
-  beforeTakingEffect(args: {
-    effect: Effect;
-    source: Entity;
-    target: Entity;
-  }): Effect | null {
+  beforeTakingEffect(args: EffectHookArgs): Effect | null {
     return args.effect;
   }
 
-  beforeDealingDamage(args: {
-    damage: number;
-    type: DamageType;
-    source: Entity;
-    target: Entity;
-  }): number {
+  beforeDealingDamage(args: DamageHookArgs): number {
     return args.damage;
   }
 
-  beforeDealingHealing(args: {
-    healing: number;
-    source: Entity;
-    target: Entity;
-  }): number {
+  beforeDealingHealing(args: HealingHookArgs): number {
     return args.healing;
   }
 
-  beforeDealingEffect(args: {
-    effect: Effect;
-    source: Entity;
-    target: Entity;
-  }): Effect | null {
+  beforeDealingEffect(args: EffectHookArgs): Effect | null {
     return args.effect;
   }
 
