@@ -5,9 +5,10 @@
   --line: #3b4843;
   color: var(--ink);
   background: #111916;
-  padding: 28px 32px 36px;
+  padding: 14px 22px 20px;
   font-family: "Trebuchet MS", sans-serif;
   font-size: 13px;
+  line-height: 1.35;
 }
 .battle-3d * {
   box-sizing: border-box;
@@ -67,15 +68,19 @@
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  margin-bottom: 26px;
+  margin-bottom: 12px;
 }
 .battle-stage-heading h1 {
   margin: 6px 0 0;
-  font-size: 32px;
+  font-size: 28px;
   letter-spacing: -0.025em;
   display: flex;
   align-items: center;
   gap: 16px;
+  line-height: 1.1;
+}
+.battle-stage-heading > div:first-child {
+  line-height: 1.1;
 }
 .battle-stage-heading h1 span {
   font:
@@ -106,8 +111,10 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  min-height: 44px;
-  padding: 0 0 18px;
+  min-height: 34px;
+  padding: 0 0 10px;
+  overflow-x: auto;
+  white-space: nowrap;
 }
 .battle-turn-order > span:first-child {
   margin-right: 14px;
@@ -117,6 +124,8 @@
   align-items: center;
   gap: 10px;
   font-size: 11px;
+  line-height: 14px;
+  padding: 6px 10px;
 }
 .battle-turn-order button > span {
   color: var(--muted);
@@ -133,14 +142,14 @@
 }
 .battle-composition {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 260px;
+  grid-template-columns: minmax(0, 1fr) 242px;
   border: 1px solid var(--line);
 }
 .battle-field-column {
   min-width: 0;
 }
 .battle-viewport {
-  height: clamp(400px, 46vh, 610px);
+  height: clamp(300px, calc(100dvh - 505px), 530px);
   position: relative;
   background: #11191a;
   isolation: isolate;
@@ -171,10 +180,10 @@
   position: absolute;
   top: 0;
   left: 0;
-  min-width: 105px;
-  max-width: 154px;
-  padding: 5px 9px;
-  background: #111b18e6;
+  min-width: 136px;
+  max-width: 152px;
+  padding: 5px 6px;
+  background: #111b18ef;
   border-bottom: 1px solid #667668;
   text-align: center;
   box-shadow: 0 3px 12px #0006;
@@ -188,16 +197,16 @@
 }
 .battle-actor-label strong {
   display: block;
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.2;
   margin-top: 2px;
 }
-.battle-actor-label div {
+.battle-actor-health {
   margin: 4px 0 2px;
   height: 3px;
   background: #435049;
 }
-.battle-actor-label i {
+.battle-actor-health > i {
   display: block;
   height: 100%;
   background: #91b396;
@@ -226,7 +235,7 @@
 }
 .battle-event-caption {
   position: absolute;
-  bottom: 32px;
+  bottom: 10px;
   left: 8%;
   right: 8%;
   text-align: center;
@@ -241,18 +250,13 @@
   padding: 6px 14px;
 }
 .battle-model-note {
-  position: absolute;
-  bottom: 10px;
-  left: 0;
-  right: 0;
-  font-size: 8px;
+  margin-top: 16px;
+  font-size: 9px;
   color: #91a098;
-  text-align: center;
   letter-spacing: 0.07em;
-  pointer-events: none;
 }
 .battle-entity-controls {
-  padding: 12px;
+  padding: 7px 10px;
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 6px;
@@ -271,13 +275,15 @@
   font-size: 10px;
 }
 .battle-inspect-button {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr);
   align-items: center;
-  gap: 3px;
-  min-height: 62px;
+  gap: 2px 5px;
+  min-height: 38px;
+  text-align: left;
 }
 .battle-inspect-button > span {
+  grid-row: 1 / 3;
   color: var(--gold);
   font-family: Georgia, serif;
   font-size: 10px;
@@ -285,19 +291,31 @@
 .battle-inspect-button strong {
   font-size: 10px;
   font-weight: 400;
+  line-height: 12px;
 }
 .battle-inspect-button small {
+  grid-column: 2;
   color: var(--muted);
   font-size: 9px;
+  line-height: 11px;
+}
+.battle-entity-controls button:not(.battle-inspect-button) {
+  padding: 4px;
+  line-height: 12px;
 }
 .battle-inspector {
-  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0;
   background: #1a231d;
   border-left: 1px solid var(--line);
+  max-height: calc(100dvh - 188px);
+  overflow: hidden;
 }
 .battle-inspector h2 {
-  font-size: 28px;
-  margin: 14px 0 6px;
+  font-size: 25px;
+  margin: 10px 0 6px;
   line-height: 1.08;
 }
 .battle-muted {
@@ -308,8 +326,8 @@
 .battle-inspector-resources {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  margin: 22px 0;
-  padding: 16px 0;
+  margin: 14px 0;
+  padding: 12px 0;
   border-block: 1px solid var(--line);
 }
 .battle-inspector-resources span {
@@ -329,7 +347,7 @@
   font-size: 11px;
 }
 .battle-inspector h3 {
-  margin: 22px 0 12px;
+  margin: 16px 0 10px;
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
@@ -388,7 +406,7 @@
   line-height: 1.7;
 }
 .battle-command-panel {
-  padding: 18px 22px 20px;
+  padding: 10px 14px 12px;
   background: #131e18;
   border-top: 1px solid var(--line);
 }
@@ -397,7 +415,7 @@
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  margin-bottom: 14px;
+  margin-bottom: 8px;
 }
 .battle-command-title > span:last-child {
   color: var(--gold);
@@ -411,32 +429,37 @@
   flex: 1;
   text-align: left;
   min-width: 0;
-  padding: 12px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 64px;
+  padding: 7px 8px;
 }
-.battle-spell-list button > span {
+.battle-spell-text {
   display: block;
-  color: var(--gold);
-  font-size: 10px;
-  margin-bottom: 8px;
+  min-width: 0;
 }
 .battle-spell-list button strong {
   display: block;
   font-size: 12px;
   font-weight: 400;
+  line-height: 15px;
 }
 .battle-spell-list button small {
   display: block;
   color: #a2b2a6;
   font-size: 9px;
-  margin-top: 6px;
+  margin-top: 4px;
+  line-height: 12px;
 }
 .battle-cast-row {
-  margin-top: 18px;
+  margin-top: 10px;
   border-top: 1px solid var(--line);
-  padding-top: 16px;
+  padding-top: 10px;
   display: flex;
-  align-items: center;
-  gap: 10px;
+  align-items: stretch;
+  gap: 12px;
+  min-height: 106px;
 }
 .battle-cast-row > div {
   flex: 1;
@@ -470,7 +493,7 @@
   gap: 10px;
   align-items: center;
   flex-wrap: wrap;
-  padding: 22px;
+  padding: 12px 16px;
   border-top: 1px solid var(--line);
 }
 .battle-replay-controls label {
@@ -497,6 +520,62 @@
   text-align: center;
   gap: 14px;
 }
+.battle-actor-label[data-state="acting"] {
+  border-color: var(--gold);
+  box-shadow:
+    0 2px 12px #0008,
+    inset 2px 0 var(--gold);
+}
+.battle-actor-label[data-state="selected"] {
+  background: #373a24f2;
+  border-color: #f2d393;
+}
+.battle-actor-label[data-state="fallen"] {
+  opacity: 0.65;
+}
+.battle-3d[data-mode="replay"] .battle-viewport {
+  height: clamp(340px, calc(100dvh - 340px), 610px);
+}
+/* Compact the surrounding app chrome only while this presentation is open. */
+body:has(.battle-3d) [data-game-header] {
+  padding: 0;
+  background: #141c18;
+}
+body:has(.battle-3d) [data-game-header] > div {
+  max-width: none;
+}
+body:has(.battle-3d) [data-game-header] .rpg-panel {
+  border-radius: 0;
+  border-width: 0 0 1px;
+}
+body:has(.battle-3d) [data-header-content] {
+  padding: 6px 22px;
+}
+body:has(.battle-3d) [data-header-decoration],
+body:has(.battle-3d) [data-header-subtitle] {
+  display: none;
+}
+body:has(.battle-3d) [data-header-brand] {
+  border: 0;
+  padding: 4px 0;
+  background: none;
+  box-shadow: none;
+}
+body:has(.battle-3d) [data-header-brand] .rpg-icon-frame {
+  width: 28px;
+  height: 28px;
+}
+body:has(.battle-3d) [data-header-brand] p {
+  font-size: 15px;
+}
+body:has(.battle-3d) [data-header-nav] a {
+  padding: 6px 10px;
+  font-size: 10px;
+  border-radius: 3px;
+}
+body:has([data-game-header]) .battle-3d[data-mode="replay"] .battle-viewport {
+  height: clamp(330px, calc(100dvh - 435px), 570px);
+}
 @media (max-width: 1200px) {
   .battle-3d {
     padding: 20px 16px;
@@ -504,8 +583,8 @@
   .battle-composition {
     grid-template-columns: minmax(0, 1fr) 220px;
   }
-  .battle-inspector {
-    padding: 20px 14px;
+  .battle-inspector-content {
+    padding: 16px 14px;
   }
   .battle-stage-heading h1 {
     font-size: 27px;
@@ -548,4 +627,281 @@
   .battle-3d * {
     transition: none !important;
   }
+}
+
+/* Skill preparation shares one stable area with the commit controls. */
+.battle-prepared-heading,
+.battle-prepared-name {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.battle-current-mana {
+  color: #a4d4df;
+  font-size: 10px;
+}
+.battle-prepared-name {
+  margin-top: 5px;
+}
+.battle-prepared-name strong {
+  font:
+    17px Georgia,
+    serif;
+  color: #f0dfb8;
+}
+.battle-prepared-name > span {
+  font-size: 10px;
+  color: #bcc8bd;
+  white-space: nowrap;
+}
+.battle-cast-row .battle-prepared-targets {
+  margin-top: 4px;
+  color: #e3d9ba;
+}
+.battle-prepared-targets > span {
+  color: var(--muted);
+  margin-right: 5px;
+}
+.battle-prepared-copy {
+  margin-top: 5px;
+  max-height: 42px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  font-size: 11px;
+  line-height: 1.55;
+  color: #c7d4c9;
+}
+.battle-cast-row > .battle-commit-buttons {
+  flex: 0 0 116px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+}
+.battle-commit-buttons > button {
+  width: 100%;
+}
+.battle-commit-buttons > button:last-child {
+  padding: 5px;
+  font-size: 10px;
+}
+.battle-prepare-hint {
+  padding-top: 12px;
+}
+
+/* The inspector and history share the sidebar without adding battlefield height. */
+.battle-inspector-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--line);
+}
+.battle-inspector-tabs > button {
+  flex: 1;
+  border: 0;
+  border-radius: 0;
+  padding: 10px;
+  font-size: 11px;
+}
+.battle-inspector-content {
+  min-height: 0;
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  scrollbar-width: thin;
+  scrollbar-color: #6c7052 transparent;
+}
+.battle-inspector details summary {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+}
+.battle-inspector details summary strong {
+  font-size: 11px;
+  font-weight: 400;
+}
+.battle-inspector details summary span {
+  float: none;
+  white-space: nowrap;
+}
+.battle-effect-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.battle-effect-heading span {
+  display: block;
+  font-size: 9px;
+  margin-top: 2px;
+  color: var(--muted);
+}
+.battle-effect[data-tone="harmful"] {
+  border-color: #da9b8c;
+}
+.battle-effect[data-tone="beneficial"] {
+  border-color: #9acdaa;
+}
+.battle-history ol {
+  list-style: none;
+  padding: 0;
+  margin: 15px 0 0;
+}
+.battle-history li {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 10px;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+}
+.battle-history li strong {
+  display: block;
+  font-size: 11px;
+  font-weight: 400;
+  color: #eddfbd;
+}
+.battle-history li .battle-history-caster {
+  font-size: 10px;
+  color: #c1d0c4;
+  margin: 3px 0;
+}
+.battle-history li p {
+  font-size: 10px;
+  line-height: 1.6;
+  color: #b7c7bc;
+  margin-top: 5px;
+}
+.battle-history-round {
+  font-size: 9px;
+  color: #aab49d;
+}
+.battle-history-empty {
+  padding-block: 20px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.battle-inspector > .battle-history-peek {
+  flex: none;
+  width: 100%;
+  text-align: left;
+  border-width: 1px 0 0;
+  border-radius: 0;
+  padding: 12px 16px;
+  background: #202b22;
+}
+.battle-history-peek strong {
+  display: block;
+  font-size: 11px;
+  line-height: 1.4;
+  font-weight: 400;
+  margin-top: 5px;
+}
+.battle-history-peek small {
+  display: block;
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Entity conditions use skill artwork, shape markers and keyboard-readable descriptions. */
+.battle-conditions {
+  display: flex;
+  justify-content: center;
+  gap: 3px;
+  margin: 6px 0 1px;
+  pointer-events: auto;
+}
+.battle-conditions .battle-condition-icon {
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  position: relative;
+  padding: 0;
+  border-radius: 3px;
+  border: 1px solid #bfa773;
+  background: #16211c;
+}
+.battle-condition-icon .skill-icon {
+  border: 0;
+  border-radius: 2px;
+}
+.battle-conditions .battle-condition-icon[data-tone="harmful"] {
+  border-color: #dd9d8a;
+}
+.battle-conditions .battle-condition-icon[data-tone="beneficial"] {
+  border-color: #9acdaa;
+}
+.battle-condition-sign {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  font:
+    bold 9px Arial,
+    sans-serif;
+  color: #eddbb0;
+  background: #18221d;
+  border-radius: 2px;
+  padding: 0 1px;
+  line-height: 10px;
+}
+.battle-condition-icon[data-tone="harmful"] .battle-condition-sign {
+  color: #ffbda9;
+}
+.battle-condition-icon[data-tone="beneficial"] .battle-condition-sign {
+  color: #beefc7;
+}
+.battle-condition-count {
+  position: absolute;
+  top: -4px;
+  right: -3px;
+  color: #fff3d2;
+  background: #332d20;
+  border-radius: 3px;
+  padding: 0 2px;
+  font:
+    9px "Trebuchet MS",
+    sans-serif;
+}
+.battle-condition-overflow {
+  font:
+    10px "Trebuchet MS",
+    sans-serif;
+  color: #e0d2ad;
+}
+.battle-condition-tooltip {
+  z-index: 120;
+  width: 264px;
+  max-height: min(680px, calc(100dvh - 24px));
+  overflow-y: auto;
+  padding: 12px 14px;
+  border: 1px solid #a29565;
+  border-radius: 4px;
+  color: #ede6cf;
+  background: #17221efc;
+  box-shadow: 0 8px 28px #0009;
+  font:
+    12px/1.5 "Trebuchet MS",
+    sans-serif;
+}
+.battle-condition-tooltip strong {
+  display: block;
+  font-weight: 600;
+}
+.battle-condition-tooltip span {
+  display: block;
+  font-size: 10px;
+  color: #d1bd89;
+}
+.battle-condition-tooltip p {
+  margin-top: 5px;
+  color: #c1d0c4;
+  font-size: 11px;
+}
+.battle-condition-extra {
+  display: flex;
+  align-items: start;
+  gap: 8px;
+  margin-top: 10px;
 }

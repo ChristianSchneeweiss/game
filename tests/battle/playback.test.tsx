@@ -78,7 +78,7 @@ test("replay changes display resources at impact and pause/seek cancel queued ti
   const initial = current.stats;
   await act(async () => current.setPlaying(true));
   expect(current.stats).toEqual(initial);
-  expect(await tick()).toBe(450);
+  expect(await tick()).toBe(297);
   expect(current.impact).toBe(true);
   expect(current.stats).toEqual(current.frames[1].stats);
   await act(async () => current.setPlaying(false));
@@ -113,6 +113,37 @@ test("normal, accelerated, reduced-motion, skip and seek reach exactly the same 
   });
   await act(async () => current.skip());
   expect(current.stats).toEqual(final);
+});
+
+test("resource bookkeeping settles with the preceding action and appended live results stay playable", async () => {
+  await act(async () => current.setPlaying(true));
+  expect(current.shownCursor).toBe(0);
+  await tick();
+  expect(current.shownCursor).toBe(1);
+  expect(current.stats.get("hero-0")!.cooldowns.get("hero-0-stone-bark")).toBe(
+    4,
+  );
+  expect(await tick()).toBeCloseTo(363);
+  expect(current.cursor).toBe(3);
+  expect(current.stats).toEqual(current.frames[3].stats);
+  expect(current.stats.get("hero-0")!.cooldowns.get("hero-0-stone-bark")).toBe(
+    3,
+  );
+  await act(async () => {
+    current.setPlaying(false);
+    root.render(<Probe events={recording.events.slice(0, 3)} />);
+  });
+  await act(async () => current.skip());
+  await act(async () =>
+    root.render(<Probe events={recording.events.slice(0, 8)} />),
+  );
+  expect(current.cursor).toBe(3);
+  expect(current.caughtUp).toBe(false);
+  await act(async () => current.setPlaying(true));
+  let steps = 0;
+  while (!current.caughtUp && steps++ < 20) await tick();
+  expect(current.cursor).toBe(8);
+  expect(current.stats).toEqual(current.frames[8].stats);
 });
 
 test("identical updates do not replay, divergent histories cancel cues, and live reconnect catches up", async () => {

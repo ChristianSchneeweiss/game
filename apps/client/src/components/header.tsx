@@ -45,91 +45,110 @@ export default function Header() {
   const lootCount = loot?.length ?? 0;
 
   return (
-    <header className="sticky top-0 z-50 px-4 pt-4 sm:px-6 lg:px-8">
+    <header
+      data-game-header
+      className="sticky top-0 z-50 px-4 pt-4 sm:px-6 lg:px-8"
+    >
       <div className="mx-auto max-w-7xl">
         <div className="rpg-panel">
-          <div className="rpg-panel-content px-4 py-4 sm:px-5">
+          <div
+            data-header-content
+            className="rpg-panel-content px-4 py-4 sm:px-5"
+          >
             <div className="flex flex-wrap items-center gap-4 lg:flex-nowrap lg:justify-between">
-            <Link
-              to="/"
-              activeOptions={{ exact: true }}
-              className="group flex min-w-0 items-center gap-3 rounded-[1.1rem] border border-[#846d46]/35 bg-[linear-gradient(180deg,rgba(48,40,30,0.94),rgba(29,24,18,0.98))] px-3 py-2.5 shadow-[inset_0_1px_0_rgba(255,238,204,0.04)] transition-all duration-200 hover:border-[#b89656]/45 hover:bg-[linear-gradient(180deg,rgba(58,48,35,0.96),rgba(34,28,21,0.98))]"
-            >
-              <div className="rpg-icon-frame h-11 w-11 text-[#ead7aa]">
-                <Shield className="h-5 w-5" />
-              </div>
-              <div className="min-w-0">
-                <p className="rpg-title text-[0.58rem] text-[#d2c097]/70">
-                  Ancient battle ledger
-                </p>
-                <p className="truncate font-(--rpg-font-display) text-xl leading-none tracking-[0.08em] text-[#f2e5c8] uppercase">
-                  Shards of Affinity
-                </p>
-              </div>
-            </Link>
-
-            <nav className="order-3 w-full lg:order-2 lg:w-auto">
-              <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:justify-center">
-                {navItems.map(({ to, label, icon: Icon, exact }) => (
-                  <Link
-                    key={to}
-                    to={to}
-                    activeOptions={exact ? { exact: true } : undefined}
-                    activeProps={{ className: activeNavLinkClass }}
-                    className={navLinkClass}
-                  >
-                    <Icon className="h-4 w-4 text-[#bfa880] transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:text-[#efd9a9]" />
-                    <span>{label}</span>
-                  </Link>
-                ))}
-              </div>
-            </nav>
-
-            <div className="order-2 ml-auto flex items-center gap-2.5 lg:order-3">
-              <SignedIn>
-                {lootCount > 0 && (
-                  <Button
-                    asChild
-                    variant="outline"
-                    className="h-10 px-4 text-[0.68rem]"
-                  >
-                    <Link to="/loot">
-                      <Crown className="h-4 w-4" />
-                      {lootCount} Loot
-                    </Link>
-                  </Button>
-                )}
-                <div className="rounded-full border border-[#8a7753]/35 bg-[#2a241b]/92 p-1.5 shadow-[inset_0_1px_0_rgba(255,239,201,0.05)]">
-                  <UserButton
-                    appearance={{
-                      elements: {
-                        avatarBox:
-                          "h-9 w-9 ring-1 ring-[#b89656]/35 ring-offset-0",
-                      },
-                    }}
-                  />
+              <Link
+                data-header-brand
+                to="/"
+                activeOptions={{ exact: true }}
+                className="group flex min-w-0 items-center gap-3 rounded-[1.1rem] border border-[#846d46]/35 bg-[linear-gradient(180deg,rgba(48,40,30,0.94),rgba(29,24,18,0.98))] px-3 py-2.5 shadow-[inset_0_1px_0_rgba(255,238,204,0.04)] transition-all duration-200 hover:border-[#b89656]/45 hover:bg-[linear-gradient(180deg,rgba(58,48,35,0.96),rgba(34,28,21,0.98))]"
+              >
+                <div className="rpg-icon-frame h-11 w-11 text-[#ead7aa]">
+                  <Shield className="h-5 w-5" />
                 </div>
-              </SignedIn>
-
-              <SignedOut>
-                <SignInButton mode="modal">
-                  <Button
-                    variant="outline"
-                    className="h-10 px-4 text-[0.68rem]"
+                <div className="min-w-0">
+                  <p
+                    data-header-subtitle
+                    className="rpg-title text-[0.58rem] text-[#d2c097]/70"
                   >
-                    Sign in
-                  </Button>
-                </SignInButton>
-                <SignUpButton mode="modal">
-                  <Button variant="relic" className="h-10 px-4 text-[0.68rem]">
-                    Start run
-                  </Button>
-                </SignUpButton>
-              </SignedOut>
+                    Ancient battle ledger
+                  </p>
+                  <p className="truncate text-xl leading-none font-(--rpg-font-display) tracking-[0.08em] text-[#f2e5c8] uppercase">
+                    Shards of Affinity
+                  </p>
+                </div>
+              </Link>
+
+              <nav
+                data-header-nav
+                className="order-3 w-full lg:order-2 lg:w-auto"
+              >
+                <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:justify-center">
+                  {navItems.map(({ to, label, icon: Icon, exact }) => (
+                    <Link
+                      key={to}
+                      to={to}
+                      activeOptions={exact ? { exact: true } : undefined}
+                      activeProps={{ className: activeNavLinkClass }}
+                      className={navLinkClass}
+                    >
+                      <Icon className="h-4 w-4 text-[#bfa880] transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:text-[#efd9a9]" />
+                      <span>{label}</span>
+                    </Link>
+                  ))}
+                </div>
+              </nav>
+
+              <div className="order-2 ml-auto flex items-center gap-2.5 lg:order-3">
+                <SignedIn>
+                  {lootCount > 0 && (
+                    <Button
+                      asChild
+                      variant="outline"
+                      className="h-10 px-4 text-[0.68rem]"
+                    >
+                      <Link to="/loot">
+                        <Crown className="h-4 w-4" />
+                        {lootCount} Loot
+                      </Link>
+                    </Button>
+                  )}
+                  <div className="rounded-full border border-[#8a7753]/35 bg-[#2a241b]/92 p-1.5 shadow-[inset_0_1px_0_rgba(255,239,201,0.05)]">
+                    <UserButton
+                      appearance={{
+                        elements: {
+                          avatarBox:
+                            "h-9 w-9 ring-1 ring-[#b89656]/35 ring-offset-0",
+                        },
+                      }}
+                    />
+                  </div>
+                </SignedIn>
+
+                <SignedOut>
+                  <SignInButton mode="modal">
+                    <Button
+                      variant="outline"
+                      className="h-10 px-4 text-[0.68rem]"
+                    >
+                      Sign in
+                    </Button>
+                  </SignInButton>
+                  <SignUpButton mode="modal">
+                    <Button
+                      variant="relic"
+                      className="h-10 px-4 text-[0.68rem]"
+                    >
+                      Start run
+                    </Button>
+                  </SignUpButton>
+                </SignedOut>
+              </div>
             </div>
-            </div>
-            <div className="rpg-section-divider mt-4" />
-            <div className="mt-3 flex flex-wrap items-center gap-2 text-[0.68rem] text-[#cdbc98]">
+            <div data-header-decoration className="rpg-section-divider mt-4" />
+            <div
+              data-header-decoration
+              className="mt-3 flex flex-wrap items-center gap-2 text-[0.68rem] text-[#cdbc98]"
+            >
               <RpgBadge>Dungeon ledger active</RpgBadge>
               <RpgBadge>
                 <Sparkles className="h-3.5 w-3.5" />

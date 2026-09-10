@@ -1,0 +1,39 @@
+[
+  {
+    "source": "Knight.glb",
+    "sourceSha256": "60428e3abc09ba83e595d256e3af8c5c976b46cdae599f0802fc82b4a3445168",
+    "sourceBytes": 3659532,
+    "output": "knight.glb",
+    "outputSha256": "34cb9e02e3a721903c0e0ff56f6441c83c55737a2f6f13f762ab8eba3594e036",
+    "outputBytes": 488568,
+    "originalClips": 76,
+    "retainedClips": [
+      "Idle",
+      "1H_Melee_Attack_Slice_Diagonal",
+      "Spellcast_Shoot",
+      "Spellcast_Raise",
+      "Hit_A",
+      "Death_A"
+    ],
+    "originalMeshes": 15,
+    "retainedMeshes": 10
+  },
+  {
+    "source": "Dragon.gltf",
+    "sourceSha256": "d219a29b5e928da26c24218a64284bbf999b88484a508ac6c01e0edad9f1f56c",
+    "sourceBytes": 427100,
+    "output": "dragon.glb",
+    "outputSha256": "1c75d437de6bc09c164cf32664bfd9c0551550a1e73f9b9f64ce5297c836091b",
+    "outputBytes": 228836,
+    "originalClips": 8,
+    "retainedClips": [
+      "Flying_Idle",
+      "Headbutt",
+      "Punch",
+      "HitReact",
+      "Death"
+    ],
+    "originalMeshes": 1,
+    "retainedMeshes": 1
+  }
+]

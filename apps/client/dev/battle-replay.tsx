@@ -1,5 +1,5 @@
 import { createRoot } from "react-dom/client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import SuperJSON from "superjson";
 import type { Entity } from "@loot-game/game/entity-types";
 import type { EffectTracking } from "@loot-game/game/bm";
@@ -8,6 +8,7 @@ import type { SpellDescription } from "@loot-game/game/types";
 import BattleView3D from "../src/routes/battle/-presentation/battle-view-3d";
 import { usePlayback } from "../src/routes/battle/-presentation/use-playback";
 import fixture from "../../../tests/battle/recordings/six-entity.json";
+import { enemyModelRoster } from "./enemy-model-roster";
 
 const recording = SuperJSON.deserialize<{
   participants: Entity[];
@@ -15,9 +16,26 @@ const recording = SuperJSON.deserialize<{
   effects: EffectTracking;
   descriptions: Map<string, SpellDescription>;
 }>(fixture as unknown as Parameters<typeof SuperJSON.deserialize>[0]);
+const lineups = Array.from(
+  { length: Math.ceil(enemyModelRoster.length / 4) },
+  (_, index) => enemyModelRoster.slice(index * 4, index * 4 + 4),
+);
 function Replay() {
+  const [lineup, setLineup] = useState(
+    Number(new URLSearchParams(location.search).get("lineup") ?? -1),
+  );
+  const participants = useMemo(() => {
+    const preview = lineups[lineup];
+    if (!preview) return recording.participants;
+    let enemyIndex = 0;
+    return recording.participants.map((entity) => {
+      if (entity.team === "TEAM_A") return entity;
+      const model = preview[enemyIndex++ % preview.length];
+      return { ...entity, type: model.id, name: model.name };
+    });
+  }, [lineup]);
   const playback = usePlayback(
-    recording.participants,
+    participants,
     recording.events,
     recording.effects,
     0,
@@ -42,8 +60,11 @@ function Replay() {
                 .map((entry) => entry.startTime),
               resources: performance
                 .getEntriesByType("resource")
-                .filter((e) => e.name.includes("warrior.glb"))
+                .filter(
+                  (e) => e.name.includes("/models/") && e.name.includes(".glb"),
+                )
                 .map((e) => ({
+                  name: new URL(e.name).pathname,
                   duration: e.duration,
                   transferSize: (e as PerformanceResourceTiming).transferSize,
                   encodedBodySize: (e as PerformanceResourceTiming)
@@ -68,12 +89,35 @@ function Replay() {
           display: "flex",
           justifyContent: "space-between",
           gap: 12,
+          flexWrap: "wrap",
         }}
       >
         <span>
           DEVELOPMENT VERIFICATION · Recorded server-command results · No live
           connection or combat input
         </span>
+        <label>
+          Enemy art preview{" "}
+          <select
+            aria-label="Enemy art preview"
+            value={lineup}
+            onChange={(event) => {
+              const value = Number(event.target.value);
+              setLineup(value);
+              const url = new URL(location.href);
+              url.searchParams.set("lineup", String(value));
+              history.replaceState(null, "", url);
+            }}
+          >
+            <option value={-1}>Recorded identities</option>
+            {lineups.map((group, index) => (
+              <option key={group[0].id} value={index}>
+                {group[0].name} – {group.at(-1)?.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        {lineup >= 0 && <span>Art preview · recorded actions unchanged</span>}
         <label>
           Failure check{" "}
           <select
@@ -82,9 +126,11 @@ function Replay() {
               new URLSearchParams(location.search).get("sceneFault") ?? ""
             }
             onChange={(e) => {
-              location.search = e.target.value
-                ? `sceneFault=${e.target.value}`
-                : "";
+              const url = new URL(location.href);
+              if (e.target.value)
+                url.searchParams.set("sceneFault", e.target.value);
+              else url.searchParams.delete("sceneFault");
+              location.href = url.href;
             }}
           >
             <option value="">Normal</option>
@@ -95,7 +141,9 @@ function Replay() {
         </label>
         <button
           onClick={() => {
-            location.search = `loadSample=${Date.now()}`;
+            const url = new URL(location.href);
+            url.searchParams.set("loadSample", String(Date.now()));
+            location.href = url.href;
           }}
         >
           Fresh model load
@@ -106,7 +154,7 @@ function Replay() {
       </div>
       {mounted && (
         <BattleView3D
-          participants={recording.participants}
+          participants={participants}
           effects={recording.effects}
           descriptions={recording.descriptions}
           playback={playback}

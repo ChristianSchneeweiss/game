@@ -1,5 +1,7 @@
 # Development 3D battle prototype
 
+The current milestone adds generated skill artwork, condition icons above each entity, a prepared-action panel, an action log and faster combat presentation. See [milestone 3](threejs-milestone-3/README.md) for the latest live acceptance and measurements. [Milestone 2](threejs-milestone-2/README.md) covers the animated knights and dragons; the original [milestone-1 evidence](threejs-evidence/README.md) remains a historical baseline.
+
 Implemented for issue [#1](https://github.com/ChristianSchneeweiss/game/issues/1) on the existing `prototype` checkout. The original documentation/tooling changes remain untouched. This is local development work; it has not been deployed or published.
 
 ## Open the prototype
@@ -10,8 +12,12 @@ Completed live acceptance results in this local database:
 
 - Small encounter: http://127.0.0.1:3001/battle/finished/e9d4gsje6rx2
 - Six-entity encounter: http://127.0.0.1:3001/battle/finished/yy0jlk9l83h8
+- Milestone-2 six-entity encounter: http://127.0.0.1:3001/battle/finished/lb7sxdh9cct5
+- Milestone-3 six-entity encounter: http://127.0.0.1:3001/battle/finished/ni8jo13drsfn
 
 Each result page offers **3D replay prototype**. A portable, read-only recording harness is at http://127.0.0.1:3001/dev/battle-replay.html. It contains results produced by real server command handlers; it has no live connection or Cast controls and cannot establish live fighting by itself.
+
+Preview all 49 skill/passive icons and 10 condition symbols at http://127.0.0.1:3001/dev/skill-icons.html. The prompt set and artwork provenance are linked from the milestone-3 report.
 
 The 3D controls and dynamic imports are development-only. The production build excludes the 3D JavaScript chunk. Public model files are still copied as static assets by Vite, but ordinary navigation does not request them.
 
@@ -60,7 +66,7 @@ The pinned rendering dependencies are Three.js **0.186.0**, React Three Fiber **
 - `use-battle.ts` owns the shared live session and explicit pending/selection contract. Target replies must match spell, caster, request and revision. The Cards view uses the same explicit Cast contract.
 - `-presentation/timeline.ts` reconstructs display frames from ordered authoritative events and Maps. `use-playback.ts` owns presentation timing, history replacement, catch-up, speed, reduced motion and replay cursors. Neither runs combat calculations.
 - `battle-view-3d.tsx` provides accessible HTML controls; `battle-scene.tsx` provides the fixed orthographic diorama. Labels project from the same formation positions. Graphics and lazy-module failures retain a Cards fallback.
-- `miniature.tsx` owns the shared asset cache and independent skinned instances. See [asset provenance](../apps/client/public/models/kaykit-skeletons-1.0/PROVENANCE.md).
+- `miniature.tsx` owns the per-model asset caches and independent skinned instances. See [current asset provenance and reproducible preparation](../apps/client/public/models/battle-v2/PROVENANCE.md).
 
 The exercised baseline defects needed small corrections: invalid casts previously advanced turns; lethal effect damage assumed a spell-shaped source; buffered effect/death events could remain unflushed; BM initialized RNG after entity joins; tooltip reads could consume combat RNG; serialization could detach live managers; result participants incorrectly used final HP as replay starting HP. Result writes are idempotent, and the completed result is saved before offering the replay handoff.
 
@@ -83,10 +89,10 @@ bun --bun ../../node_modules/vite/bin/vite.js build --emptyOutDir --outDir /tmp/
 
 `bun run record:battle` regenerates the supporting six-entity fixture through the real command handler. It intentionally overwrites that fixture; effect IDs may change because existing content uses `nanoid`. The saved recording includes initial snapshots, spell identities/descriptions, commands, effect metadata, resolved events and final resources. A seed alone is not the reproduction contract.
 
-The two `live-*.json` recordings came from the authenticated local browser fights, their accepted Durable Object command logs and saved PostgreSQL results. Account user IDs are replaced with `fixture-owner`; tokens and secrets are excluded. Regression tests replay their frozen builds through the real engine and independently reconstruct display resources from the saved events.
+The four `live-*.json` recordings came from the authenticated local browser fights, their accepted Durable Object command logs and saved PostgreSQL results. Account user IDs are replaced with `fixture-owner`; tokens and secrets are excluded. Regression tests replay their frozen builds through the real engine and independently reconstruct display resources from the saved events.
 
 Automated coverage includes explicit Cast and duplicate-click gating; ownership/spectators; stale target replies; disconnect/reconnect without resend; unchanged/append/replaced histories; invalid casts without turn/resource/RNG consumption; self/team counts; enemy victory and defeat; lethal effects; capped healing/regeneration; exact recorded HP/mana/cooldowns/effects/death; normal/4×/reduced/skip/seek equivalence; frozen-build recovery; serialization and tooltip purity; GLB validation; four independent imported skeletons and repeated one-shot resets.
 
 ## Browser evidence
 
-See [the evidence report](threejs-evidence/README.md) for screenshots, measurements, live actions, qualifications and remaining limits. Rendering measurements are local desktop feasibility evidence, not a guarantee of a sustained 60 fps on every browser/device or a production download benchmark.
+See [the latest evidence report](threejs-milestone-3/README.md) for screenshots, measurements, live actions, qualifications and remaining limits. Rendering measurements are local desktop feasibility evidence, not a guarantee of a sustained 60 fps on every browser/device or a production download benchmark.

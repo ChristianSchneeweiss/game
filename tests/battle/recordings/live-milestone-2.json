@@ -1,0 +1,2953 @@
+{
+  "version": 1,
+  "source": "Authenticated localhost WebSocket acceptance on 2026-09-09",
+  "battleId": "lb7sxdh9cct5",
+  "startingBuilds": {
+    "json": [
+      {
+        "id": "emmbjo8fovof",
+        "name": "Deshaun27",
+        "team": "TEAM_A",
+        "health": 200,
+        "maxHealth": 200,
+        "mana": 100,
+        "maxMana": 100,
+        "baseAttributes": {
+          "intelligence": 40,
+          "vitality": 40,
+          "agility": 20,
+          "strength": 10
+        },
+        "baseSpecialAttributes": {
+          "lifesteal": 0,
+          "omnivamp": 0,
+          "armor": 0,
+          "magicResistance": 0,
+          "armorPenetration": 0,
+          "magicPenetration": 0,
+          "healthRegen": 0,
+          "manaRegen": 0,
+          "blessed": 0,
+          "critChance": 0,
+          "critDamage": 1
+        },
+        "baseAffinities": {
+          "fire": 0,
+          "lightning": 0,
+          "earth": 0,
+          "water": 0,
+          "dark": 0
+        },
+        "character": {
+          "userId": "fixture-owner",
+          "xp": 250,
+          "level": 3,
+          "statPointsAvailable": 8
+        },
+        "enemy": null,
+        "spells": [
+          {
+            "config": {
+              "id": "9e5binse7wth",
+              "type": "arcane-channeling",
+              "name": "Arcane Channeling",
+              "manaCost": 40,
+              "cooldown": 6,
+              "targetType": {
+                "allies": 0,
+                "enemies": "Infinity"
+              },
+              "tier": "A"
+            },
+            "currentCooldown": 0
+          },
+          {
+            "config": {
+              "id": "0che5dauf7u0",
+              "type": "bladestorm-rhythm",
+              "name": "Bladestorm Rhythm",
+              "manaCost": 15,
+              "cooldown": 4,
+              "targetType": {
+                "enemies": 1,
+                "allies": 0
+              },
+              "tier": "S"
+            },
+            "currentCooldown": 0
+          },
+          {
+            "config": {
+              "id": "kf5233lwcqux",
+              "type": "final-verdict",
+              "name": "Final Verdict",
+              "manaCost": 10,
+              "cooldown": 2,
+              "targetType": {
+                "enemies": 1,
+                "allies": 0
+              },
+              "tier": "S"
+            },
+            "currentCooldown": 0
+          },
+          {
+            "config": {
+              "id": "3di16mbo3j1x",
+              "type": "fleetfoot-gambit",
+              "name": "Fleetfoot Gambit",
+              "manaCost": 50,
+              "cooldown": 8,
+              "targetType": {
+                "allies": 1,
+                "enemies": 0
+              },
+              "tier": "S"
+            },
+            "currentCooldown": 0
+          },
+          {
+            "config": {
+              "id": "emmbjo8fovof",
+              "type": "basic-attack",
+              "name": "Basic Attack",
+              "manaCost": 0,
+              "cooldown": 0,
+              "targetType": {
+                "enemies": 1,
+                "allies": 0
+              },
+              "tier": "A"
+            },
+            "currentCooldown": 0
+          }
+        ],
+        "passives": [
+          {
+            "id": "9e10z2070fci",
+            "type": "armor-up"
+          }
+        ],
+        "equipment": [
+          {
+            "id": "abcd",
+            "type": "int-armor",
+            "modifiers": [
+              {
+                "id": "qkTmIYYjnjOysEPkCIxPd",
+                "attribute": "intelligence",
+                "value": 10,
+                "operation": "ADD"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "6e5x736w6mch",
+        "name": "Araceli_Schroeder7",
+        "team": "TEAM_A",
+        "health": 100,
+        "maxHealth": 100,
+        "mana": 50,
+        "maxMana": 50,
+        "baseAttributes": {
+          "intelligence": 10,
+          "vitality": 10,
+          "agility": 10,
+          "strength": 10
+        },
+        "baseSpecialAttributes": {
+          "lifesteal": 0,
+          "omnivamp": 0,
+          "armor": 0,
+          "magicResistance": 0,
+          "armorPenetration": 0,
+          "magicPenetration": 0,
+          "healthRegen": 0,
+          "manaRegen": 0,
+          "blessed": 0,
+          "critChance": 0,
+          "critDamage": 1
+        },
+        "baseAffinities": {
+          "fire": 0,
+          "lightning": 0,
+          "earth": 0,
+          "water": 0,
+          "dark": 0
+        },
+        "character": {
+          "userId": "fixture-owner",
+          "xp": 30,
+          "level": 3,
+          "statPointsAvailable": 8
+        },
+        "enemy": null,
+        "spells": [
+          {
+            "config": {
+              "id": "91hnwxcvrcho",
+              "type": "bulwark-bash",
+              "name": "Bulwark Bash",
+              "manaCost": 0,
+              "cooldown": 2,
+              "targetType": {
+                "enemies": 1,
+                "allies": 0
+              },
+              "tier": "S"
+            },
+            "currentCooldown": 0
+          },
+          {
+            "config": {
+              "id": "d9wojdbuckgu",
+              "type": "deflecting-stance",
+              "name": "Deflecting Stance",
+              "manaCost": 25,
+              "cooldown": 4,
+              "targetType": {
+                "allies": 1,
+                "enemies": 0
+              },
+              "tier": "B"
+            },
+            "currentCooldown": 0
+          },
+          {
+            "config": {
+              "id": "oxk8nma0oj1l",
+              "type": "earthshatter",
+              "name": "Earthshatter",
+              "manaCost": 0,
+              "cooldown": 4,
+              "targetType": {
+                "enemies": "Infinity",
+                "allies": 0
+              },
+              "tier": "S"
+            },
+            "currentCooldown": 0
+          },
+          {
+            "config": {
+              "id": "yoswa0g5tap1",
+              "type": "cinder-wisp",
+              "name": "Cinder Wisp",
+              "manaCost": 10,
+              "cooldown": 1,
+              "targetType": {
+                "enemies": 1,
+                "allies": 0
+              },
+              "tier": "A"
+            },
+            "currentCooldown": 0
+          },
+          {
+            "config": {
+              "id": "6e5x736w6mch",
+              "type": "basic-attack",
+              "name": "Basic Attack",
+              "manaCost": 0,
+              "cooldown": 0,
+              "targetType": {
+                "enemies": 1,
+                "allies": 0
+              },
+              "tier": "A"
+            },
+            "currentCooldown": 0
+          }
+        ],
+        "passives": [],
+        "equipment": []
+      },
+      {
+        "id": "storm-hatchling-lh1a6CkCK2nW0ODPqS4Ug",
+        "name": "Storm Hatchling",
+        "team": "TEAM_B",
+        "health": 40,
+        "maxHealth": 40,
+        "mana": 40,
+        "maxMana": 40,
+        "baseAttributes": {
+          "intelligence": 8,
+          "vitality": 8,
+          "agility": 18,
+          "strength": 8
+        },
+        "baseSpecialAttributes": {
+          "lifesteal": 0,
+          "omnivamp": 0,
+          "armor": 0,
+          "magicResistance": 0,
+          "armorPenetration": 0,
+          "magicPenetration": 0,
+          "healthRegen": 0,
+          "manaRegen": 0,
+          "blessed": 0,
+          "critChance": 0,
+          "critDamage": 1
+        },
+        "baseAffinities": {
+          "fire": 0,
+          "lightning": 0,
+          "earth": 0,
+          "water": 0,
+          "dark": 0
+        },
+        "character": null,
+        "enemy": {
+          "type": "storm-hatchling",
+          "xp": 20,
+          "loot": {
+            "gold": 20,
+            "items": [
+              {
+                "type": "SPELL",
+                "data": {
+                  "spellType": "staggering-jab"
+                },
+                "dropRate": 0.01
+              }
+            ]
+          }
+        },
+        "spells": [
+          {
+            "config": {
+              "id": "storm-hatchling-lh1a6CkCK2nW0ODPqS4Ug-staggering-jab",
+              "type": "staggering-jab",
+              "name": "Staggering Jab",
+              "manaCost": 0,
+              "cooldown": 1,
+              "targetType": {
+                "enemies": 1,
+                "allies": 0
+              },
+              "tier": "A"
+            },
+            "currentCooldown": 0
+          },
+          {
+            "config": {
+              "id": "storm-hatchling-lh1a6CkCK2nW0ODPqS4Ug-basic-attack",
+              "type": "basic-attack",
+              "name": "Basic Attack",
+              "manaCost": 0,
+              "cooldown": 0,
+              "targetType": {
+                "enemies": 1,
+                "allies": 0
+              },
+              "tier": "A"
+            },
+            "currentCooldown": 0
+          }
+        ],
+        "passives": [],
+        "equipment": []
+      },
+      {
+        "id": "storm-hatchling-D4b_cMe-VfZipOazGfvSB",
+        "name": "Storm Hatchling",
+        "team": "TEAM_B",
+        "health": 40,
+        "maxHealth": 40,
+        "mana": 40,
+        "maxMana": 40,
+        "baseAttributes": {
+          "intelligence": 8,
+          "vitality": 8,
+          "agility": 18,
+          "strength": 8
+        },
+        "baseSpecialAttributes": {
+          "lifesteal": 0,
+          "omnivamp": 0,
+          "armor": 0,
+          "magicResistance": 0,
+          "armorPenetration": 0,
+          "magicPenetration": 0,
+          "healthRegen": 0,
+          "manaRegen": 0,
+          "blessed": 0,
+          "critChance": 0,
+          "critDamage": 1
+        },
+        "baseAffinities": {
+          "fire": 0,
+          "lightning": 0,
+          "earth": 0,
+          "water": 0,
+          "dark": 0
+        },
+        "character": null,
+        "enemy": {
+          "type": "storm-hatchling",
+          "xp": 20,
+          "loot": {
+            "gold": 20,
+            "items": [
+              {
+                "type": "SPELL",
+                "data": {
+                  "spellType": "staggering-jab"
+                },
+                "dropRate": 0.01
+              }
+            ]
+          }
+        },
+        "spells": [
+          {
+            "config": {
+              "id": "storm-hatchling-D4b_cMe-VfZipOazGfvSB-staggering-jab",
+              "type": "staggering-jab",
+              "name": "Staggering Jab",
+              "manaCost": 0,
+              "cooldown": 1,
+              "targetType": {
+                "enemies": 1,
+                "allies": 0
+              },
+              "tier": "A"
+            },
+            "currentCooldown": 0
+          },
+          {
+            "config": {
+              "id": "storm-hatchling-D4b_cMe-VfZipOazGfvSB-basic-attack",
+              "type": "basic-attack",
+              "name": "Basic Attack",
+              "manaCost": 0,
+              "cooldown": 0,
+              "targetType": {
+                "enemies": 1,
+                "allies": 0
+              },
+              "tier": "A"
+            },
+            "currentCooldown": 0
+          }
+        ],
+        "passives": [],
+        "equipment": []
+      },
+      {
+        "id": "storm-hatchling-q0pl93tQGVUsLiSUoADcr",
+        "name": "Storm Hatchling",
+        "team": "TEAM_B",
+        "health": 40,
+        "maxHealth": 40,
+        "mana": 40,
+        "maxMana": 40,
+        "baseAttributes": {
+          "intelligence": 8,
+          "vitality": 8,
+          "agility": 18,
+          "strength": 8
+        },
+        "baseSpecialAttributes": {
+          "lifesteal": 0,
+          "omnivamp": 0,
+          "armor": 0,
+          "magicResistance": 0,
+          "armorPenetration": 0,
+          "magicPenetration": 0,
+          "healthRegen": 0,
+          "manaRegen": 0,
+          "blessed": 0,
+          "critChance": 0,
+          "critDamage": 1
+        },
+        "baseAffinities": {
+          "fire": 0,
+          "lightning": 0,
+          "earth": 0,
+          "water": 0,
+          "dark": 0
+        },
+        "character": null,
+        "enemy": {
+          "type": "storm-hatchling",
+          "xp": 20,
+          "loot": {
+            "gold": 20,
+            "items": [
+              {
+                "type": "SPELL",
+                "data": {
+                  "spellType": "staggering-jab"
+                },
+                "dropRate": 0.01
+              }
+            ]
+          }
+        },
+        "spells": [
+          {
+            "config": {
+              "id": "storm-hatchling-q0pl93tQGVUsLiSUoADcr-staggering-jab",
+              "type": "staggering-jab",
+              "name": "Staggering Jab",
+              "manaCost": 0,
+              "cooldown": 1,
+              "targetType": {
+                "enemies": 1,
+                "allies": 0
+              },
+              "tier": "A"
+            },
+            "currentCooldown": 0
+          },
+          {
+            "config": {
+              "id": "storm-hatchling-q0pl93tQGVUsLiSUoADcr-basic-attack",
+              "type": "basic-attack",
+              "name": "Basic Attack",
+              "manaCost": 0,
+              "cooldown": 0,
+              "targetType": {
+                "enemies": 1,
+                "allies": 0
+              },
+              "tier": "A"
+            },
+            "currentCooldown": 0
+          }
+        ],
+        "passives": [],
+        "equipment": []
+      },
+      {
+        "id": "storm-hatchling-wJfELB2Xt5t2_3tbcVkvC",
+        "name": "Storm Hatchling",
+        "team": "TEAM_B",
+        "health": 40,
+        "maxHealth": 40,
+        "mana": 40,
+        "maxMana": 40,
+        "baseAttributes": {
+          "intelligence": 8,
+          "vitality": 8,
+          "agility": 18,
+          "strength": 8
+        },
+        "baseSpecialAttributes": {
+          "lifesteal": 0,
+          "omnivamp": 0,
+          "armor": 0,
+          "magicResistance": 0,
+          "armorPenetration": 0,
+          "magicPenetration": 0,
+          "healthRegen": 0,
+          "manaRegen": 0,
+          "blessed": 0,
+          "critChance": 0,
+          "critDamage": 1
+        },
+        "baseAffinities": {
+          "fire": 0,
+          "lightning": 0,
+          "earth": 0,
+          "water": 0,
+          "dark": 0
+        },
+        "character": null,
+        "enemy": {
+          "type": "storm-hatchling",
+          "xp": 20,
+          "loot": {
+            "gold": 20,
+            "items": [
+              {
+                "type": "SPELL",
+                "data": {
+                  "spellType": "staggering-jab"
+                },
+                "dropRate": 0.01
+              }
+            ]
+          }
+        },
+        "spells": [
+          {
+            "config": {
+              "id": "storm-hatchling-wJfELB2Xt5t2_3tbcVkvC-staggering-jab",
+              "type": "staggering-jab",
+              "name": "Staggering Jab",
+              "manaCost": 0,
+              "cooldown": 1,
+              "targetType": {
+                "enemies": 1,
+                "allies": 0
+              },
+              "tier": "A"
+            },
+            "currentCooldown": 0
+          },
+          {
+            "config": {
+              "id": "storm-hatchling-wJfELB2Xt5t2_3tbcVkvC-basic-attack",
+              "type": "basic-attack",
+              "name": "Basic Attack",
+              "manaCost": 0,
+              "cooldown": 0,
+              "targetType": {
+                "enemies": 1,
+                "allies": 0
+              },
+              "tier": "A"
+            },
+            "currentCooldown": 0
+          }
+        ],
+        "passives": [],
+        "equipment": []
+      }
+    ],
+    "meta": {
+      "values": {
+        "0.enemy": [
+          "undefined"
+        ],
+        "0.spells.0.config.targetType.enemies": [
+          "number"
+        ],
+        "1.enemy": [
+          "undefined"
+        ],
+        "1.spells.2.config.targetType.enemies": [
+          "number"
+        ],
+        "2.character": [
+          "undefined"
+        ],
+        "3.character": [
+          "undefined"
+        ],
+        "4.character": [
+          "undefined"
+        ],
+        "5.character": [
+          "undefined"
+        ]
+      },
+      "v": 1
+    }
+  },
+  "commands": [
+    {
+      "type": "castSpell",
+      "data": {
+        "entityId": "emmbjo8fovof",
+        "spellId": "emmbjo8fovof",
+        "targetIds": [
+          "storm-hatchling-D4b_cMe-VfZipOazGfvSB"
+        ],
+        "requestId": "571019ba-fcdf-442a-bdb7-188f3247ece6",
+        "revision": 1
+      }
+    },
+    {
+      "type": "castSpell",
+      "data": {
+        "entityId": "6e5x736w6mch",
+        "spellId": "yoswa0g5tap1",
+        "targetIds": [
+          "storm-hatchling-lh1a6CkCK2nW0ODPqS4Ug"
+        ],
+        "requestId": "f30c6799-4686-404f-a120-be056e19b1b3",
+        "revision": 16
+      }
+    },
+    {
+      "type": "castSpell",
+      "data": {
+        "entityId": "emmbjo8fovof",
+        "spellId": "kf5233lwcqux",
+        "targetIds": [
+          "storm-hatchling-D4b_cMe-VfZipOazGfvSB"
+        ],
+        "requestId": "90f1c32e-ff21-4d66-870e-68f1472828de",
+        "revision": 19
+      }
+    },
+    {
+      "type": "castSpell",
+      "data": {
+        "entityId": "6e5x736w6mch",
+        "spellId": "oxk8nma0oj1l",
+        "targetIds": [
+          "storm-hatchling-lh1a6CkCK2nW0ODPqS4Ug",
+          "storm-hatchling-D4b_cMe-VfZipOazGfvSB",
+          "storm-hatchling-q0pl93tQGVUsLiSUoADcr",
+          "storm-hatchling-wJfELB2Xt5t2_3tbcVkvC"
+        ],
+        "requestId": "89b07dfc-a5b9-4e61-9caa-b967a4d0d345",
+        "revision": 34
+      }
+    },
+    {
+      "type": "castSpell",
+      "data": {
+        "entityId": "emmbjo8fovof",
+        "spellId": "0che5dauf7u0",
+        "targetIds": [
+          "storm-hatchling-lh1a6CkCK2nW0ODPqS4Ug"
+        ],
+        "requestId": "36b105e2-2c97-4ebc-b068-c2e6ec202562",
+        "revision": 41
+      }
+    },
+    {
+      "type": "castSpell",
+      "data": {
+        "entityId": "6e5x736w6mch",
+        "spellId": "yoswa0g5tap1",
+        "targetIds": [
+          "storm-hatchling-q0pl93tQGVUsLiSUoADcr"
+        ],
+        "requestId": "cffff157-dd01-4a34-a9b6-e641119dfb34",
+        "revision": 45
+      }
+    },
+    {
+      "type": "castSpell",
+      "data": {
+        "entityId": "emmbjo8fovof",
+        "spellId": "emmbjo8fovof",
+        "targetIds": [
+          "storm-hatchling-q0pl93tQGVUsLiSUoADcr"
+        ],
+        "requestId": "2ff2dfeb-5f52-4822-aed1-17e42286f525",
+        "revision": 48
+      }
+    },
+    {
+      "type": "castSpell",
+      "data": {
+        "entityId": "6e5x736w6mch",
+        "spellId": "d9wojdbuckgu",
+        "targetIds": [
+          "emmbjo8fovof"
+        ],
+        "requestId": "29618dfa-4990-4e6e-ae24-d3ac4d490018",
+        "revision": 55
+      }
+    },
+    {
+      "type": "castSpell",
+      "data": {
+        "entityId": "emmbjo8fovof",
+        "spellId": "kf5233lwcqux",
+        "targetIds": [
+          "storm-hatchling-wJfELB2Xt5t2_3tbcVkvC"
+        ],
+        "requestId": "6bccff95-13cb-4f35-9b1d-0401ae4af789",
+        "revision": 58
+      }
+    }
+  ],
+  "result": {
+    "battle_id": "lb7sxdh9cct5",
+    "timeline_data": {
+      "json": [
+        {
+          "round": 0,
+          "event": {
+            "eventType": "SPELL_CAST",
+            "data": {
+              "spellId": "emmbjo8fovof",
+              "roll": 0,
+              "isCrit": false,
+              "effectsApplied": [
+                [
+                  "emmbjo8fovof",
+                  [
+                    "9e10z2070fci"
+                  ]
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "round": 0,
+          "event": {
+            "eventType": "SPELL_CAST",
+            "data": {
+              "damageApplied": [
+                [
+                  "storm-hatchling-D4b_cMe-VfZipOazGfvSB",
+                  11
+                ]
+              ],
+              "healingApplied": [],
+              "effectsApplied": [],
+              "totalDamage": 11,
+              "isCrit": false,
+              "spellId": "emmbjo8fovof",
+              "roll": 14
+            }
+          }
+        },
+        {
+          "round": 0,
+          "event": {
+            "eventType": "REDUCE_SPELL_COOLDOWN",
+            "data": []
+          }
+        },
+        {
+          "round": 0,
+          "event": {
+            "eventType": "REGEN",
+            "data": {
+              "entityId": "storm-hatchling-lh1a6CkCK2nW0ODPqS4Ug",
+              "healthRegen": 2,
+              "manaRegen": 2
+            }
+          }
+        },
+        {
+          "round": 0,
+          "event": {
+            "eventType": "SPELL_CAST",
+            "data": {
+              "damageApplied": [
+                [
+                  "emmbjo8fovof",
+                  5
+                ]
+              ],
+              "healingApplied": [],
+              "effectsApplied": [],
+              "totalDamage": 5,
+              "isCrit": false,
+              "spellId": "storm-hatchling-lh1a6CkCK2nW0ODPqS4Ug-staggering-jab",
+              "roll": 12
+            }
+          }
+        },
+        {
+          "round": 0,
+          "event": {
+            "eventType": "REDUCE_SPELL_COOLDOWN",
+            "data": [
+              {
+                "spellId": "storm-hatchling-lh1a6CkCK2nW0ODPqS4Ug-staggering-jab",
+                "amount": 1
+              }
+            ]
+          }
+        },
+        {
+          "round": 0,
+          "event": {
+            "eventType": "REGEN",
+            "data": {
+              "entityId": "storm-hatchling-D4b_cMe-VfZipOazGfvSB",
+              "healthRegen": 2,
+              "manaRegen": 2
+            }
+          }
+        },
+        {
+          "round": 0,
+          "event": {
+            "eventType": "SPELL_CAST",
+            "data": {
+              "damageApplied": [
+                [
+                  "emmbjo8fovof",
+                  4
+                ]
+              ],
+              "healingApplied": [],
+              "effectsApplied": [],
+              "totalDamage": 4,
+              "isCrit": false,
+              "spellId": "storm-hatchling-D4b_cMe-VfZipOazGfvSB-staggering-jab",
+              "roll": 2
+            }
+          }
+        },
+        {
+          "round": 0,
+          "event": {
+            "eventType": "REDUCE_SPELL_COOLDOWN",
+            "data": [
+              {
+                "spellId": "storm-hatchling-D4b_cMe-VfZipOazGfvSB-staggering-jab",
+                "amount": 1
+              }
+            ]
+          }
+        },
+        {
+          "round": 0,
+          "event": {
+            "eventType": "REGEN",
+            "data": {
+              "entityId": "storm-hatchling-q0pl93tQGVUsLiSUoADcr",
+              "healthRegen": 2,
+              "manaRegen": 2
+            }
+          }
+        },
+        {
+          "round": 0,
+          "event": {
+            "eventType": "SPELL_CAST",
+            "data": {
+              "damageApplied": [
+                [
+                  "emmbjo8fovof",
+                  6
+                ]
+              ],
+              "healingApplied": [],
+              "effectsApplied": [],
+              "totalDamage": 6,
+              "isCrit": false,
+              "spellId": "storm-hatchling-q0pl93tQGVUsLiSUoADcr-staggering-jab",
+              "roll": 15
+            }
+          }
+        },
+        {
+          "round": 0,
+          "event": {
+            "eventType": "REDUCE_SPELL_COOLDOWN",
+            "data": [
+              {
+                "spellId": "storm-hatchling-q0pl93tQGVUsLiSUoADcr-staggering-jab",
+                "amount": 1
+              }
+            ]
+          }
+        },
+        {
+          "round": 0,
+          "event": {
+            "eventType": "REGEN",
+            "data": {
+              "entityId": "storm-hatchling-wJfELB2Xt5t2_3tbcVkvC",
+              "healthRegen": 2,
+              "manaRegen": 2
+            }
+          }
+        },
+        {
+          "round": 0,
+          "event": {
+            "eventType": "SPELL_CAST",
+            "data": {
+              "damageApplied": [
+                [
+                  "6e5x736w6mch",
+                  4
+                ]
+              ],
+              "healingApplied": [],
+              "effectsApplied": [],
+              "totalDamage": 4,
+              "isCrit": false,
+              "spellId": "storm-hatchling-wJfELB2Xt5t2_3tbcVkvC-staggering-jab",
+              "roll": 2
+            }
+          }
+        },
+        {
+          "round": 0,
+          "event": {
+            "eventType": "REDUCE_SPELL_COOLDOWN",
+            "data": [
+              {
+                "spellId": "storm-hatchling-wJfELB2Xt5t2_3tbcVkvC-staggering-jab",
+                "amount": 1
+              }
+            ]
+          }
+        },
+        {
+          "round": 0,
+          "event": {
+            "eventType": "REGEN",
+            "data": {
+              "entityId": "6e5x736w6mch",
+              "healthRegen": 5,
+              "manaRegen": 2
+            }
+          }
+        },
+        {
+          "round": 0,
+          "event": {
+            "eventType": "SPELL_CAST",
+            "data": {
+              "damageApplied": [
+                [
+                  "storm-hatchling-lh1a6CkCK2nW0ODPqS4Ug",
+                  10
+                ]
+              ],
+              "healingApplied": [],
+              "effectsApplied": [],
+              "totalDamage": 10,
+              "isCrit": false,
+              "spellId": "yoswa0g5tap1",
+              "roll": 6
+            }
+          }
+        },
+        {
+          "round": 0,
+          "event": {
+            "eventType": "REDUCE_SPELL_COOLDOWN",
+            "data": [
+              {
+                "spellId": "yoswa0g5tap1",
+                "amount": 1
+              }
+            ]
+          }
+        },
+        {
+          "round": 1,
+          "event": {
+            "eventType": "REGEN",
+            "data": {
+              "entityId": "emmbjo8fovof",
+              "healthRegen": 20,
+              "manaRegen": 10
+            }
+          }
+        },
+        {
+          "round": 1,
+          "event": {
+            "eventType": "SPELL_CAST",
+            "data": {
+              "damageApplied": [
+                [
+                  "storm-hatchling-D4b_cMe-VfZipOazGfvSB",
+                  29
+                ]
+              ],
+              "healingApplied": [],
+              "effectsApplied": [],
+              "totalDamage": 29,
+              "isCrit": false,
+              "spellId": "kf5233lwcqux",
+              "roll": 9
+            }
+          }
+        },
+        {
+          "round": 1,
+          "event": {
+            "eventType": "REDUCE_SPELL_COOLDOWN",
+            "data": [
+              {
+                "spellId": "kf5233lwcqux",
+                "amount": 1
+              }
+            ]
+          }
+        },
+        {
+          "round": 1,
+          "event": {
+            "eventType": "REGEN",
+            "data": {
+              "entityId": "storm-hatchling-lh1a6CkCK2nW0ODPqS4Ug",
+              "healthRegen": 2,
+              "manaRegen": 2
+            }
+          }
+        },
+        {
+          "round": 1,
+          "event": {
+            "eventType": "SPELL_CAST",
+            "data": {
+              "damageApplied": [
+                [
+                  "emmbjo8fovof",
+                  11
+                ]
+              ],
+              "healingApplied": [],
+              "effectsApplied": [],
+              "totalDamage": 11,
+              "isCrit": false,
+              "spellId": "storm-hatchling-lh1a6CkCK2nW0ODPqS4Ug-basic-attack",
+              "roll": 14
+            }
+          }
+        },
+        {
+          "round": 1,
+          "event": {
+            "eventType": "REDUCE_SPELL_COOLDOWN",
+            "data": [
+              {
+                "spellId": "storm-hatchling-lh1a6CkCK2nW0ODPqS4Ug-staggering-jab",
+                "amount": 1
+              }
+            ]
+          }
+        },
+        {
+          "round": 1,
+          "event": {
+            "eventType": "REGEN",
+            "data": {
+              "entityId": "storm-hatchling-D4b_cMe-VfZipOazGfvSB",
+              "healthRegen": 2,
+              "manaRegen": 2
+            }
+          }
+        },
+        {
+          "round": 1,
+          "event": {
+            "eventType": "SPELL_CAST",
+            "data": {
+              "damageApplied": [
+                [
+                  "emmbjo8fovof",
+                  7
+                ]
+              ],
+              "healingApplied": [],
+              "effectsApplied": [],
+              "totalDamage": 7,
+              "isCrit": false,
+              "spellId": "storm-hatchling-D4b_cMe-VfZipOazGfvSB-basic-attack",
+              "roll": 9
+            }
+          }
+        },
+        {
+          "round": 1,
+          "event": {
+            "eventType": "REDUCE_SPELL_COOLDOWN",
+            "data": [
+              {
+                "spellId": "storm-hatchling-D4b_cMe-VfZipOazGfvSB-staggering-jab",
+                "amount": 1
+              }
+            ]
+          }
+        },
+        {
+          "round": 1,
+          "event": {
+            "eventType": "REGEN",
+            "data": {
+              "entityId": "storm-hatchling-q0pl93tQGVUsLiSUoADcr",
+              "healthRegen": 2,
+              "manaRegen": 2
+            }
+          }
+        },
+        {
+          "round": 1,
+          "event": {
+            "eventType": "SPELL_CAST",
+            "data": {
+              "damageApplied": [
+                [
+                  "emmbjo8fovof",
+                  3
+                ]
+              ],
+              "healingApplied": [],
+              "effectsApplied": [],
+              "totalDamage": 3,
+              "isCrit": false,
+              "spellId": "storm-hatchling-q0pl93tQGVUsLiSUoADcr-basic-attack",
+              "roll": 4
+            }
+          }
+        },
+        {
+          "round": 1,
+          "event": {
+            "eventType": "REDUCE_SPELL_COOLDOWN",
+            "data": [
+              {
+                "spellId": "storm-hatchling-q0pl93tQGVUsLiSUoADcr-staggering-jab",
+                "amount": 1
+              }
+            ]
+          }
+        },
+        {
+          "round": 1,
+          "event": {
+            "eventType": "REGEN",
+            "data": {
+              "entityId": "storm-hatchling-wJfELB2Xt5t2_3tbcVkvC",
+              "healthRegen": 2,
+              "manaRegen": 2
+            }
+          }
+        },
+        {
+          "round": 1,
+          "event": {
+            "eventType": "SPELL_CAST",
+            "data": {
+              "damageApplied": [
+                [
+                  "6e5x736w6mch",
+                  15
+                ]
+              ],
+              "healingApplied": [],
+              "effectsApplied": [],
+              "totalDamage": 15,
+              "isCrit": false,
+              "spellId": "storm-hatchling-wJfELB2Xt5t2_3tbcVkvC-basic-attack",
+              "roll": 20
+            }
+          }
+        },
+        {
+          "round": 1,
+          "event": {
+            "eventType": "REDUCE_SPELL_COOLDOWN",
+            "data": [
+              {
+                "spellId": "storm-hatchling-wJfELB2Xt5t2_3tbcVkvC-staggering-jab",
+                "amount": 1
+              }
+            ]
+          }
+        },
+        {
+          "round": 1,
+          "event": {
+            "eventType": "REGEN",
+            "data": {
+              "entityId": "6e5x736w6mch",
+              "healthRegen": 5,
+              "manaRegen": 2
+            }
+          }
+        },
+        {
+          "round": 1,
+          "event": {
+            "eventType": "SPELL_CAST",
+            "data": {
+              "damageApplied": [
+                [
+                  "storm-hatchling-lh1a6CkCK2nW0ODPqS4Ug",
+                  23
+                ],
+                [
+                  "storm-hatchling-D4b_cMe-VfZipOazGfvSB",
+                  23
+                ],
+                [
+                  "storm-hatchling-q0pl93tQGVUsLiSUoADcr",
+                  23
+                ],
+                [
+                  "storm-hatchling-wJfELB2Xt5t2_3tbcVkvC",
+                  23
+                ]
+              ],
+              "healingApplied": [],
+              "effectsApplied": [
+                [
+                  "storm-hatchling-lh1a6CkCK2nW0ODPqS4Ug",
+                  [
+                    "qfZgEVSMgr7a_9Dg-lPs"
+                  ]
+                ],
+                [
+                  "storm-hatchling-D4b_cMe-VfZipOazGfvSB",
+                  [
+                    "OYo16zAsLY3d_Iajxp73"
+                  ]
+                ],
+                [
+                  "storm-hatchling-q0pl93tQGVUsLiSUoADcr",
+                  [
+                    "R8MTRKF81A6CIt3rjL03"
+                  ]
+                ],
+                [
+                  "storm-hatchling-wJfELB2Xt5t2_3tbcVkvC",
+                  [
+                    "4TwNvmFtpVrfcaNeFPUu"
+                  ]
+                ]
+              ],
+              "totalDamage": 92,
+              "isCrit": false,
+              "spellId": "oxk8nma0oj1l",
+              "roll": 4
+            }
+          }
+        },
+        {
+          "round": 1,
+          "event": {
+            "eventType": "DEATH",
+            "data": {
+              "id": "storm-hatchling-D4b_cMe-VfZipOazGfvSB"
+            }
+          }
+        },
+        {
+          "round": 1,
+          "event": {
+            "eventType": "REDUCE_SPELL_COOLDOWN",
+            "data": [
+              {
+                "spellId": "oxk8nma0oj1l",
+                "amount": 1
+              },
+              {
+                "spellId": "yoswa0g5tap1",
+                "amount": 1
+              }
+            ]
+          }
+        },
+        {
+          "round": 1,
+          "event": {
+            "eventType": "EFFECT_REMOVAL",
+            "data": {
+              "effectId": "qfZgEVSMgr7a_9Dg-lPs"
+            }
+          }
+        },
+        {
+          "round": 1,
+          "event": {
+            "eventType": "EFFECT_REMOVAL",
+            "data": {
+              "effectId": "R8MTRKF81A6CIt3rjL03"
+            }
+          }
+        },
+        {
+          "round": 1,
+          "event": {
+            "eventType": "EFFECT_REMOVAL",
+            "data": {
+              "effectId": "4TwNvmFtpVrfcaNeFPUu"
+            }
+          }
+        },
+        {
+          "round": 2,
+          "event": {
+            "eventType": "REGEN",
+            "data": {
+              "entityId": "emmbjo8fovof",
+              "healthRegen": 20,
+              "manaRegen": 10
+            }
+          }
+        },
+        {
+          "round": 2,
+          "event": {
+            "eventType": "SPELL_CAST",
+            "data": {
+              "damageApplied": [
+                [
+                  "storm-hatchling-lh1a6CkCK2nW0ODPqS4Ug",
+                  77
+                ]
+              ],
+              "healingApplied": [],
+              "effectsApplied": [],
+              "totalDamage": 77,
+              "isCrit": false,
+              "spellId": "0che5dauf7u0",
+              "roll": 1
+            }
+          }
+        },
+        {
+          "round": 2,
+          "event": {
+            "eventType": "DEATH",
+            "data": {
+              "id": "storm-hatchling-lh1a6CkCK2nW0ODPqS4Ug"
+            }
+          }
+        },
+        {
+          "round": 2,
+          "event": {
+            "eventType": "REDUCE_SPELL_COOLDOWN",
+            "data": [
+              {
+                "spellId": "0che5dauf7u0",
+                "amount": 1
+              },
+              {
+                "spellId": "kf5233lwcqux",
+                "amount": 1
+              }
+            ]
+          }
+        },
+        {
+          "round": 2,
+          "event": {
+            "eventType": "REGEN",
+            "data": {
+              "entityId": "6e5x736w6mch",
+              "healthRegen": 5,
+              "manaRegen": 2
+            }
+          }
+        },
+        {
+          "round": 2,
+          "event": {
+            "eventType": "SPELL_CAST",
+            "data": {
+              "damageApplied": [
+                [
+                  "storm-hatchling-q0pl93tQGVUsLiSUoADcr",
+                  8
+                ]
+              ],
+              "healingApplied": [],
+              "effectsApplied": [],
+              "totalDamage": 8,
+              "isCrit": false,
+              "spellId": "yoswa0g5tap1",
+              "roll": 0
+            }
+          }
+        },
+        {
+          "round": 2,
+          "event": {
+            "eventType": "REDUCE_SPELL_COOLDOWN",
+            "data": [
+              {
+                "spellId": "oxk8nma0oj1l",
+                "amount": 1
+              },
+              {
+                "spellId": "yoswa0g5tap1",
+                "amount": 1
+              }
+            ]
+          }
+        },
+        {
+          "round": 3,
+          "event": {
+            "eventType": "REGEN",
+            "data": {
+              "entityId": "emmbjo8fovof",
+              "healthRegen": 20,
+              "manaRegen": 10
+            }
+          }
+        },
+        {
+          "round": 3,
+          "event": {
+            "eventType": "SPELL_CAST",
+            "data": {
+              "damageApplied": [
+                [
+                  "storm-hatchling-q0pl93tQGVUsLiSUoADcr",
+                  10
+                ]
+              ],
+              "healingApplied": [],
+              "effectsApplied": [],
+              "totalDamage": 10,
+              "isCrit": false,
+              "spellId": "emmbjo8fovof",
+              "roll": 13
+            }
+          }
+        },
+        {
+          "round": 3,
+          "event": {
+            "eventType": "DEATH",
+            "data": {
+              "id": "storm-hatchling-q0pl93tQGVUsLiSUoADcr"
+            }
+          }
+        },
+        {
+          "round": 3,
+          "event": {
+            "eventType": "REDUCE_SPELL_COOLDOWN",
+            "data": [
+              {
+                "spellId": "0che5dauf7u0",
+                "amount": 1
+              },
+              {
+                "spellId": "kf5233lwcqux",
+                "amount": 1
+              }
+            ]
+          }
+        },
+        {
+          "round": 3,
+          "event": {
+            "eventType": "REGEN",
+            "data": {
+              "entityId": "storm-hatchling-wJfELB2Xt5t2_3tbcVkvC",
+              "healthRegen": 2,
+              "manaRegen": 2
+            }
+          }
+        },
+        {
+          "round": 3,
+          "event": {
+            "eventType": "SPELL_CAST",
+            "data": {
+              "damageApplied": [
+                [
+                  "6e5x736w6mch",
+                  4
+                ]
+              ],
+              "healingApplied": [],
+              "effectsApplied": [],
+              "totalDamage": 4,
+              "isCrit": false,
+              "spellId": "storm-hatchling-wJfELB2Xt5t2_3tbcVkvC-staggering-jab",
+              "roll": 4
+            }
+          }
+        },
+        {
+          "round": 3,
+          "event": {
+            "eventType": "REDUCE_SPELL_COOLDOWN",
+            "data": [
+              {
+                "spellId": "storm-hatchling-wJfELB2Xt5t2_3tbcVkvC-staggering-jab",
+                "amount": 1
+              }
+            ]
+          }
+        },
+        {
+          "round": 3,
+          "event": {
+            "eventType": "REGEN",
+            "data": {
+              "entityId": "6e5x736w6mch",
+              "healthRegen": 5,
+              "manaRegen": 2
+            }
+          }
+        },
+        {
+          "round": 3,
+          "event": {
+            "eventType": "SPELL_CAST",
+            "data": {
+              "damageApplied": [],
+              "healingApplied": [],
+              "effectsApplied": [
+                [
+                  "emmbjo8fovof",
+                  [
+                    "gV2TM5OXxKP22hwq6wZu"
+                  ]
+                ]
+              ],
+              "totalDamage": 0,
+              "isCrit": false,
+              "spellId": "d9wojdbuckgu",
+              "roll": 3
+            }
+          }
+        },
+        {
+          "round": 3,
+          "event": {
+            "eventType": "REDUCE_SPELL_COOLDOWN",
+            "data": [
+              {
+                "spellId": "d9wojdbuckgu",
+                "amount": 1
+              },
+              {
+                "spellId": "oxk8nma0oj1l",
+                "amount": 1
+              },
+              {
+                "spellId": "yoswa0g5tap1",
+                "amount": 1
+              }
+            ]
+          }
+        },
+        {
+          "round": 4,
+          "event": {
+            "eventType": "REGEN",
+            "data": {
+              "entityId": "emmbjo8fovof",
+              "healthRegen": 20,
+              "manaRegen": 10
+            }
+          }
+        },
+        {
+          "round": 4,
+          "event": {
+            "eventType": "SPELL_CAST",
+            "data": {
+              "damageApplied": [
+                [
+                  "storm-hatchling-wJfELB2Xt5t2_3tbcVkvC",
+                  30
+                ]
+              ],
+              "healingApplied": [],
+              "effectsApplied": [],
+              "totalDamage": 30,
+              "isCrit": false,
+              "spellId": "kf5233lwcqux",
+              "roll": 13
+            }
+          }
+        },
+        {
+          "round": 4,
+          "event": {
+            "eventType": "DEATH",
+            "data": {
+              "id": "storm-hatchling-wJfELB2Xt5t2_3tbcVkvC"
+            }
+          }
+        },
+        {
+          "round": 4,
+          "event": {
+            "eventType": "EFFECT_REMOVAL",
+            "data": {
+              "effectId": "gV2TM5OXxKP22hwq6wZu"
+            }
+          }
+        },
+        {
+          "round": 4,
+          "event": {
+            "eventType": "REDUCE_SPELL_COOLDOWN",
+            "data": [
+              {
+                "spellId": "0che5dauf7u0",
+                "amount": 1
+              },
+              {
+                "spellId": "kf5233lwcqux",
+                "amount": 1
+              }
+            ]
+          }
+        }
+      ],
+      "meta": {
+        "values": {
+          "0.event.data.effectsApplied": [
+            "map"
+          ],
+          "1.event.data.damageApplied": [
+            "map"
+          ],
+          "1.event.data.healingApplied": [
+            "map"
+          ],
+          "1.event.data.effectsApplied": [
+            "map"
+          ],
+          "4.event.data.damageApplied": [
+            "map"
+          ],
+          "4.event.data.healingApplied": [
+            "map"
+          ],
+          "4.event.data.effectsApplied": [
+            "map"
+          ],
+          "7.event.data.damageApplied": [
+            "map"
+          ],
+          "7.event.data.healingApplied": [
+            "map"
+          ],
+          "7.event.data.effectsApplied": [
+            "map"
+          ],
+          "10.event.data.damageApplied": [
+            "map"
+          ],
+          "10.event.data.healingApplied": [
+            "map"
+          ],
+          "10.event.data.effectsApplied": [
+            "map"
+          ],
+          "13.event.data.damageApplied": [
+            "map"
+          ],
+          "13.event.data.healingApplied": [
+            "map"
+          ],
+          "13.event.data.effectsApplied": [
+            "map"
+          ],
+          "16.event.data.damageApplied": [
+            "map"
+          ],
+          "16.event.data.healingApplied": [
+            "map"
+          ],
+          "16.event.data.effectsApplied": [
+            "map"
+          ],
+          "19.event.data.damageApplied": [
+            "map"
+          ],
+          "19.event.data.healingApplied": [
+            "map"
+          ],
+          "19.event.data.effectsApplied": [
+            "map"
+          ],
+          "22.event.data.damageApplied": [
+            "map"
+          ],
+          "22.event.data.healingApplied": [
+            "map"
+          ],
+          "22.event.data.effectsApplied": [
+            "map"
+          ],
+          "25.event.data.damageApplied": [
+            "map"
+          ],
+          "25.event.data.healingApplied": [
+            "map"
+          ],
+          "25.event.data.effectsApplied": [
+            "map"
+          ],
+          "28.event.data.damageApplied": [
+            "map"
+          ],
+          "28.event.data.healingApplied": [
+            "map"
+          ],
+          "28.event.data.effectsApplied": [
+            "map"
+          ],
+          "31.event.data.damageApplied": [
+            "map"
+          ],
+          "31.event.data.healingApplied": [
+            "map"
+          ],
+          "31.event.data.effectsApplied": [
+            "map"
+          ],
+          "34.event.data.damageApplied": [
+            "map"
+          ],
+          "34.event.data.healingApplied": [
+            "map"
+          ],
+          "34.event.data.effectsApplied": [
+            "map"
+          ],
+          "41.event.data.damageApplied": [
+            "map"
+          ],
+          "41.event.data.healingApplied": [
+            "map"
+          ],
+          "41.event.data.effectsApplied": [
+            "map"
+          ],
+          "45.event.data.damageApplied": [
+            "map"
+          ],
+          "45.event.data.healingApplied": [
+            "map"
+          ],
+          "45.event.data.effectsApplied": [
+            "map"
+          ],
+          "48.event.data.damageApplied": [
+            "map"
+          ],
+          "48.event.data.healingApplied": [
+            "map"
+          ],
+          "48.event.data.effectsApplied": [
+            "map"
+          ],
+          "52.event.data.damageApplied": [
+            "map"
+          ],
+          "52.event.data.healingApplied": [
+            "map"
+          ],
+          "52.event.data.effectsApplied": [
+            "map"
+          ],
+          "55.event.data.damageApplied": [
+            "map"
+          ],
+          "55.event.data.healingApplied": [
+            "map"
+          ],
+          "55.event.data.effectsApplied": [
+            "map"
+          ],
+          "58.event.data.damageApplied": [
+            "map"
+          ],
+          "58.event.data.healingApplied": [
+            "map"
+          ],
+          "58.event.data.effectsApplied": [
+            "map"
+          ]
+        },
+        "v": 1
+      }
+    },
+    "start_entity_data": {
+      "json": [
+        {
+          "characterId": "emmbjo8fovof",
+          "health": 200,
+          "mana": 100
+        },
+        {
+          "characterId": "6e5x736w6mch",
+          "health": 100,
+          "mana": 50
+        }
+      ]
+    },
+    "participants": {
+      "json": [
+        {
+          "id": "emmbjo8fovof",
+          "userId": "fixture-owner",
+          "name": "Deshaun27",
+          "team": "TEAM_A",
+          "health": 200,
+          "maxHealth": 200,
+          "mana": 100,
+          "maxMana": 100,
+          "baseAttributes": {
+            "intelligence": 40,
+            "vitality": 40,
+            "agility": 20,
+            "strength": 10
+          },
+          "baseSpecialAttributes": {
+            "lifesteal": 0,
+            "omnivamp": 0,
+            "armor": 0,
+            "magicResistance": 0,
+            "armorPenetration": 0,
+            "magicPenetration": 0,
+            "healthRegen": 0,
+            "manaRegen": 0,
+            "blessed": 0,
+            "critChance": 0,
+            "critDamage": 1
+          },
+          "baseAffinities": {
+            "fire": 0,
+            "lightning": 0,
+            "earth": 0,
+            "water": 0,
+            "dark": 0
+          },
+          "activeEffects": [
+            {
+              "id": "9e10z2070fci",
+              "effectType": "PASSIVE",
+              "duration": 10000,
+              "sourceId": "emmbjo8fovof",
+              "targetId": "emmbjo8fovof",
+              "spellSourceId": "emmbjo8fovof",
+              "passiveType": "armor-up",
+              "tier": "E"
+            }
+          ],
+          "attributeModifiers": [
+            {
+              "id": "qkTmIYYjnjOysEPkCIxPd",
+              "attribute": "intelligence",
+              "value": 10,
+              "operation": "ADD"
+            },
+            {
+              "id": "UvXyD30pdSnu9UoRq2QUp",
+              "attribute": "armor",
+              "value": 1.2,
+              "operation": "MULTIPLY"
+            }
+          ],
+          "spells": [
+            {
+              "config": {
+                "id": "9e5binse7wth",
+                "type": "arcane-channeling",
+                "name": "Arcane Channeling",
+                "manaCost": 40,
+                "cooldown": 6,
+                "targetType": {
+                  "allies": 0,
+                  "enemies": null
+                },
+                "tier": "A"
+              },
+              "currentCooldown": 0,
+              "damageModule": {
+                "type": "MAGICAL"
+              }
+            },
+            {
+              "config": {
+                "id": "0che5dauf7u0",
+                "type": "bladestorm-rhythm",
+                "name": "Bladestorm Rhythm",
+                "manaCost": 15,
+                "cooldown": 4,
+                "targetType": {
+                  "enemies": 1,
+                  "allies": 0
+                },
+                "tier": "S"
+              },
+              "currentCooldown": 0,
+              "damageModule": {
+                "type": "PHYSICAL",
+                "damageCalc": {
+                  "min": 21,
+                  "max": 27
+                }
+              }
+            },
+            {
+              "config": {
+                "id": "kf5233lwcqux",
+                "type": "final-verdict",
+                "name": "Final Verdict",
+                "manaCost": 10,
+                "cooldown": 2,
+                "targetType": {
+                  "enemies": 1,
+                  "allies": 0
+                },
+                "tier": "S"
+              },
+              "currentCooldown": 0,
+              "damageModule": {
+                "type": "PHYSICAL",
+                "damageCalc": {
+                  "min": 18,
+                  "max": 24
+                }
+              },
+              "executionThreshold": 0.1
+            },
+            {
+              "config": {
+                "id": "3di16mbo3j1x",
+                "type": "fleetfoot-gambit",
+                "name": "Fleetfoot Gambit",
+                "manaCost": 50,
+                "cooldown": 8,
+                "targetType": {
+                  "allies": 1,
+                  "enemies": 0
+                },
+                "tier": "S"
+              },
+              "currentCooldown": 0,
+              "effectModule": {},
+              "effectChance": 1
+            },
+            {
+              "config": {
+                "id": "emmbjo8fovof",
+                "type": "basic-attack",
+                "name": "Basic Attack",
+                "manaCost": 0,
+                "cooldown": 0,
+                "targetType": {
+                  "enemies": 1,
+                  "allies": 0
+                },
+                "tier": "A"
+              },
+              "currentCooldown": 0,
+              "damageModule": {
+                "type": "PHYSICAL",
+                "damageCalc": {
+                  "min": 0,
+                  "max": 15
+                }
+              }
+            }
+          ],
+          "passiveSkills": [
+            {
+              "id": "9e10z2070fci",
+              "effectType": "PASSIVE",
+              "duration": 10000,
+              "sourceId": "emmbjo8fovof",
+              "targetId": "emmbjo8fovof",
+              "spellSourceId": "emmbjo8fovof",
+              "passiveType": "armor-up",
+              "tier": "E"
+            }
+          ],
+          "equipped": {
+            "ARMOR": {
+              "id": "abcd",
+              "name": "Int Armor",
+              "description": "Increases intelligence by 10.",
+              "tier": "E",
+              "itemType": "int-armor",
+              "equipmentSlot": "ARMOR",
+              "modifiers": [
+                {
+                  "id": "qkTmIYYjnjOysEPkCIxPd",
+                  "attribute": "intelligence",
+                  "value": 10,
+                  "operation": "ADD"
+                }
+              ],
+              "holderId": "emmbjo8fovof"
+            }
+          },
+          "isBot": false,
+          "xp": 250,
+          "level": 3,
+          "statPointsAvailable": 8
+        },
+        {
+          "id": "6e5x736w6mch",
+          "userId": "fixture-owner",
+          "name": "Araceli_Schroeder7",
+          "team": "TEAM_A",
+          "health": 100,
+          "maxHealth": 100,
+          "mana": 50,
+          "maxMana": 50,
+          "baseAttributes": {
+            "intelligence": 10,
+            "vitality": 10,
+            "agility": 10,
+            "strength": 10
+          },
+          "baseSpecialAttributes": {
+            "lifesteal": 0,
+            "omnivamp": 0,
+            "armor": 0,
+            "magicResistance": 0,
+            "armorPenetration": 0,
+            "magicPenetration": 0,
+            "healthRegen": 0,
+            "manaRegen": 0,
+            "blessed": 0,
+            "critChance": 0,
+            "critDamage": 1
+          },
+          "baseAffinities": {
+            "fire": 0,
+            "lightning": 0,
+            "earth": 0,
+            "water": 0,
+            "dark": 0
+          },
+          "activeEffects": [],
+          "attributeModifiers": [],
+          "spells": [
+            {
+              "config": {
+                "id": "91hnwxcvrcho",
+                "type": "bulwark-bash",
+                "name": "Bulwark Bash",
+                "manaCost": 0,
+                "cooldown": 2,
+                "targetType": {
+                  "enemies": 1,
+                  "allies": 0
+                },
+                "tier": "S"
+              },
+              "currentCooldown": 0,
+              "damageModule": {
+                "type": "PHYSICAL",
+                "damageCalc": {
+                  "min": 10,
+                  "max": 15
+                }
+              },
+              "effectModule": {},
+              "effectChance": 1
+            },
+            {
+              "config": {
+                "id": "d9wojdbuckgu",
+                "type": "deflecting-stance",
+                "name": "Deflecting Stance",
+                "manaCost": 25,
+                "cooldown": 4,
+                "targetType": {
+                  "allies": 1,
+                  "enemies": 0
+                },
+                "tier": "B"
+              },
+              "currentCooldown": 0,
+              "effectModule": {},
+              "effectChance": 1
+            },
+            {
+              "config": {
+                "id": "oxk8nma0oj1l",
+                "type": "earthshatter",
+                "name": "Earthshatter",
+                "manaCost": 0,
+                "cooldown": 4,
+                "targetType": {
+                  "enemies": null,
+                  "allies": 0
+                },
+                "tier": "S"
+              },
+              "currentCooldown": 0,
+              "damageModule": {
+                "type": "PHYSICAL",
+                "damageCalc": {
+                  "min": 16,
+                  "max": 23
+                }
+              },
+              "effectModule": {},
+              "effectChance": 0.5
+            },
+            {
+              "config": {
+                "id": "yoswa0g5tap1",
+                "type": "cinder-wisp",
+                "name": "Cinder Wisp",
+                "manaCost": 10,
+                "cooldown": 1,
+                "targetType": {
+                  "enemies": 1,
+                  "allies": 0
+                },
+                "tier": "A"
+              },
+              "currentCooldown": 0,
+              "damageModule": {
+                "type": "MAGICAL",
+                "damageCalc": {
+                  "min": 6,
+                  "max": 12
+                }
+              }
+            },
+            {
+              "config": {
+                "id": "6e5x736w6mch",
+                "type": "basic-attack",
+                "name": "Basic Attack",
+                "manaCost": 0,
+                "cooldown": 0,
+                "targetType": {
+                  "enemies": 1,
+                  "allies": 0
+                },
+                "tier": "A"
+              },
+              "currentCooldown": 0,
+              "damageModule": {
+                "type": "PHYSICAL",
+                "damageCalc": {
+                  "min": 0,
+                  "max": 15
+                }
+              }
+            }
+          ],
+          "passiveSkills": [],
+          "equipped": {},
+          "isBot": false,
+          "xp": 30,
+          "level": 3,
+          "statPointsAvailable": 8
+        },
+        {
+          "id": "storm-hatchling-lh1a6CkCK2nW0ODPqS4Ug",
+          "name": "Storm Hatchling",
+          "team": "TEAM_B",
+          "health": 40,
+          "maxHealth": 40,
+          "mana": 40,
+          "maxMana": 40,
+          "baseAttributes": {
+            "intelligence": 8,
+            "vitality": 8,
+            "agility": 18,
+            "strength": 8
+          },
+          "baseSpecialAttributes": {
+            "lifesteal": 0,
+            "omnivamp": 0,
+            "armor": 0,
+            "magicResistance": 0,
+            "armorPenetration": 0,
+            "magicPenetration": 0,
+            "healthRegen": 0,
+            "manaRegen": 0,
+            "blessed": 0,
+            "critChance": 0,
+            "critDamage": 1
+          },
+          "baseAffinities": {
+            "fire": 0,
+            "lightning": 0,
+            "earth": 0,
+            "water": 0,
+            "dark": 0
+          },
+          "activeEffects": [],
+          "attributeModifiers": [],
+          "spells": [
+            {
+              "config": {
+                "id": "storm-hatchling-lh1a6CkCK2nW0ODPqS4Ug-staggering-jab",
+                "type": "staggering-jab",
+                "name": "Staggering Jab",
+                "manaCost": 0,
+                "cooldown": 1,
+                "targetType": {
+                  "enemies": 1,
+                  "allies": 0
+                },
+                "tier": "A"
+              },
+              "currentCooldown": 0,
+              "damageModule": {
+                "type": "PHYSICAL",
+                "damageCalc": {
+                  "min": 4,
+                  "max": 6
+                }
+              },
+              "effectModule": {},
+              "effectChance": 0.2
+            },
+            {
+              "config": {
+                "id": "storm-hatchling-lh1a6CkCK2nW0ODPqS4Ug-basic-attack",
+                "type": "basic-attack",
+                "name": "Basic Attack",
+                "manaCost": 0,
+                "cooldown": 0,
+                "targetType": {
+                  "enemies": 1,
+                  "allies": 0
+                },
+                "tier": "A"
+              },
+              "currentCooldown": 0,
+              "damageModule": {
+                "type": "PHYSICAL",
+                "damageCalc": {
+                  "min": 0,
+                  "max": 15
+                }
+              }
+            }
+          ],
+          "passiveSkills": [],
+          "equipped": {},
+          "isBot": true,
+          "type": "storm-hatchling",
+          "xp": 20,
+          "loot": {
+            "gold": 20,
+            "items": [
+              {
+                "type": "SPELL",
+                "data": {
+                  "spellType": "staggering-jab"
+                },
+                "dropRate": 0.01
+              }
+            ]
+          }
+        },
+        {
+          "id": "storm-hatchling-D4b_cMe-VfZipOazGfvSB",
+          "name": "Storm Hatchling",
+          "team": "TEAM_B",
+          "health": 40,
+          "maxHealth": 40,
+          "mana": 40,
+          "maxMana": 40,
+          "baseAttributes": {
+            "intelligence": 8,
+            "vitality": 8,
+            "agility": 18,
+            "strength": 8
+          },
+          "baseSpecialAttributes": {
+            "lifesteal": 0,
+            "omnivamp": 0,
+            "armor": 0,
+            "magicResistance": 0,
+            "armorPenetration": 0,
+            "magicPenetration": 0,
+            "healthRegen": 0,
+            "manaRegen": 0,
+            "blessed": 0,
+            "critChance": 0,
+            "critDamage": 1
+          },
+          "baseAffinities": {
+            "fire": 0,
+            "lightning": 0,
+            "earth": 0,
+            "water": 0,
+            "dark": 0
+          },
+          "activeEffects": [],
+          "attributeModifiers": [],
+          "spells": [
+            {
+              "config": {
+                "id": "storm-hatchling-D4b_cMe-VfZipOazGfvSB-staggering-jab",
+                "type": "staggering-jab",
+                "name": "Staggering Jab",
+                "manaCost": 0,
+                "cooldown": 1,
+                "targetType": {
+                  "enemies": 1,
+                  "allies": 0
+                },
+                "tier": "A"
+              },
+              "currentCooldown": 0,
+              "damageModule": {
+                "type": "PHYSICAL",
+                "damageCalc": {
+                  "min": 4,
+                  "max": 6
+                }
+              },
+              "effectModule": {},
+              "effectChance": 0.2
+            },
+            {
+              "config": {
+                "id": "storm-hatchling-D4b_cMe-VfZipOazGfvSB-basic-attack",
+                "type": "basic-attack",
+                "name": "Basic Attack",
+                "manaCost": 0,
+                "cooldown": 0,
+                "targetType": {
+                  "enemies": 1,
+                  "allies": 0
+                },
+                "tier": "A"
+              },
+              "currentCooldown": 0,
+              "damageModule": {
+                "type": "PHYSICAL",
+                "damageCalc": {
+                  "min": 0,
+                  "max": 15
+                }
+              }
+            }
+          ],
+          "passiveSkills": [],
+          "equipped": {},
+          "isBot": true,
+          "type": "storm-hatchling",
+          "xp": 20,
+          "loot": {
+            "gold": 20,
+            "items": [
+              {
+                "type": "SPELL",
+                "data": {
+                  "spellType": "staggering-jab"
+                },
+                "dropRate": 0.01
+              }
+            ]
+          }
+        },
+        {
+          "id": "storm-hatchling-q0pl93tQGVUsLiSUoADcr",
+          "name": "Storm Hatchling",
+          "team": "TEAM_B",
+          "health": 40,
+          "maxHealth": 40,
+          "mana": 40,
+          "maxMana": 40,
+          "baseAttributes": {
+            "intelligence": 8,
+            "vitality": 8,
+            "agility": 18,
+            "strength": 8
+          },
+          "baseSpecialAttributes": {
+            "lifesteal": 0,
+            "omnivamp": 0,
+            "armor": 0,
+            "magicResistance": 0,
+            "armorPenetration": 0,
+            "magicPenetration": 0,
+            "healthRegen": 0,
+            "manaRegen": 0,
+            "blessed": 0,
+            "critChance": 0,
+            "critDamage": 1
+          },
+          "baseAffinities": {
+            "fire": 0,
+            "lightning": 0,
+            "earth": 0,
+            "water": 0,
+            "dark": 0
+          },
+          "activeEffects": [],
+          "attributeModifiers": [],
+          "spells": [
+            {
+              "config": {
+                "id": "storm-hatchling-q0pl93tQGVUsLiSUoADcr-staggering-jab",
+                "type": "staggering-jab",
+                "name": "Staggering Jab",
+                "manaCost": 0,
+                "cooldown": 1,
+                "targetType": {
+                  "enemies": 1,
+                  "allies": 0
+                },
+                "tier": "A"
+              },
+              "currentCooldown": 0,
+              "damageModule": {
+                "type": "PHYSICAL",
+                "damageCalc": {
+                  "min": 4,
+                  "max": 6
+                }
+              },
+              "effectModule": {},
+              "effectChance": 0.2
+            },
+            {
+              "config": {
+                "id": "storm-hatchling-q0pl93tQGVUsLiSUoADcr-basic-attack",
+                "type": "basic-attack",
+                "name": "Basic Attack",
+                "manaCost": 0,
+                "cooldown": 0,
+                "targetType": {
+                  "enemies": 1,
+                  "allies": 0
+                },
+                "tier": "A"
+              },
+              "currentCooldown": 0,
+              "damageModule": {
+                "type": "PHYSICAL",
+                "damageCalc": {
+                  "min": 0,
+                  "max": 15
+                }
+              }
+            }
+          ],
+          "passiveSkills": [],
+          "equipped": {},
+          "isBot": true,
+          "type": "storm-hatchling",
+          "xp": 20,
+          "loot": {
+            "gold": 20,
+            "items": [
+              {
+                "type": "SPELL",
+                "data": {
+                  "spellType": "staggering-jab"
+                },
+                "dropRate": 0.01
+              }
+            ]
+          }
+        },
+        {
+          "id": "storm-hatchling-wJfELB2Xt5t2_3tbcVkvC",
+          "name": "Storm Hatchling",
+          "team": "TEAM_B",
+          "health": 40,
+          "maxHealth": 40,
+          "mana": 40,
+          "maxMana": 40,
+          "baseAttributes": {
+            "intelligence": 8,
+            "vitality": 8,
+            "agility": 18,
+            "strength": 8
+          },
+          "baseSpecialAttributes": {
+            "lifesteal": 0,
+            "omnivamp": 0,
+            "armor": 0,
+            "magicResistance": 0,
+            "armorPenetration": 0,
+            "magicPenetration": 0,
+            "healthRegen": 0,
+            "manaRegen": 0,
+            "blessed": 0,
+            "critChance": 0,
+            "critDamage": 1
+          },
+          "baseAffinities": {
+            "fire": 0,
+            "lightning": 0,
+            "earth": 0,
+            "water": 0,
+            "dark": 0
+          },
+          "activeEffects": [],
+          "attributeModifiers": [],
+          "spells": [
+            {
+              "config": {
+                "id": "storm-hatchling-wJfELB2Xt5t2_3tbcVkvC-staggering-jab",
+                "type": "staggering-jab",
+                "name": "Staggering Jab",
+                "manaCost": 0,
+                "cooldown": 1,
+                "targetType": {
+                  "enemies": 1,
+                  "allies": 0
+                },
+                "tier": "A"
+              },
+              "currentCooldown": 0,
+              "damageModule": {
+                "type": "PHYSICAL",
+                "damageCalc": {
+                  "min": 4,
+                  "max": 6
+                }
+              },
+              "effectModule": {},
+              "effectChance": 0.2
+            },
+            {
+              "config": {
+                "id": "storm-hatchling-wJfELB2Xt5t2_3tbcVkvC-basic-attack",
+                "type": "basic-attack",
+                "name": "Basic Attack",
+                "manaCost": 0,
+                "cooldown": 0,
+                "targetType": {
+                  "enemies": 1,
+                  "allies": 0
+                },
+                "tier": "A"
+              },
+              "currentCooldown": 0,
+              "damageModule": {
+                "type": "PHYSICAL",
+                "damageCalc": {
+                  "min": 0,
+                  "max": 15
+                }
+              }
+            }
+          ],
+          "passiveSkills": [],
+          "equipped": {},
+          "isBot": true,
+          "type": "storm-hatchling",
+          "xp": 20,
+          "loot": {
+            "gold": 20,
+            "items": [
+              {
+                "type": "SPELL",
+                "data": {
+                  "spellType": "staggering-jab"
+                },
+                "dropRate": 0.01
+              }
+            ]
+          }
+        }
+      ],
+      "meta": {
+        "values": {
+          "0": [
+            [
+              "class",
+              "Character"
+            ],
+            {
+              "activeEffects.0": [
+                [
+                  "custom",
+                  "Effect"
+                ]
+              ],
+              "spells.0": [
+                [
+                  "custom",
+                  "Spell"
+                ]
+              ],
+              "spells.1": [
+                [
+                  "custom",
+                  "Spell"
+                ]
+              ],
+              "spells.2": [
+                [
+                  "custom",
+                  "Spell"
+                ]
+              ],
+              "spells.3": [
+                [
+                  "custom",
+                  "Spell"
+                ]
+              ],
+              "spells.4": [
+                [
+                  "custom",
+                  "Spell"
+                ]
+              ],
+              "passiveSkills.0": [
+                [
+                  "custom",
+                  "Effect"
+                ]
+              ],
+              "equipped.ARMOR": [
+                [
+                  "custom",
+                  "Equipment"
+                ]
+              ]
+            }
+          ],
+          "1": [
+            [
+              "class",
+              "Character"
+            ],
+            {
+              "spells.0": [
+                [
+                  "custom",
+                  "Spell"
+                ]
+              ],
+              "spells.1": [
+                [
+                  "custom",
+                  "Spell"
+                ]
+              ],
+              "spells.2": [
+                [
+                  "custom",
+                  "Spell"
+                ]
+              ],
+              "spells.3": [
+                [
+                  "custom",
+                  "Spell"
+                ]
+              ],
+              "spells.4": [
+                [
+                  "custom",
+                  "Spell"
+                ]
+              ]
+            }
+          ],
+          "2": [
+            [
+              "custom",
+              "BaseEnemy"
+            ]
+          ],
+          "3": [
+            [
+              "custom",
+              "BaseEnemy"
+            ]
+          ],
+          "4": [
+            [
+              "custom",
+              "BaseEnemy"
+            ]
+          ],
+          "5": [
+            [
+              "custom",
+              "BaseEnemy"
+            ]
+          ]
+        },
+        "referentialEqualities": {
+          "0.activeEffects.0": [
+            "0.passiveSkills.0"
+          ]
+        },
+        "v": 1
+      }
+    },
+    "effect_tracking": {
+      "json": [
+        [
+          "9e10z2070fci",
+          {
+            "sourceId": "emmbjo8fovof",
+            "targetId": "emmbjo8fovof",
+            "round": 0,
+            "duration": 10000,
+            "description": "Increases armor by 20%.",
+            "effectType": "PASSIVE",
+            "battleManager": null
+          }
+        ],
+        [
+          "qfZgEVSMgr7a_9Dg-lPs",
+          {
+            "sourceId": "6e5x736w6mch",
+            "targetId": "storm-hatchling-lh1a6CkCK2nW0ODPqS4Ug",
+            "round": 1,
+            "duration": 1,
+            "description": "Can not act this turn",
+            "effectType": "STUN",
+            "battleManager": null
+          }
+        ],
+        [
+          "OYo16zAsLY3d_Iajxp73",
+          {
+            "sourceId": "6e5x736w6mch",
+            "targetId": "storm-hatchling-D4b_cMe-VfZipOazGfvSB",
+            "round": 1,
+            "duration": 1,
+            "description": "Can not act this turn",
+            "effectType": "STUN",
+            "battleManager": null
+          }
+        ],
+        [
+          "R8MTRKF81A6CIt3rjL03",
+          {
+            "sourceId": "6e5x736w6mch",
+            "targetId": "storm-hatchling-q0pl93tQGVUsLiSUoADcr",
+            "round": 1,
+            "duration": 1,
+            "description": "Can not act this turn",
+            "effectType": "STUN",
+            "battleManager": null
+          }
+        ],
+        [
+          "4TwNvmFtpVrfcaNeFPUu",
+          {
+            "sourceId": "6e5x736w6mch",
+            "targetId": "storm-hatchling-wJfELB2Xt5t2_3tbcVkvC",
+            "round": 1,
+            "duration": 1,
+            "description": "Can not act this turn",
+            "effectType": "STUN",
+            "battleManager": null
+          }
+        ],
+        [
+          "gV2TM5OXxKP22hwq6wZu",
+          {
+            "sourceId": "6e5x736w6mch",
+            "targetId": "emmbjo8fovof",
+            "round": 3,
+            "duration": 1,
+            "description": "Reflects 50% of the damage taken back to the attacker.",
+            "effectType": "BUFF",
+            "battleManager": null
+          }
+        ]
+      ],
+      "meta": {
+        "values": [
+          "map",
+          {
+            "0.1": [
+              [
+                "custom",
+                "Effect"
+              ],
+              {
+                "battleManager": [
+                  "undefined"
+                ]
+              }
+            ],
+            "1.1": [
+              [
+                "custom",
+                "Effect"
+              ],
+              {
+                "battleManager": [
+                  "undefined"
+                ]
+              }
+            ],
+            "2.1": [
+              [
+                "custom",
+                "Effect"
+              ],
+              {
+                "battleManager": [
+                  "undefined"
+                ]
+              }
+            ],
+            "3.1": [
+              [
+                "custom",
+                "Effect"
+              ],
+              {
+                "battleManager": [
+                  "undefined"
+                ]
+              }
+            ],
+            "4.1": [
+              [
+                "custom",
+                "Effect"
+              ],
+              {
+                "battleManager": [
+                  "undefined"
+                ]
+              }
+            ],
+            "5.1": [
+              [
+                "custom",
+                "Effect"
+              ],
+              {
+                "battleManager": [
+                  "undefined"
+                ]
+              }
+            ]
+          }
+        ],
+        "v": 1
+      }
+    },
+    "winner": "TEAM_A",
+    "team_a": {
+      "json": [
+        {
+          "id": "emmbjo8fovof",
+          "health": 200,
+          "mana": 90,
+          "dead": false
+        },
+        {
+          "id": "6e5x736w6mch",
+          "health": 96,
+          "mana": 11,
+          "dead": false
+        }
+      ]
+    },
+    "team_b": {
+      "json": [
+        {
+          "id": "storm-hatchling-lh1a6CkCK2nW0ODPqS4Ug",
+          "health": 0,
+          "dead": true,
+          "type": "storm-hatchling"
+        },
+        {
+          "id": "storm-hatchling-D4b_cMe-VfZipOazGfvSB",
+          "health": 0,
+          "dead": true,
+          "type": "storm-hatchling"
+        },
+        {
+          "id": "storm-hatchling-q0pl93tQGVUsLiSUoADcr",
+          "health": 0,
+          "dead": true,
+          "type": "storm-hatchling"
+        },
+        {
+          "id": "storm-hatchling-wJfELB2Xt5t2_3tbcVkvC",
+          "health": 0,
+          "dead": true,
+          "type": "storm-hatchling"
+        }
+      ]
+    }
+  }
+}

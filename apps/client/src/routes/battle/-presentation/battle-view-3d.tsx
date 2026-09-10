@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Entity } from "@loot-game/game/entity-types";
 import type { EffectTracking } from "@loot-game/game/bm";
 import type { BattleRound } from "@loot-game/game/battle-types";
@@ -7,6 +7,9 @@ import type { BattleSession } from "../-hooks/use-battle";
 import type { usePlayback } from "./use-playback";
 import BattleScene from "./battle-scene";
 import { entityLabel } from "./entity-label";
+import { BattleCommandPanel } from "./battle-command-panel";
+import { BattleInspector } from "./battle-inspector";
+import { buildActionHistory, cueLabel } from "./action-history";
 import "./battle-view.css";
 
 type Props = {
@@ -21,7 +24,6 @@ type Props = {
 
 export default function BattleView3D({
   participants,
-  effects,
   playback,
   round,
   session,
@@ -34,14 +36,25 @@ export default function BattleView3D({
   const [inspectedId, setInspectedId] = useState<string>();
   const [graphicsFailed, setGraphicsFailed] = useState(false);
   const actingId = playback.cue?.casterId ?? round?.orderQueue[0];
+  const presenting = !playback.caughtUp;
+  const order = presenting
+    ? actingId
+      ? [actingId]
+      : []
+    : (round?.orderQueue ?? []);
+  const turnLabel = presenting
+    ? playback.playing
+      ? "Resolving"
+      : "Next action"
+    : "Acting";
   const inspected =
     participants.find((p) => p.id === inspectedId) ??
     participants.find((p) => p.id === actingId) ??
     participants[0];
-  const actor = session?.activeEntity;
-  const spells = actor?.spells ?? [];
-  const selectedSpell = spells.find(
-    (s) => s.config.id === session?.activeSpell,
+  const history = useMemo(
+    () =>
+      buildActionHistory(playback.frames, participants, playback.conditions),
+    [playback.frames, participants, playback.conditions],
   );
   const legal = session?.canChoose ? (session.validTargets ?? []) : [];
   const selected = session?.chosenTargets ?? [];
@@ -73,20 +86,21 @@ export default function BattleView3D({
   };
   const status = !session
     ? "Recorded battle · read only"
-    : session.winner
-      ? session.winner === "TEAM_A"
-        ? "Victory"
-        : "Defeat"
-      : session.pending
-        ? "Awaiting the server…"
-        : !playback.caughtUp
-          ? "Presenting resolved actions…"
+    : !playback.caughtUp
+      ? "Presenting resolved actions…"
+      : session.winner
+        ? session.winner === "TEAM_A"
+          ? "Victory"
+          : "Defeat"
+        : session.pending
+          ? "Awaiting the server…"
           : session.canChoose
             ? "Your turn · prepare an action"
             : "Watching · waiting for the active owner";
   return (
     <section
       className="battle-3d"
+      data-mode={session ? "live" : "replay"}
       aria-label={session ? "Live 3D battle" : "Recorded 3D battle"}
     >
       <header className="battle-stage-heading">
@@ -127,24 +141,24 @@ export default function BattleView3D({
       <div className="battle-turn-order" aria-label="Turn order">
         <span className="battle-eyebrow">
           Round{" "}
-          {(round?.round ??
-            playback.frames[playback.cursor].event?.round ??
+          {((presenting
+            ? playback.frames[playback.shownCursor].event?.round
+            : round?.round) ??
+            playback.frames[playback.shownCursor].event?.round ??
             0) + 1}
         </span>
-        {(round?.orderQueue ?? (actingId ? [actingId] : [])).map(
-          (id, index) => (
-            <button
-              key={`${id}:${index}`}
-              onClick={() => inspect(id)}
-              className={index === 0 ? "is-active" : ""}
-              aria-label={`Inspect ${names([id])}, ${index === 0 ? "acting" : `turn ${index + 1}`}`}
-            >
-              <span>{index === 0 ? "◆" : `${index + 1}`}</span>
-              {names([id])}
-              {index === 0 && <small>Acting</small>}
-            </button>
-          ),
-        )}
+        {order.map((id, index) => (
+          <button
+            key={`${id}:${index}`}
+            onClick={() => inspect(id)}
+            className={index === 0 ? "is-active" : ""}
+            aria-label={`Inspect ${names([id])}, ${index === 0 ? turnLabel.toLowerCase() : `turn ${index + 1}`}`}
+          >
+            <span>{index === 0 ? "◆" : `${index + 1}`}</span>
+            {names([id])}
+            {index === 0 && <small>{turnLabel}</small>}
+          </button>
+        ))}
         {!round && !actingId && (
           <span>Seek or play the recorded events below.</span>
         )}
@@ -170,6 +184,8 @@ export default function BattleView3D({
               <BattleScene
                 participants={participants}
                 stats={playback.stats}
+                conditions={playback.conditions}
+                durationMs={playback.durationMs}
                 activeId={actingId}
                 selected={selected}
                 legal={legal}
@@ -186,13 +202,10 @@ export default function BattleView3D({
             <div className="battle-event-caption" aria-live="polite">
               <span>
                 {playback.cue
-                  ? `${playback.cue.casterId ? names([playback.cue.casterId]) + " · " : ""}${playback.cue.label}${playback.cue.targetIds.length ? " → " + names(playback.cue.targetIds) : ""}`
+                  ? `${playback.cue.casterId ? names([playback.cue.casterId]) + " · " : ""}${cueLabel(playback.cue, playback.conditions)}${playback.cue.targetIds.length ? " → " + (playback.cue.targetIds.length > 2 ? `${playback.cue.targetIds.length} targets` : names(playback.cue.targetIds)) : ""}`
                   : status}
               </span>
             </div>
-            <p className="battle-model-note">
-              KayKit Skeleton Warrior · model stand-in for every entity
-            </p>
           </div>
           <div
             className="battle-entity-controls"
@@ -244,90 +257,12 @@ export default function BattleView3D({
             })}
           </div>
           {session ? (
-            <div className="battle-command-panel">
-              <div className="battle-command-title">
-                <span className="battle-eyebrow">
-                  {actor?.name ?? "Waiting for battle"}
-                </span>
-                <span role="status">{status}</span>
-              </div>
-              <div className="battle-spell-list" aria-label="Choose a spell">
-                {spells.map((spell, index) => {
-                  const cooldown =
-                    playback.stats
-                      .get(actor!.id)
-                      ?.cooldowns.get(spell.config.id) ?? 0;
-                  const randomTarget = ["storm-pulse", "volt-lash"].includes(
-                    spell.config.type,
-                  );
-                  const unavailable =
-                    randomTarget ||
-                    !session.battleState?.availableSpells.includes(
-                      spell.config.id,
-                    );
-                  return (
-                    <button
-                      key={spell.config.id}
-                      disabled={!session.canChoose || unavailable}
-                      aria-pressed={session.activeSpell === spell.config.id}
-                      onFocus={() =>
-                        session.getSpellDescription(spell.config.id)
-                      }
-                      onClick={() => session.getTargets(spell.config.id)}
-                    >
-                      <span>{String(index + 1).padStart(2, "0")}</span>
-                      <strong>{spell.config.name}</strong>
-                      <small>
-                        {spell.config.manaCost} mana ·{" "}
-                        {randomTarget
-                          ? "Use Cards (random targets)"
-                          : cooldown > 0
-                            ? `${cooldown} turns`
-                            : "Ready"}
-                      </small>
-                    </button>
-                  );
-                })}
-              </div>
-              <div className="battle-cast-row">
-                <div>
-                  <span className="battle-eyebrow">Prepared action</span>
-                  <p>
-                    {selectedSpell ? (
-                      <>
-                        <strong>{selectedSpell.config.name}</strong> →{" "}
-                        {selected.length
-                          ? names(selected)
-                          : session.validTargets
-                            ? "Choose a legal target"
-                            : "Requesting legal targets…"}
-                      </>
-                    ) : (
-                      "Choose a spell, review its targets, then Cast."
-                    )}
-                  </p>
-                </div>
-                <button
-                  onClick={session.cancelSpell}
-                  disabled={!session.activeSpell || session.pending}
-                >
-                  Cancel
-                </button>
-                <button
-                  className="battle-cast-button"
-                  onClick={session.castSpell}
-                  disabled={!session.canCast}
-                >
-                  {session.pending ? "Casting…" : "Cast"}
-                  <span>↗</span>
-                </button>
-              </div>
-              {session.error && (
-                <p role="alert" className="battle-command-error">
-                  {session.error}
-                </p>
-              )}
-            </div>
+            <BattleCommandPanel
+              session={session}
+              stats={playback.stats}
+              status={status}
+              targetNames={names(selected)}
+            />
           ) : (
             <div className="battle-replay-controls">
               <button onClick={() => playback.setPlaying(!playback.playing)}>
@@ -359,109 +294,18 @@ export default function BattleView3D({
             </div>
           )}
         </div>
-        <aside className="battle-inspector" aria-label="Entity inspector">
-          <span className="battle-eyebrow">Entity dossier / inspection</span>
-          <h2>
-            {inspected
-              ? entityLabel(inspected, participants)
-              : "The battlefield"}
-          </h2>
-          <p className="battle-muted">
-            {inspected?.team === "TEAM_A" ? "Party member" : "Enemy"}
-            {inspected && playback.stats.get(inspected.id)?.flags.dead
-              ? " · Fallen"
-              : ""}
-          </p>
-          {inspected && (
-            <>
-              <div className="battle-inspector-resources">
-                <div>
-                  <span>Health</span>
-                  <strong>
-                    {playback.stats.get(inspected.id)?.health}
-                    <small> / {inspected.maxHealth}</small>
-                  </strong>
-                </div>
-                <div>
-                  <span>Mana</span>
-                  <strong>
-                    {playback.stats.get(inspected.id)?.mana}
-                    <small> / {inspected.maxMana}</small>
-                  </strong>
-                </div>
-              </div>
-              <h3>
-                Conditions <span>✦</span>
-              </h3>
-              {(playback.stats.get(inspected.id)?.activeEffects ?? [])
-                .length === 0 && (
-                <p className="battle-muted">No active effects.</p>
-              )}
-              {(playback.stats.get(inspected.id)?.activeEffects ?? []).map(
-                (id) => (
-                  <div className="battle-effect" key={id}>
-                    <strong>{effects.get(id)?.effectType ?? "Effect"}</strong>
-                    <p>
-                      {effects.get(id)?.description ??
-                        "Effect metadata is unavailable in this recording."}
-                    </p>
-                  </div>
-                ),
-              )}
-              <h3>
-                Spellbook <span>↗</span>
-              </h3>
-              {inspected.spells.map((spell) => (
-                <details
-                  key={spell.config.id}
-                  onToggle={(e) => {
-                    if (e.currentTarget.open)
-                      session?.getSpellDescription(spell.config.id);
-                  }}
-                >
-                  <summary>
-                    {spell.config.name}
-                    <span>
-                      {playback.stats
-                        .get(inspected.id)
-                        ?.cooldowns.get(spell.config.id) || 0}{" "}
-                      cd
-                    </span>
-                  </summary>
-                  <p>
-                    {spell.config.manaCost} mana · {spell.config.cooldown} turn
-                    cooldown
-                  </p>
-                  <p>
-                    {session?.spellDescription.get(spell.config.id)?.text ??
-                      descriptions?.get(spell.config.id)?.text ??
-                      "Description not recorded. In a live battle, expand to request it from the server."}
-                  </p>
-                </details>
-              ))}
-            </>
-          )}
-          {selectedSpell &&
-            session?.spellDescription.get(selectedSpell.config.id) && (
-              <div className="battle-prepared-description">
-                <span className="battle-eyebrow">Prepared spell</span>
-                <h3>{selectedSpell.config.name}</h3>
-                <p>
-                  {session.spellDescription.get(selectedSpell.config.id)!.text}
-                </p>
-              </div>
-            )}
-          <div className="battle-legend">
-            <span>◆ Active turn</span>
-            <span>◇ Legal target</span>
-            <span>◎ Selected target</span>
-            <span>✕ Fallen</span>
-          </div>
-          <p className="battle-inspector-note">
-            Inspecting is separate from targeting. Use Tab and Enter for every
-            control.
-          </p>
-        </aside>
+        <BattleInspector
+          entity={inspected}
+          name={
+            inspected ? entityLabel(inspected, participants) : "The battlefield"
+          }
+          stats={inspected ? playback.stats.get(inspected.id) : undefined}
+          conditions={playback.conditions}
+          session={session}
+          descriptions={descriptions}
+          history={history}
+          shownCursor={playback.shownCursor}
+        />
       </div>
     </section>
   );

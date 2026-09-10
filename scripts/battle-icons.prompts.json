@@ -1,0 +1,362 @@
+{
+  "mode": "built-in image_gen",
+  "version": 1,
+  "commonPrompt": "Use case: stylized-concept. Asset type: one square skill or status icon for a stylized dark-fantasy miniature RPG, displayed at 40px in combat and 24px for statuses. Generate one standalone icon, not a sheet or UI mockup. Style: hand-painted fantasy game ability art, chunky sculptural forms and one strong readable silhouette, restrained details, rich material shading, painterly edges. Background: softly lit dark forest-charcoal (#101b19), matching an antique gold and forest-black game interface. Composition: one large centered emblem filling 75% of the square with a 12% safe margin. No border, no lettering, no numbers, no text, no watermark, no extra miniature characters. Must remain immediately recognizable at 32px. Square image. ",
+  "basicAttackPrompt": "Use case: stylized-concept. Asset type: one square skill icon for a stylized dark-fantasy miniature RPG, displayed at 40px in combat and 24px for statuses. Generate a single standalone icon, not a sheet or UI mockup. Subject: BASIC ATTACK — one stout polished steel arming sword angled from lower left to upper right, a short pale ivory slash arc behind the blade. Style: hand-painted high quality fantasy game ability art, chunky sculptural forms and strong readable silhouette, restrained details, rich material shading, painterly edges, consistent softly lit dark forest-charcoal background (#101b19), warm muted gold accents. Composition: one large centered emblem filling 75% of the square, generous 12% safe margin, no border, no lettering, no numbers, no text, no watermark, no extra miniature characters. The subject must remain immediately recognizable when reduced to 32 pixels. 1024x1024 square image.",
+  "icons": [
+    {
+      "key": "basic-attack",
+      "name": "Basic Attack",
+      "subject": "One polished steel arming sword angled upward with a pale ivory slash arc.",
+      "kind": "spell"
+    },
+    {
+      "key": "fireball",
+      "name": "Fireball",
+      "subject": "A single blazing orange-red fireball with a bright core and curling flame tail.",
+      "kind": "spell"
+    },
+    {
+      "key": "single-heal",
+      "name": "Single Heal",
+      "subject": "One open cupped hand cradling a luminous green healing cross and a soft halo.",
+      "kind": "spell"
+    },
+    {
+      "key": "crude-strike",
+      "name": "Crude Strike",
+      "subject": "A rough chipped iron cleaver swinging with a thick dusty ochre impact slash.",
+      "kind": "spell"
+    },
+    {
+      "key": "festering-blow",
+      "name": "Festering Blow",
+      "subject": "A corroded broad blade releasing three small sickly green droplets and a ragged green shock arc.",
+      "kind": "spell"
+    },
+    {
+      "key": "cinder-wisp",
+      "name": "Cinder Wisp",
+      "subject": "A small floating amber flame spirit with one bright eye-shaped core and a wispy tapered tail.",
+      "kind": "spell"
+    },
+    {
+      "key": "vital-strike",
+      "name": "Vital Strike",
+      "subject": "A sharp silver dagger crossing a red heart-shaped ember, with red life energy flowing toward its hilt.",
+      "kind": "spell"
+    },
+    {
+      "key": "splinter-shot",
+      "name": "Splinter Shot",
+      "subject": "A single sharp wooden arrowhead breaking through a small cracked armor plate, pale splinters flying.",
+      "kind": "spell"
+    },
+    {
+      "key": "cinderbrand",
+      "name": "Cinderbrand",
+      "subject": "A glowing ember-red circular brand burning into dark stone, three upward tongues of flame.",
+      "kind": "spell"
+    },
+    {
+      "key": "precise-thrust",
+      "name": "Precise Thrust",
+      "subject": "The pointed tip of a thin steel rapier piercing a small gold target ring, clean straight movement.",
+      "kind": "spell"
+    },
+    {
+      "key": "soulflare",
+      "name": "Soulflare",
+      "subject": "A violet-white spectral flame enveloping a small glowing soul orb, with a crimson energy ribbon curling inward.",
+      "kind": "spell"
+    },
+    {
+      "key": "charred-chains",
+      "name": "Charred Chains",
+      "subject": "Two heavy blackened iron chain links cracked with orange fire, their ends encircling a burning core.",
+      "kind": "spell"
+    },
+    {
+      "key": "crushing-blow",
+      "name": "Crushing Blow",
+      "subject": "A massive stone-headed war hammer striking a cracked rock slab with a bold golden impact burst.",
+      "kind": "spell"
+    },
+    {
+      "key": "stone-bark",
+      "name": "Stone Bark",
+      "subject": "An upright bark shield fused with grey stone plates, soft moss-green light in its seams.",
+      "kind": "spell"
+    },
+    {
+      "key": "rootgrasp",
+      "name": "Rootgrasp",
+      "subject": "Thick twisting green-brown roots tightening around a single dark armored boot, a clear gripping silhouette.",
+      "kind": "spell"
+    },
+    {
+      "key": "verdant-smite",
+      "name": "Verdant Smite",
+      "subject": "A sharp luminous green leaf-shaped blade striking a cracked iron shield, a small emerald spark burst.",
+      "kind": "spell"
+    },
+    {
+      "key": "natures-embrace",
+      "name": "Nature’s Embrace",
+      "subject": "Two broad green leaves curving protectively around three small luminous life orbs.",
+      "kind": "spell"
+    },
+    {
+      "key": "lightning-surge",
+      "name": "Lightning Surge",
+      "subject": "Three bold electric blue lightning forks erupting from one bright central storm orb.",
+      "kind": "spell"
+    },
+    {
+      "key": "stunning-strike",
+      "name": "Stunning Strike",
+      "subject": "A heavy iron mace head beside a bright golden four-point impact star and two small dazed stars.",
+      "kind": "spell"
+    },
+    {
+      "key": "staggering-jab",
+      "name": "Staggering Jab",
+      "subject": "A compact leather-wrapped gauntlet delivering a quick jab with one small sharp golden impact flash.",
+      "kind": "spell"
+    },
+    {
+      "key": "battle-roar",
+      "name": "Battle Roar",
+      "subject": "A roaring bronze lion-like mouth emitting three strong curved golden sound waves.",
+      "kind": "spell"
+    },
+    {
+      "key": "torrent-spiral",
+      "name": "Torrent Spiral",
+      "subject": "A coiled turquoise whirlpool shaped as a bold spiral, white water streaks spinning around a dark center.",
+      "kind": "spell"
+    },
+    {
+      "key": "tidepiercer-thrust",
+      "name": "Tidepiercer Thrust",
+      "subject": "A silver trident spear tip driving through a crest of deep blue water in one straight thrust.",
+      "kind": "spell"
+    },
+    {
+      "key": "ocean-blessing",
+      "name": "Ocean Blessing",
+      "subject": "A pearly turquoise water droplet suspended above an open hand, a gentle mint healing halo.",
+      "kind": "spell"
+    },
+    {
+      "key": "aqua-wave",
+      "name": "Aqua Wave",
+      "subject": "One crisp curling turquoise wave with a pale foam crest, sweeping diagonally upward.",
+      "kind": "spell"
+    },
+    {
+      "key": "tidal-pulse",
+      "name": "Tidal Pulse",
+      "subject": "Three concentric luminous blue water rings expanding from a single sea-blue orb.",
+      "kind": "spell"
+    },
+    {
+      "key": "stream-of-life",
+      "name": "Stream of Life",
+      "subject": "A flowing emerald-turquoise stream curling around one warm glowing heart-shaped stone.",
+      "kind": "spell"
+    },
+    {
+      "key": "rupture",
+      "name": "Rupture",
+      "subject": "A jagged red fissure splitting a dark iron plate, a few crimson droplets along the tear, no gore.",
+      "kind": "spell"
+    },
+    {
+      "key": "storm-pulse",
+      "name": "Storm Pulse",
+      "subject": "A deep blue storm cloud with three broad silver-white shockwave arcs pulsing outward.",
+      "kind": "spell"
+    },
+    {
+      "key": "volt-lash",
+      "name": "Volt Lash",
+      "subject": "A single bright electric-blue lightning whip forming an S-shaped lash, four tiny sparks along its path.",
+      "kind": "spell"
+    },
+    {
+      "key": "final-verdict",
+      "name": "Final Verdict",
+      "subject": "An imposing silver executioner's greatsword pointing downward through a bright gold judgement halo.",
+      "kind": "spell"
+    },
+    {
+      "key": "aegis-wall",
+      "name": "Aegis Wall",
+      "subject": "Three overlapping broad golden shield plates forming a luminous protective wall.",
+      "kind": "spell"
+    },
+    {
+      "key": "bulwark-bash",
+      "name": "Bulwark Bash",
+      "subject": "The face of a thick steel tower shield lunging forward into a bold pale-gold impact burst.",
+      "kind": "spell"
+    },
+    {
+      "key": "earthshatter",
+      "name": "Earthshatter",
+      "subject": "A heavy stone fist striking the ground and splitting three broad glowing ochre cracks outward.",
+      "kind": "spell"
+    },
+    {
+      "key": "deflecting-stance",
+      "name": "Deflecting Stance",
+      "subject": "A polished silver round shield reflecting an incoming gold arrow into a clearly curved returning arrow path.",
+      "kind": "spell"
+    },
+    {
+      "key": "bladestorm-rhythm",
+      "name": "Bladestorm Rhythm",
+      "subject": "Two curved silver sword blades crossing inside a clean circular golden slash trail.",
+      "kind": "spell"
+    },
+    {
+      "key": "iron-will",
+      "name": "Iron Will",
+      "subject": "A resolute closed steel knight helmet framed by a small gold inner halo and one unbroken iron band.",
+      "kind": "spell"
+    },
+    {
+      "key": "arcane-channeling",
+      "name": "Arcane Channeling",
+      "subject": "Two gloved hands gathering a large luminous violet arcane orb with three simple orbiting blue sparks.",
+      "kind": "spell"
+    },
+    {
+      "key": "fleetfoot-gambit",
+      "name": "Fleetfoot Gambit",
+      "subject": "A dark leather boot with two small silver wing-shaped speed marks and a gold curved movement trail.",
+      "kind": "spell"
+    },
+    {
+      "key": "armor-up",
+      "name": "Armor Up",
+      "subject": "A solid upright steel breastplate with a small strong gold upward chevron embedded at its center.",
+      "kind": "passive"
+    },
+    {
+      "key": "thorn-carapace",
+      "name": "Thorn Carapace",
+      "subject": "A rounded dark emerald armored shell with five large ivory thorns pointing outward.",
+      "kind": "passive"
+    },
+    {
+      "key": "blessed-fortune",
+      "name": "Blessed Fortune",
+      "subject": "A warm gold four-leaf clover-shaped talisman with a bright central star glint.",
+      "kind": "passive"
+    },
+    {
+      "key": "bloodfang",
+      "name": "Bloodfang",
+      "subject": "Two polished ivory fangs curving around a single ruby-red droplet, no mouth or gore.",
+      "kind": "passive"
+    },
+    {
+      "key": "soulleech",
+      "name": "Soulleech",
+      "subject": "A violet spectral tendril drawing a small blue soul orb toward one larger purple core.",
+      "kind": "passive"
+    },
+    {
+      "key": "mystic-flow",
+      "name": "Mystic Flow",
+      "subject": "A sapphire mana crystal with a continuous flowing blue energy ribbon curling around it.",
+      "kind": "passive"
+    },
+    {
+      "key": "vital-wellspring",
+      "name": "Vital Wellspring",
+      "subject": "A small stone spring overflowing with luminous green life water, one bright living sprout.",
+      "kind": "passive"
+    },
+    {
+      "key": "stoneform-resolve",
+      "name": "Stoneform Resolve",
+      "subject": "A determined sculpted stone face with two strong mossy stone armor plates at its sides.",
+      "kind": "passive"
+    },
+    {
+      "key": "titans-resurgence",
+      "name": "Titan’s Resurgence",
+      "subject": "A giant stone hand rising upward through a bright green life halo, three small rising green sparks.",
+      "kind": "passive"
+    },
+    {
+      "key": "keen-instincts",
+      "name": "Keen Instincts",
+      "subject": "One intense amber animal eye inside a clean sharp gold target-like diamond.",
+      "kind": "passive"
+    },
+    {
+      "key": "effect-buff",
+      "name": "Buff",
+      "subject": "A luminous green upward chevron set within a simple polished gold protective ring.",
+      "kind": "effect"
+    },
+    {
+      "key": "effect-debuff",
+      "name": "Debuff",
+      "subject": "A fractured muted crimson downward chevron surrounded by three dark splinters.",
+      "kind": "effect"
+    },
+    {
+      "key": "effect-dot",
+      "name": "Damage over time",
+      "subject": "One vivid orange flame curling around a dark crimson droplet, a small burning ember trail.",
+      "kind": "effect"
+    },
+    {
+      "key": "effect-hot",
+      "name": "Healing over time",
+      "subject": "A bright mint-green healing cross above a gentle green droplet, two small rising life sparks.",
+      "kind": "effect"
+    },
+    {
+      "key": "effect-curse",
+      "name": "Curse",
+      "subject": "A small stylized violet cursed skull made of dark amethyst with two softly glowing purple eye sockets.",
+      "kind": "effect"
+    },
+    {
+      "key": "effect-stun",
+      "name": "Stun",
+      "subject": "Three bold gold dazed stars circling over a simple dark steel helmet silhouette.",
+      "kind": "effect"
+    },
+    {
+      "key": "effect-charge",
+      "name": "Charging",
+      "subject": "A luminous violet energy orb held between two simple incomplete golden concentric rings.",
+      "kind": "effect"
+    },
+    {
+      "key": "effect-control",
+      "name": "Controlled",
+      "subject": "A violet puppet hand above two short silver strings leading to one small dark knight chess piece.",
+      "kind": "effect"
+    },
+    {
+      "key": "effect-shield",
+      "name": "Shielded",
+      "subject": "A clear broad steel shield silhouette filled with a pale turquoise protective glow.",
+      "kind": "effect"
+    },
+    {
+      "key": "effect-passive",
+      "name": "Passive effect",
+      "subject": "A small ancient bronze medallion with one softly glowing ivory central star, simple and solid.",
+      "kind": "effect"
+    }
+  ]
+}

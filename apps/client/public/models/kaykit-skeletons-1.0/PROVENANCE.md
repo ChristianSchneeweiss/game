@@ -1,5 +1,7 @@
 # Skeleton Warrior miniature
 
+Historical milestone-1 asset. The original GLB is preserved in commit `81df60d` and at the pinned upstream URL below. It is no longer shipped; milestone 2 uses the optimized knight and dragon in [battle-v2](../battle-v2/PROVENANCE.md).
+
 - Creator: Kay Lousberg / KayKit.
 - Pack: KayKit Character Pack — Skeletons, version 1.0.
 - Asset: `Skeleton_Warrior.glb`, renamed locally to `warrior.glb`.

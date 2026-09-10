@@ -26,6 +26,24 @@ const recording = SuperJSON.deserialize<Recording>(
   recordingJson as Parameters<typeof SuperJSON.deserialize>[0],
 );
 
+test("recorded melee, magic, healing and protective effects get distinct presentation cues", () => {
+  const frames = buildTimeline(
+    recording.participants,
+    recording.events,
+    undefined,
+    recording.effects,
+  );
+  const styles = new Map(
+    frames
+      .filter((frame) => frame.cue?.kind === "SPELL_CAST")
+      .map((frame) => [frame.cue!.label, frame.cue!.style]),
+  );
+  expect(styles.get("Stone Bark")).toBe("ward");
+  expect(styles.get("Single Heal")).toBe("heal");
+  expect(styles.get("Cinder Wisp")).toBe("spell");
+  expect(styles.get("Basic Attack")).toBe("melee");
+});
+
 test("recorded command results reconstruct exact resources, cooldowns, effects and death", () => {
   const frames = buildTimeline(
     recording.participants,

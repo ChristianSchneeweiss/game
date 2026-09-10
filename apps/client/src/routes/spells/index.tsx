@@ -1,3 +1,4 @@
+import { SkillIcon } from "@/components/skill-icon";
 import { Button } from "@/components/ui/button";
 import {
   RpgBadge,
@@ -129,7 +130,7 @@ function RouteComponent() {
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex items-start gap-4">
                         <div className="rpg-icon-frame h-14 w-14 text-[#ceb2ea]">
-                          <WandSparkles className="h-6 w-6" />
+                          <SkillIcon type={type} size={56} />
                         </div>
                         <div>
                           <p className="rpg-title text-[0.58rem] text-[#c9b0df]/75">
@@ -225,7 +226,7 @@ function RouteComponent() {
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex items-start gap-4">
                         <div className="rpg-icon-frame h-14 w-14 text-[#b2d58e]">
-                          <Shield className="h-6 w-6" />
+                          <SkillIcon type={type} size={56} />
                         </div>
                         <div>
                           <p className="rpg-title text-[0.58rem] text-[#b2d58e]/75">

@@ -1,0 +1,57 @@
+[
+  {
+    "file": "Big-Fish.gltf",
+    "url": "https://drive.google.com/uc?export=download&id=1mQqf-c9O4u3bk2ycpt-DFraGfRjcVfZV",
+    "sha256": "9549f80351ad7c8e97c6894662a80fb42e4df8ebc7588b6912ea8f9e2ec6b9b1"
+  },
+  {
+    "file": "Big-Orc.gltf",
+    "url": "https://drive.google.com/uc?export=download&id=17675H4Owu5FeHUk_7Goyc9TKI5YK3cEM",
+    "sha256": "e61a37f8d9b2eee28928bdfad2c55e0798cc0a212e925cc5dcc66b243526c1a3"
+  },
+  {
+    "file": "Flying-Dragon_Evolved.gltf",
+    "url": "https://drive.google.com/uc?export=download&id=1Mcfuavq7F4itG9xhqc-20_IL257ZY2_3",
+    "sha256": "39ba6ea24b5f27acf68bbf4c19fe80ba070dbec167ff14bbe933453303426f5c"
+  },
+  {
+    "file": "Flying-Dragon.gltf",
+    "url": "https://drive.google.com/uc?export=download&id=1-mQSm6_oGt7-EEQfNj1dFWYgPQy4AdPC",
+    "sha256": "d219a29b5e928da26c24218a64284bbf999b88484a508ac6c01e0edad9f1f56c"
+  },
+  {
+    "file": "Flying-Ghost_Skull.gltf",
+    "url": "https://drive.google.com/uc?export=download&id=1JIw8lx6H5IIhf_3Z5FprEu_yCoMcoRN7",
+    "sha256": "5bf24cf0f22aa94b0b58315e7d879afc53a0964a5b326aa0c844ba3278cae1da"
+  },
+  {
+    "file": "Flying-Ghost.gltf",
+    "url": "https://drive.google.com/uc?export=download&id=1rUs1QRA9v1Y2wRYEXsfteBisTsz4JlLi",
+    "sha256": "40bea9d887874cc86b391b83e72cc5ac2cac340892e23f3d8068a568b6e61457"
+  },
+  {
+    "file": "Skeleton_Minion.glb",
+    "url": "https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0/15b62b9bad122f72926c10fb14d622c73819fa54/addons/kaykit_character_pack_skeletons/Characters/gltf/Skeleton_Minion.glb",
+    "sha256": "6ffc003f895bed0b074791e0e490846210a2e2f8fc7da300aba53cc185f95968"
+  },
+  {
+    "file": "Skeleton_Warrior.glb",
+    "url": "https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0/15b62b9bad122f72926c10fb14d622c73819fa54/addons/kaykit_character_pack_skeletons/Characters/gltf/Skeleton_Warrior.glb",
+    "sha256": "178b6fda810b814c250d8a2010c24dfd9b458b9006dd323353e620b7ff118bbe"
+  },
+  {
+    "file": "Skeleton_Mage.glb",
+    "url": "https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0/15b62b9bad122f72926c10fb14d622c73819fa54/addons/kaykit_character_pack_skeletons/Characters/gltf/Skeleton_Mage.glb",
+    "sha256": "e05b0f5cfa395271c9f75fd07c0a0613c56f401ece4ab644e080001a79971075"
+  },
+  {
+    "file": "spider-animations.glb",
+    "url": "https://raw.githubusercontent.com/Mesh2Motion/mesh2motion-app/2d3d1ff03247d9e7e830d1ae375653da4e2146e2/static/animations/spider-animations.glb",
+    "sha256": "a321c1617c7f74cf86c050694bc254e74409c6c69db26fe542338f2f7c43d07a"
+  },
+  {
+    "file": "snake-animations.glb",
+    "url": "https://raw.githubusercontent.com/Mesh2Motion/mesh2motion-app/2d3d1ff03247d9e7e830d1ae375653da4e2146e2/static/animations/snake-animations.glb",
+    "sha256": "795e4c62ba1e02f3f33e900832cdc6a1ca5a4aa4f6fe426fccd3aaa0f7f6ac25"
+  }
+]

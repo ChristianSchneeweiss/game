@@ -1,0 +1,247 @@
+:root {
+  font-family: "Avenir Next", Avenir, sans-serif;
+  color: #dce3dc;
+  background: #101714;
+  font-synthesis: none;
+  color-scheme: dark;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+header,
+main,
+footer {
+  max-width: 1460px;
+  margin: auto;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  padding: 25px 44px;
+  border-bottom: 1px solid #304038;
+  font-size: 11px;
+  letter-spacing: 2px;
+}
+a {
+  color: #b3cc9a;
+  text-decoration: none;
+}
+header a {
+  font-size: 14px;
+  letter-spacing: 0.4px;
+}
+main {
+  padding: 48px 44px;
+}
+.intro {
+  max-width: 760px;
+  margin-bottom: 38px;
+}
+.eyebrow {
+  color: #b9cc96;
+  font-size: 10px;
+  letter-spacing: 2.3px;
+  font-weight: 600;
+}
+h1 {
+  font-family: Georgia, serif;
+  font-size: clamp(36px, 4vw, 58px);
+  font-weight: 400;
+  letter-spacing: -1.6px;
+  line-height: 1.12;
+  margin: 13px 0 18px;
+}
+.intro > p:last-child {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #9daea3;
+  max-width: 570px;
+}
+.workshop {
+  display: grid;
+  grid-template-columns: 290px minmax(0, 1fr);
+  border: 1px solid #34473b;
+  background: #15201a;
+}
+aside {
+  border-right: 1px solid #34473b;
+  padding: 22px;
+  max-height: 775px;
+  overflow: auto;
+}
+aside label {
+  font-size: 11px;
+  display: block;
+  margin-bottom: 8px;
+  color: #a9b7ad;
+}
+input,
+select,
+button {
+  font: inherit;
+  border: 1px solid #3c5043;
+  background: #1b2a21;
+  color: #e3e9df;
+  border-radius: 3px;
+}
+input {
+  padding: 10px;
+  width: 100%;
+  font-size: 12px;
+  margin-bottom: 17px;
+}
+nav {
+  display: grid;
+  gap: 4px;
+}
+nav button {
+  background: transparent;
+  border-color: transparent;
+  text-align: left;
+  padding: 12px 10px;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1.4;
+}
+nav button span {
+  display: block;
+  font-size: 10px;
+  color: #859c8e;
+  margin-top: 3px;
+}
+nav button:hover,
+nav button[aria-pressed="true"] {
+  background: #2a3d2d;
+  border-color: #536848;
+}
+nav button[aria-pressed="true"] {
+  color: #d4edaa;
+}
+.stage {
+  padding: 27px;
+  min-width: 0;
+}
+.model-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+.model-heading h2 {
+  font-family: Georgia, serif;
+  font-weight: 400;
+  font-size: 29px;
+  margin: 8px 0;
+}
+.model-heading #badge {
+  border: 1px solid #668054;
+  border-radius: 20px;
+  color: #bfd2a8;
+  padding: 7px 12px;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+#viewport {
+  height: 430px;
+  position: relative;
+  margin: 16px -27px 0;
+  background: radial-gradient(ellipse at center, #263e31 0, #17241c 65%);
+}
+#viewport canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-top: 18px;
+}
+.controls label {
+  font-size: 11px;
+  color: #b1c3b4;
+  margin-right: 8px;
+}
+.controls select {
+  min-width: 175px;
+  max-width: 100%;
+  padding: 9px;
+  font-size: 12px;
+}
+.controls button {
+  font-size: 11px;
+  padding: 10px 13px;
+  cursor: pointer;
+}
+.controls button:hover {
+  background: #3d5339;
+}
+#status {
+  font-size: 11px;
+  color: #bfd0ad;
+  min-height: 16px;
+}
+.hint {
+  font-size: 10px;
+  color: #829987;
+  letter-spacing: 0.5px;
+}
+#model-notes {
+  font-size: 12px;
+  color: #acbdb0;
+  line-height: 1.7;
+  border-top: 1px solid #34473b;
+  margin-top: 22px;
+  padding-top: 14px;
+}
+footer {
+  padding: 0 44px 32px;
+  color: #718777;
+  font-size: 11px;
+}
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+a:focus-visible {
+  outline: 2px solid #d7e5b0;
+  outline-offset: 3px;
+}
+@media (max-width: 760px) {
+  header {
+    padding: 20px;
+  }
+  main {
+    padding: 28px 20px;
+  }
+  .workshop {
+    grid-template-columns: 1fr;
+  }
+  aside {
+    max-height: 235px;
+    border-right: 0;
+    border-bottom: 1px solid #34473b;
+  }
+  nav {
+    grid-template-columns: 1fr 1fr;
+  }
+  .stage {
+    padding: 22px;
+  }
+  #viewport {
+    height: 350px;
+    margin-left: -22px;
+    margin-right: -22px;
+  }
+  .model-heading h2 {
+    font-size: 25px;
+  }
+  footer {
+    padding: 0 20px 24px;
+  }
+}

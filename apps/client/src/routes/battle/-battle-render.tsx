@@ -1,3 +1,4 @@
+import { SkillIcon } from "@/components/skill-icon";
 import {
   HoverCard,
   HoverCardContent,
@@ -404,6 +405,7 @@ export const BattleRender = ({
                   }}
                 >
                   <div className="flex items-start justify-between gap-2.5">
+                    <SkillIcon type={spell.config.type} size={36} eager />
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-1.5">
                         {cooldown !== undefined && cooldown > 0 ? (

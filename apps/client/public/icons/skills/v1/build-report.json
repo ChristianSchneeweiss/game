@@ -1,0 +1,426 @@
+{
+  "generator": "OpenAI built-in image generation",
+  "generatedOn": "2026-09-10",
+  "dimensions": [
+    256,
+    256
+  ],
+  "format": "WebP",
+  "quality": 86,
+  "totalBytes": 753338,
+  "assets": [
+    {
+      "key": "aegis-wall",
+      "sourceImage": "exec-20f61930-d968-4e02-9957-534314982a59.png",
+      "sourceSha256": "c182900ac6f52c2b712eee5c85d8454908b23c16a24a0eef6db1a5eb343a2b07",
+      "bytes": 15118,
+      "sha256": "e18b3bfb1506610410e76c02544ef8a732c85b27cd29104af5079ac772982393"
+    },
+    {
+      "key": "aqua-wave",
+      "sourceImage": "exec-9c7ae7e4-8096-4423-b20b-23dc06f8c5d3.png",
+      "sourceSha256": "190994bea16a6b0bb2c9e157b8b1bb675f2cb875953038d7299b70a730f41b74",
+      "bytes": 14530,
+      "sha256": "3c7412be4e5eb9e56b0ab6088eee51d281a6ff2c0d46969ad08c4a7d1b961ab1"
+    },
+    {
+      "key": "arcane-channeling",
+      "sourceImage": "exec-f2f0150b-9b21-4687-815f-922db5205673.png",
+      "sourceSha256": "8dd3cb8f3edf5f92dac25232e5f61b3a796cd6df00d9d61c011a8d804029ad12",
+      "bytes": 12542,
+      "sha256": "457242eb8659bbf5da0377ae13fd62b2f30258592df270940f75db76e79702df"
+    },
+    {
+      "key": "armor-up",
+      "sourceImage": "exec-0d4f21a0-9de8-413a-a2d0-09efc4ecebcd.png",
+      "sourceSha256": "43267bb2a9969beb3b18e044bf1fe6a2e5f055e2c728f0058186d073eda48989",
+      "bytes": 12204,
+      "sha256": "b9ec7c5057d59b6c80da45653b6cd462a74e74ae6d86f17b1ad91c6ad7b5d291"
+    },
+    {
+      "key": "basic-attack",
+      "sourceImage": "exec-37f88010-e7e3-4084-b739-2e61df607625.png",
+      "sourceSha256": "87141d693d5452e440c33c112c8b44ef54a637baf7324186070dd4d7620b19c5",
+      "bytes": 7948,
+      "sha256": "77d3a148bf8570c2c2e0ae42aff3b03cf4b4d47402d4baf2f0c787713edffbf3"
+    },
+    {
+      "key": "battle-roar",
+      "sourceImage": "exec-1738dbed-4b17-46aa-a875-50905635706b.png",
+      "sourceSha256": "f1e1611b209007fa77eb48672573600ff5e87c3e7b15bd2ef3421a70aaf6108d",
+      "bytes": 12678,
+      "sha256": "990bb26952f65dd6bde3d0c93bd486a582cf93c17db3298e6dbee5089c148838"
+    },
+    {
+      "key": "bladestorm-rhythm",
+      "sourceImage": "exec-51a62981-b827-4d93-979d-304b2b44c44e.png",
+      "sourceSha256": "75942c7fcf5ab209ad22ec118bf6ab05bc9f0bf39b61ac1ecc0942874c89e249",
+      "bytes": 15528,
+      "sha256": "f16259432f538545aca46c024e037cee65c56e07574fe4aec4ba5ced11272749"
+    },
+    {
+      "key": "blessed-fortune",
+      "sourceImage": "exec-65b44293-bedb-4f06-a0e0-438094f1b3ae.png",
+      "sourceSha256": "eb67598f42b4d2aee532cceedd1c68931dd659b308aeba88da29d9961b9da02c",
+      "bytes": 12560,
+      "sha256": "3d75d9623d4e7a248909850c3aaf1c252cd06aa6693bad4d6842bf1b848ee010"
+    },
+    {
+      "key": "bloodfang",
+      "sourceImage": "exec-d13df550-6df2-4b05-9638-eeeef8652060.png",
+      "sourceSha256": "927322f74a4d40ac1aee759a03f8825618f003faed190d3663e17804adc0aade",
+      "bytes": 8510,
+      "sha256": "d55b3ac1279fa029772ef14d82e7c28022fe5d2234cc6b4d8a0c43fbe122987f"
+    },
+    {
+      "key": "bulwark-bash",
+      "sourceImage": "exec-e161e0b2-2f4a-40e0-a503-2d8ac86da4b3.png",
+      "sourceSha256": "a97e52b84dcff98870ff4da514368bb73c13a7ae502c56889fbc24f11fe5866b",
+      "bytes": 16160,
+      "sha256": "fe982662a52b4899c98e3453437562cd3f0606396a13eef8ec881fef8f71c2ab"
+    },
+    {
+      "key": "charred-chains",
+      "sourceImage": "exec-69227949-0a06-44cb-9fd6-12e306386b46.png",
+      "sourceSha256": "371626bfb37adaae57278a49a9b5b8f0068f2831b0a33568b0e3350b629ed964",
+      "bytes": 14426,
+      "sha256": "256360959f4489efd38e7c88b3f534f4bd2c45617050ab6022c7704cf56f7539"
+    },
+    {
+      "key": "cinder-wisp",
+      "sourceImage": "exec-12cc98b9-f1c4-4a1d-86a8-d3601b8e9bd9.png",
+      "sourceSha256": "0d2a2f553e2025e0330032f354b3fb97ea9e0689699a016855f066b3d133c248",
+      "bytes": 7062,
+      "sha256": "f3ef5c94233da98487424025aa2b5ea7bedc2bbb01a5ce2152aa80558fc02f9f"
+    },
+    {
+      "key": "cinderbrand",
+      "sourceImage": "exec-f30a22bf-ca8a-4098-89e8-fb0491dbb4bf.png",
+      "sourceSha256": "aee896ab6255bd5f1d9e42856cb040d666d694bfee8ee8f6d49c2ec65c4858fd",
+      "bytes": 16578,
+      "sha256": "edb290fd67b1aa9432bca62fee5693f556a10e7f110cab4c800fd69c870b54e8"
+    },
+    {
+      "key": "crude-strike",
+      "sourceImage": "exec-13bedd4e-6de0-47cb-865a-c3f43c1df50d.png",
+      "sourceSha256": "aae9317a86cf6941a3373be5259078e5db0a0d4d0aace334e1dceff8242cf7ef",
+      "bytes": 16556,
+      "sha256": "f96290a3daabb4370150ae95846787f842b0f221a736816b4d71217780505285"
+    },
+    {
+      "key": "crushing-blow",
+      "sourceImage": "exec-fe111b3a-e0c5-4bcb-8c88-c36476a50076.png",
+      "sourceSha256": "2bc58d133eaf140247487b17e1113cddaedbd7b3607e66b49c1208cb4615abed",
+      "bytes": 20662,
+      "sha256": "1dd1b35fda61d5c4045f039d2c6388643c82f465b5f3ea58b34517f88e158315"
+    },
+    {
+      "key": "deflecting-stance",
+      "sourceImage": "exec-86234cb8-5cdd-44cf-8ae8-9141437d96b6.png",
+      "sourceSha256": "d3a730832fcc4d8182730dd9a23a20f76b23a7e8e3cc8650cbfff11640087c25",
+      "bytes": 13300,
+      "sha256": "519c11e769235971b44546bba75d7448ddd8483dde8b4822d0be036fcf85e104"
+    },
+    {
+      "key": "earthshatter",
+      "sourceImage": "exec-0745723a-e553-41ec-aae8-86d2cd0953d9.png",
+      "sourceSha256": "8e6208a21c975275949ec3794f9032a48c0945df4d7ed220ab17c49a7a861538",
+      "bytes": 13966,
+      "sha256": "c6933fcd75528b749cc256903949115cae43cbc0bd24fcb56c8453d148d6e3f1"
+    },
+    {
+      "key": "effect-buff",
+      "sourceImage": "exec-cf2b910e-b18a-4935-a162-89448f280ce3.png",
+      "sourceSha256": "619c29f7878b4d56357270d08194ede586942dd07a4e1ed8416d3005fa0ef1c5",
+      "bytes": 11022,
+      "sha256": "0f19ed91c26059756c963c32b3a46cce25452ef95d6c7a4f604888fbec382cb7"
+    },
+    {
+      "key": "effect-charge",
+      "sourceImage": "exec-139ed921-35d3-456c-91f3-28c6897ca97d.png",
+      "sourceSha256": "6cda197065cd1dd8970ce001b5cbc1a6aa6a393ae7c5fed0b5e7a07630a125ab",
+      "bytes": 11878,
+      "sha256": "68e719a506d44ca809759e6f770144f81cdb969c1e12955af1a2616fe8b8ddf4"
+    },
+    {
+      "key": "effect-control",
+      "sourceImage": "exec-21523e86-b5fd-4578-bac0-a929608339fe.png",
+      "sourceSha256": "bde37c2373153057c238d3adbe3ad5d60f692691b306d2dc1c83a8aa45917d91",
+      "bytes": 6174,
+      "sha256": "458ac700ad2301b811ff9845a6141c47246f74a9fa49f00161ef8a628d815bb2"
+    },
+    {
+      "key": "effect-curse",
+      "sourceImage": "exec-f5936aaf-b623-4203-b4da-61a9fa850239.png",
+      "sourceSha256": "0dcf6d558a7bb0f4c5fbfca75848e95591b94cca05a5bfc3e2f07fd83c019fbf",
+      "bytes": 7826,
+      "sha256": "85230c88d12a7dbfd10dfd8ca861a2112557cbdd2fafea3955e4f280c330cfa9"
+    },
+    {
+      "key": "effect-debuff",
+      "sourceImage": "exec-e3678dbd-f82a-4d22-a797-01eac6bf366f.png",
+      "sourceSha256": "c232ffdc96ecc611bf39febc6ff6224b0d068fd2bc2b6a6cf81209f705d7bfdd",
+      "bytes": 6770,
+      "sha256": "9589f03e871c95bf096fd9c3a1f031db71666e11035764e367aed65e85736598"
+    },
+    {
+      "key": "effect-dot",
+      "sourceImage": "exec-bd343154-f811-40a5-b965-277f5c861e01.png",
+      "sourceSha256": "f27a09139ed7c2000d6aa2677a8bcd3dde62494aa6b49df087aa6fe5669e510d",
+      "bytes": 11236,
+      "sha256": "450b2815616cf4ccf4d27ddbb3eafb1f53888b994af2489a299fe86bd34d0f44"
+    },
+    {
+      "key": "effect-hot",
+      "sourceImage": "exec-4ef3bf83-baf1-4415-bcf1-944f09fdf2ee.png",
+      "sourceSha256": "d5db2af7151052e217ddf82a1f6897eec239bbf6bc6b17d7f7fae7dfd5e6055d",
+      "bytes": 7680,
+      "sha256": "21de05f20133d6825e55a65c7bcd6ea800a6f50fcf8563a68a9578e0fb712075"
+    },
+    {
+      "key": "effect-passive",
+      "sourceImage": "exec-4b6c48d1-0188-42a8-bf07-ea7739d25f08.png",
+      "sourceSha256": "7c01da5e7d04112a52ee73b086645703918d28c2b245c559b3bbdcb2831469b2",
+      "bytes": 9258,
+      "sha256": "5cf1031142372304a39c06ae3371018d3de6fa5bc762051468303ea5bd9d2818"
+    },
+    {
+      "key": "effect-shield",
+      "sourceImage": "exec-79d8eacf-c3b4-42f8-b8b8-c3a137d2b977.png",
+      "sourceSha256": "55b9bee1381ddb60f31c7e30ccee4465aa713858cb8d5e857a7876485608ef51",
+      "bytes": 12276,
+      "sha256": "ceb92dc8e0cd240b63935fa634f9c9af0e5b98ff1b99e475342e8450544def5e"
+    },
+    {
+      "key": "effect-stun",
+      "sourceImage": "exec-f31dfcd3-f96c-4f51-ae16-b81ad4b346ea.png",
+      "sourceSha256": "48b81ee0362434703bc25472167bf0eced095631c87b5f90077928f54a0ff1ca",
+      "bytes": 10456,
+      "sha256": "1a9ab6d64d202deefeb9af15c0dabed2894c1acf76b76e340b4b6b7ebce4e4ea"
+    },
+    {
+      "key": "festering-blow",
+      "sourceImage": "exec-2b8e24b6-7fa3-44b8-b011-f3e4d5788fa2.png",
+      "sourceSha256": "5d08aaf38fe39343730e5232545b815f7eefcf3a5e15d4f93a2949085dcca2a9",
+      "bytes": 15494,
+      "sha256": "54fd4e8a8656227003c5f47e305e0e6357304efb13ecc9a832efd360fbea6435"
+    },
+    {
+      "key": "final-verdict",
+      "sourceImage": "exec-3497195a-d6ee-4ea6-b609-43c4e7e29f82.png",
+      "sourceSha256": "e2fa4eb0da372f2b533bae25723419fdd4ef073cea3f5e3e2de8f560a60f954b",
+      "bytes": 11978,
+      "sha256": "7b4698ff757c49cae9d8384ce4db506a9b5901efc178e35ddbae54e5feafec32"
+    },
+    {
+      "key": "fireball",
+      "sourceImage": "exec-e19a99e4-7751-4904-9df5-ca7f7f91cf6e.png",
+      "sourceSha256": "3ec35d3f095fa359cccec79a161e2591d4d1406f29b28f420abcef97033134ca",
+      "bytes": 11748,
+      "sha256": "77b45ee6d62a348008b3ab36468b0a6b7d29a8d9be7950c3d7f81c088b03c0d3"
+    },
+    {
+      "key": "fleetfoot-gambit",
+      "sourceImage": "exec-4554acaf-3f9d-48be-913e-0e5cdb1f868e.png",
+      "sourceSha256": "3b471cf0c0fa566bb7ba03622222b2ea441c22d231b6f1fcbd7844c957e8d030",
+      "bytes": 10424,
+      "sha256": "48e80feba00382f4aee25e68bf56f9b231f8b66565d47d2b79457af8ebc5fbb8"
+    },
+    {
+      "key": "iron-will",
+      "sourceImage": "exec-b7d9c0b6-77d6-4be6-8e25-651f3ed2d57d.png",
+      "sourceSha256": "a2f42a571a95f8de3b6c110083eabe3fdc406b446f891240b58b9dffc6474d6c",
+      "bytes": 13216,
+      "sha256": "113a6a96888a696fce60fd98256a7efca8dc00a2fbe6e76659fa3dd96f8b91a7"
+    },
+    {
+      "key": "keen-instincts",
+      "sourceImage": "exec-c6ac2ab4-7aa8-49aa-81ab-cfe0de60ec7e.png",
+      "sourceSha256": "87a42d7e7172b0f0921cf9b017c5d1794e3dd29a7effeaf561a76544bab1e88e",
+      "bytes": 13224,
+      "sha256": "48aff0066d8d533e0fe667ce43835015836c782e92293f4c57cee8177decc272"
+    },
+    {
+      "key": "lightning-surge",
+      "sourceImage": "exec-57a4a492-5521-4ecf-a0c8-c0a9a78a62a9.png",
+      "sourceSha256": "70589011fcb04c373a81f88e549606cfcd22b15317b66c56c2238a1d0b4015b7",
+      "bytes": 13600,
+      "sha256": "807c645410daecabc1735b1e95b2940077677a781a3fa8a6c13c71e0fcf38db9"
+    },
+    {
+      "key": "mystic-flow",
+      "sourceImage": "exec-5964c853-a5c6-427e-939c-2633705c21cf.png",
+      "sourceSha256": "819eafa44f55f10aaf40deccf4e1b04a5ab3ef139eb11d8f602361485141764f",
+      "bytes": 10452,
+      "sha256": "98db83457d1c2efa480d3e9a81cc00796753d3ae69e217dcaa483a798cbc2248"
+    },
+    {
+      "key": "natures-embrace",
+      "sourceImage": "exec-4c6da4ba-c400-437a-9de3-8856500f670c.png",
+      "sourceSha256": "75b5ac21c4d6cd784c5da41c73632c5939659c07b05e095e09542357a93f3ab2",
+      "bytes": 10242,
+      "sha256": "a52d4759950dd75bbe443224bbe0a919a3ea2eab3b48fc3f65569a5b2e86c69f"
+    },
+    {
+      "key": "ocean-blessing",
+      "sourceImage": "exec-82ecd911-d17a-47b2-9150-b1ef9aece5ae.png",
+      "sourceSha256": "8bad816c549acce29230a8f59e7a1cc8a408944ac0e4a3f65c61eb1ef371733a",
+      "bytes": 11382,
+      "sha256": "64a3b17b9ce12e7ab8114407021246b449e4abf212d1734879df6b8706d7acc0"
+    },
+    {
+      "key": "precise-thrust",
+      "sourceImage": "exec-6c7dd963-9888-46a8-a918-1db90f83891f.png",
+      "sourceSha256": "b0623f36fbe205b8264e6438ae29a928d67f90f3a0c62b7be093a27f4f235b27",
+      "bytes": 8302,
+      "sha256": "9153067ee2bab57daeeb2446016b5246cdb6f9127abaff761cbe0e7f4e79e745"
+    },
+    {
+      "key": "rootgrasp",
+      "sourceImage": "exec-b7a6186c-2430-46ac-b010-4bc7ba831132.png",
+      "sourceSha256": "299314415e21335ab1f129a1e140f13051ed35d38f62ec765096fa11b27ead71",
+      "bytes": 16228,
+      "sha256": "5b8cea6a5717450c72f7c9841e62f9f63bc2fd73df25e727a97cce6cfd7a8837"
+    },
+    {
+      "key": "rupture",
+      "sourceImage": "exec-7675f7a2-2b1f-45d8-8a4e-9b8167f496dc.png",
+      "sourceSha256": "6544d8e5eeea695f44f119fd0b01c1c6248915d77159c362db6fb5c7bd4fde42",
+      "bytes": 14132,
+      "sha256": "2f3d0933901b9467c9a4acfa65e05eb70730220e00b82584d4156894d0cda019"
+    },
+    {
+      "key": "single-heal",
+      "sourceImage": "exec-3c746444-d56e-4f45-ae35-d41dedf7fcf5.png",
+      "sourceSha256": "824444eca7ca2f4679beca301bcb2c18eecbee380c600ea9ecd33ad11bcfd389",
+      "bytes": 11132,
+      "sha256": "c5422326969d4b41f8a06c4e0f495071c82b378569121c99de40591ff8714390"
+    },
+    {
+      "key": "soulflare",
+      "sourceImage": "exec-2a702a98-347f-47ad-a8d4-7c2b00bf6376.png",
+      "sourceSha256": "49a9fe9b918e821075e85b530e9380b87171b5d894149469b495c7cfae7f29b2",
+      "bytes": 12348,
+      "sha256": "1cd6c05a3a2edf289d91684a8a6854b700dfe502ffe9d3202d8c7dc51ca0e275"
+    },
+    {
+      "key": "soulleech",
+      "sourceImage": "exec-e11acd78-ad32-40c0-896c-41ed8b9cba00.png",
+      "sourceSha256": "88fc4baf77e7a07606f00ccebad2d603e017f17a22bd7c739e883db13aae5fa2",
+      "bytes": 13994,
+      "sha256": "3ffdd97904a9c441534d0b52bc18eb0d9abb37be91a56e407299618f16d22ba7"
+    },
+    {
+      "key": "splinter-shot",
+      "sourceImage": "exec-a633c631-8f6c-41be-9d81-62128ad06008.png",
+      "sourceSha256": "451ada69d4fbc5d3f603b60f296e9e70ad41d3b3176d6c9cda7557cbcb17cd07",
+      "bytes": 16216,
+      "sha256": "4b5d38378ecaef2428744e8541bf47efed886c81f61b88fe94b557d587f0e6f4"
+    },
+    {
+      "key": "staggering-jab",
+      "sourceImage": "exec-bd42b29b-d9a5-40fc-800a-3b4a41d1c71a.png",
+      "sourceSha256": "b6b3ca24a485da8136f6fa1a893bd5df9f942c58c36e0c01726d2ea8ecfdbcde",
+      "bytes": 11312,
+      "sha256": "46747f749ba4a03c7360f67bc5b96d2ffd73bf895a0736707551fa15385c84a1"
+    },
+    {
+      "key": "stone-bark",
+      "sourceImage": "exec-08ff88b7-b328-48e2-9948-8c1402abfc2e.png",
+      "sourceSha256": "41d352784b73a47a0ea1f1ef0ced8116c20f06130526772d564e449f2b26efbc",
+      "bytes": 12762,
+      "sha256": "b387078fe7145aab5b51053d6b8999b3a3e2d75769d779e19abab5fe33a05bed"
+    },
+    {
+      "key": "stoneform-resolve",
+      "sourceImage": "exec-6143c911-6acb-40b0-b15b-476b42259bd8.png",
+      "sourceSha256": "2410defa13cc335b1c15bc8dddbcd2d923638695fc744cc9fa1f0a15f4e1f214",
+      "bytes": 14998,
+      "sha256": "40f683ba831b29b19984d3080d0265dba16d97fb5f6a0354ddab7ad8cd59a107"
+    },
+    {
+      "key": "storm-pulse",
+      "sourceImage": "exec-ab4d0e61-8a5a-44a3-832a-eea58dd59968.png",
+      "sourceSha256": "e40f78a83f79c75edcf2cca67f0018b131b99a63d32e087c8e36ac8b0c013f1f",
+      "bytes": 13784,
+      "sha256": "a4b2d9b519f710658d72f3f26f0062fcac426f92a4aeedf9eec4c6d21e8fb8a1"
+    },
+    {
+      "key": "stream-of-life",
+      "sourceImage": "exec-a455096d-28a8-4556-a1f6-0fc93f397bd2.png",
+      "sourceSha256": "8b0bb17854f5fb02126302e305d28990e9778ba7f228e91242ac5525b0ff5f28",
+      "bytes": 15746,
+      "sha256": "347c11c2dd8f356ae77ea358ff51cbe704cdb95211c99b66454f5bb5371fb38d"
+    },
+    {
+      "key": "stunning-strike",
+      "sourceImage": "exec-b3d4ef62-954c-400e-ac7f-6ca1515e7aac.png",
+      "sourceSha256": "c6841174ea416e81c97d0014001ef22838d56b7a88127ee8647979989f4ee8c4",
+      "bytes": 10224,
+      "sha256": "b2ca596bdc8f189610936a6c5b2cf1dba7477cff9be38159d70636f6d20bb516"
+    },
+    {
+      "key": "thorn-carapace",
+      "sourceImage": "exec-c600b569-d0a9-44ee-9b7c-55d08032d234.png",
+      "sourceSha256": "5a1aff92276d7040ce341d33057da213997a34ba1bf7279f99ce342145524b59",
+      "bytes": 11202,
+      "sha256": "b2736f26c3770968f8f8a86bfac06a7ec050ac78d2ea75fec6ef34d65b028b05"
+    },
+    {
+      "key": "tidal-pulse",
+      "sourceImage": "exec-9cb175aa-57aa-4e2d-8ddc-c741c649c4cb.png",
+      "sourceSha256": "ee5f8651c0cc6b2f8fe173b5a14ce69006e160bc03d4feee5e9f84789be5b659",
+      "bytes": 19522,
+      "sha256": "bead3bf835daff8e036807cb61131165093502473fbbfaad7f77b73f0eff413a"
+    },
+    {
+      "key": "tidepiercer-thrust",
+      "sourceImage": "exec-94144896-ab42-4b79-832a-d546c867f9f5.png",
+      "sourceSha256": "919483301e304d07e7c8e2e1c1aa17abadb2f39f90e51ce5030ee70b13b6640d",
+      "bytes": 20234,
+      "sha256": "2356505c99bf2c90398d073fc737f9d90f79ee182e4166db8a46d9422fc00117"
+    },
+    {
+      "key": "titans-resurgence",
+      "sourceImage": "exec-4bc3fc8e-8356-4e37-8d17-d9d05319c690.png",
+      "sourceSha256": "42a238e676ce4540f10914fa110442f64f1d30329103231fc528438eddfb69e5",
+      "bytes": 16644,
+      "sha256": "4653f0651285dfdcf5b8a365391a92229b9efc4c5a7852e805a434d3488da9fe"
+    },
+    {
+      "key": "torrent-spiral",
+      "sourceImage": "exec-1cf54a65-79a3-438b-bfe7-014522d513ec.png",
+      "sourceSha256": "17dfe7d6d21f75750b96205cdb6eb38474400383358b8bf442b4a3ec21eb5bb2",
+      "bytes": 16724,
+      "sha256": "8eca370d52a1027104695cd7ccf85d2517c5036f278eb571cecc0588abf3e9ab"
+    },
+    {
+      "key": "verdant-smite",
+      "sourceImage": "exec-f205ee41-442f-41c2-9ad6-10a9a74c395d.png",
+      "sourceSha256": "510efa28a9117f59189d0597839d67588e0984ba1d195e4c971ff9a4aa038653",
+      "bytes": 15372,
+      "sha256": "38550d65f2e1c09759151c0e49e9a322225431d34ee95fd13c5fcc4475a74733"
+    },
+    {
+      "key": "vital-strike",
+      "sourceImage": "exec-a33f191f-f5a0-4b56-bcaa-c283eee0bb29.png",
+      "sourceSha256": "abcbbe6959f8d041a0f41397488409689d964fa7e308c5f1546e93f499bae30f",
+      "bytes": 10586,
+      "sha256": "db56ceabefdf8a73f9782418a6c22d1123b026ac41a3ea6fd1ef95e383a32141"
+    },
+    {
+      "key": "vital-wellspring",
+      "sourceImage": "exec-9eb434fc-ae00-4b16-ad0d-131315bf9578.png",
+      "sourceSha256": "810f6af3a709055fe71bac4a8537615272b106d0155f723fedda6f08ee7e0f58",
+      "bytes": 14020,
+      "sha256": "9e762cc57a83f75aceace11b837c99506d4527f516e460e5722e801e4e5774fa"
+    },
+    {
+      "key": "volt-lash",
+      "sourceImage": "exec-5c6c3b74-2496-4c96-83e3-71cb0e1cc86f.png",
+      "sourceSha256": "73efda32144a7c5f4a2671dbe824426279a2991e212863121365899d66dc36bf",
+      "bytes": 11192,
+      "sha256": "90e7b324901cabb521ea44dd57795b2ba755480e84a46a6846b973195a2b5c20"
+    }
+  ]
+}

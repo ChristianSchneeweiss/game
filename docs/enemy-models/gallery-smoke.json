@@ -1,0 +1,267 @@
+[
+  {
+    "name": "Goblin",
+    "clips": [
+      "Death",
+      "HitReact",
+      "Idle",
+      "Punch",
+      "Run",
+      "Walk",
+      "Weapon"
+    ],
+    "status": "Weapon · 0.87s · 7 available motions"
+  },
+  {
+    "name": "Skeleton Grunt",
+    "clips": [
+      "1H_Melee_Attack_Slice_Diagonal",
+      "Death_A",
+      "Hit_A",
+      "Idle",
+      "Spellcast_Raise",
+      "Spellcast_Shoot",
+      "Unarmed_Melee_Attack_Punch_A"
+    ],
+    "status": "Unarmed_Melee_Attack_Punch_A · 1.47s · 7 available motions"
+  },
+  {
+    "name": "Rotting Corpse",
+    "clips": [
+      "ZombieBite",
+      "ZombieWalk",
+      "ZombieIdle"
+    ],
+    "status": "ZombieIdle · 5.54s · 3 available motions"
+  },
+  {
+    "name": "Wisp of Regret",
+    "clips": [
+      "Death",
+      "Flying_Idle",
+      "Headbutt",
+      "HitReact",
+      "Punch"
+    ],
+    "status": "Punch · 1.17s · 5 available motions"
+  },
+  {
+    "name": "Ghoul Knight Ivern",
+    "clips": [
+      "1H_Melee_Attack_Slice_Diagonal",
+      "Death_A",
+      "Hit_A",
+      "Idle",
+      "Spellcast_Raise",
+      "Spellcast_Shoot",
+      "Unarmed_Melee_Attack_Punch_A"
+    ],
+    "status": "Unarmed_Melee_Attack_Punch_A · 1.47s · 7 available motions"
+  },
+  {
+    "name": "Emberbound Revenant",
+    "clips": [
+      "1H_Melee_Attack_Slice_Diagonal",
+      "Death_A",
+      "Hit_A",
+      "Idle",
+      "Spellcast_Raise",
+      "Spellcast_Shoot",
+      "Unarmed_Melee_Attack_Punch_A"
+    ],
+    "status": "Unarmed_Melee_Attack_Punch_A · 1.47s · 7 available motions"
+  },
+  {
+    "name": "Ashen Skeleton",
+    "clips": [
+      "1H_Melee_Attack_Slice_Diagonal",
+      "Death_A",
+      "Hit_A",
+      "Idle",
+      "Spellcast_Raise",
+      "Spellcast_Shoot",
+      "Unarmed_Melee_Attack_Punch_A"
+    ],
+    "status": "Unarmed_Melee_Attack_Punch_A · 1.47s · 7 available motions"
+  },
+  {
+    "name": "Lurking Flame Wraith",
+    "clips": [
+      "Death",
+      "Flying_Idle",
+      "Headbutt",
+      "HitReact",
+      "Punch"
+    ],
+    "status": "Punch · 1.17s · 5 available motions"
+  },
+  {
+    "name": "Crypt Crawler",
+    "clips": [
+      "Attack",
+      "Bite",
+      "Death",
+      "Hit",
+      "Idle",
+      "Walk"
+    ],
+    "status": "Walk · 1.00s · 6 available motions"
+  },
+  {
+    "name": "Moss-Covered Golem",
+    "clips": [
+      "Idle",
+      "Attack",
+      "Cast",
+      "Hit",
+      "Death"
+    ],
+    "status": "Death · 1.50s · 5 available motions"
+  },
+  {
+    "name": "Barkhide Shaman",
+    "clips": [
+      "Death3",
+      "Taunt",
+      "Attack2",
+      "Attack_1",
+      "Attack3",
+      "Idle",
+      "Death2",
+      "Death1"
+    ],
+    "status": "Death1 · 1.25s · 8 available motions"
+  },
+  {
+    "name": "Hollowed Oakwarden",
+    "clips": [
+      "Idle",
+      "Attack2",
+      "Death1",
+      "Attack_1",
+      "Death3",
+      "Death2",
+      "Taunt",
+      "Attack3"
+    ],
+    "status": "Attack3 · 1.25s · 8 available motions"
+  },
+  {
+    "name": "Elder Treant",
+    "clips": [
+      "Death3",
+      "Taunt",
+      "Attack2",
+      "Attack_1",
+      "Attack3",
+      "Idle",
+      "Death2",
+      "Death1"
+    ],
+    "status": "Death1 · 1.25s · 8 available motions"
+  },
+  {
+    "name": "Thundermaw",
+    "clips": [
+      "Death",
+      "Flying_Idle",
+      "Headbutt",
+      "HitReact",
+      "Punch"
+    ],
+    "status": "Punch · 1.33s · 5 available motions"
+  },
+  {
+    "name": "Thunder Drake",
+    "clips": [
+      "Death",
+      "Flying_Idle",
+      "Headbutt",
+      "HitReact",
+      "Punch"
+    ],
+    "status": "Punch · 1.33s · 5 available motions"
+  },
+  {
+    "name": "Sky Serpent",
+    "clips": [
+      "Bite",
+      "Death",
+      "Hit",
+      "Idle"
+    ],
+    "status": "Idle · 2.29s · 4 available motions"
+  },
+  {
+    "name": "Storm Hatchling",
+    "clips": [
+      "Death",
+      "Flying_Idle",
+      "Headbutt",
+      "HitReact",
+      "Punch"
+    ],
+    "status": "Punch · 1.17s · 5 available motions"
+  },
+  {
+    "name": "Skybolt Wyvern",
+    "clips": [
+      "Death",
+      "Flying_Idle",
+      "Headbutt",
+      "HitReact",
+      "Punch"
+    ],
+    "status": "Punch · 1.33s · 5 available motions"
+  },
+  {
+    "name": "Commander Kelvaris",
+    "clips": [
+      "Death",
+      "HitReact",
+      "Idle",
+      "Punch",
+      "Run",
+      "Walk",
+      "Weapon"
+    ],
+    "status": "Weapon · 0.87s · 7 available motions"
+  },
+  {
+    "name": "Fishfolk Shaman",
+    "clips": [
+      "Death",
+      "HitReact",
+      "Idle",
+      "Punch",
+      "Run",
+      "Walk",
+      "Weapon"
+    ],
+    "status": "Weapon · 0.87s · 7 available motions"
+  },
+  {
+    "name": "Fishfolk Scout",
+    "clips": [
+      "Death",
+      "HitReact",
+      "Idle",
+      "Punch",
+      "Run",
+      "Walk",
+      "Weapon"
+    ],
+    "status": "Weapon · 0.87s · 7 available motions"
+  },
+  {
+    "name": "Water Elemental",
+    "clips": [
+      "Idle",
+      "Attack",
+      "Cast",
+      "Hit",
+      "Death"
+    ],
+    "status": "Death · 1.20s · 5 available motions"
+  }
+]

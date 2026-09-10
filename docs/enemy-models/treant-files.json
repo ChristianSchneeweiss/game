@@ -1,0 +1,92 @@
+[
+  {
+    "file": "Treant Package/Treant 1/Treant_1 Textures/Set 2/Treant_1_LP_DefaultMaterial_MaskMap.png",
+    "bytes": 3694246,
+    "sha256": "72b6fe38c9ca4f1b6a7f6f457a73b4900a7897eb3129a4079472eec5c48e093c"
+  },
+  {
+    "file": "Treant Package/Treant 1/Treant_1 Textures/Set 2/Treant_1_LP_DefaultMaterial_Normal.png",
+    "bytes": 3387442,
+    "sha256": "1b0372d5b2797d520c33cfa2839b46f4536f2ce15104e23f5c50cb4a1b503d2f"
+  },
+  {
+    "file": "Treant Package/Treant 1/Treant_1 Textures/Set 2/Tree01 Albedo Light.png",
+    "bytes": 3991821,
+    "sha256": "cd50e1a9179f1242a862f6fb7f8448cff5cbbd56d599e687d916dc8583625573"
+  },
+  {
+    "file": "Treant Package/Treant 1/Treant_1 Textures/Tree01 Albedo Dark.png",
+    "bytes": 3779253,
+    "sha256": "2bc983596c1e8ebe2d0d324f4b177d307760186f10b12b8965bf1f242c926c6a"
+  },
+  {
+    "file": "Treant Package/Treant 1/Treant_1 Textures/Tree01 Detail Mask.png",
+    "bytes": 3694236,
+    "sha256": "91adf1aacb888e751f84db675ea652223874c308b7266857bd5b9b75ab70aa42"
+  },
+  {
+    "file": "Treant Package/Treant 1/Treant_1 Textures/Tree01 Normal.png",
+    "bytes": 3387441,
+    "sha256": "567a2206ac39259249b454165217b994282509fb6253c536444b7a711ec50cf2"
+  },
+  {
+    "file": "Treant Package/Treant 1/Tree01_FBX.fbx",
+    "bytes": 1937020,
+    "sha256": "bd90b4f8dd823334cbb226229ef731c1280ae601ab942d16193b96f5f674a02e"
+  },
+  {
+    "file": "Treant Package/Treant 1/Tree01_OBJ.mtl",
+    "bytes": 143,
+    "sha256": "2e22fb2618634f03ecb16b9b7040f6558673044698bf0c4f1fef6a039d40211d"
+  },
+  {
+    "file": "Treant Package/Treant 1/Tree01_OBJ.obj",
+    "bytes": 887736,
+    "sha256": "bbd37e56d4751786ce12333d96e4fdc8e02fb1b33f8b0641ea40105f65bb14fa"
+  },
+  {
+    "file": "Treant Package/Treant 2/Treant_2 Textures/Set 2/Treant_2_LP_DefaultMaterial_MaskMap.png",
+    "bytes": 4619778,
+    "sha256": "aa38a2064751ccb17a5f806cc4482b8df845b850aed2632c74aa0491ca7bb8f4"
+  },
+  {
+    "file": "Treant Package/Treant 2/Treant_2 Textures/Set 2/Treant_2_LP_DefaultMaterial_Normal.png",
+    "bytes": 4333717,
+    "sha256": "4a350203edfbeacd0b17011c32ca6025e655231561b43d631608280f5714bd52"
+  },
+  {
+    "file": "Treant Package/Treant 2/Treant_2 Textures/Set 2/Tree02 Albedo Light.png",
+    "bytes": 5037016,
+    "sha256": "585365f421dd1380718fbfd9051703b93687822756799a01bfe6e9e397287bd3"
+  },
+  {
+    "file": "Treant Package/Treant 2/Treant_2 Textures/Tree02 Albedo Dark.png",
+    "bytes": 4695545,
+    "sha256": "0378a877e4bfb0179e8b528753517820c98ee6ebd002bbccbe70b6e6ad389d35"
+  },
+  {
+    "file": "Treant Package/Treant 2/Treant_2 Textures/Tree02 Detail Mask.png",
+    "bytes": 4619759,
+    "sha256": "8d78dd43b1376a769502f602144a2cf46096769e5a20a3929b20b91841ffe928"
+  },
+  {
+    "file": "Treant Package/Treant 2/Treant_2 Textures/Tree02 Normal.png",
+    "bytes": 4333716,
+    "sha256": "22460f23a71144bfd11bd4b8089e4759b289ac58e8fa145f69c962d5e9c260f5"
+  },
+  {
+    "file": "Treant Package/Treant 2/Tree02_FBX.fbx",
+    "bytes": 2104764,
+    "sha256": "f7f5b4b015ee4df4088b438df80abdc923f1b9a5e430a12d5f069bc87e952293"
+  },
+  {
+    "file": "Treant Package/Treant 2/Tree02_OBJ.mtl",
+    "bytes": 143,
+    "sha256": "2e22fb2618634f03ecb16b9b7040f6558673044698bf0c4f1fef6a039d40211d"
+  },
+  {
+    "file": "Treant Package/Treant 2/Tree02_OBJ.obj",
+    "bytes": 887875,
+    "sha256": "1dd36d277653a25a0f68afbffa53dc24f2aea952da8ef1a9dbe1381694bb3e1e"
+  }
+]

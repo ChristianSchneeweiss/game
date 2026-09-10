@@ -1,0 +1,44 @@
+{
+  "renderer": {
+    "frames": 660,
+    "p50": 16.69999998807907,
+    "p95": 19,
+    "max": 41.30000001192093,
+    "playback": {
+      "frames": 0,
+      "p50": 0,
+      "p95": 0,
+      "max": 0,
+      "kinds": []
+    },
+    "calls": 111,
+    "triangles": 59742,
+    "geometries": 70,
+    "textures": 21
+  },
+  "viewport": [
+    1440,
+    1000
+  ],
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+  "modelReady": [
+    210.4000000357628
+  ],
+  "controlsReady": [
+    53
+  ],
+  "resources": [
+    {
+      "name": "/models/battle-v2/dragon.glb",
+      "duration": 11.800000011920929,
+      "transferSize": 229136,
+      "encodedBodySize": 228836
+    },
+    {
+      "name": "/models/battle-v2/knight.glb",
+      "duration": 16.400000035762787,
+      "transferSize": 488868,
+      "encodedBodySize": 488568
+    }
+  ]
+}

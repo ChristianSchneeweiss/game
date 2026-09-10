@@ -3,6 +3,7 @@ import type { Entity } from "@loot-game/game/entity-types";
 import type { EffectTracking } from "@loot-game/game/bm";
 import type { TimelineEventFull } from "@loot-game/game/timeline-events";
 import SuperJSON from "superjson";
+import type { SpellType } from "@loot-game/game/spells/base/spell-types";
 
 export type Stats = {
   health: number;
@@ -19,7 +20,32 @@ export type VisualCue = {
   casterId?: string;
   targetIds: string[];
   label: string;
+  style: "melee" | "spell" | "heal" | "ward" | "effect" | "update";
+  skillType?: SpellType;
+  effectId?: string;
+  major?: boolean;
 };
+// Presentation categories only. Unknown spells use a generic cast; this never
+// infers damage, elemental rules or additional targets.
+const meleeSpells = new Set([
+  "basic-attack",
+  "festering-blow",
+  "final-verdict",
+  "bladestorm-rhythm",
+  "staggering-jab",
+  "crude-strike",
+  "vital-strike",
+  "splinter-shot",
+  "precise-thrust",
+  "crushing-blow",
+  "stunning-strike",
+  "torrent-spiral",
+  "tidepiercer-thrust",
+  "rupture",
+  "bulwark-bash",
+  "earthshatter",
+  "storm-pulse",
+]);
 export type DisplayFrame = {
   stats: Map<string, Stats>;
   cue?: VisualCue;
@@ -81,6 +107,7 @@ export function buildTimeline(
       kind: event.eventType,
       targetIds: [],
       label: "Battle update",
+      style: "update",
     };
     if (
       event.eventType === "SPELL_CAST" ||
@@ -92,8 +119,35 @@ export function buildTimeline(
           owner?.entity.id ??
           participants.find((e) => e.id === event.data.spellId)?.id;
         cue.label = owner?.spell.config.name ?? "Effect applied";
+        cue.skillType = owner?.spell.config.type;
+        cue.major =
+          owner?.spell.config.tier === "S" ||
+          (owner?.spell.config.manaCost ?? 0) >= 35;
+        cue.style = event.data.healingApplied?.size
+          ? "heal"
+          : !event.data.damageApplied?.size && event.data.effectsApplied?.size
+            ? "ward"
+            : owner && meleeSpells.has(owner.spell.config.type)
+              ? "melee"
+              : "spell";
+        const appliedIds = [
+          ...(event.data.effectsApplied?.values() ?? []),
+        ].flat();
+        const passiveOnly =
+          event.data.spellId === cue.casterId &&
+          event.data.roll === 0 &&
+          appliedIds.length > 0 &&
+          !event.data.damageApplied?.size &&
+          !event.data.healingApplied?.size &&
+          appliedIds.every((id) => effects.get(id)?.effectType === "PASSIVE");
+        if (passiveOnly) {
+          cue.label = "Passive effect";
+          cue.style = "effect";
+          cue.skillType = undefined;
+          if (appliedIds.length === 1) cue.effectId = appliedIds[0];
+        }
         const caster = owner && stats.get(owner.entity.id);
-        if (caster && owner) {
+        if (caster && owner && !passiveOnly) {
           caster.deltaMana = -Math.min(
             caster.mana,
             owner.spell.config.manaCost,
@@ -108,11 +162,13 @@ export function buildTimeline(
           caster.roll = event.data.roll;
         }
       } else {
+        cue.effectId = event.data.effectId;
         const effect = effects.get(event.data.effectId);
         cue.casterId = effect?.sourceId;
         cue.label = effect
           ? `${effect.effectType} triggers`
           : "Effect triggers";
+        cue.style = event.data.healingApplied?.size ? "heal" : "effect";
         if (effect) cue.targetIds.push(effect.targetId);
       }
       const { damageApplied, healingApplied, effectsApplied } = event.data;
@@ -141,6 +197,8 @@ export function buildTimeline(
         s.flags.dead = s.health <= 0;
       }
     } else if (event.eventType === "EFFECT_REMOVAL") {
+      cue.effectId = event.data.effectId;
+      cue.style = "effect";
       const effect = effects.get(event.data.effectId);
       cue.label = effect ? `${effect.effectType} ends` : "Effect ends";
       for (const [id, s] of stats) {
@@ -185,6 +243,12 @@ export function buildTimeline(
       }
     }
     cue.targetIds = [...new Set(cue.targetIds)];
+    if (
+      cue.kind === "SPELL_CAST" &&
+      cue.style !== "effect" &&
+      cue.targetIds.length > 1
+    )
+      cue.major = true;
     frames.push({ stats, cue, event: full });
   }
   return frames;

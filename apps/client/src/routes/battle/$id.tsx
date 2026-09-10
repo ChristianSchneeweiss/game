@@ -55,7 +55,7 @@ function LiveBattle({ id }: { id: string }) {
           reset on reconnect.
         </div>
       )}
-      {import.meta.env.DEV && (
+      {import.meta.env.DEV && !threeD && (
         <div
           className="flex justify-end gap-2 px-6 py-3"
           aria-label="Battle presentation"

@@ -1,0 +1,26 @@
+[
+  {
+    "output": "Moss_Golem.glb",
+    "bytes": 128228,
+    "sha256": "44353cac8d6aebc20f189a68b3d4ff70f4b5af2064bdf168acc00935542dc0dc",
+    "clips": [
+      "Idle",
+      "Attack",
+      "Cast",
+      "Hit",
+      "Death"
+    ]
+  },
+  {
+    "output": "Water_Elemental.glb",
+    "bytes": 112360,
+    "sha256": "68eb8bc36d83e85591fb76a3100d99dfc44f544273fbec944d8a04f51213f6a3",
+    "clips": [
+      "Idle",
+      "Attack",
+      "Cast",
+      "Hit",
+      "Death"
+    ]
+  }
+]

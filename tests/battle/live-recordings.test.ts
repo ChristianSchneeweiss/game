@@ -12,9 +12,16 @@ import {
 } from "../../apps/server/src/battle/starting-builds";
 import { registerRecipes } from "../../apps/server/src/lib/superjson-recipes";
 import { buildTimeline } from "../../apps/client/src/routes/battle/-presentation/timeline";
+import { buildConditionDetails } from "../../apps/client/src/routes/battle/-presentation/battle-effects";
+import { buildActionHistory } from "../../apps/client/src/routes/battle/-presentation/action-history";
 
 registerRecipes();
-for (const name of ["live-goblin", "live-six-entity"]) {
+for (const name of [
+  "live-goblin",
+  "live-six-entity",
+  "live-milestone-2",
+  "live-milestone-3",
+]) {
   test(`${name}: authenticated browser recording agrees with persisted results and frozen-build restoration`, () => {
     const recording = JSON.parse(
       readFileSync(
@@ -42,9 +49,18 @@ for (const name of ["live-goblin", "live-six-entity"]) {
     const effects = SuperJSON.deserialize<EffectTracking>(
       result.effect_tracking,
     );
-    const final = buildTimeline(participants, events, undefined, effects).at(
-      -1,
-    )!.stats;
+    const frames = buildTimeline(participants, events, undefined, effects);
+    const conditions = buildConditionDetails(participants, events, effects);
+    for (const participant of participants) {
+      for (const passive of participant.passiveSkills ?? []) {
+        if ("passiveType" in passive) {
+          expect(conditions.get(passive.id)?.iconType).toBe(
+            passive.passiveType,
+          );
+        }
+      }
+    }
+    const final = frames.at(-1)!.stats;
     const restored = new BM(
       restoreStartingBuilds(
         SuperJSON.deserialize<StartingBuilds>(recording.startingBuilds),
@@ -72,7 +88,17 @@ for (const name of ["live-goblin", "live-six-entity"]) {
         expect(restored.getEntityById(entity.id)!.mana).toBe(entity.mana);
       }
     }
-    if (name === "live-six-entity") {
+    if (name !== "live-goblin") {
+      expect(frames[1].cue).toMatchObject({
+        label: "Passive effect",
+        style: "effect",
+      });
+      expect(
+        buildActionHistory(frames, participants, conditions)[0],
+      ).toMatchObject({
+        label: "Armor Up",
+        iconType: "armor-up",
+      });
       const first = recording.commands[0].data;
       const cast = events.find(
         (event) =>

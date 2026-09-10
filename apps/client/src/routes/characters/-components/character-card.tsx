@@ -1,3 +1,4 @@
+import { SkillIcon } from "@/components/skill-icon";
 import { Button } from "@/components/ui/button";
 import { RpgBadge, RpgInset, RpgMeter, RpgPanel } from "@/components/rpg-ui";
 import { cn } from "@/lib/utils";
@@ -16,7 +17,7 @@ import {
   Zap,
 } from "lucide-react";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { RenameDialog } from "./rename-dialog";
 
 const coreAttributes = [
@@ -419,7 +420,7 @@ export const CharacterCard = ({
                   character.passiveSkills.map((passive) => (
                     <ActionRow
                       key={passive.id}
-                      icon="🌟"
+                      icon={<SkillIcon type={passive.passiveType} size={32} />}
                       title={formatLabel(passive.passiveType)}
                       onRemove={async () => {
                         try {
@@ -454,7 +455,7 @@ export const CharacterCard = ({
                   character.spells.map((spell) => (
                     <ActionRow
                       key={spell.config.id}
-                      icon="⚡"
+                      icon={<SkillIcon type={spell.config.type} size={32} />}
                       title={spell.config.name}
                       locked={spell.config.type === "basic-attack"}
                       onRemove={async () => {
@@ -533,7 +534,7 @@ function ActionRow({
   onRemove,
   locked = false,
 }: {
-  icon: string;
+  icon: ReactNode;
   title: string;
   onRemove: () => Promise<void>;
   locked?: boolean;

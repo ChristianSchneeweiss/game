@@ -10,13 +10,22 @@ import {
 import { Group, PCFShadowMap, Vector3 } from "three";
 import type { Entity } from "@loot-game/game/entity-types";
 import type { Stats, VisualCue } from "./timeline";
-import { Miniature, useMiniatureAsset } from "./miniature";
-import { miniature, sceneFault } from "./visual-manifest";
+import {
+  Miniature,
+  useMiniatureAssets,
+  type MiniatureAssetResult,
+} from "./miniature";
+import { miniatureFor, sceneFault } from "./visual-manifest";
+import { ActionFeedback, cueColor } from "./action-feedback";
 import { entityLabel } from "./entity-label";
+import { ConditionIcons } from "./condition-icons";
+import type { ConditionDetail } from "./battle-effects";
 
 type Props = {
   participants: Entity[];
   stats: Map<string, Stats>;
+  conditions: Map<string, ConditionDetail>;
+  durationMs: number;
   activeId?: string;
   selected: string[];
   legal: string[];
@@ -83,13 +92,13 @@ export function formation(participants: Entity[]) {
       positions.set(
         entity.id,
         team === "TEAM_A"
-          ? [-3.7, 0, members.length === 1 ? 0 : (i - 0.5) * 3.6]
+          ? [-7 + i * 3.15, 0, members.length === 1 ? 0 : (i - 0.5) * 4.4]
           : [
-              2.3 + (i % 2) * 3.1,
+              (i % 2) * 6.3 + Math.floor(i / 2) * 3.15,
               0,
               members.length <= 2
                 ? (i - (members.length - 1) / 2) * 3.5
-                : (Math.floor(i / 2) - 0.5) * 3.6,
+                : (Math.floor(i / 2) - 0.5) * 4.4,
             ],
       );
     });
@@ -102,11 +111,13 @@ function CameraAndMetrics({
   labels,
   onFailure,
   cueKind,
+  participants,
 }: {
   positions: Map<string, [number, number, number]>;
   labels: Map<string, HTMLDivElement>;
   onFailure: () => void;
   cueKind?: string;
+  participants: Entity[];
 }) {
   const { camera, size, gl } = useThree();
   const times = useRef<number[]>([]);
@@ -114,6 +125,16 @@ function CameraAndMetrics({
   const activeKinds = useRef(new Set<string>());
   const frameCount = useRef(0);
   const point = useMemo(() => new Vector3(), []);
+  const labelHeights = useMemo(
+    () =>
+      new Map(
+        participants.map((entity) => [
+          entity.id,
+          miniatureFor(entity).labelHeight,
+        ]),
+      ),
+    [participants],
+  );
   useEffect(() => {
     gl.domElement.addEventListener("webglcontextlost", onFailure);
     return () =>
@@ -121,16 +142,16 @@ function CameraAndMetrics({
   }, [gl, onFailure]);
   useEffect(() => {
     if ("zoom" in camera) {
-      camera.zoom = Math.min(size.width / 15, size.height / 10.5);
-      camera.position.set(0, 11, 13);
-      camera.lookAt(0, 0, 0);
+      camera.zoom = Math.min(size.width / 24, size.height / 9.3);
+      camera.position.set(1.4, 9.5, 15);
+      camera.lookAt(1.4, 1.65, 0);
       camera.updateProjectionMatrix();
     }
   }, [camera, size]);
   useFrame((_, delta) => {
     for (const [id, position] of positions) {
       point
-        .set(position[0], miniature.labelHeight, position[2])
+        .set(position[0], labelHeights.get(id) ?? 2.6, position[2])
         .project(camera);
       const label = labels.get(id);
       if (label)
@@ -170,54 +191,72 @@ function Diorama({
   labels: Map<string, HTMLDivElement>;
   onAssetStatus: (status: string) => void;
 }) {
-  const { asset, error } = useMiniatureAsset();
+  const definitions = useMemo(
+    () => props.participants.map(miniatureFor),
+    [props.participants],
+  );
+  const assets = useMiniatureAssets(
+    definitions.map((definition) => definition.url),
+  );
   const positions = useMemo(
     () => formation(props.participants),
     [props.participants],
   );
   useEffect(() => {
+    const failed = new Set<string>();
+    let loading = false;
+    let missingClip = false;
+    for (const definition of definitions) {
+      const result = assets.get(definition.url);
+      if (result?.error) failed.add(definition.name);
+      else if (!result?.asset) loading = true;
+      else {
+        const clips = new Set<string>();
+        for (const clip of result.asset.animations)
+          if (clip.duration > 0) clips.add(clip.name);
+        missingClip ||= Object.values(definition.clips).some(
+          (name) => name !== null && !clips.has(name),
+        );
+      }
+    }
     onAssetStatus(
-      error
-        ? "Model unavailable · using simple miniatures"
-        : !asset
+      failed.size
+        ? `${[...failed].join(", ")} unavailable · simple miniature fallback`
+        : loading
           ? "Loading miniatures…"
-          : Object.values(miniature.clips).some(
-                (name) =>
-                  !asset.animations.some(
-                    (clip) => clip.name === name && clip.duration > 0,
-                  ),
-              )
+          : missingClip
             ? "Animation unavailable · impact markers remain active"
             : "",
     );
-    if (asset) performance.mark("battle-model-ready");
-  }, [asset, error, onAssetStatus]);
+    if (!loading && !failed.size) performance.mark("battle-model-ready");
+  }, [assets, definitions, onAssetStatus]);
   if (sceneFault === "graphics")
     throw new Error("Development graphics failure check");
   return (
     <>
       <CameraAndMetrics
         positions={positions}
+        participants={props.participants}
         labels={labels}
         onFailure={onFailure}
         cueKind={props.speed > 0 ? props.cue?.kind : undefined}
       />
       <color attach="background" args={["#11191a"]} />
       <fog attach="fog" args={["#11191a", 19, 37]} />
-      <ambientLight intensity={1.2} color="#ccd5c7" />
+      <ambientLight intensity={1.5} color="#c7d4e0" />
       <directionalLight
-        position={[-4, 10, 5]}
-        intensity={3}
+        position={[-3, 9, 8]}
+        intensity={2.7}
         color="#ffe2b0"
         castShadow
         shadow-mapSize={[1024, 1024]}
-        shadow-camera-left={-9}
-        shadow-camera-right={9}
+        shadow-camera-left={-12}
+        shadow-camera-right={13}
         shadow-camera-top={8}
         shadow-camera-bottom={-8}
         shadow-bias={-0.001}
       />
-      <directionalLight position={[5, 5, -5]} intensity={2} color="#71b5be" />
+      <directionalLight position={[4, 6, -6]} intensity={2.2} color="#8caed0" />
       <mesh
         rotation={[-Math.PI / 2, 0, 0]}
         position={[0, -0.18, 0]}
@@ -226,17 +265,17 @@ function Diorama({
         <planeGeometry args={[200, 200]} />
         <meshStandardMaterial color="#141c1d" roughness={1} />
       </mesh>
-      <mesh position={[0, -0.12, 0]} receiveShadow>
-        <boxGeometry args={[14.6, 0.3, 9.2]} />
+      <mesh position={[1.4, -0.12, 0]} receiveShadow>
+        <boxGeometry args={[22.2, 0.3, 9.2]} />
         <meshStandardMaterial color="#303a38" roughness={1} />
       </mesh>
       {Array.from({ length: 28 }, (_, i) => (
         <mesh
           key={i}
-          position={[-6 + (i % 7) * 2, 0.045, -3 + Math.floor(i / 7) * 2]}
+          position={[-7.9 + (i % 7) * 3.1, 0.045, -3 + Math.floor(i / 7) * 2]}
           receiveShadow
         >
-          <boxGeometry args={[1.97, 0.05, 1.97]} />
+          <boxGeometry args={[3.07, 0.05, 1.97]} />
           <meshStandardMaterial
             color={i % 3 === 0 ? "#37413d" : "#323b38"}
             roughness={1}
@@ -245,7 +284,10 @@ function Diorama({
       ))}
       {[-1, 1].flatMap((side) =>
         [-1, 1].map((end) => (
-          <group key={`${side}:${end}`} position={[side * 6.8, 0, end * 4.2]}>
+          <group
+            key={`${side}:${end}`}
+            position={[1.4 + side * 10.6, 0, end * 4.2]}
+          >
             <mesh position={[0, 0.35, 0]} castShadow>
               <boxGeometry args={[0.65, 0.7, 0.65]} />
               <meshStandardMaterial color="#464740" />
@@ -267,9 +309,18 @@ function Diorama({
           {...props}
           entity={entity}
           position={positions.get(entity.id)!}
-          asset={asset}
+          asset={assets.get(miniatureFor(entity).url)?.asset}
         />
       ))}
+      <ActionFeedback
+        cue={props.cue}
+        cueKey={props.cueKey}
+        positions={positions}
+        durationMs={props.durationMs}
+        impact={props.impact}
+        speed={props.speed}
+        reducedMotion={props.reducedMotion}
+      />
     </>
   );
 }
@@ -282,21 +333,28 @@ function Actor({
 }: Omit<Props, "onFailure"> & {
   entity: Entity;
   position: [number, number, number];
-  asset: ReturnType<typeof useMiniatureAsset>["asset"];
+  asset: MiniatureAssetResult["asset"];
 }) {
   const root = useRef<Group>(null);
   const stats = props.stats.get(entity.id);
+  const definition = miniatureFor(entity);
   const dead = stats?.flags.dead;
   const selected = props.selected.includes(entity.id);
   const legal = props.legal.includes(entity.id) && !dead;
   const active = props.activeId === entity.id;
   const hit = props.impact && props.cue?.targetIds.includes(entity.id);
   const casting =
-    props.cue?.casterId === entity.id && props.cue.kind === "SPELL_CAST";
+    props.cue?.casterId === entity.id &&
+    props.cue.kind === "SPELL_CAST" &&
+    props.cue.style !== "effect";
   const action = dead
     ? "death"
     : casting
-      ? "attack"
+      ? props.cue?.style === "melee"
+        ? "attack"
+        : props.cue?.style === "heal" || props.cue?.style === "ward"
+          ? "heal"
+          : "cast"
       : hit && (stats?.deltaHealth ?? 0) < 0
         ? "hit"
         : "idle";
@@ -314,12 +372,13 @@ function Actor({
     elapsed.current = 0;
   }, [props.cueKey]);
   useFrame((_, delta) => {
-    elapsed.current += delta * props.speed;
+    elapsed.current +=
+      Math.min(delta, 0.1) * props.speed * (1000 / props.durationMs);
     if (!root.current) return;
     root.current.position.x =
-      !props.reducedMotion && casting
+      !props.reducedMotion && casting && props.cue?.style === "melee"
         ? Math.sin(Math.min(elapsed.current, 1) * Math.PI) *
-          (entity.team === "TEAM_A" ? 0.4 : -0.4)
+          (entity.team === "TEAM_A" ? 0.7 : -0.7)
         : 0;
   });
   return (
@@ -335,7 +394,10 @@ function Actor({
         <meshBasicMaterial color={color} />
       </mesh>
       {active && (
-        <mesh position={[0, 3.2, 0]} rotation={[0, 0, Math.PI]}>
+        <mesh
+          position={[0, definition.labelHeight + 0.22, 0]}
+          rotation={[0, 0, Math.PI]}
+        >
           <coneGeometry args={[0.18, 0.36, 4]} />
           <meshBasicMaterial color="#e3bd74" />
         </mesh>
@@ -359,7 +421,7 @@ function Actor({
         <mesh position={[0, 1.2, 0]}>
           <sphereGeometry args={[0.9, 12, 8]} />
           <meshBasicMaterial
-            color={(stats?.deltaHealth ?? 0) > 0 ? "#82d6af" : "#f0ac77"}
+            color={cueColor(props.cue?.style)}
             wireframe
             transparent
             opacity={0.45}
@@ -368,20 +430,19 @@ function Actor({
       )}
       <group
         ref={root}
-        rotation={[
-          0,
-          entity.team === "TEAM_A" ? miniature.facing : -miniature.facing,
-          0,
-        ]}
+        rotation={[0, definition.facing, 0]}
         position={[0, 0.2, 0]}
       >
         {asset ? (
           <Miniature
             asset={asset}
+            definition={definition}
             action={action}
             cueKey={dead ? "death" : casting || hit ? props.cueKey : action}
             speed={props.speed}
+            durationMs={props.durationMs}
             reducedMotion={props.reducedMotion}
+            deathSettled={!!dead && (!hit || props.cue?.kind === "DEATH")}
           />
         ) : (
           <group rotation={[0, 0, dead ? Math.PI / 2 : 0]}>
@@ -421,7 +482,7 @@ export default function BattleScene(props: Props) {
           orthographic
           shadows={{ type: PCFShadowMap }}
           dpr={[1, 1.5]}
-          camera={{ position: [0, 11, 13], near: 0.1, far: 100, zoom: 50 }}
+          camera={{ position: [0.4, 8.5, 15], near: 0.1, far: 100, zoom: 50 }}
           fallback={<p>WebGL is unavailable. Use Cards to continue.</p>}
         >
           <Diorama
@@ -454,10 +515,20 @@ export default function BattleScene(props: Props) {
                 else labels.current.delete(entity.id);
               }}
               data-entity-label={entity.id}
+              data-model={miniatureFor(entity).id}
+              data-state={
+                stats?.flags.dead
+                  ? "fallen"
+                  : props.selected.includes(entity.id)
+                    ? "selected"
+                    : props.activeId === entity.id
+                      ? "acting"
+                      : "idle"
+              }
             >
               <span>{marker}</span>
               <strong>{entityLabel(entity, props.participants)}</strong>
-              <div>
+              <div className="battle-actor-health">
                 <i
                   style={{
                     width: `${Math.max(0, (stats?.health ?? 0) / entity.maxHealth) * 100}%`,
@@ -466,10 +537,12 @@ export default function BattleScene(props: Props) {
               </div>
               <small>
                 {stats?.health ?? 0} / {entity.maxHealth} HP
-                {stats?.activeEffects.length
-                  ? ` · ✦ ${stats.activeEffects.length}`
-                  : ""}
               </small>
+              <ConditionIcons
+                ids={stats?.activeEffects ?? []}
+                details={props.conditions}
+                entityName={entityLabel(entity, props.participants)}
+              />
               {props.impact && stats?.deltaHealth ? (
                 <b
                   className={stats.deltaHealth > 0 ? "is-healing" : "is-damage"}

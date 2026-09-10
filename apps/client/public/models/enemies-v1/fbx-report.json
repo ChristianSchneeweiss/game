@@ -1,0 +1,75 @@
+[
+  {
+    "file": "Zombie.fbx",
+    "texture": "ZombieTexture.png",
+    "output": "Zombie.glb",
+    "url": "https://quaternius.com/packs/animatedzombie.html",
+    "sha256": "203d76f29b12c58529ab6bdf8d3b414b869e9858b2c25f9f9ea5f161ae90349e",
+    "textureSha256": "43e4bb1aea01e85dddc02000094c07250fbb07ffcb796aa18805cfb5d368e801",
+    "textureOutputSha256": "43e4bb1aea01e85dddc02000094c07250fbb07ffcb796aa18805cfb5d368e801",
+    "textureOutputBytes": 211,
+    "textureMaxDimension": null,
+    "sourceBytes": 1573820,
+    "bytes": 658224,
+    "outputSha256": "8d9f0bfdcc456575b65e2b19401ed7787bdf45cf856f16c3cbc8edc3f7d99c2d",
+    "clips": [
+      "ZombieBite",
+      "ZombieWalk",
+      "ZombieIdle"
+    ],
+    "meshes": 1,
+    "skins": 1
+  },
+  {
+    "file": "Treant Package/Treant 1/Tree01_FBX.fbx",
+    "texture": "Treant Package/Treant 1/Treant_1 Textures/Tree01 Albedo Dark.png",
+    "output": "Tree01.glb",
+    "url": "https://tennessippistudios.itch.io/treant-pack",
+    "sha256": "bd90b4f8dd823334cbb226229ef731c1280ae601ab942d16193b96f5f674a02e",
+    "textureSha256": "2bc983596c1e8ebe2d0d324f4b177d307760186f10b12b8965bf1f242c926c6a",
+    "textureOutputSha256": "9e1d4d82d9fb4c6e67bc1471d2eab4395d8dfaa8ed41bbdef5ab9eb7bb11be96",
+    "textureOutputBytes": 422436,
+    "textureMaxDimension": 512,
+    "sourceBytes": 1937020,
+    "bytes": 838576,
+    "outputSha256": "4e95409e8389b91cd3226958e50bb1909072197661744f5b0011db0b8acb4800",
+    "clips": [
+      "Death3",
+      "Taunt",
+      "Attack2",
+      "Attack_1",
+      "Attack3",
+      "Idle",
+      "Death2",
+      "Death1"
+    ],
+    "meshes": 1,
+    "skins": 1
+  },
+  {
+    "file": "Treant Package/Treant 2/Tree02_FBX.fbx",
+    "texture": "Treant Package/Treant 2/Treant_2 Textures/Set 2/Tree02 Albedo Light.png",
+    "output": "Tree02.glb",
+    "url": "https://tennessippistudios.itch.io/treant-pack",
+    "sha256": "f7f5b4b015ee4df4088b438df80abdc923f1b9a5e430a12d5f069bc87e952293",
+    "textureSha256": "585365f421dd1380718fbfd9051703b93687822756799a01bfe6e9e397287bd3",
+    "textureOutputSha256": "5bc00c4ce18176b52a77fbc733daac1e0e6f985f29fe2f4e8cd2e4b5ec552c53",
+    "textureOutputBytes": 536637,
+    "textureMaxDimension": 512,
+    "sourceBytes": 2104764,
+    "bytes": 1041744,
+    "outputSha256": "3861e573ed2b926d6d7be7b8be026ee39e7f9df0dae832f428ba1338fa3b69b4",
+    "clips": [
+      "Idle",
+      "Attack2",
+      "Death1",
+      "Attack_1",
+      "Death3",
+      "Death2",
+      "Taunt",
+      "Attack3"
+    ],
+    "meshes": 1,
+    "skins": 1
+  }
+]

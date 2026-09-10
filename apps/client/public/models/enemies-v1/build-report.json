@@ -1,0 +1,210 @@
+[
+  {
+    "file": "Big-Fish.gltf",
+    "url": "https://drive.google.com/uc?export=download&id=1mQqf-c9O4u3bk2ycpt-DFraGfRjcVfZV",
+    "sha256": "9549f80351ad7c8e97c6894662a80fb42e4df8ebc7588b6912ea8f9e2ec6b9b1",
+    "output": "Big-Fish.glb",
+    "sourceBytes": 1261440,
+    "bytes": 424364,
+    "outputSha256": "1d2e614f02b835ab6cc96efb213ff3a760721f0c7ee19b01c80c5e6938bcc279",
+    "clips": [
+      "Death",
+      "HitReact",
+      "Idle",
+      "Punch",
+      "Run",
+      "Walk",
+      "Weapon"
+    ],
+    "meshes": 1,
+    "skins": 1
+  },
+  {
+    "file": "Big-Orc.gltf",
+    "url": "https://drive.google.com/uc?export=download&id=17675H4Owu5FeHUk_7Goyc9TKI5YK3cEM",
+    "sha256": "e61a37f8d9b2eee28928bdfad2c55e0798cc0a212e925cc5dcc66b243526c1a3",
+    "output": "Big-Orc.glb",
+    "sourceBytes": 1280189,
+    "bytes": 449520,
+    "outputSha256": "1d5f042315dc36b6d1756c364beff68f8af1fce4225c8ef391436aac9d871fc0",
+    "clips": [
+      "Death",
+      "HitReact",
+      "Idle",
+      "Punch",
+      "Run",
+      "Walk",
+      "Weapon"
+    ],
+    "meshes": 2,
+    "skins": 1
+  },
+  {
+    "file": "Flying-Dragon_Evolved.gltf",
+    "url": "https://drive.google.com/uc?export=download&id=1Mcfuavq7F4itG9xhqc-20_IL257ZY2_3",
+    "sha256": "39ba6ea24b5f27acf68bbf4c19fe80ba070dbec167ff14bbe933453303426f5c",
+    "output": "Flying-Dragon_Evolved.glb",
+    "sourceBytes": 991335,
+    "bytes": 429488,
+    "outputSha256": "7274246c8d3ad67db6dc70559db04d39bfdc88e5ad7c5aaf139e4ece1838b7ba",
+    "clips": [
+      "Death",
+      "Flying_Idle",
+      "Headbutt",
+      "HitReact",
+      "Punch"
+    ],
+    "meshes": 1,
+    "skins": 1
+  },
+  {
+    "file": "Flying-Dragon.gltf",
+    "url": "https://drive.google.com/uc?export=download&id=1-mQSm6_oGt7-EEQfNj1dFWYgPQy4AdPC",
+    "sha256": "d219a29b5e928da26c24218a64284bbf999b88484a508ac6c01e0edad9f1f56c",
+    "output": "Flying-Dragon.glb",
+    "sourceBytes": 427100,
+    "bytes": 228836,
+    "outputSha256": "1c75d437de6bc09c164cf32664bfd9c0551550a1e73f9b9f64ce5297c836091b",
+    "clips": [
+      "Death",
+      "Flying_Idle",
+      "Headbutt",
+      "HitReact",
+      "Punch"
+    ],
+    "meshes": 1,
+    "skins": 1
+  },
+  {
+    "file": "Flying-Ghost_Skull.gltf",
+    "url": "https://drive.google.com/uc?export=download&id=1JIw8lx6H5IIhf_3Z5FprEu_yCoMcoRN7",
+    "sha256": "5bf24cf0f22aa94b0b58315e7d879afc53a0964a5b326aa0c844ba3278cae1da",
+    "output": "Flying-Ghost_Skull.glb",
+    "sourceBytes": 682385,
+    "bytes": 258004,
+    "outputSha256": "dab2cdc857be006b878dcbcb2faaeb0f5b3f43a4d6d714fc180299b7be97f36f",
+    "clips": [
+      "Death",
+      "Flying_Idle",
+      "Headbutt",
+      "HitReact",
+      "Punch"
+    ],
+    "meshes": 1,
+    "skins": 1
+  },
+  {
+    "file": "Flying-Ghost.gltf",
+    "url": "https://drive.google.com/uc?export=download&id=1rUs1QRA9v1Y2wRYEXsfteBisTsz4JlLi",
+    "sha256": "40bea9d887874cc86b391b83e72cc5ac2cac340892e23f3d8068a568b6e61457",
+    "output": "Flying-Ghost.glb",
+    "sourceBytes": 643180,
+    "bytes": 228364,
+    "outputSha256": "ba93cd49e3efc2c00e4254247bfcf461238beaff49405ddf71e5e3731481e283",
+    "clips": [
+      "Death",
+      "Flying_Idle",
+      "Headbutt",
+      "HitReact",
+      "Punch"
+    ],
+    "meshes": 1,
+    "skins": 1
+  },
+  {
+    "file": "Skeleton_Minion.glb",
+    "url": "https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0/15b62b9bad122f72926c10fb14d622c73819fa54/addons/kaykit_character_pack_skeletons/Characters/gltf/Skeleton_Minion.glb",
+    "sha256": "6ffc003f895bed0b074791e0e490846210a2e2f8fc7da300aba53cc185f95968",
+    "output": "Skeleton_Minion.glb",
+    "sourceBytes": 4814296,
+    "bytes": 557640,
+    "outputSha256": "fc6bd80f226d37a04db5df666ca93433515afdbca78ff432561c5a171431aaba",
+    "clips": [
+      "Idle",
+      "1H_Melee_Attack_Slice_Diagonal",
+      "Unarmed_Melee_Attack_Punch_A",
+      "Spellcast_Shoot",
+      "Spellcast_Raise",
+      "Hit_A",
+      "Death_A"
+    ],
+    "meshes": 9,
+    "skins": 1
+  },
+  {
+    "file": "Skeleton_Warrior.glb",
+    "url": "https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0/15b62b9bad122f72926c10fb14d622c73819fa54/addons/kaykit_character_pack_skeletons/Characters/gltf/Skeleton_Warrior.glb",
+    "sha256": "178b6fda810b814c250d8a2010c24dfd9b458b9006dd323353e620b7ff118bbe",
+    "output": "Skeleton_Warrior.glb",
+    "sourceBytes": 4863620,
+    "bytes": 606464,
+    "outputSha256": "a65736f9e60253c97cffc3bc6e118e8cb2821caffd34709442f278e7ccde6e86",
+    "clips": [
+      "Idle",
+      "1H_Melee_Attack_Slice_Diagonal",
+      "Unarmed_Melee_Attack_Punch_A",
+      "Spellcast_Shoot",
+      "Spellcast_Raise",
+      "Hit_A",
+      "Death_A"
+    ],
+    "meshes": 10,
+    "skins": 1
+  },
+  {
+    "file": "Skeleton_Mage.glb",
+    "url": "https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0/15b62b9bad122f72926c10fb14d622c73819fa54/addons/kaykit_character_pack_skeletons/Characters/gltf/Skeleton_Mage.glb",
+    "sha256": "e05b0f5cfa395271c9f75fd07c0a0613c56f401ece4ab644e080001a79971075",
+    "output": "Skeleton_Mage.glb",
+    "sourceBytes": 4761048,
+    "bytes": 504784,
+    "outputSha256": "3a3b0d30f2ba8d1ba36f88158c0530d73c019905db4e837c0a66ab937a4c9be9",
+    "clips": [
+      "Idle",
+      "1H_Melee_Attack_Slice_Diagonal",
+      "Unarmed_Melee_Attack_Punch_A",
+      "Spellcast_Shoot",
+      "Spellcast_Raise",
+      "Hit_A",
+      "Death_A"
+    ],
+    "meshes": 9,
+    "skins": 1
+  },
+  {
+    "file": "spider-animations.glb",
+    "url": "https://raw.githubusercontent.com/Mesh2Motion/mesh2motion-app/2d3d1ff03247d9e7e830d1ae375653da4e2146e2/static/animations/spider-animations.glb",
+    "sha256": "a321c1617c7f74cf86c050694bc254e74409c6c69db26fe542338f2f7c43d07a",
+    "output": "spider-animations.glb",
+    "sourceBytes": 597156,
+    "bytes": 370716,
+    "outputSha256": "886b4d31a9544c00cb209e6121392ae8e1fdb56670eabf9890376555fded4d49",
+    "clips": [
+      "Attack",
+      "Bite",
+      "Death",
+      "Hit",
+      "Idle",
+      "Walk"
+    ],
+    "meshes": 1,
+    "skins": 1
+  },
+  {
+    "file": "snake-animations.glb",
+    "url": "https://raw.githubusercontent.com/Mesh2Motion/mesh2motion-app/2d3d1ff03247d9e7e830d1ae375653da4e2146e2/static/animations/snake-animations.glb",
+    "sha256": "795e4c62ba1e02f3f33e900832cdc6a1ca5a4aa4f6fe426fccd3aaa0f7f6ac25",
+    "output": "snake-animations.glb",
+    "sourceBytes": 359604,
+    "bytes": 215248,
+    "outputSha256": "621fd5c9e04568e5b679fe01eee3c2b43e5756faa697e568a04d7fba486521d1",
+    "clips": [
+      "Bite",
+      "Death",
+      "Hit",
+      "Idle"
+    ],
+    "meshes": 1,
+    "skins": 1
+  }
+]

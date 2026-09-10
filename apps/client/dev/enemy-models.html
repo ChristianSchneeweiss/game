@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shards of Affinity · Bestiary workshop</title>
+  </head>
+  <body>
+    <header>
+      <a href="/dev/battle-replay.html">Shards of Affinity</a
+      ><span>ART COLLECTION / 01</span>
+    </header>
+    <main>
+      <section class="intro">
+        <p class="eyebrow">THE BESTIARY WORKSHOP</p>
+        <h1>Meet the opposition.</h1>
+        <p>
+          Animated model candidates for every corner of the world. Select a
+          creature, turn it around, and inspect its combat motions.
+        </p>
+      </section>
+      <div class="workshop">
+        <aside>
+          <label for="model-filter">Find a creature</label
+          ><input
+            id="model-filter"
+            type="search"
+            placeholder="Name or family…"
+          />
+          <nav id="roster" aria-label="Enemy models"></nav>
+        </aside>
+        <section class="stage">
+          <div class="model-heading">
+            <div>
+              <p class="eyebrow" id="family">MODEL CANDIDATE</p>
+              <h2 id="model-name">Loading…</h2>
+            </div>
+            <span id="badge">CC0</span>
+          </div>
+          <div id="viewport" aria-label="Interactive 3D model preview"></div>
+          <div class="controls">
+            <label for="clip">Animation</label
+            ><select id="clip"></select
+            ><button id="pause" type="button">Pause</button
+            ><button id="reset-view" type="button">Reset view</button>
+          </div>
+          <p id="status" aria-live="polite"></p>
+          <p class="hint">Drag to orbit · Scroll to zoom</p>
+          <div id="model-notes"></div>
+        </section>
+      </div>
+    </main>
+    <footer>
+      Bestiary workshop · These bases are now assigned to enemy types in battles.
+    </footer>
+    <script type="module" src="/dev/enemy-models.ts"></script>
+  </body>
+</html>

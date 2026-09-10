@@ -1,0 +1,278 @@
+{
+  "checkedAt": "2026-09-10T10:52:42.353Z",
+  "lineups": [
+    {
+      "lineup": 0,
+      "models": [
+        {
+          "id": "hero-0",
+          "model": "knight",
+          "text": "◆ ActingAldric160 / 160 HP"
+        },
+        {
+          "id": "hero-1",
+          "model": "knight",
+          "text": "I PartySeren160 / 160 HP"
+        },
+        {
+          "id": "hatchling-0",
+          "model": "Big-Orc",
+          "text": "II EnemyGoblin40 / 40 HP"
+        },
+        {
+          "id": "hatchling-1",
+          "model": "Skeleton_Minion",
+          "text": "II EnemySkeleton Grunt40 / 40 HP"
+        },
+        {
+          "id": "hatchling-2",
+          "model": "Zombie",
+          "text": "II EnemyRotting Corpse40 / 40 HP"
+        },
+        {
+          "id": "hatchling-3",
+          "model": "Flying-Ghost",
+          "text": "II EnemyWisp of Regret40 / 40 HP"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "lineup": 1,
+      "models": [
+        {
+          "id": "hero-0",
+          "model": "knight",
+          "text": "◆ ActingAldric160 / 160 HP"
+        },
+        {
+          "id": "hero-1",
+          "model": "knight",
+          "text": "I PartySeren160 / 160 HP"
+        },
+        {
+          "id": "hatchling-0",
+          "model": "Skeleton_Warrior",
+          "text": "II EnemyGhoul Knight Ivern40 / 40 HP"
+        },
+        {
+          "id": "hatchling-1",
+          "model": "Skeleton_Mage",
+          "text": "II EnemyEmberbound Revenant40 / 40 HP"
+        },
+        {
+          "id": "hatchling-2",
+          "model": "Skeleton_Minion",
+          "text": "II EnemyAshen Skeleton40 / 40 HP"
+        },
+        {
+          "id": "hatchling-3",
+          "model": "Flying-Ghost_Skull",
+          "text": "II EnemyLurking Flame Wraith40 / 40 HP"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "lineup": 2,
+      "models": [
+        {
+          "id": "hero-0",
+          "model": "knight",
+          "text": "◆ ActingAldric160 / 160 HP"
+        },
+        {
+          "id": "hero-1",
+          "model": "knight",
+          "text": "I PartySeren160 / 160 HP"
+        },
+        {
+          "id": "hatchling-0",
+          "model": "spider-animations",
+          "text": "II EnemyCrypt Crawler40 / 40 HP"
+        },
+        {
+          "id": "hatchling-1",
+          "model": "Moss_Golem",
+          "text": "II EnemyMoss-Covered Golem40 / 40 HP"
+        },
+        {
+          "id": "hatchling-2",
+          "model": "Tree01",
+          "text": "II EnemyBarkhide Shaman40 / 40 HP"
+        },
+        {
+          "id": "hatchling-3",
+          "model": "Tree02",
+          "text": "II EnemyHollowed Oakwarden40 / 40 HP"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "lineup": 3,
+      "models": [
+        {
+          "id": "hero-0",
+          "model": "knight",
+          "text": "◆ ActingAldric160 / 160 HP"
+        },
+        {
+          "id": "hero-1",
+          "model": "knight",
+          "text": "I PartySeren160 / 160 HP"
+        },
+        {
+          "id": "hatchling-0",
+          "model": "Tree01",
+          "text": "II EnemyElder Treant40 / 40 HP"
+        },
+        {
+          "id": "hatchling-1",
+          "model": "Flying-Dragon_Evolved",
+          "text": "II EnemyThundermaw40 / 40 HP"
+        },
+        {
+          "id": "hatchling-2",
+          "model": "Flying-Dragon_Evolved",
+          "text": "II EnemyThunder Drake40 / 40 HP"
+        },
+        {
+          "id": "hatchling-3",
+          "model": "snake-animations",
+          "text": "II EnemySky Serpent40 / 40 HP"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "lineup": 4,
+      "models": [
+        {
+          "id": "hero-0",
+          "model": "knight",
+          "text": "◆ ActingAldric160 / 160 HP"
+        },
+        {
+          "id": "hero-1",
+          "model": "knight",
+          "text": "I PartySeren160 / 160 HP"
+        },
+        {
+          "id": "hatchling-0",
+          "model": "Flying-Dragon",
+          "text": "II EnemyStorm Hatchling40 / 40 HP"
+        },
+        {
+          "id": "hatchling-1",
+          "model": "Flying-Dragon_Evolved",
+          "text": "II EnemySkybolt Wyvern40 / 40 HP"
+        },
+        {
+          "id": "hatchling-2",
+          "model": "Big-Fish",
+          "text": "II EnemyCommander Kelvaris40 / 40 HP"
+        },
+        {
+          "id": "hatchling-3",
+          "model": "Big-Fish",
+          "text": "II EnemyFishfolk Shaman40 / 40 HP"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "lineup": 5,
+      "models": [
+        {
+          "id": "hero-0",
+          "model": "knight",
+          "text": "◆ ActingAldric160 / 160 HP"
+        },
+        {
+          "id": "hero-1",
+          "model": "knight",
+          "text": "I PartySeren160 / 160 HP"
+        },
+        {
+          "id": "hatchling-0",
+          "model": "Big-Fish",
+          "text": "II EnemyFishfolk Scout 140 / 40 HP"
+        },
+        {
+          "id": "hatchling-1",
+          "model": "Water_Elemental",
+          "text": "II EnemyWater Elemental 140 / 40 HP"
+        },
+        {
+          "id": "hatchling-2",
+          "model": "Big-Fish",
+          "text": "II EnemyFishfolk Scout 240 / 40 HP"
+        },
+        {
+          "id": "hatchling-3",
+          "model": "Water_Elemental",
+          "text": "II EnemyWater Elemental 240 / 40 HP"
+        }
+      ],
+      "errors": []
+    }
+  ],
+  "checks": {
+    "normalPlayback": {
+      "speed": 4,
+      "event": 69,
+      "totalEvents": 69,
+      "partyHealth": [
+        131,
+        160
+      ],
+      "fallenEnemies": 4
+    },
+    "reducedMotionSeek": {
+      "lineup": 2,
+      "event": 69,
+      "fallenEnemies": 4
+    },
+    "missingModel": "KayKit Knight unavailable · simple miniature fallback",
+    "missingClip": "Animation unavailable · impact markers remain active",
+    "inspection": "Hollowed Oakwarden",
+    "liveBattle": {
+      "enemy": "Thunder Drake",
+      "model": "Flying-Dragon_Evolved",
+      "combatCommandsSent": 0
+    }
+  },
+  "currentLineupResources": [
+    {
+      "name": "/models/battle-v2/knight.glb",
+      "duration": 6.700000047683716,
+      "transferSize": 300,
+      "encodedBodySize": 488568
+    },
+    {
+      "name": "/models/enemies-v1/Moss_Golem.glb",
+      "duration": 4.899999976158142,
+      "transferSize": 300,
+      "encodedBodySize": 128228
+    },
+    {
+      "name": "/models/enemies-v1/Tree01.glb",
+      "duration": 6.699999928474426,
+      "transferSize": 300,
+      "encodedBodySize": 838576
+    },
+    {
+      "name": "/models/enemies-v1/Tree02.glb",
+      "duration": 7.699999928474426,
+      "transferSize": 300,
+      "encodedBodySize": 1041744
+    },
+    {
+      "name": "/models/enemies-v1/spider-animations.glb",
+      "duration": 6.600000023841858,
+      "transferSize": 300,
+      "encodedBodySize": 370716
+    }
+  ]
+}

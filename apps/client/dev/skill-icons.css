@@ -1,0 +1,74 @@
+body {
+  margin: 0;
+  background: #101916;
+  color: #e4e5da;
+  font:
+    14px "Trebuchet MS",
+    sans-serif;
+}
+* {
+  box-sizing: border-box;
+}
+.icon-gallery {
+  max-width: 1360px;
+  margin: auto;
+  padding: 48px 40px 80px;
+}
+.icon-gallery header {
+  max-width: 720px;
+  margin-bottom: 44px;
+}
+.icon-gallery header > span,
+.icon-gallery code {
+  color: #a9b69f;
+  font-size: 11px;
+}
+.icon-gallery h1 {
+  font:
+    46px Georgia,
+    serif;
+  margin: 16px 0;
+}
+.icon-gallery p {
+  line-height: 1.6;
+  color: #b1baa9;
+}
+.icon-gallery a {
+  color: #d7c18b;
+}
+.icon-gallery section {
+  margin: 32px 0;
+}
+.icon-gallery h2 {
+  font:
+    25px Georgia,
+    serif;
+  color: #d7c18b;
+}
+.icon-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 12px;
+}
+.icon-gallery article {
+  padding: 16px;
+  background: #17221c;
+  border: 1px solid #364238;
+  border-radius: 4px;
+}
+.icon-gallery-sizes {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 72px;
+}
+.icon-gallery h3 {
+  font-size: 13px;
+  margin: 14px 0 7px;
+}
+.icon-gallery .battle-conditions {
+  width: 152px;
+  background: #17221c;
+  padding: 8px;
+  margin-top: 20px;
+}

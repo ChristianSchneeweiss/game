@@ -1,0 +1,37 @@
+[
+  {
+    "file": "Zombie.blend",
+    "url": "https://drive.usercontent.google.com/download?id=1on9MAJjWv3Mfu-7N9AAtT2ZFBSJu6Uus&export=download",
+    "bytes": 19464224,
+    "sha256": "ccba2b762dcbf22108c4bf6d13a0eabb01f9fe8fd68a6614c723367e7d75bbc8",
+    "content_type": "application/octet-stream"
+  },
+  {
+    "file": "ZombieSmooth.blend",
+    "url": "https://drive.usercontent.google.com/download?id=1C7N1EADKkEpSQVpY9QFesECHkU71Qnkp&export=download",
+    "bytes": 19464128,
+    "sha256": "5d3725b335efe60cd2f7109de75c2d264f6586a46b687534a5ce73775fbc3dd4",
+    "content_type": "application/octet-stream"
+  },
+  {
+    "file": "Zombie.fbx",
+    "url": "https://drive.usercontent.google.com/download?id=16vkB5Pj8Z3lIPAMrS5rTN3Yt5OzjEyN0&export=download",
+    "bytes": 1573820,
+    "sha256": "203d76f29b12c58529ab6bdf8d3b414b869e9858b2c25f9f9ea5f161ae90349e",
+    "content_type": "application/octet-stream"
+  },
+  {
+    "file": "ZombieSmooth.fbx",
+    "url": "https://drive.usercontent.google.com/download?id=1NihcY_3MZhA5SYuyC16n7ICQ9vB1Rq2z&export=download",
+    "bytes": 1568892,
+    "sha256": "729b230ef7e91403196fa3baed17f722d1fc7d2a9b105c0ba20f9d6349238497",
+    "content_type": "application/octet-stream"
+  },
+  {
+    "file": "ZombieTexture.png",
+    "url": "https://drive.usercontent.google.com/download?id=1NSJdgIIwWOXsrUzCz_c_QR05cI9y3W9H&export=download",
+    "bytes": 211,
+    "sha256": "43e4bb1aea01e85dddc02000094c07250fbb07ffcb796aa18805cfb5d368e801",
+    "content_type": "image/png"
+  }
+]

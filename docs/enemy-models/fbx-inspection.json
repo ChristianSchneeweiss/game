@@ -1,0 +1,380 @@
+[
+  {
+    "file": "/private/tmp/enemy-model-alternatives/Zombie.fbx",
+    "binary": true,
+    "version": 7400,
+    "animation_stacks": [
+      {
+        "name": "Zombie|ZombieBite::AnimStack",
+        "properties": {
+          "LocalStop": [
+            234009878945
+          ],
+          "ReferenceStop": [
+            234009878945
+          ]
+        }
+      },
+      {
+        "name": "Zombie|ZombieCrawl::AnimStack",
+        "properties": {
+          "LocalStop": [
+            237088938527
+          ],
+          "ReferenceStop": [
+            237088938527
+          ]
+        }
+      },
+      {
+        "name": "Zombie|ZombieIdle::AnimStack",
+        "properties": {
+          "LocalStop": [
+            257102957945
+          ],
+          "ReferenceStop": [
+            257102957945
+          ]
+        }
+      },
+      {
+        "name": "Zombie|ZombieRun::AnimStack",
+        "properties": {
+          "LocalStop": [
+            38488450317
+          ],
+          "ReferenceStop": [
+            38488450317
+          ]
+        }
+      },
+      {
+        "name": "Zombie|ZombieWalk::AnimStack",
+        "properties": {
+          "LocalStop": [
+            184744632000
+          ],
+          "ReferenceStop": [
+            184744632000
+          ]
+        }
+      }
+    ],
+    "animation_layers": 5,
+    "animation_curves": 1890,
+    "skin_deformers": 1,
+    "mesh_geometries": 1,
+    "limb_nodes": 48
+  },
+  {
+    "file": "/private/tmp/enemy-model-alternatives/ZombieSmooth.fbx",
+    "binary": true,
+    "version": 7400,
+    "animation_stacks": [
+      {
+        "name": "Zombie|ZombieBite::AnimStack",
+        "properties": {
+          "LocalStop": [
+            234009878945
+          ],
+          "ReferenceStop": [
+            234009878945
+          ]
+        }
+      },
+      {
+        "name": "Zombie|ZombieCrawl::AnimStack",
+        "properties": {
+          "LocalStop": [
+            237088938527
+          ],
+          "ReferenceStop": [
+            237088938527
+          ]
+        }
+      },
+      {
+        "name": "Zombie|ZombieIdle::AnimStack",
+        "properties": {
+          "LocalStop": [
+            257102957945
+          ],
+          "ReferenceStop": [
+            257102957945
+          ]
+        }
+      },
+      {
+        "name": "Zombie|ZombieRun::AnimStack",
+        "properties": {
+          "LocalStop": [
+            38488450317
+          ],
+          "ReferenceStop": [
+            38488450317
+          ]
+        }
+      },
+      {
+        "name": "Zombie|ZombieWalk::AnimStack",
+        "properties": {
+          "LocalStop": [
+            184744632000
+          ],
+          "ReferenceStop": [
+            184744632000
+          ]
+        }
+      }
+    ],
+    "animation_layers": 5,
+    "animation_curves": 1890,
+    "skin_deformers": 1,
+    "mesh_geometries": 1,
+    "limb_nodes": 48
+  },
+  {
+    "file": "/private/tmp/enemy-model-alternatives/Treant Package/Treant 1/Tree01_FBX.fbx",
+    "binary": true,
+    "version": 7400,
+    "animation_stacks": [
+      {
+        "name": "Tree01|Attack2::AnimStack",
+        "properties": {
+          "LocalStop": [
+            48110581250
+          ],
+          "ReferenceStop": [
+            48110581250
+          ]
+        }
+      },
+      {
+        "name": "Tree01|Attack3::AnimStack",
+        "properties": {
+          "LocalStop": [
+            57732697500
+          ],
+          "ReferenceStop": [
+            57732697500
+          ]
+        }
+      },
+      {
+        "name": "Tree01|Attack_1::AnimStack",
+        "properties": {
+          "LocalStop": [
+            76976930000
+          ],
+          "ReferenceStop": [
+            76976930000
+          ]
+        }
+      },
+      {
+        "name": "Tree01|Death1::AnimStack",
+        "properties": {
+          "LocalStop": [
+            57732697500
+          ],
+          "ReferenceStop": [
+            57732697500
+          ]
+        }
+      },
+      {
+        "name": "Tree01|Death2::AnimStack",
+        "properties": {
+          "LocalStop": [
+            53883851000
+          ],
+          "ReferenceStop": [
+            53883851000
+          ]
+        }
+      },
+      {
+        "name": "Tree01|Death3::AnimStack",
+        "properties": {
+          "LocalStop": [
+            53883851000
+          ],
+          "ReferenceStop": [
+            53883851000
+          ]
+        }
+      },
+      {
+        "name": "Tree01|Idle::AnimStack",
+        "properties": {
+          "LocalStop": [
+            76976930000
+          ],
+          "ReferenceStop": [
+            76976930000
+          ]
+        }
+      },
+      {
+        "name": "Tree01|River Dance::AnimStack",
+        "properties": {
+          "LocalStop": [
+            76976930000
+          ],
+          "ReferenceStop": [
+            76976930000
+          ]
+        }
+      },
+      {
+        "name": "Tree01|Run::AnimStack",
+        "properties": {
+          "LocalStop": [
+            76976930000
+          ],
+          "ReferenceStop": [
+            76976930000
+          ]
+        }
+      },
+      {
+        "name": "Tree01|Taunt::AnimStack",
+        "properties": {
+          "LocalStop": [
+            96221162500
+          ],
+          "ReferenceStop": [
+            96221162500
+          ]
+        }
+      }
+    ],
+    "animation_layers": 10,
+    "animation_curves": 2880,
+    "skin_deformers": 1,
+    "mesh_geometries": 1,
+    "limb_nodes": 31
+  },
+  {
+    "file": "/private/tmp/enemy-model-alternatives/Treant Package/Treant 2/Tree02_FBX.fbx",
+    "binary": true,
+    "version": 7400,
+    "animation_stacks": [
+      {
+        "name": "Tree02|Attack2::AnimStack",
+        "properties": {
+          "LocalStop": [
+            48110581250
+          ],
+          "ReferenceStop": [
+            48110581250
+          ]
+        }
+      },
+      {
+        "name": "Tree02|Attack3::AnimStack",
+        "properties": {
+          "LocalStop": [
+            57732697500
+          ],
+          "ReferenceStop": [
+            57732697500
+          ]
+        }
+      },
+      {
+        "name": "Tree02|Attack_1::AnimStack",
+        "properties": {
+          "LocalStop": [
+            76976930000
+          ],
+          "ReferenceStop": [
+            76976930000
+          ]
+        }
+      },
+      {
+        "name": "Tree02|Death1::AnimStack",
+        "properties": {
+          "LocalStop": [
+            57732697500
+          ],
+          "ReferenceStop": [
+            57732697500
+          ]
+        }
+      },
+      {
+        "name": "Tree02|Death2::AnimStack",
+        "properties": {
+          "LocalStop": [
+            53883851000
+          ],
+          "ReferenceStop": [
+            53883851000
+          ]
+        }
+      },
+      {
+        "name": "Tree02|Death3::AnimStack",
+        "properties": {
+          "LocalStop": [
+            53883851000
+          ],
+          "ReferenceStop": [
+            53883851000
+          ]
+        }
+      },
+      {
+        "name": "Tree02|Idle::AnimStack",
+        "properties": {
+          "LocalStop": [
+            76976930000
+          ],
+          "ReferenceStop": [
+            76976930000
+          ]
+        }
+      },
+      {
+        "name": "Tree02|River Dance::AnimStack",
+        "properties": {
+          "LocalStop": [
+            76976930000
+          ],
+          "ReferenceStop": [
+            76976930000
+          ]
+        }
+      },
+      {
+        "name": "Tree02|Run::AnimStack",
+        "properties": {
+          "LocalStop": [
+            76976930000
+          ],
+          "ReferenceStop": [
+            76976930000
+          ]
+        }
+      },
+      {
+        "name": "Tree02|Taunt::AnimStack",
+        "properties": {
+          "LocalStop": [
+            96221162500
+          ],
+          "ReferenceStop": [
+            96221162500
+          ]
+        }
+      }
+    ],
+    "animation_layers": 10,
+    "animation_curves": 3060,
+    "skin_deformers": 1,
+    "mesh_geometries": 1,
+    "limb_nodes": 33
+  }
+]

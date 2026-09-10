@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import {
   AnimationMixer,
+  Group,
   LoopOnce,
   LoopRepeat,
   Mesh,
@@ -11,12 +12,16 @@ import {
 } from "three";
 import { GLTFLoader, type GLTF } from "three/addons/loaders/GLTFLoader.js";
 import { clone } from "three/addons/utils/SkeletonUtils.js";
-import { miniature } from "./visual-manifest";
+import type { MiniatureAction, MiniatureDefinition } from "./visual-manifest";
 
-// One immutable asset cache. Instances own only their skeletons and mixers.
-let cached: Promise<GLTF> | undefined;
-let owners = 0;
-let eviction: ReturnType<typeof setTimeout> | undefined;
+// Each URL has independent ownership. Instances share immutable asset data,
+// while retaining their own skeletons and animation mixers.
+type CacheEntry = {
+  promise: Promise<GLTF>;
+  owners: number;
+  eviction?: ReturnType<typeof setTimeout>;
+};
+const cache = new Map<string, CacheEntry>();
 function disposeAsset(asset: GLTF) {
   const geometries = new Set<Mesh["geometry"]>();
   const materials = new Set<Material>();
@@ -47,58 +52,100 @@ function disposeAsset(asset: GLTF) {
   images.forEach((bitmap) => bitmap.close());
 }
 
-export function useMiniatureAsset() {
-  const [asset, setAsset] = useState<GLTF>();
-  const [error, setError] = useState(false);
+export type MiniatureAssetResult = { asset?: GLTF; error?: boolean };
+
+export function useMiniatureAssets(urls: string[]) {
+  const key = JSON.stringify([...new Set(urls)].sort());
+  const [results, setResults] = useState(
+    new Map<string, MiniatureAssetResult & { entry: CacheEntry }>(),
+  );
   useEffect(() => {
-    owners++;
-    clearTimeout(eviction);
     let active = true;
-    if (!cached) {
-      cached = fetch(miniature.url, { signal: AbortSignal.timeout(12000) })
-        .then((response) => {
-          if (!response.ok) throw new Error("Miniature unavailable");
-          return response.arrayBuffer();
-        })
-        .then((buffer) =>
-          new GLTFLoader().parseAsync(buffer, "/models/kaykit-skeletons-1.0/"),
-        );
-    }
-    cached
-      .then((gltf) => {
-        if (active) setAsset(gltf);
-      })
-      .catch(() => {
-        if (active) setError(true);
-      });
+    const requested: string[] = JSON.parse(key);
+    const owned = requested.map((url) => {
+      let entry = cache.get(url);
+      if (!entry) {
+        const promise = fetch(url, { signal: AbortSignal.timeout(12000) })
+          .then((response) => {
+            if (!response.ok) throw new Error("Miniature unavailable");
+            return response.arrayBuffer();
+          })
+          .then((buffer) =>
+            new GLTFLoader().parseAsync(
+              buffer,
+              url.slice(0, url.lastIndexOf("/") + 1),
+            ),
+          );
+        entry = { promise, owners: 0 };
+        cache.set(url, entry);
+      }
+      const lease = entry;
+      lease.owners++;
+      clearTimeout(lease.eviction);
+      const publish = (result: MiniatureAssetResult) => {
+        if (!active) return;
+        setResults((previous) => {
+          const next = new Map(
+            requested.flatMap((name) => {
+              const value = previous.get(name);
+              return value ? [[name, value] as const] : [];
+            }),
+          );
+          next.set(url, { ...result, entry: lease });
+          return next;
+        });
+      };
+      lease.promise
+        .then((asset) => publish({ asset }))
+        .catch(() => publish({ error: true }));
+      return { url, lease };
+    });
     return () => {
       active = false;
-      owners--;
-      eviction = setTimeout(() => {
-        if (owners !== 0) return;
-        const previous = cached;
-        cached = undefined;
-        previous?.then(disposeAsset).catch(() => {});
-      }, 1000);
+      for (const { url, lease } of owned) {
+        lease.owners--;
+        lease.eviction = setTimeout(() => {
+          if (lease.owners !== 0 || cache.get(url) !== lease) return;
+          cache.delete(url);
+          lease.promise.then(disposeAsset).catch(() => {});
+        }, 1000);
+      }
     };
-  }, []);
-  return { asset, error };
+  }, [key]);
+  return useMemo(
+    () =>
+      new Map<string, MiniatureAssetResult>(
+        (JSON.parse(key) as string[]).map((url) => {
+          const result = results.get(url);
+          return [url, result && cache.get(url) === result.entry ? result : {}];
+        }),
+      ),
+    [key, results],
+  );
 }
 
 type Props = {
   asset: GLTF;
-  action: "idle" | "attack" | "hit" | "death";
+  definition: MiniatureDefinition;
+  action: MiniatureAction;
   cueKey: string;
   reducedMotion: boolean;
+  deathSettled: boolean;
   speed: number;
+  durationMs: number;
 };
 export function Miniature({
   asset,
+  definition,
   action,
   cueKey,
   reducedMotion,
+  deathSettled,
   speed,
+  durationMs,
 }: Props) {
+  const pose = useRef<Group>(null);
+  const elapsed = useRef(0);
   const instance = useMemo(() => {
     const root = clone(asset.scene);
     root.traverse((node) => {
@@ -121,13 +168,19 @@ export function Miniature({
     [instance],
   );
   useEffect(() => {
+    elapsed.current = 0;
     const name =
-      miniature.clips[reducedMotion && action !== "death" ? "idle" : action];
-    const clip = asset.animations.find(
+      definition.clips[reducedMotion && action !== "death" ? "idle" : action];
+    const requested = asset.animations.find(
       (clip) => clip.name === name && clip.duration > 0,
     );
+    const clip =
+      requested ??
+      asset.animations.find(
+        (clip) => clip.name === definition.clips.idle && clip.duration > 0,
+      );
     instance.mixer.stopAllAction();
-    if (!clip) return; // The outer marker still presents impact/death.
+    if (!clip) return;
     const animation = instance.mixer.clipAction(clip);
     animation
       .reset()
@@ -136,20 +189,66 @@ export function Miniature({
         action === "idle" ? Infinity : 1,
       );
     animation.clampWhenFinished = true;
-    animation.timeScale = action === "attack" ? clip.duration : 1;
+    animation.timeScale = ["attack", "cast", "heal"].includes(action)
+      ? clip.duration * (1000 / durationMs)
+      : 1;
     animation.play();
-    if (reducedMotion) {
-      animation.time = action === "death" ? clip.duration : 0;
-      instance.mixer.update(0);
+    if (action === "death" && !requested) animation.paused = true;
+    if (reducedMotion || (action === "death" && deathSettled)) {
+      animation.time = action === "death" && requested ? clip.duration : 0;
     }
+    instance.mixer.update(0);
     return () => {
       animation.stop();
     };
-  }, [instance, asset, action, cueKey, reducedMotion]);
+  }, [
+    instance,
+    asset,
+    definition,
+    action,
+    cueKey,
+    reducedMotion,
+    deathSettled,
+    durationMs,
+  ]);
+  const nativeDeath = asset.animations.some(
+    (clip) => clip.name === definition.clips.death && clip.duration > 0,
+  );
+  const nativeHit = asset.animations.some(
+    (clip) => clip.name === definition.clips.hit && clip.duration > 0,
+  );
   useFrame((_, delta) => {
-    if (!reducedMotion) instance.mixer.update(Math.min(delta, 0.1) * speed);
+    const dt = Math.min(delta, 0.1) * speed;
+    if (!reducedMotion) instance.mixer.update(dt);
+    elapsed.current += dt;
+    if (!pose.current) return;
+    const falling = action === "death";
+    const progress =
+      falling && (deathSettled || reducedMotion)
+        ? 1
+        : Math.min(elapsed.current / 0.65, 1);
+    const topple = falling && !nativeDeath ? (progress * Math.PI) / 2 : 0;
+    pose.current.rotation.x = -topple;
+    pose.current.rotation.z =
+      action === "hit" && !nativeHit && !reducedMotion
+        ? Math.sin(Math.min(elapsed.current / 0.35, 1) * Math.PI) * 0.16
+        : 0;
+    // Ground native death poses (including flying rigs), or a toppled idle body.
+    pose.current.position.y =
+      falling && nativeDeath
+        ? ((definition.deathOffsetY ?? 0) - (definition.offset?.[1] ?? 0)) *
+          progress
+        : Math.sin(topple) * (definition.halfDepth ?? 0.35);
   });
   return (
-    <primitive object={instance.root} scale={miniature.scale} dispose={null} />
+    <group ref={pose}>
+      <group position={definition.offset ?? [0, 0, 0]}>
+        <primitive
+          object={instance.root}
+          scale={definition.scale}
+          dispose={null}
+        />
+      </group>
+    </group>
   );
 }

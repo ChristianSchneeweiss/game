@@ -1,0 +1,223 @@
+[
+  {
+    "renderer": {
+      "frames": 1800,
+      "p50": 16.699999928474426,
+      "p95": 20.100000023841858,
+      "max": 28.899999976158142,
+      "playback": {
+        "frames": 1800,
+        "p50": 16.699999928474426,
+        "p95": 19.399999976158142,
+        "max": 28.700000047683716,
+        "kinds": [
+          "SPELL_CAST",
+          "EFFECT_REMOVAL",
+          "DEATH",
+          "EFFECT_TRIGGER"
+        ]
+      },
+      "calls": 108,
+      "triangles": 59486,
+      "geometries": 67,
+      "textures": 21
+    },
+    "viewport": [
+      1280,
+      800
+    ],
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+    "modelReady": [
+      325.5,
+      118606.29999995232
+    ],
+    "controlsReady": [
+      120.19999992847443,
+      118472.59999990463
+    ],
+    "resources": [
+      {
+        "name": "/models/battle-v2/knight.glb",
+        "duration": 4.100000023841858,
+        "transferSize": 300,
+        "encodedBodySize": 488568
+      },
+      {
+        "name": "/models/battle-v2/dragon.glb",
+        "duration": 3.299999952316284,
+        "transferSize": 300,
+        "encodedBodySize": 228836
+      },
+      {
+        "name": "/models/battle-v2/knight.glb",
+        "duration": 10.399999976158142,
+        "transferSize": 300,
+        "encodedBodySize": 488568
+      },
+      {
+        "name": "/models/battle-v2/dragon.glb",
+        "duration": 9.600000023841858,
+        "transferSize": 300,
+        "encodedBodySize": 228836
+      }
+    ]
+  },
+  {
+    "renderer": {
+      "frames": 60,
+      "p50": 16.699999928474426,
+      "p95": 22.699999928474426,
+      "max": 27.700000047683716,
+      "playback": {
+        "frames": 0,
+        "p50": 0,
+        "p95": 0,
+        "max": 0,
+        "kinds": []
+      },
+      "calls": 108,
+      "triangles": 59486,
+      "geometries": 67,
+      "textures": 21
+    },
+    "viewport": [
+      1280,
+      800
+    ],
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+    "modelReady": [
+      325.5,
+      118606.29999995232,
+      121774.5
+    ],
+    "controlsReady": [
+      120.19999992847443,
+      118472.59999990463,
+      121625.79999995232
+    ],
+    "resources": [
+      {
+        "name": "/models/battle-v2/knight.glb",
+        "duration": 4.100000023841858,
+        "transferSize": 300,
+        "encodedBodySize": 488568
+      },
+      {
+        "name": "/models/battle-v2/dragon.glb",
+        "duration": 3.299999952316284,
+        "transferSize": 300,
+        "encodedBodySize": 228836
+      },
+      {
+        "name": "/models/battle-v2/knight.glb",
+        "duration": 10.399999976158142,
+        "transferSize": 300,
+        "encodedBodySize": 488568
+      },
+      {
+        "name": "/models/battle-v2/dragon.glb",
+        "duration": 9.600000023841858,
+        "transferSize": 300,
+        "encodedBodySize": 228836
+      },
+      {
+        "name": "/models/battle-v2/knight.glb",
+        "duration": 5.099999904632568,
+        "transferSize": 300,
+        "encodedBodySize": 488568
+      },
+      {
+        "name": "/models/battle-v2/dragon.glb",
+        "duration": 3.200000047683716,
+        "transferSize": 300,
+        "encodedBodySize": 228836
+      }
+    ]
+  },
+  {
+    "renderer": {
+      "frames": 60,
+      "p50": 16.699999928474426,
+      "p95": 21.899999976158142,
+      "max": 36.40000009536743,
+      "playback": {
+        "frames": 0,
+        "p50": 0,
+        "p95": 0,
+        "max": 0,
+        "kinds": []
+      },
+      "calls": 108,
+      "triangles": 59486,
+      "geometries": 67,
+      "textures": 21
+    },
+    "viewport": [
+      1280,
+      800
+    ],
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+    "modelReady": [
+      325.5,
+      118606.29999995232,
+      121774.5,
+      124930.79999995232
+    ],
+    "controlsReady": [
+      120.19999992847443,
+      118472.59999990463,
+      121625.79999995232,
+      124779.19999992847
+    ],
+    "resources": [
+      {
+        "name": "/models/battle-v2/knight.glb",
+        "duration": 4.100000023841858,
+        "transferSize": 300,
+        "encodedBodySize": 488568
+      },
+      {
+        "name": "/models/battle-v2/dragon.glb",
+        "duration": 3.299999952316284,
+        "transferSize": 300,
+        "encodedBodySize": 228836
+      },
+      {
+        "name": "/models/battle-v2/knight.glb",
+        "duration": 10.399999976158142,
+        "transferSize": 300,
+        "encodedBodySize": 488568
+      },
+      {
+        "name": "/models/battle-v2/dragon.glb",
+        "duration": 9.600000023841858,
+        "transferSize": 300,
+        "encodedBodySize": 228836
+      },
+      {
+        "name": "/models/battle-v2/knight.glb",
+        "duration": 5.099999904632568,
+        "transferSize": 300,
+        "encodedBodySize": 488568
+      },
+      {
+        "name": "/models/battle-v2/dragon.glb",
+        "duration": 3.200000047683716,
+        "transferSize": 300,
+        "encodedBodySize": 228836
+      },
+      {
+        "name": "/models/battle-v2/dragon.glb",
+        "duration": 6.700000047683716,
+        "transferSize": 300,
+        "encodedBodySize": 228836
+      },
+      {
+        "name": "/models/battle-v2/knight.glb",
+        "duration": 8.100000023841858,
+        "transferSize": 300,
+        "encodedBodySize": 488568
+      }
+    ]
+  }
+]
