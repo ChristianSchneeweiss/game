@@ -10,12 +10,17 @@
     "dev:server": "bun run --filter @loot-game/server dev",
     "build:client": "bun run --filter @loot-game/client build",
     "deploy": "bun run --filter @loot-game/client build && bun run --filter @loot-game/server deploy",
-    "test:battle": "bun test tests/battle",
+    "test:battle": "bun tests/battle/run.ts",
     "record:battle": "bun tests/battle/record.ts",
     "prepare:battle-models": "bun scripts/prepare-battle-models.ts",
-    "typecheck": "tsc --noEmit -p apps/client && tsc --noEmit -p apps/server"
+    "typecheck": "tsc --noEmit -p apps/client && tsc --noEmit -p apps/server",
+    "test:battle:rules": "bun tests/battle/run.ts rules/",
+    "test:battle:sweep": "bun tests/battle/run.ts sweeps/",
+    "test:battle:integration": "bun tests/battle/run.ts integration/",
+    "typecheck:battle": "tsc --noEmit -p tests/battle"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
     "@gltf-transform/core": "4.5.0",
     "@gltf-transform/extensions": "4.5.0",
     "@gltf-transform/functions": "4.5.0",

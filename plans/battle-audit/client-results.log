@@ -1,0 +1,37 @@
+bun test v1.4.0 (34cbb9a40)
+
+plans/battle-audit/client-checks.test.tsx:
+121 |   await mount("arcane-channeling", "charge-client");
+122 |   expect(await submit("arcane-channeling")).toBeUndefined();
+123 |   const liveMana = bm.getEntityById("hero-0")!.mana;
+124 |   const observedBeforeReconnect = session.playback.stats.get("hero-0")!.mana;
+125 |   await act(async () => { socket.close(); socket.open(); sendState(); });
+126 |   expect(session.playback.stats.get("hero-0")!.mana).toBe(liveMana);
+                                                           ^
+error: expect(received).toBe(expected)
+
+Expected: 110
+Received: 70
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/client-checks.test.tsx:126:54)
+(fail) real client hook displays server mana after delayed charge and reconnect [22.37ms]
+133 |   await mount("battle-roar", "crypt-of-forgotten-echoes-wave1-trial3");
+134 |   const rejection = await submit("battle-roar");
+135 |   expect(rejection).toBe("The spell was rejected.");
+136 |   expect(session.error).toBe(rejection);
+137 |   expect(session.pending).toBe(false);
+138 |   expect(session.playback.stats.get("hero-0")!.mana).toBe(bm.getEntityById("hero-0")!.mana);
+                                                           ^
+error: expect(received).toBe(expected)
+
+Expected: 135
+Received: 150
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/client-checks.test.tsx:138:54)
+(fail) a rejected Battle Roar cannot leave the client showing mana the server already spent [3.77ms]
+(pass) control: ordinary chosen-target cast remains consistent through the real client hook [6.83ms]
+
+ 1 pass
+ 2 fail
+ 17 expect() calls
+Ran 3 tests across 1 file. [191.00ms]

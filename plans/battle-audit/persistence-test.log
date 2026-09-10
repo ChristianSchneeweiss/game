@@ -1,0 +1,390 @@
+bun test v1.4.0 (34cbb9a40)
+
+plans/battle-audit/persistence-checks.test.ts:
+(pass) persistence audit: dungeon state handoff > control: frozen starting builds retain resource attrition [0.86ms]
+249 |     const dungeon = await dungeonManager.getDungeon("audit-dungeon", data.db);
+250 |     expect([dungeon.playerTeam[0].health, dungeon.playerTeam[0].mana]).toEqual([37, 9]);
+251 |     const factory = new SyncFactory(data.db);
+252 |     await factory.add("audit-battle", dungeon.playerTeam, dungeon.actualEnemies[0]);
+253 |     const rebuilt = await factory.get("audit-battle");
+254 |     expect([rebuilt.characters[0].health, rebuilt.characters[0].mana]).toEqual([37, 9]);
+                                                                             ^
+error: expect(received).toEqual(expected)
+
+  [
+-   37,
+-   9,
++   100,
++   50,
+  ]
+
+- Expected  - 2
++ Received  + 2
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/persistence-checks.test.ts:254:72)
+(fail) persistence audit: dungeon state handoff > dungeon-to-SyncFactory handoff retains saved HP/mana [1.56ms]
+259 |     data.rows(TB_dungeonBattle).push({ battleId: "loss", dungeonId: "audit-dungeon", round: 0 });
+260 |     await dungeonManager.handleDungeonCleared("audit-dungeon", "loss", [], [], "TEAM_B", data.db);
+261 |     expect(data.rows(TB_dungeonData)[0].round).toBe(0);
+262 |     data.rows(TB_dungeonBattle).push({ battleId: "win", dungeonId: "audit-dungeon", round: 0 });
+263 |     await dungeonManager.handleDungeonCleared("audit-dungeon", "win", [], [], "TEAM_A", data.db);
+264 |     expect(data.rows(TB_dungeonData)[0].round).toBe(1);
+                                                     ^
+error: expect(received).toBe(expected)
+
+Expected: 1
+Received: 2
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/persistence-checks.test.ts:264:48)
+(fail) persistence audit: dungeon state handoff > a successful retry after a loss advances exactly one dungeon room [0.87ms]
+270 |     const killedEnemy = new Goblin("audit-goblin");
+271 |     const party = [{ id: "audit-hero", health: 0, mana: 9, dead: true }];
+272 |     for (let i = 0; i < 2; i++) {
+273 |       await dungeonManager.handleDungeonCleared("audit-dungeon", "loss", [killedEnemy], party, "TEAM_B", data.db);
+274 |     }
+275 |     expect(data.rows(TB_loot)).toHaveLength(1);
+                                     ^
+error: expect(received).toHaveLength(expected)
+
+Expected length: 1
+Received length: 2
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/persistence-checks.test.ts:275:32)
+(fail) persistence audit: dungeon state handoff > reprocessing a defeat does not issue duplicate loot [0.41ms]
+(pass) persistence audit: dungeon state handoff > control: repeating a win at its original round does not duplicate loot [0.23ms]
+296 |     await dungeonManager.handleDungeonCleared("audit-dungeon", "win", [new Goblin("audit-goblin")], party, "TEAM_A", data.db);
+297 |     expect({
+298 |       round: data.rows(TB_dungeonData)[0].round,
+299 |       activeBattle: data.rows(TB_dungeonData)[0].activeBattle,
+300 |       rewardRows: data.rows(TB_loot).length,
+301 |     }).toEqual({ round: 1, activeBattle: true, rewardRows: 1 });
+             ^
+error: expect(received).toEqual(expected)
+
+  {
+-   "activeBattle": true,
+-   "rewardRows": 1,
+-   "round": 1,
++   "activeBattle": false,
++   "rewardRows": 2,
++   "round": 2,
+  }
+
+- Expected  - 3
++ Received  + 3
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/persistence-checks.test.ts:301:8)
+(fail) persistence audit: dungeon state handoff > reprocessing an earlier victory cannot complete a newer active battle or issue its rewards again [0.32ms]
+(pass) persistence audit: actual Durable Object method seams > control: accepted commands survive constructor rehydration [7.02ms]
+321 |     expect(audit.received.map((m) => m.type)).toContain("rejected");
+322 |     expect(audit.storage.get("messages")).toBeUndefined();
+323 |     audit.allowStorage();
+324 |     const restored = await audit.rehydrate();
+325 |     expect(restored.bm.events).toEqual(initialEvents);
+326 |     expect(restored.bm.events).toEqual(audit.socket.bm.events);
+                                     ^
+error: expect(received).toEqual(expected)
+
+  [
+    {
+      "event": {
+        "data": {
+          "effectsApplied":
+  Map {
+            "audit-goblin" => [
+              "audit-goblin-armor-up",
+            ],
+          }
+  ,
+          "isCrit": false,
+          "roll": 0,
+          "spellId": "audit-goblin",
+        },
+        "eventType": "SPELL_CAST",
+      },
+      "round": 0,
+    },
+-   {
+-     "event": {
+-       "data": {
+-         "damageApplied":
+- Map {
+-           "audit-goblin" => 0,
+-         }
+- ,
+-         "effectsApplied": Map {},
+-         "healingApplied": Map {},
+-         "isCrit": false,
+-         "roll": 4,
+-         "spellId": "audit-hit",
+-         "totalDamage": 0,
+-       },
+-       "eventType": "SPELL_CAST",
+-     },
+-     "round": 0,
+-   },
+-   {
+-     "event": {
+-       "data": [],
+-       "eventType": "REDUCE_SPELL_COOLDOWN",
+-     },
+-     "round": 0,
+-   },
+-   {
+-     "event": {
+-       "data": {
+-         "entityId": "audit-goblin",
+-         "healthRegen": 2,
+-         "manaRegen": 2,
+-       },
+-       "eventType": "REGEN",
+-     },
+-     "round": 0,
+-   },
+-   {
+-     "event": {
+-       "data": {
+-         "damageApplied":
+- Map {
+-           "audit-hero" => 9,
+-         }
+- ,
+-         "effectsApplied": Map {},
+-         "healingApplied": Map {},
+-         "isCrit": false,
+-         "roll": 12,
+-         "spellId": "audit-goblin-basic-attack",
+-         "totalDamage": 9,
+-       },
+-       "eventType": "SPELL_CAST",
+-     },
+-     "round": 0,
+-   },
+-   {
+-     "event": {
+-       "data": [],
+-       "eventType": "REDUCE_SPELL_COOLDOWN",
+-     },
+-     "round": 0,
+-   },
+-   {
+-     "event": {
+-       "data": {
+-         "entityId": "audit-hero",
+-         "healthRegen": 5,
+-         "manaRegen": 4,
+-       },
+-       "eventType": "REGEN",
+-     },
+-     "round": 1,
+-   },
+  ]
+
+- Expected  - 74
++ Received  + 0
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/persistence-checks.test.ts:326:32)
+(fail) persistence audit: actual Durable Object method seams > a failed command-log write leaves live and recovered state consistent [1.54ms]
+331 |     // The first legal cast hits the current Bloodfang + magical damage failure.
+332 |     // The following legal physical cast demonstrates the journal/revision gap.
+333 |     await audit.socket.webSocketMessage(audit.ws, audit.cast());
+334 |     await audit.socket.webSocketMessage(audit.ws, audit.cast("audit-safe"));
+335 |     const restored = await audit.rehydrate();
+336 |     expect(restored.bm.events).toEqual(audit.socket.bm.events);
+                                     ^
+error: expect(received).toEqual(expected)
+
+  [
+    {
+      "event": {
+        "data": {
+          "effectsApplied":
+  Map {
+            "audit-hero" => [
+              "audit-passive",
+            ],
+          }
+  ,
+          "isCrit": false,
+          "roll": 0,
+          "spellId": "audit-hero",
+        },
+        "eventType": "SPELL_CAST",
+      },
+      "round": 0,
+    },
+    {
+      "event": {
+        "data": {
+          "effectsApplied":
+  Map {
+            "audit-goblin" => [
+              "audit-goblin-armor-up",
+            ],
+          }
+  ,
+          "isCrit": false,
+          "roll": 0,
+          "spellId": "audit-goblin",
+        },
+        "eventType": "SPELL_CAST",
+      },
+      "round": 0,
+    },
+    {
+      "event": {
+        "data": {
+          "damageApplied":
+  Map {
+            "audit-goblin" => 0,
+          }
+  ,
+          "effectsApplied": Map {},
+          "healingApplied":
+  Map {
+            "audit-hero" => 0,
+          }
+  ,
+          "isCrit": false,
+-         "roll": 7,
++         "roll": 4,
+          "spellId": "audit-safe",
+          "totalDamage": 0,
+        },
+        "eventType": "SPELL_CAST",
+      },
+      "round": 0,
+    },
+    {
+      "event": {
+-       "data": [
+-         {
+-           "amount": 1,
+-           "spellId": "audit-hit",
+-         },
+-       ],
++       "data": [],
+        "eventType": "REDUCE_SPELL_COOLDOWN",
+      },
+      "round": 0,
+    },
+    {
+      "event": {
+        "data": {
+          "entityId": "audit-goblin",
+          "healthRegen": 2,
+          "manaRegen": 2,
+        },
+        "eventType": "REGEN",
+      },
+      "round": 0,
+    },
+    {
+      "event": {
+        "data": {
+          "damageApplied":
+  Map {
+-           "audit-hero" => 11,
++           "audit-hero" => 9,
+          }
+  ,
+          "effectsApplied": Map {},
+          "healingApplied": Map {},
+          "isCrit": false,
+-         "roll": 15,
++         "roll": 12,
+          "spellId": "audit-goblin-basic-attack",
+-         "totalDamage": 11,
++         "totalDamage": 9,
+        },
+        "eventType": "SPELL_CAST",
+      },
+      "round": 0,
+    },
+    {
+      "event": {
+        "data": [],
+        "eventType": "REDUCE_SPELL_COOLDOWN",
+      },
+      "round": 0,
+    },
+    {
+      "event": {
+        "data": {
+          "entityId": "audit-hero",
+          "healthRegen": 5,
+          "manaRegen": 4,
+        },
+        "eventType": "REGEN",
+      },
+      "round": 1,
+    },
+  ]
+
+- Expected  - 10
++ Received  + 5
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/persistence-checks.test.ts:336:32)
+(fail) persistence audit: actual Durable Object method seams > a cast that throws after a partial mutation cannot poison the next accepted command's recovery [2.03ms]
+347 |     audit.data.allowActiveWrite();
+348 |     await audit.socket.setup("audit-placeholder", "audit-battle");
+349 |     const restored = await audit.rehydrate();
+350 |     expect(restored.bm.isGameOver()).toBe(true);
+351 |     await restored.setup("audit-placeholder", "audit-battle");
+352 |     expect(audit.data.rows(TB_battleResult)).toHaveLength(1);
+                                                   ^
+error: expect(received).toHaveLength(expected)
+
+Expected length: 1
+Received length: 0
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/persistence-checks.test.ts:352:46)
+(fail) persistence audit: actual Durable Object method seams > a lethal cast completes after recovery from an active-battle write failure [1.58ms]
+363 |     expect(audit.received.map((m) => m.type)).not.toContain("finished");
+364 |     audit.allowWorkflow();
+365 |     await audit.socket.setup("audit-placeholder", "audit-battle");
+366 |     const restored = await audit.rehydrate();
+367 |     await restored.setup("audit-placeholder", "audit-battle");
+368 |     expect(audit.workflowCalls()).toBe(2);
+                                        ^
+error: expect(received).toBe(expected)
+
+Expected: 2
+Received: 1
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/persistence-checks.test.ts:368:35)
+(fail) persistence audit: actual Durable Object method seams > a transient completion-workflow error is retried on warm or cold setup [2.28ms]
+(pass) persistence audit: actual Durable Object method seams > control: successful lethal cast saves the result and starts one workflow [0.94ms]
+386 |     } as any);
+387 |     const attempts = await Promise.allSettled([
+388 |       caller.fightDungeon({ id: "audit-dungeon" }),
+389 |       caller.fightDungeon({ id: "audit-dungeon" }),
+390 |     ]);
+391 |     expect(attempts.filter((attempt) => attempt.status === "fulfilled")).toHaveLength(1);
+                                                                               ^
+error: expect(received).toHaveLength(expected)
+
+Expected length: 1
+Received length: 2
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/persistence-checks.test.ts:391:74)
+(fail) persistence audit: authenticated dungeon API > concurrent fight requests create only one active battle for a dungeon [1.54ms]
+395 |   test("a logged-in account outside the dungeon cannot start its battle", async () => {
+396 |     const data = database();
+397 |     const caller = dungeonRouter.createCaller({
+398 |       db: data.db, session: { id: "audit-unrelated-user" },
+399 |     } as any);
+400 |     await expect(caller.fightDungeon({ id: "audit-dungeon" })).rejects.toThrow();
+                                                                             ^
+error: expect(received).rejects.toThrow(expected)
+
+Expected promise that rejects
+Received promise that resolved: Promise { <resolved> }
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/persistence-checks.test.ts:400:72)
+(fail) persistence audit: authenticated dungeon API > a logged-in account outside the dungeon cannot start its battle [0.29ms]
+
+ 4 pass
+ 10 fail
+ 31 expect() calls
+Ran 14 tests across 1 file. [237.00ms]

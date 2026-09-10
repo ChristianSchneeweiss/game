@@ -1,0 +1,565 @@
+bun test v1.4.0 (34cbb9a40)
+
+plans/battle-audit/spell-checks.test.ts:
+(pass) all registered spells through real server target/cast commands > covers every current registration [0.01ms]
+(pass) all registered spells through real server target/cast commands > basic-attack: legal sets, readonly descriptions, resource bounds across 64 scenarios [12.69ms]
+(pass) all registered spells through real server target/cast commands > fireball: legal sets, readonly descriptions, resource bounds across 64 scenarios [9.86ms]
+(pass) all registered spells through real server target/cast commands > single-heal: legal sets, readonly descriptions, resource bounds across 64 scenarios [12.26ms]
+(pass) all registered spells through real server target/cast commands > crude-strike: legal sets, readonly descriptions, resource bounds across 64 scenarios [8.08ms]
+(pass) all registered spells through real server target/cast commands > festering-blow: legal sets, readonly descriptions, resource bounds across 64 scenarios [7.77ms]
+(pass) all registered spells through real server target/cast commands > cinder-wisp: legal sets, readonly descriptions, resource bounds across 64 scenarios [7.17ms]
+(pass) all registered spells through real server target/cast commands > vital-strike: legal sets, readonly descriptions, resource bounds across 64 scenarios [7.00ms]
+(pass) all registered spells through real server target/cast commands > splinter-shot: legal sets, readonly descriptions, resource bounds across 64 scenarios [6.55ms]
+(pass) all registered spells through real server target/cast commands > cinderbrand: legal sets, readonly descriptions, resource bounds across 64 scenarios [5.21ms]
+(pass) all registered spells through real server target/cast commands > precise-thrust: legal sets, readonly descriptions, resource bounds across 64 scenarios [6.73ms]
+(pass) all registered spells through real server target/cast commands > soulflare: legal sets, readonly descriptions, resource bounds across 64 scenarios [6.36ms]
+(pass) all registered spells through real server target/cast commands > charred-chains: legal sets, readonly descriptions, resource bounds across 64 scenarios [8.03ms]
+(pass) all registered spells through real server target/cast commands > crushing-blow: legal sets, readonly descriptions, resource bounds across 64 scenarios [4.99ms]
+(pass) all registered spells through real server target/cast commands > stone-bark: legal sets, readonly descriptions, resource bounds across 64 scenarios [4.93ms]
+(pass) all registered spells through real server target/cast commands > rootgrasp: legal sets, readonly descriptions, resource bounds across 64 scenarios [5.22ms]
+(pass) all registered spells through real server target/cast commands > verdant-smite: legal sets, readonly descriptions, resource bounds across 64 scenarios [5.59ms]
+(pass) all registered spells through real server target/cast commands > natures-embrace: legal sets, readonly descriptions, resource bounds across 64 scenarios [7.00ms]
+(pass) all registered spells through real server target/cast commands > lightning-surge: legal sets, readonly descriptions, resource bounds across 64 scenarios [4.83ms]
+(pass) all registered spells through real server target/cast commands > stunning-strike: legal sets, readonly descriptions, resource bounds across 64 scenarios [4.50ms]
+(pass) all registered spells through real server target/cast commands > staggering-jab: legal sets, readonly descriptions, resource bounds across 64 scenarios [4.10ms]
+105 |             expect(f.bm.events.some(({ event }) => event.eventType === "SPELL_CAST"
+106 |               && event.data.spellId === f.spell.config.id)).toBe(true);
+107 |           }
+108 |         }
+109 |       }
+110 |       expect(rejections, `${type}: legal casts must not reject after spending resources`).toEqual([]);
+                                                                                                ^
+error: battle-roar: legal casts must not reject after spending resources
+
+- []
++ [
++   "full seed 2: Error: The spell was rejected.",
++   "wounded seed 2: Error: The spell was rejected.",
++   "single seed 2: Error: The spell was rejected.",
++   "dead seed 2: Error: The spell was rejected.",
++   "full seed 4: Error: The spell was rejected.",
++   "wounded seed 4: Error: The spell was rejected.",
++   "single seed 4: Error: The spell was rejected.",
++   "dead seed 4: Error: The spell was rejected.",
++   "full seed 6: Error: The spell was rejected.",
++   "wounded seed 6: Error: The spell was rejected.",
++   "single seed 6: Error: The spell was rejected.",
++   "dead seed 6: Error: The spell was rejected.",
++   "full seed 7: Error: The spell was rejected.",
++   "wounded seed 7: Error: The spell was rejected.",
++   "single seed 7: Error: The spell was rejected.",
++   "dead seed 7: Error: The spell was rejected.",
++   "full seed 15: Error: The spell was rejected.",
++   "wounded seed 15: Error: The spell was rejected.",
++   "single seed 15: Error: The spell was rejected.",
++   "dead seed 15: Error: The spell was rejected.",
++ ]
+
+- Expected  - 1
++ Received  + 22
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/spell-checks.test.ts:110:91)
+(fail) all registered spells through real server target/cast commands > battle-roar: legal sets, readonly descriptions, resource bounds across 64 scenarios [4.92ms]
+(pass) all registered spells through real server target/cast commands > torrent-spiral: legal sets, readonly descriptions, resource bounds across 64 scenarios [7.18ms]
+(pass) all registered spells through real server target/cast commands > tidepiercer-thrust: legal sets, readonly descriptions, resource bounds across 64 scenarios [4.20ms]
+(pass) all registered spells through real server target/cast commands > ocean-blessing: legal sets, readonly descriptions, resource bounds across 64 scenarios [4.42ms]
+(pass) all registered spells through real server target/cast commands > aqua-wave: legal sets, readonly descriptions, resource bounds across 64 scenarios [5.02ms]
+(pass) all registered spells through real server target/cast commands > tidal-pulse: legal sets, readonly descriptions, resource bounds across 64 scenarios [5.04ms]
+(pass) all registered spells through real server target/cast commands > stream-of-life: legal sets, readonly descriptions, resource bounds across 64 scenarios [6.10ms]
+(pass) all registered spells through real server target/cast commands > rupture: legal sets, readonly descriptions, resource bounds across 64 scenarios [4.79ms]
+(pass) all registered spells through real server target/cast commands > storm-pulse: legal sets, readonly descriptions, resource bounds across 64 scenarios [4.84ms]
+(pass) all registered spells through real server target/cast commands > volt-lash: legal sets, readonly descriptions, resource bounds across 64 scenarios [5.00ms]
+(pass) all registered spells through real server target/cast commands > final-verdict: legal sets, readonly descriptions, resource bounds across 64 scenarios [4.68ms]
+105 |             expect(f.bm.events.some(({ event }) => event.eventType === "SPELL_CAST"
+106 |               && event.data.spellId === f.spell.config.id)).toBe(true);
+107 |           }
+108 |         }
+109 |       }
+110 |       expect(rejections, `${type}: legal casts must not reject after spending resources`).toEqual([]);
+                                                                                                ^
+error: aegis-wall: legal casts must not reject after spending resources
+
+- []
++ [
++   "full seed 0: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "wounded seed 0: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "single seed 0: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "dead seed 0: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "full seed 1: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "wounded seed 1: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "single seed 1: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "dead seed 1: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "full seed 2: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "wounded seed 2: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "single seed 2: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "dead seed 2: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "full seed 3: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "wounded seed 3: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "single seed 3: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "dead seed 3: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "full seed 4: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "wounded seed 4: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "single seed 4: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "dead seed 4: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "full seed 5: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "wounded seed 5: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "single seed 5: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "dead seed 5: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "full seed 6: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "wounded seed 6: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "single seed 6: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "dead seed 6: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "full seed 7: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "wounded seed 7: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "single seed 7: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "dead seed 7: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "full seed 8: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "wounded seed 8: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "single seed 8: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "dead seed 8: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "full seed 9: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "wounded seed 9: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "single seed 9: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "dead seed 9: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "full seed 10: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "wounded seed 10: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "single seed 10: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "dead seed 10: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "full seed 11: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "wounded seed 11: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "single seed 11: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "dead seed 11: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "full seed 12: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "wounded seed 12: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "single seed 12: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "dead seed 12: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "full seed 13: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "wounded seed 13: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "single seed 13: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "dead seed 13: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "full seed 14: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "wounded seed 14: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "single seed 14: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "dead seed 14: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "full seed 15: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "wounded seed 15: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "single seed 15: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++   "dead seed 15: TypeError: undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++ ]
+
+- Expected  - 1
++ Received  + 66
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/spell-checks.test.ts:110:91)
+(fail) all registered spells through real server target/cast commands > aegis-wall: legal sets, readonly descriptions, resource bounds across 64 scenarios [6.83ms]
+(pass) all registered spells through real server target/cast commands > bulwark-bash: legal sets, readonly descriptions, resource bounds across 64 scenarios [4.58ms]
+(pass) all registered spells through real server target/cast commands > earthshatter: legal sets, readonly descriptions, resource bounds across 64 scenarios [4.95ms]
+(pass) all registered spells through real server target/cast commands > deflecting-stance: legal sets, readonly descriptions, resource bounds across 64 scenarios [4.64ms]
+(pass) all registered spells through real server target/cast commands > bladestorm-rhythm: legal sets, readonly descriptions, resource bounds across 64 scenarios [4.59ms]
+(pass) all registered spells through real server target/cast commands > iron-will: legal sets, readonly descriptions, resource bounds across 64 scenarios [6.44ms]
+(pass) all registered spells through real server target/cast commands > arcane-channeling: legal sets, readonly descriptions, resource bounds across 64 scenarios [4.67ms]
+(pass) all registered spells through real server target/cast commands > fleetfoot-gambit: legal sets, readonly descriptions, resource bounds across 64 scenarios [4.67ms]
+120 |     for (const type of registered) {
+121 |       // Mirrors getMySpells: createSpellFromType(spell.id, spell.type).description(character).
+122 |       try { createSpellFromType(`inventory-${type}`, type).description(caster); }
+123 |       catch (error) { failures.push({ type, error: String(error) }); }
+124 |     }
+125 |     expect(failures).toEqual([]);
+                           ^
+error: expect(received).toEqual(expected)
+
+- []
++ [
++   {
++     "error": "TypeError: undefined is not an object (evaluating 'this.battleManager.getRNG')",
++     "type": "storm-pulse",
++   },
++ ]
+
+- Expected  - 1
++ Received  + 6
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/spell-checks.test.ts:125:22)
+(fail) spell correctness regressions > every inventory spell can be described before being assigned to a battle [0.61ms]
+125 |     expect(failures).toEqual([]);
+126 |   });
+127 |
+128 |   test("Aegis Wall applies a shield to each living ally without throwing", () => {
+129 |     const f = fixture("aegis-wall");
+130 |     expect(() => cast(f)).not.toThrow();
+                                    ^
+error: expect(received).not.toThrow()
+
+Error name: "TypeError"
+Error message: "undefined is not an object (evaluating 'this.battleManager.getEntityById')"
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/spell-checks.test.ts:130:31)
+(fail) spell correctness regressions > Aegis Wall applies a shield to each living ally without throwing [0.25ms]
+134 |   });
+135 |
+136 |   test("Storm Pulse damages only enemies in a three-entity battle", () => {
+137 |     const f = fixture("storm-pulse", "storm-friendly-fire", 1, 1);
+138 |     cast(f);
+139 |     expect(f.caster.health).toBe(1000);
+                                  ^
+error: expect(received).toBe(expected)
+
+Expected: 1000
+Received: 974
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/spell-checks.test.ts:139:29)
+(fail) spell correctness regressions > Storm Pulse damages only enemies in a three-entity battle [0.13ms]
+153 |       if (candidate() >= 0.6) break;
+154 |       seed++;
+155 |     }
+156 |     f.bm.rng = seedrandom(`roar-whiff-${seed}`, { state: true });
+157 |     const beforeEvents = f.bm.events.length;
+158 |     expect(() => cast(f)).not.toThrow();
+                                    ^
+error: expect(received).not.toThrow()
+
+Error name: "Error"
+Error message: "The spell was rejected."
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/spell-checks.test.ts:158:31)
+(fail) spell correctness regressions > Battle Roar's ordinary failed stun records a spent cast and advances the turn [0.17ms]
+175 |         castBattleSpell(bm, { entityId: f.caster.id, spellId: f.spell.config.id, targetIds: [serpent.id] }, owner);
+176 |       } catch (error) {
+177 |         rejections.push(`seed ${seed}: ${String(error)}; active=${bm.getCurrentRound().orderQueue[0]}`);
+178 |       }
+179 |     }
+180 |     expect(rejections).toEqual([]);
+                             ^
+error: expect(received).toEqual(expected)
+
+- []
++ [
++   "seed 0: Error: Enemy action rejected: Sky Serpent; active=serpent",
++   "seed 4: Error: Enemy action rejected: Sky Serpent; active=serpent",
++   "seed 6: Error: Enemy action rejected: Sky Serpent; active=serpent",
++   "seed 7: Error: Enemy action rejected: Sky Serpent; active=serpent",
++   "seed 11: Error: Enemy action rejected: Sky Serpent; active=serpent",
++   "seed 14: Error: Enemy action rejected: Sky Serpent; active=serpent",
++ ]
+
+- Expected  - 1
++ Received  + 8
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/spell-checks.test.ts:180:24)
+(fail) spell correctness regressions > a Sky Serpent's failed Battle Roar never leaves the command driver stuck on a bot turn [4.04ms]
+193 |       }
+194 |     }
+195 |     expect(successful).toBeDefined();
+196 |     const f = successful!;
+197 |     expect(f.spell.description(f.caster).text).toContain("gain +20 Armor and Magic Resistance");
+198 |     expect(f.caster.getAttribute("armor")).toBe(20);
+                                                 ^
+error: expect(received).toBe(expected)
+
+Expected: 20
+Received: 0
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/spell-checks.test.ts:198:44)
+(fail) spell correctness regressions > Earthshatter grants its promised defenses after stunning multiple enemies [0.25ms]
+(pass) spell correctness regressions > Final Verdict currently has a 0.1% threshold, requiring a design decision [0.11ms]
+216 |     expect(f.enemies[0]!.isDead()).toBe(true);
+217 |     expect(f.caster.activeEffects.some((effect) => effect.effectType === "CHARGE")).toBe(true);
+218 |     // Normal entity end-step invokes the installed charge's release. Drive this
+219 |     // hook directly to isolate target validation from audited queue bookkeeping.
+220 |     f.caster.onEndStep();
+221 |     expect(f.enemies[1]!.health).toBeLessThan(1000);
+                                       ^
+error: expect(received).toBeLessThan(expected)
+
+Expected: < 1000
+Received: 1000
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/spell-checks.test.ts:221:34)
+(fail) spell correctness regressions > Arcane Channeling still damages surviving targets when one selected enemy dies [0.23ms]
+237 |         });
+238 |         cast(f);
+239 |         observed.mockRestore();
+240 |       }
+241 |     }
+242 |     expect(corpseHits).toEqual([]);
+                             ^
+error: expect(received).toEqual(expected)
+
+- []
++ [
++   {
++     "seed": 1,
++     "targetId": "enemy-0",
++     "type": "volt-lash",
++   },
++   {
++     "seed": 1,
++     "targetId": "enemy-0",
++     "type": "volt-lash",
++   },
++   {
++     "seed": 3,
++     "targetId": "enemy-0",
++     "type": "volt-lash",
++   },
++   {
++     "seed": 3,
++     "targetId": "enemy-0",
++     "type": "volt-lash",
++   },
++   {
++     "seed": 3,
++     "targetId": "enemy-0",
++     "type": "volt-lash",
++   },
++   {
++     "seed": 4,
++     "targetId": "enemy-0",
++     "type": "volt-lash",
++   },
++   {
++     "seed": 5,
++     "targetId": "enemy-0",
++     "type": "volt-lash",
++   },
++   {
++     "seed": 5,
++     "targetId": "enemy-0",
++     "type": "volt-lash",
++   },
++   {
++     "seed": 6,
++     "targetId": "enemy-0",
++     "type": "volt-lash",
++   },
++   {
++     "seed": 6,
++     "targetId": "enemy-0",
++     "type": "volt-lash",
++   },
++   {
++     "seed": 7,
++     "targetId": "enemy-0",
++     "type": "volt-lash",
++   },
++   {
++     "seed": 7,
++     "targetId": "enemy-0",
++     "type": "volt-lash",
++   },
++   {
++     "seed": 7,
++     "targetId": "enemy-0",
++     "type": "volt-lash",
++   },
++   {
++     "seed": 9,
++     "targetId": "enemy-0",
++     "type": "volt-lash",
++   },
++   {
++     "seed": 10,
++     "targetId": "enemy-0",
++     "type": "volt-lash",
++   },
++   {
++     "seed": 11,
++     "targetId": "enemy-0",
++     "type": "volt-lash",
++   },
++   {
++     "seed": 11,
++     "targetId": "enemy-0",
++     "type": "volt-lash",
++   },
++   {
++     "seed": 12,
++     "targetId": "enemy-0",
++     "type": "volt-lash",
++   },
++   {
++     "seed": 12,
++     "targetId": "enemy-0",
++     "type": "volt-lash",
++   },
++   {
++     "seed": 13,
++     "targetId": "enemy-0",
++     "type": "volt-lash",
++   },
++   {
++     "seed": 13,
++     "targetId": "enemy-0",
++     "type": "volt-lash",
++   },
++   {
++     "seed": 14,
++     "targetId": "enemy-0",
++     "type": "volt-lash",
++   },
++   {
++     "seed": 14,
++     "targetId": "enemy-0",
++     "type": "volt-lash",
++   },
++   {
++     "seed": 15,
++     "targetId": "enemy-0",
++     "type": "volt-lash",
++   },
++   {
++     "seed": 0,
++     "targetId": "enemy-0",
++     "type": "bladestorm-rhythm",
++   },
++   {
++     "seed": 1,
++     "targetId": "enemy-0",
++     "type": "bladestorm-rhythm",
++   },
++   {
++     "seed": 2,
++     "targetId": "enemy-0",
++     "type": "bladestorm-rhythm",
++   },
++   {
++     "seed": 3,
++     "targetId": "enemy-0",
++     "type": "bladestorm-rhythm",
++   },
++   {
++     "seed": 4,
++     "targetId": "enemy-0",
++     "type": "bladestorm-rhythm",
++   },
++   {
++     "seed": 5,
++     "targetId": "enemy-0",
++     "type": "bladestorm-rhythm",
++   },
++   {
++     "seed": 6,
++     "targetId": "enemy-0",
++     "type": "bladestorm-rhythm",
++   },
++   {
++     "seed": 7,
++     "targetId": "enemy-0",
++     "type": "bladestorm-rhythm",
++   },
++   {
++     "seed": 8,
++     "targetId": "enemy-0",
++     "type": "bladestorm-rhythm",
++   },
++   {
++     "seed": 9,
++     "targetId": "enemy-0",
++     "type": "bladestorm-rhythm",
++   },
++   {
++     "seed": 10,
++     "targetId": "enemy-0",
++     "type": "bladestorm-rhythm",
++   },
++   {
++     "seed": 11,
++     "targetId": "enemy-0",
++     "type": "bladestorm-rhythm",
++   },
++   {
++     "seed": 12,
++     "targetId": "enemy-0",
++     "type": "bladestorm-rhythm",
++   },
++   {
++     "seed": 13,
++     "targetId": "enemy-0",
++     "type": "bladestorm-rhythm",
++   },
++   {
++     "seed": 14,
++     "targetId": "enemy-0",
++     "type": "bladestorm-rhythm",
++   },
++   {
++     "seed": 15,
++     "targetId": "enemy-0",
++     "type": "bladestorm-rhythm",
++   },
++ ]
+
+- Expected  - 1
++ Received  + 202
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/spell-checks.test.ts:242:24)
+(fail) spell correctness regressions > multi-hit spells never send later hits to a target that has already died [2.37ms]
+250 |       // armor, so each advertised proc must deal 2–7 damage.
+251 |       f.enemies[0]!.baseSpecialAttributes.armor = 40;
+252 |       cast(f);
+253 |       if (f.enemies[0]!.health < 1000) damagingCasts++;
+254 |     }
+255 |     expect(damagingCasts).toBeGreaterThan(0);
+                                ^
+error: expect(received).toBeGreaterThan(expected)
+
+Expected: > 0
+Received: 0
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/spell-checks.test.ts:255:27)
+(fail) spell correctness regressions > Tidepiercer Thrust's advertised armor-ignore proc penetrates otherwise blocking armor [4.50ms]
+264 |     for (let i = 0; i < 60000; i++) {
+265 |       const target = randomInArray(slots, rng)!;
+266 |       counts.set(target, counts.get(target)! + 1);
+267 |     }
+268 |     for (const [slot, count] of counts) {
+269 |       expect(count, `${slot}: ${JSON.stringify(Object.fromEntries(counts))}`).toBeGreaterThan(13500);
+                                                                                    ^
+error: enemy-0: {"enemy-0":9992,"enemy-1":19799,"enemy-2":20158,"enemy-3":10051}
+
+Expected: > 13500
+Received: 9992
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/spell-checks.test.ts:269:79)
+(fail) registered enemy targeting > random target choice gives equal-sized enemy slots equal probability [3.77ms]
+(pass) registered enemy targeting > goblin: each spell selects legal living targets and empty mana falls back [0.69ms]
+(pass) registered enemy targeting > skeleton-grunt: each spell selects legal living targets and empty mana falls back [0.33ms]
+(pass) registered enemy targeting > rotting-corpse: each spell selects legal living targets and empty mana falls back [0.59ms]
+(pass) registered enemy targeting > wisp-of-regret: each spell selects legal living targets and empty mana falls back [2.68ms]
+(pass) registered enemy targeting > ghoul-knight-ivern: each spell selects legal living targets and empty mana falls back [1.15ms]
+(pass) registered enemy targeting > emberbound-revenant: each spell selects legal living targets and empty mana falls back [1.03ms]
+(pass) registered enemy targeting > ashen-skeleton: each spell selects legal living targets and empty mana falls back [0.95ms]
+(pass) registered enemy targeting > lurking-flame-wraith: each spell selects legal living targets and empty mana falls back [1.07ms]
+(pass) registered enemy targeting > crypt-crawler: each spell selects legal living targets and empty mana falls back [1.09ms]
+(pass) registered enemy targeting > moss-covered-golem: each spell selects legal living targets and empty mana falls back [0.88ms]
+(pass) registered enemy targeting > barkhide-shaman: each spell selects legal living targets and empty mana falls back [0.86ms]
+(pass) registered enemy targeting > hollowed-oakwarden: each spell selects legal living targets and empty mana falls back [1.29ms]
+(pass) registered enemy targeting > elder-treant: each spell selects legal living targets and empty mana falls back [1.04ms]
+(pass) registered enemy targeting > thundermaw: each spell selects legal living targets and empty mana falls back [1.35ms]
+(pass) registered enemy targeting > thunder-drake: each spell selects legal living targets and empty mana falls back [0.88ms]
+(pass) registered enemy targeting > sky-serpent: each spell selects legal living targets and empty mana falls back [1.21ms]
+(pass) registered enemy targeting > storm-hatchling: each spell selects legal living targets and empty mana falls back [0.61ms]
+(pass) registered enemy targeting > skybolt-wyvern: each spell selects legal living targets and empty mana falls back [0.51ms]
+(pass) registered enemy targeting > commander-kelvaris: each spell selects legal living targets and empty mana falls back [1.24ms]
+(pass) registered enemy targeting > fishfolk-shaman: each spell selects legal living targets and empty mana falls back [0.88ms]
+(pass) registered enemy targeting > fishfolk-scout: each spell selects legal living targets and empty mana falls back [0.87ms]
+(pass) registered enemy targeting > water-elemental: each spell selects legal living targets and empty mana falls back [0.91ms]
+
+12 tests failed:
+(fail) all registered spells through real server target/cast commands > battle-roar: legal sets, readonly descriptions, resource bounds across 64 scenarios [4.92ms]
+(fail) all registered spells through real server target/cast commands > aegis-wall: legal sets, readonly descriptions, resource bounds across 64 scenarios [6.83ms]
+(fail) spell correctness regressions > every inventory spell can be described before being assigned to a battle [0.61ms]
+(fail) spell correctness regressions > Aegis Wall applies a shield to each living ally without throwing [0.25ms]
+(fail) spell correctness regressions > Storm Pulse damages only enemies in a three-entity battle [0.13ms]
+(fail) spell correctness regressions > Battle Roar's ordinary failed stun records a spent cast and advances the turn [0.17ms]
+(fail) spell correctness regressions > a Sky Serpent's failed Battle Roar never leaves the command driver stuck on a bot turn [4.04ms]
+(fail) spell correctness regressions > Earthshatter grants its promised defenses after stunning multiple enemies [0.25ms]
+(fail) spell correctness regressions > Arcane Channeling still damages surviving targets when one selected enemy dies [0.23ms]
+(fail) spell correctness regressions > multi-hit spells never send later hits to a target that has already died [2.37ms]
+(fail) spell correctness regressions > Tidepiercer Thrust's advertised armor-ignore proc penetrates otherwise blocking armor [4.50ms]
+(fail) registered enemy targeting > random target choice gives equal-sized enemy slots equal probability [3.77ms]
+
+ 61 pass
+ 12 fail
+ 104238 expect() calls
+Ran 73 tests across 1 file. [317.00ms]

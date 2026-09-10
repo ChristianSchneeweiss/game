@@ -1,0 +1,465 @@
+{
+  "summary": {
+    "scenarios": 300,
+    "waves": 25,
+    "completed": 177,
+    "commandsChecked": 2123,
+    "snapshotsChecked": 2423,
+    "failed": 123,
+    "byKind": {
+      "client-state-drift": 54,
+      "exception": 40,
+      "no-playable-turn": 29
+    }
+  },
+  "examples": [
+    {
+      "seed": "dungeon1-wave2-trial1",
+      "step": 2,
+      "kind": "client-state-drift",
+      "detail": {
+        "entity": "hero-1",
+        "expected": {
+          "health": 300,
+          "mana": 110,
+          "dead": false,
+          "cooldowns": [
+            [
+              "hero-1-arcane-channeling",
+              7
+            ],
+            [
+              "hero-1-volt-lash",
+              0
+            ],
+            [
+              "hero-1-natures-embrace",
+              0
+            ],
+            [
+              "hero-1-soulflare",
+              0
+            ],
+            [
+              "hero-1-basic-attack",
+              0
+            ]
+          ],
+          "effects": [
+            "siQ7jyDsrJAWbdwRFdfw"
+          ]
+        },
+        "actual": {
+          "health": 300,
+          "mana": 70,
+          "dead": false,
+          "cooldowns": [
+            [
+              "hero-1-arcane-channeling",
+              7
+            ],
+            [
+              "hero-1-volt-lash",
+              0
+            ],
+            [
+              "hero-1-natures-embrace",
+              0
+            ],
+            [
+              "hero-1-soulflare",
+              0
+            ],
+            [
+              "hero-1-basic-attack",
+              0
+            ]
+          ],
+          "effects": [
+            "siQ7jyDsrJAWbdwRFdfw"
+          ]
+        }
+      },
+      "commands": [
+        {
+          "entityId": "hero-0",
+          "spellId": "hero-0-iron-will",
+          "revision": 1,
+          "targetIds": [
+            "hero-1"
+          ]
+        },
+        {
+          "entityId": "hero-1",
+          "spellId": "hero-1-arcane-channeling",
+          "revision": 4,
+          "targetIds": [
+            "ashen-skeleton-0",
+            "goblin-1"
+          ]
+        }
+      ]
+    },
+    {
+      "seed": "dungeon1-wave2-trial2",
+      "step": 3,
+      "kind": "client-state-drift",
+      "detail": {
+        "entity": "hero-0",
+        "expected": {
+          "health": 276,
+          "mana": 75,
+          "dead": false,
+          "cooldowns": [
+            [
+              "hero-0-arcane-channeling",
+              7
+            ],
+            [
+              "hero-0-volt-lash",
+              0
+            ],
+            [
+              "hero-0-natures-embrace",
+              0
+            ],
+            [
+              "hero-0-soulflare",
+              4
+            ],
+            [
+              "hero-0-basic-attack",
+              0
+            ]
+          ],
+          "effects": []
+        },
+        "actual": {
+          "health": 276,
+          "mana": 35,
+          "dead": false,
+          "cooldowns": [
+            [
+              "hero-0-arcane-channeling",
+              7
+            ],
+            [
+              "hero-0-volt-lash",
+              0
+            ],
+            [
+              "hero-0-natures-embrace",
+              0
+            ],
+            [
+              "hero-0-soulflare",
+              4
+            ],
+            [
+              "hero-0-basic-attack",
+              0
+            ]
+          ],
+          "effects": []
+        }
+      },
+      "commands": [
+        {
+          "entityId": "hero-0",
+          "spellId": "hero-0-soulflare",
+          "revision": 1,
+          "targetIds": [
+            "ashen-skeleton-0"
+          ]
+        },
+        {
+          "entityId": "hero-1",
+          "spellId": "hero-1-battle-roar",
+          "revision": 4,
+          "targetIds": [
+            "ashen-skeleton-0"
+          ]
+        },
+        {
+          "entityId": "hero-0",
+          "spellId": "hero-0-arcane-channeling",
+          "revision": 11,
+          "targetIds": [
+            "ashen-skeleton-0",
+            "goblin-1"
+          ]
+        }
+      ]
+    },
+    {
+      "seed": "dungeon1-wave2-trial9",
+      "step": 1,
+      "kind": "client-state-drift",
+      "detail": {
+        "entity": "hero-1",
+        "expected": {
+          "health": 290,
+          "mana": 110,
+          "dead": false,
+          "cooldowns": [
+            [
+              "hero-1-arcane-channeling",
+              7
+            ],
+            [
+              "hero-1-volt-lash",
+              0
+            ],
+            [
+              "hero-1-natures-embrace",
+              0
+            ],
+            [
+              "hero-1-soulflare",
+              0
+            ],
+            [
+              "hero-1-basic-attack",
+              0
+            ]
+          ],
+          "effects": []
+        },
+        "actual": {
+          "health": 290,
+          "mana": 70,
+          "dead": false,
+          "cooldowns": [
+            [
+              "hero-1-arcane-channeling",
+              7
+            ],
+            [
+              "hero-1-volt-lash",
+              0
+            ],
+            [
+              "hero-1-natures-embrace",
+              0
+            ],
+            [
+              "hero-1-soulflare",
+              0
+            ],
+            [
+              "hero-1-basic-attack",
+              0
+            ]
+          ],
+          "effects": []
+        }
+      },
+      "commands": [
+        {
+          "entityId": "hero-1",
+          "spellId": "hero-1-arcane-channeling",
+          "revision": 4,
+          "targetIds": [
+            "ashen-skeleton-0",
+            "goblin-1"
+          ]
+        }
+      ]
+    },
+    {
+      "seed": "crypt-of-forgotten-echoes-wave1-trial1",
+      "step": 2,
+      "kind": "client-state-drift",
+      "detail": {
+        "entity": "hero-1",
+        "expected": {
+          "health": 300,
+          "mana": 110,
+          "dead": false,
+          "cooldowns": [
+            [
+              "hero-1-arcane-channeling",
+              7
+            ],
+            [
+              "hero-1-volt-lash",
+              0
+            ],
+            [
+              "hero-1-natures-embrace",
+              0
+            ],
+            [
+              "hero-1-soulflare",
+              0
+            ],
+            [
+              "hero-1-basic-attack",
+              0
+            ]
+          ],
+          "effects": []
+        },
+        "actual": {
+          "health": 300,
+          "mana": 70,
+          "dead": false,
+          "cooldowns": [
+            [
+              "hero-1-arcane-channeling",
+              7
+            ],
+            [
+              "hero-1-volt-lash",
+              0
+            ],
+            [
+              "hero-1-natures-embrace",
+              0
+            ],
+            [
+              "hero-1-soulflare",
+              0
+            ],
+            [
+              "hero-1-basic-attack",
+              0
+            ]
+          ],
+          "effects": []
+        }
+      },
+      "commands": [
+        {
+          "entityId": "hero-0",
+          "spellId": "hero-0-fleetfoot-gambit",
+          "revision": 0,
+          "targetIds": [
+            "hero-0"
+          ]
+        },
+        {
+          "entityId": "hero-1",
+          "spellId": "hero-1-arcane-channeling",
+          "revision": 3,
+          "targetIds": [
+            "skeleton-grunt-0",
+            "skeleton-grunt-1"
+          ]
+        }
+      ]
+    },
+    {
+      "seed": "crypt-of-forgotten-echoes-wave1-trial2",
+      "step": 5,
+      "kind": "client-state-drift",
+      "detail": {
+        "entity": "hero-0",
+        "expected": {
+          "health": 300,
+          "mana": 45,
+          "dead": false,
+          "cooldowns": [
+            [
+              "hero-0-arcane-channeling",
+              7
+            ],
+            [
+              "hero-0-volt-lash",
+              0
+            ],
+            [
+              "hero-0-natures-embrace",
+              4
+            ],
+            [
+              "hero-0-soulflare",
+              3
+            ],
+            [
+              "hero-0-basic-attack",
+              0
+            ]
+          ],
+          "effects": [
+            "grCNRe1vWTtw60BmZXen"
+          ]
+        },
+        "actual": {
+          "health": 300,
+          "mana": 5,
+          "dead": false,
+          "cooldowns": [
+            [
+              "hero-0-arcane-channeling",
+              7
+            ],
+            [
+              "hero-0-volt-lash",
+              0
+            ],
+            [
+              "hero-0-natures-embrace",
+              4
+            ],
+            [
+              "hero-0-soulflare",
+              3
+            ],
+            [
+              "hero-0-basic-attack",
+              0
+            ]
+          ],
+          "effects": [
+            "grCNRe1vWTtw60BmZXen"
+          ]
+        }
+      },
+      "commands": [
+        {
+          "entityId": "hero-0",
+          "spellId": "hero-0-soulflare",
+          "revision": 0,
+          "targetIds": [
+            "skeleton-grunt-0"
+          ]
+        },
+        {
+          "entityId": "hero-1",
+          "spellId": "hero-1-ocean-blessing",
+          "revision": 3,
+          "targetIds": [
+            "hero-0"
+          ]
+        },
+        {
+          "entityId": "hero-0",
+          "spellId": "hero-0-natures-embrace",
+          "revision": 12,
+          "targetIds": [
+            "hero-0",
+            "hero-1"
+          ]
+        },
+        {
+          "entityId": "hero-1",
+          "spellId": "hero-1-torrent-spiral",
+          "revision": 15,
+          "targetIds": [
+            "skeleton-grunt-0",
+            "skeleton-grunt-1"
+          ]
+        },
+        {
+          "entityId": "hero-0",
+          "spellId": "hero-0-arcane-channeling",
+          "revision": 22,
+          "targetIds": [
+            "skeleton-grunt-1"
+          ]
+        }
+      ]
+    }
+  ]
+}

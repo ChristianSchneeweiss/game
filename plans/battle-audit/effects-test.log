@@ -1,0 +1,441 @@
+bun test v1.4.0 (34cbb9a40)
+
+plans/battle-audit/effect-checks.test.ts:
+48 |   test("Bloodfang permits magical spells and publishes their completed cast", () => quiet(() => {
+49 |     const caster = character("caster", "TEAM_A", ["fireball"], ["bloodfang"]);
+50 |     const target = character("target", "TEAM_B");
+51 |     const bm = battle(caster, target);
+52 |     const spell = caster.spells[0]!;
+53 |     expect(() => bm.safeCastSpell(caster.id, spell.config.id, [target.id])).not.toThrow();
+                                                                                     ^
+error: expect(received).not.toThrow()
+
+Error name: "TypeError"
+Error message: "null is not an object (evaluating 'r.damageApplied')"
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/effect-checks.test.ts:53:81)
+      at quiet (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/effect-checks.test.ts:17:5)
+(fail) battle effects audit: required invariants > Bloodfang permits magical spells and publishes their completed cast [2.21ms]
+59 |
+60 |   test("Soulleech permits Basic Attack", () => quiet(() => {
+61 |     const caster = character("caster", "TEAM_A", ["basic-attack"], ["soulleech"]);
+62 |     const target = character("target", "TEAM_B");
+63 |     const bm = battle(caster, target);
+64 |     expect(() => bm.safeCastSpell(caster.id, caster.spells[0]!.config.id, [target.id])).not.toThrow();
+                                                                                                 ^
+error: expect(received).not.toThrow()
+
+Error name: "TypeError"
+Error message: "null is not an object (evaluating 'r.damageApplied')"
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/effect-checks.test.ts:64:93)
+      at quiet (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/effect-checks.test.ts:17:5)
+(fail) battle effects audit: required invariants > Soulleech permits Basic Attack [0.40ms]
+(pass) battle effects audit: required invariants > control: matching physical lifesteal completes and heals [0.30ms]
+79 |   test("Aegis Wall completes and attaches a shield", () => quiet(() => {
+80 |     const caster = character("caster", "TEAM_A", ["aegis-wall"]);
+81 |     const target = character("target", "TEAM_B");
+82 |     const bm = battle(caster, target);
+83 |     const spell = caster.spells[0]!;
+84 |     expect(() => bm.safeCastSpell(caster.id, spell.config.id, [caster.id])).not.toThrow();
+                                                                                     ^
+error: expect(received).not.toThrow()
+
+Error name: "TypeError"
+Error message: "undefined is not an object (evaluating 'this.battleManager.getEntityById')"
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/effect-checks.test.ts:84:81)
+      at quiet (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/effect-checks.test.ts:17:5)
+(fail) battle effects audit: required invariants > Aegis Wall completes and attaches a shield [0.33ms]
+89 |
+90 |   test("opposing Thorn Carapaces finish a hit without recursive reflection", () => quiet(() => {
+91 |     const caster = character("caster", "TEAM_A", ["basic-attack"], ["thorn-carapace"]);
+92 |     const target = character("target", "TEAM_B", ["basic-attack"], ["thorn-carapace"]);
+93 |     const bm = battle(caster, target);
+94 |     expect(() => bm.safeCastSpell(caster.id, caster.spells[0]!.config.id, [target.id])).not.toThrow();
+                                                                                                 ^
+error: expect(received).not.toThrow()
+
+Error name: "RangeError"
+Error message: "Maximum call stack size exceeded."
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/effect-checks.test.ts:94:93)
+      at quiet (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/effect-checks.test.ts:17:5)
+(fail) battle effects audit: required invariants > opposing Thorn Carapaces finish a hit without recursive reflection [15.61ms]
+ 99 |   test("Deflecting Stance and opposing Thorn Carapace finish a hit", () => quiet(() => {
+100 |     const caster = character("caster", "TEAM_A", ["deflecting-stance", "basic-attack"]);
+101 |     const target = character("target", "TEAM_B", ["basic-attack"], ["thorn-carapace"]);
+102 |     const bm = battle(caster, target);
+103 |     expect(bm.safeCastSpell(caster.id, caster.spells[0]!.config.id, [caster.id])).not.toBeNull();
+104 |     expect(() => bm.handler.damage(caster.spells[1]!, 100, "PHYSICAL", caster, target)).not.toThrow();
+                                                                                                  ^
+error: expect(received).not.toThrow()
+
+Error name: "RangeError"
+Error message: "Maximum call stack size exceeded."
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/effect-checks.test.ts:104:93)
+      at quiet (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/effect-checks.test.ts:17:5)
+(fail) battle effects audit: required invariants > Deflecting Stance and opposing Thorn Carapace finish a hit [3.50ms]
+108 |     const caster = character("caster", "TEAM_A");
+109 |     const target = character("target", "TEAM_B");
+110 |     const bm = battle(caster, target);
+111 |     caster.baseSpecialAttributes.critChance = 1;
+112 |     expect(caster.baseSpecialAttributes.critDamage).toBe(1);
+113 |     expect(caster.getAttribute("critDamage")).toBe(1);
+                                                    ^
+error: expect(received).toBe(expected)
+
+Expected: 1
+Received: 0
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/effect-checks.test.ts:113:47)
+      at quiet (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/effect-checks.test.ts:17:5)
+(fail) battle effects audit: required invariants > critical damage lookup includes the configured base critical multiplier [0.65ms]
+123 |     boosted.mana = baseline.mana = 10;
+124 |     expect(boosted.getAttribute("healthRegen")).toBeGreaterThan(baseline.getAttribute("healthRegen"));
+125 |     expect(boosted.getAttribute("manaRegen")).toBeGreaterThan(baseline.getAttribute("manaRegen"));
+126 |     boosted.onUpkeep();
+127 |     baseline.onUpkeep();
+128 |     expect(boosted.health).toBeGreaterThan(baseline.health);
+                                 ^
+error: expect(received).toBeGreaterThan(expected)
+
+Expected: > 20
+Received: 20
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/effect-checks.test.ts:128:28)
+      at quiet (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/effect-checks.test.ts:17:5)
+(fail) battle effects audit: required invariants > Mystic Flow and Vital Wellspring improve actual upkeep regeneration [1.20ms]
+134 |     const opponent = character("opponent", "TEAM_B");
+135 |     holder.health = 25;
+136 |     const bm = battle(holder, opponent);
+137 |     const hot = holder.activeEffects.find((effect) => effect.effectType === "HOT")!;
+138 |     expect(hot).toBeDefined();
+139 |     expect(hot.battleManager === bm).toBe(true);
+                                           ^
+error: expect(received).toBe(expected)
+
+Expected: true
+Received: false
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/effect-checks.test.ts:139:38)
+      at quiet (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/effect-checks.test.ts:17:5)
+(fail) battle effects audit: required invariants > Titan's Resurgence registers a healing effect that ticks and expires safely [0.82ms]
+152 |     const target = character("target", "TEAM_B", ["basic-attack"], ["thorn-carapace"]);
+153 |     const bm = battle(caster, target);
+154 |     caster.health = 1;
+155 |     const result = bm.handler.damage(caster.spells[0]!, 100, "PHYSICAL", caster, target);
+156 |     expect(result.totalDamage).toBe(100);
+157 |     expect(caster.health).toBe(0);
+                                ^
+error: expect(received).toBe(expected)
+
+Expected: 0
+Received: 10
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/effect-checks.test.ts:157:27)
+      at quiet (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/effect-checks.test.ts:17:5)
+(fail) battle effects audit: required invariants > lifesteal cannot revive a caster killed by the target's reflection [0.65ms]
+178 |         damage: healthAfterCast - target.health,
+179 |         ticks: bm.events.filter(({ event }) => event.eventType === "EFFECT_TRIGGER" && event.data.effectId === dot.id).length,
+180 |       };
+181 |     }
+182 |     expect(burnDamage(19)).toEqual({ damage: 10, ticks: 2 });
+183 |     expect(burnDamage(21)).toEqual({ damage: 10, ticks: 2 });
+                                 ^
+error: expect(received).toEqual(expected)
+
+  {
+-   "damage": 10,
+-   "ticks": 2,
++   "damage": 5,
++   "ticks": 1,
+  }
+
+- Expected  - 2
++ Received  + 2
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/effect-checks.test.ts:183:28)
+      at quiet (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/effect-checks.test.ts:17:5)
+(fail) battle effects audit: required invariants > a two-turn Cinderbrand burn ticks twice regardless of caster initiative [2.13ms]
+(pass) battle effects audit: required invariants > control: stacked stat modifiers expire independently and restore the base stat [0.48ms]
+222 |           failures.push({ passive: passive ?? "none", spell: type, error: error instanceof Error ? error.message : String(error) });
+223 |         }
+224 |       }
+225 |     }
+226 |     expect(casts).toBe(429);
+227 |     expect(failures).toEqual([]);
+                           ^
+error: expect(received).toEqual(expected)
+
+- []
++ [
++   {
++     "error": "legal cast rejected",
++     "passive": "none",
++     "spell": "battle-roar",
++   },
++   {
++     "error": "undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++     "passive": "none",
++     "spell": "aegis-wall",
++   },
++   {
++     "error": "legal cast rejected",
++     "passive": "armor-up",
++     "spell": "battle-roar",
++   },
++   {
++     "error": "undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++     "passive": "armor-up",
++     "spell": "aegis-wall",
++   },
++   {
++     "error": "legal cast rejected",
++     "passive": "thorn-carapace",
++     "spell": "battle-roar",
++   },
++   {
++     "error": "Maximum call stack size exceeded.",
++     "passive": "thorn-carapace",
++     "spell": "storm-pulse",
++   },
++   {
++     "error": "undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++     "passive": "thorn-carapace",
++     "spell": "aegis-wall",
++   },
++   {
++     "error": "legal cast rejected",
++     "passive": "blessed-fortune",
++     "spell": "battle-roar",
++   },
++   {
++     "error": "undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++     "passive": "blessed-fortune",
++     "spell": "aegis-wall",
++   },
++   {
++     "error": "null is not an object (evaluating 'r.damageApplied')",
++     "passive": "bloodfang",
++     "spell": "fireball",
++   },
++   {
++     "error": "null is not an object (evaluating 'r.damageApplied')",
++     "passive": "bloodfang",
++     "spell": "cinder-wisp",
++   },
++   {
++     "error": "null is not an object (evaluating 'r.damageApplied')",
++     "passive": "bloodfang",
++     "spell": "cinderbrand",
++   },
++   {
++     "error": "null is not an object (evaluating 'r.damageApplied')",
++     "passive": "bloodfang",
++     "spell": "soulflare",
++   },
++   {
++     "error": "null is not an object (evaluating 'r.damageApplied')",
++     "passive": "bloodfang",
++     "spell": "charred-chains",
++   },
++   {
++     "error": "null is not an object (evaluating 'r.damageApplied')",
++     "passive": "bloodfang",
++     "spell": "rootgrasp",
++   },
++   {
++     "error": "null is not an object (evaluating 'r.damageApplied')",
++     "passive": "bloodfang",
++     "spell": "verdant-smite",
++   },
++   {
++     "error": "null is not an object (evaluating 'r.damageApplied')",
++     "passive": "bloodfang",
++     "spell": "lightning-surge",
++   },
++   {
++     "error": "legal cast rejected",
++     "passive": "bloodfang",
++     "spell": "battle-roar",
++   },
++   {
++     "error": "null is not an object (evaluating 'r.damageApplied')",
++     "passive": "bloodfang",
++     "spell": "aqua-wave",
++   },
++   {
++     "error": "null is not an object (evaluating 'r.damageApplied')",
++     "passive": "bloodfang",
++     "spell": "tidal-pulse",
++   },
++   {
++     "error": "null is not an object (evaluating 'r.damageApplied')",
++     "passive": "bloodfang",
++     "spell": "volt-lash",
++   },
++   {
++     "error": "undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++     "passive": "bloodfang",
++     "spell": "aegis-wall",
++   },
++   {
++     "error": "null is not an object (evaluating 'r.damageApplied')",
++     "passive": "soulleech",
++     "spell": "basic-attack",
++   },
++   {
++     "error": "null is not an object (evaluating 'r.damageApplied')",
++     "passive": "soulleech",
++     "spell": "crude-strike",
++   },
++   {
++     "error": "null is not an object (evaluating 'r.damageApplied')",
++     "passive": "soulleech",
++     "spell": "festering-blow",
++   },
++   {
++     "error": "null is not an object (evaluating 'r.damageApplied')",
++     "passive": "soulleech",
++     "spell": "vital-strike",
++   },
++   {
++     "error": "null is not an object (evaluating 'r.damageApplied')",
++     "passive": "soulleech",
++     "spell": "splinter-shot",
++   },
++   {
++     "error": "null is not an object (evaluating 'r.damageApplied')",
++     "passive": "soulleech",
++     "spell": "precise-thrust",
++   },
++   {
++     "error": "null is not an object (evaluating 'r.damageApplied')",
++     "passive": "soulleech",
++     "spell": "crushing-blow",
++   },
++   {
++     "error": "null is not an object (evaluating 'r.damageApplied')",
++     "passive": "soulleech",
++     "spell": "stunning-strike",
++   },
++   {
++     "error": "null is not an object (evaluating 'r.damageApplied')",
++     "passive": "soulleech",
++     "spell": "staggering-jab",
++   },
++   {
++     "error": "legal cast rejected",
++     "passive": "soulleech",
++     "spell": "battle-roar",
++   },
++   {
++     "error": "null is not an object (evaluating 'r.damageApplied')",
++     "passive": "soulleech",
++     "spell": "torrent-spiral",
++   },
++   {
++     "error": "null is not an object (evaluating 'r.damageApplied')",
++     "passive": "soulleech",
++     "spell": "tidepiercer-thrust",
++   },
++   {
++     "error": "null is not an object (evaluating 'r.damageApplied')",
++     "passive": "soulleech",
++     "spell": "rupture",
++   },
++   {
++     "error": "null is not an object (evaluating 'r.damageApplied')",
++     "passive": "soulleech",
++     "spell": "storm-pulse",
++   },
++   {
++     "error": "null is not an object (evaluating 'r.damageApplied')",
++     "passive": "soulleech",
++     "spell": "final-verdict",
++   },
++   {
++     "error": "undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++     "passive": "soulleech",
++     "spell": "aegis-wall",
++   },
++   {
++     "error": "null is not an object (evaluating 'r.damageApplied')",
++     "passive": "soulleech",
++     "spell": "bulwark-bash",
++   },
++   {
++     "error": "null is not an object (evaluating 'r.damageApplied')",
++     "passive": "soulleech",
++     "spell": "earthshatter",
++   },
++   {
++     "error": "null is not an object (evaluating 'r.damageApplied')",
++     "passive": "soulleech",
++     "spell": "bladestorm-rhythm",
++   },
++   {
++     "error": "legal cast rejected",
++     "passive": "mystic-flow",
++     "spell": "battle-roar",
++   },
++   {
++     "error": "undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++     "passive": "mystic-flow",
++     "spell": "aegis-wall",
++   },
++   {
++     "error": "legal cast rejected",
++     "passive": "vital-wellspring",
++     "spell": "battle-roar",
++   },
++   {
++     "error": "undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++     "passive": "vital-wellspring",
++     "spell": "aegis-wall",
++   },
++   {
++     "error": "legal cast rejected",
++     "passive": "stoneform-resolve",
++     "spell": "battle-roar",
++   },
++   {
++     "error": "undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++     "passive": "stoneform-resolve",
++     "spell": "aegis-wall",
++   },
++   {
++     "error": "legal cast rejected",
++     "passive": "titans-resurgence",
++     "spell": "battle-roar",
++   },
++   {
++     "error": "undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++     "passive": "titans-resurgence",
++     "spell": "aegis-wall",
++   },
++   {
++     "error": "legal cast rejected",
++     "passive": "keen-instincts",
++     "spell": "battle-roar",
++   },
++   {
++     "error": "undefined is not an object (evaluating 'this.battleManager.getEntityById')",
++     "passive": "keen-instincts",
++     "spell": "aegis-wall",
++   },
++ ]
+
+- Expected  - 1
++ Received  + 257
+
+      at <anonymous> (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/effect-checks.test.ts:227:22)
+      at quiet (/Users/christianschneeweiss/Documents/business/loot-game/game/plans/battle-audit/effect-checks.test.ts:17:5)
+(fail) battle effects audit: required invariants > all 39 registered spells can resolve with each single registered passive [39.98ms]
+
+ 2 pass
+ 11 fail
+ 32 expect() calls
+Ran 13 tests across 1 file. [100.00ms]
