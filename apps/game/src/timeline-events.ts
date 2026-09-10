@@ -1,11 +1,36 @@
 import z from "zod";
 
+const payment = z.object({
+  casterId: z.string(),
+  manaSpent: z.number().int(),
+  cooldown: z.number().int(),
+});
+
+const provenance = z.discriminatedUnion("kind", [
+  z.object({ kind: z.literal("spell"), id: z.string(), sourceId: z.string() }),
+  z.object({ kind: z.literal("effect"), id: z.string(), sourceId: z.string() }),
+]);
+
+// Resource changes are recorded at the mutation boundary, including nested
+// reactions. Summary maps remain useful for cues and for reading old battles.
+const impact = z.object({
+  cause: provenance,
+  targetId: z.string(),
+  healthChange: z.number().int(),
+  isCrit: z.boolean(),
+});
+export type BattleImpact = z.infer<typeof impact>;
+
 const spellCastEvent = z.object({
   eventType: z.literal("SPELL_CAST"),
   data: z.object({
     spellId: z.string(),
     roll: z.number().int(),
     isCrit: z.boolean(),
+    version: z.literal(2).optional(),
+    payment: payment.optional(),
+    origin: z.enum(["cast", "delayed", "passive"]).optional(),
+    impacts: z.array(impact).optional(),
     totalDamage: z.number().int().optional(),
     damageApplied: z.map(z.string(), z.number().int()).optional(),
     healingApplied: z.map(z.string(), z.number().int()).optional(),
@@ -17,6 +42,8 @@ const EffectTriggerEvent = z.object({
   eventType: z.literal("EFFECT_TRIGGER"),
   data: z.object({
     effectId: z.string(),
+    version: z.literal(2).optional(),
+    impacts: z.array(impact).optional(),
     damageApplied: z.map(z.string(), z.number().int()).optional(),
     healingApplied: z.map(z.string(), z.number().int()).optional(),
     effectsApplied: z.map(z.string(), z.array(z.string())).optional(),

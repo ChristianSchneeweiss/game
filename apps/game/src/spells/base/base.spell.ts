@@ -5,6 +5,7 @@ import type {
   SpellCastEvent,
 } from "../../timeline-events";
 import type { Spell, SpellConfig, TargetType } from "../../types";
+import { completeSelection, legalTargets, targetSelection } from "./targets";
 
 export abstract class BaseSpell implements Spell {
   config: SpellConfig;
@@ -27,24 +28,11 @@ export abstract class BaseSpell implements Spell {
 
   getValidTargets(caster: Entity): Entity[] {
     if (!this.battleManager) throw new Error("Battle manager not set");
-    const allEntities = this.battleManager.getAliveEntities();
-    const enemies = allEntities.filter(
-      (e) => e.team !== caster.team && !e.isDead(),
+    return legalTargets(
+      caster,
+      this.battleManager.entities,
+      this.getTargetType(),
     );
-    const allies = this.battleManager
-      .getTeam(caster.team)
-      .filter((e) => !e.isDead());
-    let targets: Entity[] = [];
-
-    const targetType = this.getTargetType();
-    if (targetType.enemies > 0) {
-      targets = enemies;
-    }
-    if (targetType.allies > 0) {
-      targets = [...targets, ...allies];
-    }
-
-    return targets;
   }
 
   cast(caster: Entity, targets: Entity[]): SpellCastEvent[] | null {
@@ -68,30 +56,30 @@ export abstract class BaseSpell implements Spell {
     const roll = this.getRoll(caster);
     this.processCasting(caster);
     const result = this._cast(caster, targets, this.battleManager, roll);
-    if (!result) return null;
-    if (Array.isArray(result)) {
-      return result
-        .filter((r) => r !== null)
-        .map((r) => ({
-          eventType: "SPELL_CAST",
-          data: {
-            ...r,
-            spellId: this.config.id,
-            roll,
-          },
-        }));
-    }
-
-    return [
-      {
-        eventType: "SPELL_CAST",
-        data: {
-          ...result,
-          spellId: this.config.id,
-          roll,
-        },
+    const outcomes = (Array.isArray(result) ? result : [result]).filter(
+      (outcome) => outcome !== null,
+    );
+    // A legal cast commits even when none of its optional effects succeeds.
+    if (outcomes.length === 0) outcomes.push({ isCrit: false });
+    return outcomes.map((outcome, index) => ({
+      eventType: "SPELL_CAST",
+      data: {
+        ...outcome,
+        version: 2,
+        origin: "cast",
+        spellId: this.config.id,
+        roll,
+        ...(index === 0
+          ? {
+              payment: {
+                casterId: caster.id,
+                manaSpent: this.config.manaCost,
+                cooldown: this.currentCooldown,
+              },
+            }
+          : {}),
       },
-    ];
+    }));
   }
 
   description(caster: Entity) {
@@ -113,13 +101,12 @@ export abstract class BaseSpell implements Spell {
   ): OptionalSpellCastEvent | OptionalSpellCastEvent[];
 
   protected validateTargets(caster: Entity, targets: Entity[]): boolean {
-    const { enemies, allies } = this.getTargetType();
-    if (enemies === 0 && allies === 0) return true;
-    if (targets.length === 0) return false;
-
-    const validTargets = this.getValidTargets(caster);
-    console.log("valid targets", validTargets);
-    return targets.every((target) => validTargets.includes(target));
+    const selection = targetSelection(caster, this);
+    const ids =
+      selection.self && targets.length === 0
+        ? [caster.id]
+        : targets.map((target) => target.id);
+    return completeSelection(caster, ids, selection);
   }
 
   protected processCasting(caster: Entity): void {

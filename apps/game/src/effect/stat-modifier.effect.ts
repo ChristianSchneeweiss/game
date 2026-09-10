@@ -1,4 +1,4 @@
-import type { AttributeModifier, EffectType } from "../types";
+import type { AttributeModifier, EffectClock, EffectType } from "../types";
 import { BaseEffect } from "./base-effect";
 
 export class StatModifierEffect extends BaseEffect {
@@ -8,8 +8,9 @@ export class StatModifierEffect extends BaseEffect {
     effectType: EffectType,
     modifiers: AttributeModifier[],
     duration: number,
+    clock: EffectClock = "turn",
   ) {
-    super(effectType, duration);
+    super(effectType, duration, clock);
     this.modifiers = modifiers;
   }
 

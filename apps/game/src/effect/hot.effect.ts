@@ -1,12 +1,12 @@
 import type { Effect } from "../types";
-import { BaseEffect } from "./base-effect";
+import { PeriodicEffect } from "./periodic.effect";
 
 export interface HealingOverTimeEffectExposed extends Effect {
   readonly healingPerRound: number;
 }
 
 export class HealingOverTimeEffect
-  extends BaseEffect
+  extends PeriodicEffect
   implements HealingOverTimeEffectExposed
 {
   readonly healingPerRound: number;
@@ -16,26 +16,21 @@ export class HealingOverTimeEffect
     this.healingPerRound = healingPerRound;
   }
 
-  onPostRound(): void {
+  protected tick(): void {
     const source = this.getSource();
     const target = this.getTarget();
-    const spellSource = this.getSpellSource();
     const healing = this.battleManager.handler.healing(
       this,
       this.healingPerRound,
       source,
       target,
     );
-    this.battleManager.addEventToSpellCastBuffer({
+    this.battleManager.processEvent({
       eventType: "EFFECT_TRIGGER",
       data: {
         effectId: this.id,
         ...healing,
       },
     });
-    console.log(
-      `${source.name} heals ${healing} to ${target.name} with ${spellSource.config.name}`,
-    );
-    super.onPostRound();
   }
 }

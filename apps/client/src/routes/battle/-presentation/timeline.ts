@@ -59,6 +59,9 @@ export function buildTimeline(
   starts?: InBetweenCharacterData[],
   effects: EffectTracking = new Map(),
 ): DisplayFrame[] {
+  const participantsById = new Map(
+    participants.map((entity) => [entity.id, entity]),
+  );
   const owners = new Map(
     participants.flatMap((entity) =>
       entity.spells.map(
@@ -114,32 +117,34 @@ export function buildTimeline(
       event.eventType === "EFFECT_TRIGGER"
     ) {
       if (event.eventType === "SPELL_CAST") {
-        const owner = owners.get(event.data.spellId);
+        const data = event.data;
+        const owner = owners.get(data.spellId);
         cue.casterId =
-          owner?.entity.id ??
-          participants.find((e) => e.id === event.data.spellId)?.id;
+          owner?.entity.id ?? participantsById.get(data.spellId)?.id;
         cue.label = owner?.spell.config.name ?? "Effect applied";
         cue.skillType = owner?.spell.config.type;
         cue.major =
           owner?.spell.config.tier === "S" ||
           (owner?.spell.config.manaCost ?? 0) >= 35;
-        cue.style = event.data.healingApplied?.size
+        cue.style = data.healingApplied?.size
           ? "heal"
-          : !event.data.damageApplied?.size && event.data.effectsApplied?.size
+          : !data.damageApplied?.size && data.effectsApplied?.size
             ? "ward"
             : owner && meleeSpells.has(owner.spell.config.type)
               ? "melee"
               : "spell";
-        const appliedIds = [
-          ...(event.data.effectsApplied?.values() ?? []),
-        ].flat();
+        const appliedIds = [...(data.effectsApplied?.values() ?? [])].flat();
         const passiveOnly =
-          event.data.spellId === cue.casterId &&
-          event.data.roll === 0 &&
-          appliedIds.length > 0 &&
-          !event.data.damageApplied?.size &&
-          !event.data.healingApplied?.size &&
-          appliedIds.every((id) => effects.get(id)?.effectType === "PASSIVE");
+          data.origin === "passive" ||
+          (data.version === undefined &&
+            data.spellId === cue.casterId &&
+            data.roll === 0 &&
+            appliedIds.length > 0 &&
+            !data.damageApplied?.size &&
+            !data.healingApplied?.size &&
+            appliedIds.every(
+              (id) => effects.get(id)?.effectType === "PASSIVE",
+            ));
         if (passiveOnly) {
           cue.label = "Passive effect";
           cue.style = "effect";
@@ -148,18 +153,26 @@ export function buildTimeline(
         }
         const caster = owner && stats.get(owner.entity.id);
         if (caster && owner && !passiveOnly) {
-          caster.deltaMana = -Math.min(
-            caster.mana,
-            owner.spell.config.manaCost,
-          );
-          caster.mana += caster.deltaMana;
-          caster.cooldowns.set(
-            owner.spell.config.id,
-            owner.spell.config.cooldown ? owner.spell.config.cooldown + 1 : 0,
-          );
+          // Version 1 recordings only contain summaries; retain their legacy
+          // interpretation. New events describe payment explicitly and never
+          // infer it from the spell used by a delayed consequence.
+          const payment =
+            data.version === 2
+              ? data.payment
+              : {
+                  manaSpent: owner.spell.config.manaCost,
+                  cooldown: owner.spell.config.cooldown
+                    ? owner.spell.config.cooldown + 1
+                    : 0,
+                };
+          if (payment) {
+            caster.deltaMana = -Math.min(caster.mana, payment.manaSpent);
+            caster.mana += caster.deltaMana;
+            caster.cooldowns.set(owner.spell.config.id, payment.cooldown);
+          }
           caster.flags.casting = true;
-          caster.flags.isCrit = event.data.isCrit;
-          caster.roll = event.data.roll;
+          caster.flags.isCrit = data.isCrit;
+          caster.roll = data.roll;
         }
       } else {
         cue.effectId = event.data.effectId;
@@ -172,15 +185,24 @@ export function buildTimeline(
         if (effect) cue.targetIds.push(effect.targetId);
       }
       const { damageApplied, healingApplied, effectsApplied } = event.data;
+      for (const impact of event.data.impacts ?? []) {
+        const target = stats.get(impact.targetId);
+        if (target) {
+          target.health += impact.healthChange;
+          target.deltaHealth += impact.healthChange;
+          target.flags.dead = target.health <= 0;
+          cue.targetIds.push(impact.targetId);
+        }
+      }
       for (const entity of participants) {
         const s = stats.get(entity.id)!;
-        if (damageApplied?.has(entity.id)) {
+        if (event.data.version !== 2 && damageApplied?.has(entity.id)) {
           const damage = damageApplied.get(entity.id)!;
           s.health = Math.max(0, s.health - damage);
           s.deltaHealth -= damage;
           cue.targetIds.push(entity.id);
         }
-        if (healingApplied?.has(entity.id)) {
+        if (event.data.version !== 2 && healingApplied?.has(entity.id)) {
           const healing = Math.min(
             healingApplied.get(entity.id)!,
             entity.maxHealth - s.health,
@@ -231,7 +253,7 @@ export function buildTimeline(
       cue.label = "Regeneration";
       cue.targetIds = [event.data.entityId];
       const s = stats.get(event.data.entityId);
-      const entity = participants.find((e) => e.id === event.data.entityId);
+      const entity = participantsById.get(event.data.entityId);
       if (s && entity) {
         s.deltaHealth = Math.min(
           event.data.healthRegen,

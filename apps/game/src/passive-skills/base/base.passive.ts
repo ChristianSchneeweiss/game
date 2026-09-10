@@ -6,16 +6,18 @@ import type {
   EffectHookArgs,
 } from "../../lifecycle-hooks";
 import type { TimelineEvent } from "../../timeline-events";
-import type { Effect, Tier } from "../../types";
+import type { Effect, EffectOrigin, Tier } from "../../types";
 import type { PassiveSkill, PassiveType } from "./passive-types";
 
 export abstract class BasePassive implements PassiveSkill {
   id: string;
   effectType = "PASSIVE" as const;
   duration = 10_000; // high number. infinity breaks stuff
+  clock = "battle" as const;
+  preventsAction = false;
   sourceId: string;
   targetId: string;
-  spellSourceId: string;
+  origin: EffectOrigin;
   battleManager: BattleManager;
   passiveType: PassiveType;
   tier: Tier;
@@ -34,7 +36,7 @@ export abstract class BasePassive implements PassiveSkill {
     this.id = id;
     this.sourceId = holder.id;
     this.targetId = holder.id;
-    this.spellSourceId = holder.id;
+    this.origin = { kind: "passive", id };
     this.battleManager = undefined!;
     this.passiveType = passiveType;
     this.tier = tier;

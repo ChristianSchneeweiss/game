@@ -4,6 +4,10 @@ import type { Spell } from "@loot-game/game/types";
 import { Character } from "@loot-game/game/base-entity";
 import type { BM } from "@loot-game/game/bm";
 import { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
+import {
+  completeSelection,
+  targetSelection,
+} from "@loot-game/game/spells/base/targets";
 import type { BattleMessage } from "./protocol";
 
 type Cast = Extract<BattleMessage, { type: "castSpell" }>["data"];
@@ -35,24 +39,15 @@ export function availableSpells(bm: BM) {
 
 export function getBattleTargets(bm: BM, data: TargetRequest) {
   const { entity, spell } = currentSpell(bm, data);
-  const type = spell.getTargetType();
-  const self = type.enemies === 0 && type.allies === 0;
-  const targets = self ? [entity] : spell.getValidTargets(entity);
-  const enemies = Math.min(
-    type.enemies,
-    targets.filter((t) => t.team !== entity.team).length,
+  const { targets, enemies, allies, automatic } = targetSelection(
+    entity,
+    spell,
   );
-  const allies = self
-    ? 1
-    : Math.min(
-        type.allies,
-        targets.filter((t) => t.team === entity.team).length,
-      );
   return {
     targets: targets.map((t) => t.id),
     enemies,
     allies,
-    automatic: self || enemies + allies === targets.length,
+    automatic,
     entityId: entity.id,
     spellId: spell.config.id,
     revision: bm.events.length,
@@ -66,19 +61,12 @@ export function castBattleSpell(bm: BM, data: Cast, userId: string) {
   if (!(entity instanceof Character) || entity.userId !== userId) {
     throw new Error("You can only cast for your own character.");
   }
-  const legal = getBattleTargets(bm, data);
+  const legal = targetSelection(entity, spell);
   const ids = data.targetIds;
-  const self =
-    spell.getTargetType().enemies === 0 && spell.getTargetType().allies === 0;
+  const self = legal.self;
   // Empty self targets remain compatible with existing recorded commands.
   const selection = self && ids.length === 0 ? [entity.id] : ids;
-  if (
-    new Set(selection).size !== selection.length ||
-    selection.length !== legal.enemies + legal.allies ||
-    selection.some((id) => !legal.targets.includes(id)) ||
-    selection.filter((id) => bm.getEntityById(id)?.team === entity.team)
-      .length !== legal.allies
-  ) {
+  if (!completeSelection(entity, selection, legal)) {
     throw new Error("Choose the complete legal target set.");
   }
   const result = bm.safeCastSpell(
@@ -94,6 +82,9 @@ export function castBattleSpell(bm: BM, data: Cast, userId: string) {
 
 /** Existing automatic enemy turns, independent of display timing. */
 export function advanceBots(bm: BM) {
+  // Opening upkeep belongs to the command driver, just like later decisions.
+  // BM.preTurn is idempotent while the same turn remains prepared.
+  bm.preTurn();
   while (!bm.isGameOver()) {
     const next = bm.getEntityById(bm.getCurrentRound().orderQueue[0]);
     if (!(next instanceof BaseEnemy) || !next.isBot) return;

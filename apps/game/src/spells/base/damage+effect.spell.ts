@@ -5,6 +5,12 @@ import type { EffectModule } from "../../modules/effect.module";
 import type { OptionalSpellCastEvent } from "../../timeline-events";
 import type { SpellConfig } from "../../types";
 import { BaseSpell } from "./base.spell";
+import { canResolveImpact } from "./targets";
+
+type EffectRules = {
+  chanceScope?: "cast" | "target";
+  afterApplications?: { minimumTargets: number; effect: EffectModule };
+};
 
 /**
  * A spell that damages and has a chance to apply an effect.
@@ -19,6 +25,7 @@ export abstract class DamageEffectSpell extends BaseSpell {
     damageModule: DamageModule,
     effectModule: EffectModule,
     effectChance: number,
+    private readonly effectRules: EffectRules = {},
   ) {
     super(config);
     this.damageModule = damageModule;
@@ -39,17 +46,32 @@ export abstract class DamageEffectSpell extends BaseSpell {
       battleManager,
       this,
     );
-    const rng = this.getRNG();
-    console.log("rng", rng, this.effectChance);
-    if (rng >= this.effectChance) return damage;
-
+    const eligible = targets.filter((target) =>
+      canResolveImpact(caster, target),
+    );
+    const selected =
+      this.effectRules.chanceScope === "target"
+        ? eligible.filter(() => this.getRNG() < this.effectChance)
+        : this.getRNG() < this.effectChance
+          ? eligible
+          : [];
     const effects = this.effectModule.applyRawEffect(
       caster,
-      targets,
+      selected,
       roll,
       this,
     );
-    return battleManager.handler.mergeHandlerReturns([damage, effects]);
+    const results = [damage, effects];
+    const followup = this.effectRules.afterApplications;
+    if (
+      followup &&
+      (effects.effectsApplied?.size ?? 0) >= followup.minimumTargets
+    ) {
+      results.push(
+        followup.effect.applyRawEffect(caster, [caster], roll, this),
+      );
+    }
+    return battleManager.handler.mergeHandlerReturns(results);
   }
 
   protected textDescription(caster: Entity): string {

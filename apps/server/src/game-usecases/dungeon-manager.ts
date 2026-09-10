@@ -15,7 +15,7 @@ import type {
 } from "@loot-game/game/dungeons/types";
 import type { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
 import type { LootEntity } from "@loot-game/game/types";
-import { eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, isNull } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import seedrandom from "seedrandom";
 import {
@@ -155,26 +155,33 @@ export const dungeonManager = {
       const [dungeon] = await tx
         .select()
         .from(TB_dungeonData)
-        .where(eq(TB_dungeonData.id, dungeonId));
+        .where(eq(TB_dungeonData.id, dungeonId))
+        .for("update");
       if (!dungeon) {
         throw new Error("Dungeon not found");
       }
 
-      // this makes sure the dungeon round is the same as the number of battles
-      const dungeonBattles = await tx
-        .select()
-        .from(TB_dungeonBattle)
-        .where(eq(TB_dungeonBattle.dungeonId, dungeonId));
-      if (!dungeonBattles) {
-        throw new Error("Dungeon battle not found");
-      }
-      // short circuit if we are already at the correct round
-      if (dungeon.round === dungeonBattles.length) {
-        return;
+      const [attempt] = await tx
+        .update(TB_dungeonBattle)
+        .set({ completedAt: new Date() })
+        .where(
+          and(
+            eq(TB_dungeonBattle.dungeonId, dungeonId),
+            eq(TB_dungeonBattle.battleId, battleId),
+            isNull(TB_dungeonBattle.completedAt),
+          ),
+        )
+        .returning();
+      // Claim, rewards and progression share this transaction. Rollback restores
+      // the completion marker too, so delivery can safely be retried.
+      if (!attempt) return;
+
+      if (dungeon.activeBattleId && dungeon.activeBattleId !== battleId) {
+        throw new Error("Completion does not match the active dungeon attempt");
       }
 
       if (winningTeam === "TEAM_A") {
-        dungeon.round = dungeonBattles.length;
+        dungeon.round = attempt.round + 1;
       }
       const totalXp = enemies.reduce((acc, enemy) => acc + enemy.xp, 0);
       for (const character of characters) {
@@ -226,6 +233,7 @@ export const dungeonManager = {
         .set({
           round: dungeon.round,
           activeBattle: false,
+          activeBattleId: null,
           characterData: characters.map((character) => {
             // const characterFromBattle = bm
             //   .getTeam("TEAM_A")

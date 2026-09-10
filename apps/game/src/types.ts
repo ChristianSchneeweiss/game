@@ -12,6 +12,9 @@ import { SpellTypeSchema, type SpellType } from "./spells/base/spell-types";
 import type { SpellCastEvent } from "./timeline-events";
 
 export type DamageType = "PHYSICAL" | "MAGICAL";
+export type DamageCause = "direct" | "periodic" | "reflection";
+export type DamageOptions = { cause?: DamageCause; ignoreDefense?: number };
+export type EffectOrigin = { kind: "spell" | "effect" | "passive"; id: string };
 
 export type Tier = "E" | "D" | "C" | "B" | "A" | "S";
 
@@ -26,6 +29,8 @@ export type EffectType =
   | "CONTROL"
   | "SHIELD"
   | "PASSIVE";
+
+export type EffectClock = "turn" | "round" | "battle";
 
 export type ModifierOperation = "ADD" | "MULTIPLY";
 
@@ -46,9 +51,11 @@ export interface Effect
   id: string;
   effectType: EffectType;
   duration: number;
+  clock: EffectClock;
+  preventsAction: boolean;
   sourceId: string;
   targetId: string;
-  spellSourceId: string;
+  origin: EffectOrigin;
   battleManager: BattleManager;
 
   getDescription(): string;

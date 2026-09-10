@@ -3,10 +3,11 @@ import type { Entity, Team } from "./entity-types";
 import type { RoundLifecycleHooks } from "./lifecycle-hooks";
 import type {
   SpellCastEvent,
+  BattleImpact,
   TimelineEvent,
   TimelineEventFull,
 } from "./timeline-events";
-import type { DamageType, Effect, Spell } from "./types";
+import type { DamageOptions, DamageType, Effect, Spell } from "./types";
 
 export interface BattleManager {
   battleId: string;
@@ -28,6 +29,7 @@ export interface BattleManager {
   join(entity: Entity): void;
   processEntityDeath(entity: Entity, cause: { spellId: string }): void;
   processEvent(event: TimelineEvent): void;
+  recordImpact(impact: BattleImpact): void;
   changeTurnOrder(cb: (currentOrder: string[]) => string[]): void;
 
   addEffect(effect: Effect): void;
@@ -54,6 +56,7 @@ export interface BattleHandler {
     type: DamageType,
     source: Entity,
     target: Entity,
+    options?: DamageOptions,
   ): HandlerReturn;
   healing(
     spell: Spell | Effect,

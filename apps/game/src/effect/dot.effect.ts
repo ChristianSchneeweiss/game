@@ -1,5 +1,5 @@
 import type { DamageType, Effect } from "../types";
-import { BaseEffect } from "./base-effect";
+import { PeriodicEffect } from "./periodic.effect";
 
 export interface DamageOverTimeEffectExposed extends Effect {
   readonly damagePerRound: number;
@@ -7,7 +7,7 @@ export interface DamageOverTimeEffectExposed extends Effect {
 }
 
 export class DamageOverTimeEffect
-  extends BaseEffect
+  extends PeriodicEffect
   implements DamageOverTimeEffectExposed
 {
   readonly damagePerRound: number;
@@ -23,10 +23,9 @@ export class DamageOverTimeEffect
     this.damageType = damageType;
   }
 
-  onPostRound(): void {
+  protected tick(): void {
     const source = this.getSource();
     const target = this.getTarget();
-    const spellSource = this.getSpellSource();
 
     const damage = this.battleManager.handler.damage(
       this,
@@ -34,9 +33,7 @@ export class DamageOverTimeEffect
       this.damageType,
       source,
       target,
-    );
-    console.log(
-      `${source.name} deals ${damage} damage to ${target.name} with ${spellSource.config.name}`,
+      { cause: "periodic" },
     );
     this.battleManager.processEvent({
       eventType: "EFFECT_TRIGGER",
@@ -45,10 +42,9 @@ export class DamageOverTimeEffect
         ...damage,
       },
     });
-    super.onPostRound();
   }
 
   getDescription(): string {
-    return `${this.damagePerRound} ${this.damageType} damage per round`;
+    return `${this.damagePerRound} ${this.damageType} damage per affected turn`;
   }
 }

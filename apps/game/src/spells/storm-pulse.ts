@@ -5,6 +5,7 @@ import type { OptionalSpellCastEvent } from "../timeline-events";
 import { minMaxRoll } from "../utils/min-max-roll";
 import { uniqueRandomFromArray } from "../utils/random-in-array";
 import { BaseSpell } from "./base/base.spell";
+import { livingEnemies } from "./base/targets";
 
 export class StormPulseSpell extends BaseSpell {
   damageModule: DamageModule;
@@ -19,18 +20,16 @@ export class StormPulseSpell extends BaseSpell {
       targetType: { enemies: 0, allies: 0 },
       tier: "A",
     });
-    this.damageModule = new MinMaxDamageModule("PHYSICAL", {
-      min: 5,
-      max: 10,
-      attributeScaling: ({ roll, caster }) => {
-        const bonusDamageChance = 0.4;
-        const baseBonusDamage = caster.getAttribute("intelligence") * 0.4;
-        if (this.getRNG() < bonusDamageChance) {
-          return minMaxRoll(5, 10, roll) + baseBonusDamage;
-        }
-        return baseBonusDamage;
+    this.damageModule = new MinMaxDamageModule(
+      "PHYSICAL",
+      {
+        min: 5,
+        max: 10,
+        attributeScaling: ({ caster }) =>
+          caster.getAttribute("intelligence") * 0.4,
       },
-    });
+      { chance: 0.4, bonusDamage: ({ roll }) => minMaxRoll(5, 10, roll) },
+    );
   }
 
   protected _cast(
@@ -42,7 +41,7 @@ export class StormPulseSpell extends BaseSpell {
     if (!this.battleManager) throw new Error("Battle manager not set");
 
     const randomTargets = uniqueRandomFromArray(
-      this.battleManager.getAliveEntities(),
+      livingEnemies(caster),
       3,
       this.battleManager.getPRNG(),
     );
@@ -59,8 +58,7 @@ export class StormPulseSpell extends BaseSpell {
   }
 
   protected textDescription(caster: Entity): string {
-    const min = this.damageModule.getRawDamage(caster, caster, 0);
-    const max = this.damageModule.getRawDamage(caster, caster, 20);
+    const { min, max } = this.damageModule.getDamageRange(caster);
 
     return `A storm pulse that damages up to 3 random enemies for ${min}-${max} damage.`;
   }

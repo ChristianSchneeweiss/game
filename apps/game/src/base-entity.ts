@@ -78,9 +78,10 @@ export class BaseEntity implements Entity {
   }
 
   onUpkeep(): TimelineEvent[] | null {
+    if (this.isDead()) return null;
     // mana and health regeneration
     // TODO make health regen better
-    const healthRegen = this.isBot ? 2 : this.getAttribute("vitality") / 2;
+    const healthRegen = this.getAttribute("healthRegen");
     const realHealthRegen = calculator.calculateRealHealing(
       this,
       this,
@@ -88,7 +89,7 @@ export class BaseEntity implements Entity {
     );
     this.applyHealing(realHealthRegen, this);
 
-    const manaRegen = this.getAttribute("intelligence") / 5;
+    const manaRegen = this.getAttribute("manaRegen");
     const realManaRegen = calculator.calculateRealHealing(
       this,
       this,
@@ -133,7 +134,7 @@ export class BaseEntity implements Entity {
 
     const effects = this.activeEffects.filter((e) => e.duration > 0);
     const effectEvents = effects
-      .flatMap((e) => e.onEndStep?.())
+      .flatMap((e) => (this.activeEffects.includes(e) ? e.onEndStep?.() : null))
       .filter((e) => !!e);
 
     return [cdEvent, ...effectEvents];
@@ -144,7 +145,8 @@ export class BaseEntity implements Entity {
   }
 
   applyHealing(amount: number, source: Entity): void {
-    this.health = Math.min(this.maxHealth, this.health + amount);
+    if (this.isDead()) return;
+    this.health = Math.min(this.maxHealth, this.health + Math.max(0, amount));
   }
 
   applyEffect(effect: Effect): void {
@@ -154,8 +156,8 @@ export class BaseEntity implements Entity {
   removeEffect(effect: Effect): void {
     const index = this.activeEffects.indexOf(effect);
     if (index !== -1) {
-      effect.onRemove?.(); // todo maybe remove from entity
       this.activeEffects.splice(index, 1);
+      effect.onRemove?.();
     }
   }
 
@@ -209,7 +211,7 @@ export class BaseEntity implements Entity {
       case "healthRegen":
         return (
           this.baseSpecialAttributes.healthRegen +
-          this.getAttribute("vitality") / 4
+          (this.isBot ? 2 : this.getAttribute("vitality") / 2)
         );
       case "manaRegen":
         return (
@@ -220,6 +222,8 @@ export class BaseEntity implements Entity {
         return this.baseSpecialAttributes.blessed;
       case "critChance":
         return this.baseSpecialAttributes.critChance;
+      case "critDamage":
+        return this.baseSpecialAttributes.critDamage;
 
       // *** affinities ***
       case "fire":
@@ -234,7 +238,8 @@ export class BaseEntity implements Entity {
         return this.baseAffinities.water;
 
       default:
-        return 0;
+        const unhandled: never = attribute;
+        throw new Error(`Unknown attribute: ${unhandled}`);
     }
   }
 }

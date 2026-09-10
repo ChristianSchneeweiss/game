@@ -118,3 +118,17 @@ Key tables (defined in `apps/server/src/db/schema.ts`):
 - `dungeon_data`, `dungeon_participant`, `dungeon_enemy` - Dungeon state
 - `battle_result` - Completed battle records with timeline data
 - `loot` - Battle rewards
+
+## Agent skills
+
+### Issue tracker
+
+Issues and specs use GitHub Issues in `ChristianSchneeweiss/game`. For ticket workflows, read `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+The five canonical triage labels use their default names. Before triaging, read `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: root `CONTEXT.md` and `docs/adr/`. Before exploring the domain, read `docs/agents/domain.md`.

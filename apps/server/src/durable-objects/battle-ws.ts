@@ -1,6 +1,6 @@
 import type { ClerkClient } from "@clerk/backend";
-import type { BaseEntity, Character } from "@loot-game/game/base-entity";
-import { BM } from "@loot-game/game/bm";
+import type { BaseEntity } from "@loot-game/game/base-entity";
+import type { BM } from "@loot-game/game/bm";
 import type {
   Affinities,
   EntityAttributes,
@@ -13,8 +13,7 @@ import cloneDeep from "lodash/cloneDeep";
 import SuperJSON from "superjson";
 import z from "zod";
 import { createClerk } from "../clerk";
-import { TB_activeBattle, type Database } from "../db/schema";
-import { bmStorage } from "../game-usecases/bm-storage";
+import type { Database } from "../db/schema";
 import { SyncFactory } from "../game-usecases/sync-factory";
 
 import {
@@ -26,15 +25,20 @@ import {
 import {
   castBattleSpell,
   getBattleTargets,
-  advanceBots,
   availableSpells,
   describeBattleSpell,
 } from "../battle/commands";
 import {
   captureStartingBuilds,
-  restoreStartingBuilds,
   type StartingBuilds,
 } from "../battle/starting-builds";
+import { reconstructBattle } from "../battle/reconstruct-battle";
+import {
+  deliverBattle,
+  needsDelivery,
+  saveDelivery,
+  type BattleDelivery,
+} from "../battle/battle-delivery";
 export type {
   BattleMessage,
   BattleState,
@@ -53,6 +57,13 @@ export class BattleWebsocket extends DurableObject {
   battleId: string = undefined!;
   messages: string[] = [];
   db: Database;
+  private startingBuilds: StartingBuilds = [];
+  private delivery: BattleDelivery = {
+    activity: false,
+    completion: "none",
+    failures: 0,
+  };
+  private operation: Promise<unknown> = Promise.resolve();
 
   constructor(ctx: DurableObjectState, env: Env) {
     super(ctx, env);
@@ -77,15 +88,7 @@ export class BattleWebsocket extends DurableObject {
       this.battleId = battleId as string;
       this.clerk = createClerk(clerkSecretKey as string);
       await this.setupBm();
-      this.bm.start();
-      const messages = await this.ctx.storage.get("messages");
-      if (messages) {
-        const messagesArray = z.array(z.string()).parse(messages);
-        this.messages = messagesArray;
-        for (const message of messagesArray) {
-          await this.handleMessage(message);
-        }
-      }
+      await this.resumeDelivery();
     });
   }
 
@@ -100,22 +103,32 @@ export class BattleWebsocket extends DurableObject {
       builds = captureStartingBuilds([...characters, ...enemies]);
       await this.ctx.storage.put("startingBuilds", builds);
     }
-    this.bm = new BM(restoreStartingBuilds(builds), this.battleId);
-    this.bm.start();
-    advanceBots(this.bm);
+    this.startingBuilds = builds;
+    this.messages = z
+      .array(z.string())
+      .parse((await this.ctx.storage.get("messages")) ?? []);
+    this.bm = reconstructBattle(this.battleId, builds, this.messages);
+    this.delivery = (await this.ctx.storage.get<BattleDelivery>(
+      "delivery",
+    )) ?? {
+      activity: this.messages.length > 0,
+      completion: this.bm.isGameOver() ? "result" : "none",
+      failures: 0,
+    };
+    if (needsDelivery(this.delivery))
+      await saveDelivery(this.ctx.storage, this.delivery);
   }
 
   async setup(clerkSecretKey: string, battleId: string) {
-    await this.ctx.storage.put({
-      clerkSecretKey,
-      battleId,
+    return this.exclusive(async () => {
+      if (this.battleId && this.battleId !== battleId)
+        throw new Error("Battle identity cannot change");
+      await this.ctx.storage.put({ clerkSecretKey, battleId });
+      this.clerk = createClerk(clerkSecretKey);
+      this.battleId = battleId;
+      await this.setupBm();
+      await this.resumeDelivery();
     });
-    this.clerk = createClerk(clerkSecretKey);
-    this.battleId = battleId;
-
-    const needsSetup = !this.bm;
-    await this.setupBm();
-    if (needsSetup && this.bm.isGameOver()) await this.finishBattle();
   }
 
   async fetch(request: Request): Promise<Response> {
@@ -148,7 +161,7 @@ export class BattleWebsocket extends DurableObject {
       } satisfies ResponseMessage),
     );
 
-    if (this.bm.isGameOver()) {
+    if (this.delivery.completion === "delivered") {
       const winner = this.bm.getWinningTeam();
       server.send(SuperJSON.stringify({ type: "finished", data: { winner } }));
     }
@@ -164,111 +177,125 @@ export class BattleWebsocket extends DurableObject {
 
   async webSocketMessage(ws: WebSocket, message: ArrayBuffer | string) {
     if (typeof message !== "string") return;
+    return this.exclusive(() => this.receiveMessage(ws, message));
+  }
+
+  private async receiveMessage(ws: WebSocket, message: string) {
     let requestId: string | undefined;
     try {
       const parsed = messageSchema.parse(SuperJSON.parse(message));
       requestId =
         "requestId" in parsed.data ? parsed.data.requestId : undefined;
-      const accepted = await this.handleMessage(message, ws);
-      // Only accepted commands may be replayed after hibernation. Reads and
-      // rejected commands must never become part of the combat command log.
-      if (accepted) {
-        this.messages.push(message);
-        await this.ctx.storage.put({ messages: this.messages });
-        ws.send(
-          SuperJSON.stringify({
-            type: "castAccepted",
-            data: { requestId },
-          } satisfies ResponseMessage),
-        );
-        await this.sendState();
-        await this.db
-          .insert(TB_activeBattle)
-          .values({ battleId: this.battleId })
-          .onConflictDoUpdate({
-            target: TB_activeBattle.battleId,
-            set: { lastAction: new Date() },
-          });
-        if (this.bm.isGameOver()) await this.finishBattle();
+      if (parsed.type !== "castSpell") {
+        await this.handleRead(parsed, ws);
+        return;
       }
-    } catch (error) {
-      ws.send(
-        SuperJSON.stringify({
-          type: "rejected",
-          data: {
-            requestId,
-            message:
-              error instanceof Error ? error.message : "Command rejected.",
-          },
-        } satisfies ResponseMessage),
+      const owner = this.sessions.get(ws)?.id;
+      if (!owner) throw new Error("User not found");
+      const candidate = reconstructBattle(
+        this.battleId,
+        this.startingBuilds,
+        this.messages,
       );
+      castBattleSpell(candidate, parsed.data, owner);
+      const messages = [...this.messages, message];
+      const delivery: BattleDelivery = {
+        activity: true,
+        completion: candidate.isGameOver() ? "result" : "none",
+        failures: 0,
+      };
+      // Storage failure or a resolver exception discards the whole candidate.
+      // The accepted journal and its persistence wakeup commit together.
+      await saveDelivery(this.ctx.storage, delivery, messages);
+      this.bm = candidate;
+      this.messages = messages;
+      this.delivery = delivery;
+    } catch (error) {
+      this.send(ws, {
+        type: "rejected",
+        data: {
+          requestId,
+          message: error instanceof Error ? error.message : "Command rejected.",
+        },
+      });
       await this.sendState();
+      return;
     }
+    // Transport and external delivery failures cannot contradict a committed
+    // acknowledgement. Reconnecting clients recover the accepted history.
+    this.send(ws, { type: "castAccepted", data: { requestId } });
+    await this.sendState();
+    await this.resumeDelivery();
   }
 
-  private async handleMessage(message: string, ws?: WebSocket) {
-    const parsed = messageSchema.safeParse(SuperJSON.parse(message as string));
-    if (!parsed.success) {
-      throw new Error("Invalid message");
-    }
-    switch (parsed.data.type) {
-      case "castSpell": {
-        const character = this.bm.getEntityById(parsed.data.data.entityId);
-        // Without a socket this is an already authenticated, accepted command
-        // being restored from the Durable Object's own command log.
-        const owner = ws
-          ? this.sessions.get(ws)?.id
-          : (character as Character)?.userId;
-        if (!owner) throw new Error("User not found");
-        castBattleSpell(this.bm, parsed.data.data, owner);
-        return true;
-      }
+  private async handleRead(
+    message: Exclude<BattleMessage, { type: "castSpell" }>,
+    ws: WebSocket,
+  ) {
+    switch (message.type) {
       case "getTargets":
-        if (!ws) {
-          return;
-        }
-        ws.send(
-          SuperJSON.stringify({
-            type: "targets",
-            data: getBattleTargets(this.bm, parsed.data.data),
-          } satisfies ResponseMessage),
-        );
+        this.send(ws, {
+          type: "targets",
+          data: getBattleTargets(this.bm, message.data),
+        });
         break;
       case "getCharacterAttributes":
-        if (!ws) {
-          return;
-        }
-        await this.processGetCharacterAttributes(
-          parsed.data.data.characterId,
-          ws,
-        );
+        await this.processGetCharacterAttributes(message.data.characterId, ws);
         break;
       case "getSpellDescription":
-        if (!ws) {
-          return;
-        }
-        await this.processGetSpellDescription(parsed.data.data.spellId, ws);
+        await this.processGetSpellDescription(message.data.spellId, ws);
         break;
       default:
         throw new Error("Invalid message");
     }
   }
 
-  private async finishBattle() {
-    // Persist the result before allowing clients to enter the existing replay.
-    await bmStorage.save(this.bm, this.db);
-    await this.env.BATTLE_DONE_WORKFLOW.create({
-      id: this.battleId,
-      params: { battleId: this.battleId },
-    });
-    this.ctx.getWebSockets().forEach((ws) =>
-      ws.send(
-        SuperJSON.stringify({
+  private exclusive<T>(operation: () => Promise<T>): Promise<T> {
+    const result = this.operation.then(operation);
+    this.operation = result.catch(() => undefined);
+    return result;
+  }
+
+  async alarm() {
+    return this.exclusive(() => this.resumeDelivery());
+  }
+
+  private async resumeDelivery() {
+    if (!needsDelivery(this.delivery)) return;
+    try {
+      await deliverBattle(
+        this.bm,
+        this.db,
+        this.env.BATTLE_DONE_WORKFLOW,
+        this.delivery,
+        async (next) => {
+          await saveDelivery(this.ctx.storage, next);
+          this.delivery = next;
+        },
+      );
+    } catch (error) {
+      console.error("Battle persistence will retry", this.battleId, error);
+      const retry = { ...this.delivery, failures: this.delivery.failures + 1 };
+      await saveDelivery(this.ctx.storage, retry);
+      this.delivery = retry;
+      return;
+    }
+    if (this.delivery.completion === "delivered") {
+      this.ctx.getWebSockets().forEach((ws) =>
+        this.send(ws, {
           type: "finished",
           data: { winner: this.bm.getWinningTeam()! },
-        } satisfies ResponseMessage),
-      ),
-    );
+        }),
+      );
+    }
+  }
+
+  private send(ws: WebSocket, response: ResponseMessage) {
+    try {
+      ws.send(SuperJSON.stringify(response));
+    } catch {
+      this.sessions.delete(ws);
+    }
   }
 
   private async processGetCharacterAttributes(
@@ -351,7 +378,7 @@ export class BattleWebsocket extends DurableObject {
       },
     } satisfies ResponseMessage;
     this.ctx.getWebSockets().forEach((ws) => {
-      ws.send(SuperJSON.stringify(state));
+      this.send(ws, state);
     });
   }
 

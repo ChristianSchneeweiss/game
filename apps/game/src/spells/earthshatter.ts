@@ -1,4 +1,5 @@
 import { StunEffect } from "../effect/stun.effect";
+import { StatModifierEffect } from "../effect/stat-modifier.effect";
 import type { Entity } from "../entity-types";
 import { MinMaxDamageModule } from "../modules/damage.module";
 import { EffectModule } from "../modules/effect.module";
@@ -23,6 +24,34 @@ export class EarthshatterSpell extends DamageEffectSpell {
       }),
       new EffectModule(() => new StunEffect(1)),
       0.5,
+      {
+        chanceScope: "cast",
+        afterApplications: {
+          minimumTargets: 2,
+          effect: new EffectModule(
+            () =>
+              new StatModifierEffect(
+                "BUFF",
+                [
+                  {
+                    id: `${id}-armor`,
+                    attribute: "armor",
+                    operation: "ADD",
+                    value: 20,
+                  },
+                  {
+                    id: `${id}-resistance`,
+                    attribute: "magicResistance",
+                    operation: "ADD",
+                    value: 20,
+                  },
+                ],
+                0,
+                "battle",
+              ),
+          ),
+        },
+      },
     );
   }
 

@@ -3,14 +3,37 @@ import type { BattleManager } from "../battle-types";
 import type { DamageType, Spell } from "../types";
 import { minMaxRoll } from "../utils/min-max-roll";
 import type { SpellModule, SpellModuleReturn } from "./types";
+import { canResolveImpact } from "../spells/base/targets";
+
+type DamageInputs = { caster: Entity; target: Entity; roll: number };
+type DamageProc = {
+  chance: number;
+  bonusDamage?: (inputs: DamageInputs) => number;
+  ignoreDefense?: number;
+};
 
 export abstract class DamageModule implements SpellModule {
+  constructor(private readonly proc?: DamageProc) {}
   public abstract type: DamageType;
   public abstract getRawDamage(
     caster: Entity,
     target: Entity,
     roll: number,
   ): number;
+
+  /** Pure possible range: descriptions never sample combat randomness. */
+  public getDamageRange(caster: Entity, target = caster) {
+    const bonus = (roll: number) =>
+      this.proc?.bonusDamage?.({ caster, target, roll }) ?? 0;
+    return {
+      min:
+        this.getRawDamage(caster, target, 0) +
+        (this.proc?.chance === 1 ? bonus(0) : 0),
+      max:
+        this.getRawDamage(caster, target, 20) +
+        ((this.proc?.chance ?? 0) > 0 ? bonus(20) : 0),
+    };
+  }
 
   public applyRawDamage(
     caster: Entity,
@@ -20,13 +43,22 @@ export abstract class DamageModule implements SpellModule {
     spell: Spell,
   ): SpellModuleReturn {
     const returns = targets.map((target) => {
-      const damage = Math.round(this.getRawDamage(caster, target, roll));
+      if (!canResolveImpact(caster, target)) return { isCrit: false };
+      const proc =
+        this.proc && battleManager.getRNG() < this.proc.chance
+          ? this.proc
+          : undefined;
+      const damage = Math.round(
+        this.getRawDamage(caster, target, roll) +
+          (proc?.bonusDamage?.({ caster, target, roll }) ?? 0),
+      );
       return battleManager.handler.damage(
         spell,
         damage,
         this.type,
         caster,
         target,
+        { ignoreDefense: proc?.ignoreDefense },
       );
     });
     return battleManager.handler.mergeHandlerReturns(returns);
@@ -45,8 +77,9 @@ export class MinMaxDamageModule extends DamageModule {
         roll: number;
       }) => number;
     },
+    proc?: DamageProc,
   ) {
-    super();
+    super(proc);
   }
 
   getRawDamage(caster: Entity, target: Entity, roll: number): number {

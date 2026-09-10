@@ -1,6 +1,7 @@
 import type { Entity } from "../entity-types";
 import type { Effect, Spell } from "../types";
 import type { SpellModule, SpellModuleReturn } from "./types";
+import { canResolveImpact } from "../spells/base/targets";
 
 export class EffectModule implements SpellModule {
   constructor(
@@ -26,6 +27,7 @@ export class EffectModule implements SpellModule {
     const battleManager = caster.battleManager;
     const effects = targets
       .map((target) => {
+        if (!canResolveImpact(caster, target)) return null;
         const effect = this.getRawEffect(caster, target, roll);
         return battleManager.handler.effect(spell, effect, caster, target);
       })

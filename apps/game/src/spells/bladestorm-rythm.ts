@@ -3,6 +3,7 @@ import type { Entity } from "../entity-types";
 import { MinMaxDamageModule } from "../modules/damage.module";
 import type { OptionalSpellCastEvent } from "../timeline-events";
 import { BaseSpell } from "./base/base.spell";
+import { canResolveImpact } from "./base/targets";
 
 export class BladestormRhythmSpell extends BaseSpell {
   damageModule = new MinMaxDamageModule("PHYSICAL", {
@@ -30,6 +31,7 @@ export class BladestormRhythmSpell extends BaseSpell {
   ): OptionalSpellCastEvent {
     const results: HandlerReturn[] = [];
     for (const target of targets) {
+      if (!canResolveImpact(caster, target)) continue;
       // First attack (100% damage)
       let roll = this.getRoll(caster);
       const firstAttack = this.damageModule.applyRawDamage(
@@ -42,6 +44,7 @@ export class BladestormRhythmSpell extends BaseSpell {
       results.push(firstAttack);
 
       // Second attack (100% damage)
+      if (!canResolveImpact(caster, target)) continue;
       roll = this.getRoll(caster);
       const secondAttack = this.damageModule.applyRawDamage(
         caster,

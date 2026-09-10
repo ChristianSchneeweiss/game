@@ -7,10 +7,17 @@ import type { Entity, Team } from "./entity-types";
 import type { RoundLifecycleHooks } from "./lifecycle-hooks";
 import type {
   SpellCastEvent,
+  BattleImpact,
   TimelineEvent,
   TimelineEventFull,
 } from "./timeline-events";
-import type { Effect, EffectType, Spell } from "./types";
+import type {
+  Effect,
+  EffectClock,
+  EffectOrigin,
+  EffectType,
+  Spell,
+} from "./types";
 
 export type EffectTracking = Map<
   string,
@@ -21,6 +28,8 @@ export type EffectTracking = Map<
     round: number;
     duration: number;
     effectType: EffectType;
+    clock?: EffectClock;
+    origin?: EffectOrigin;
     description: string;
   }
 >;
@@ -37,6 +46,10 @@ export class BM implements BattleManager, RoundLifecycleHooks {
   rng: seedrandom.StatefulPRNG<seedrandom.State.Arc4>;
   effectTracking: EffectTracking = new Map();
   spellCastBuffer: TimelineEvent[] = [];
+  private effectSequence = 0;
+  private finishedActorId?: string;
+  private preparedActorId?: string;
+  private pendingImpacts: BattleImpact[] = [];
 
   constructor(entities: Entity[], battleId: string = nanoid(20)) {
     this.battleId = battleId;
@@ -60,6 +73,10 @@ export class BM implements BattleManager, RoundLifecycleHooks {
   }
 
   addEffect(effect: Effect): void {
+    if (effect.effectType !== "PASSIVE") {
+      // Replay identity is independent of combat RNG and process-local nanoid.
+      effect.id = `${this.battleId}:effect:${this.effectSequence++}`;
+    }
     this.lifeCycleHooks.push(effect);
     const currentRound = this.getCurrentRoundNumber();
     this.effectTracking.set(effect.id, {
@@ -69,6 +86,8 @@ export class BM implements BattleManager, RoundLifecycleHooks {
       round: currentRound,
       duration: effect.duration,
       effectType: effect.effectType,
+      clock: effect.clock,
+      origin: effect.origin,
       description: effect.getDescription(),
     });
   }
@@ -77,6 +96,7 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     entity.battleManager = this;
     this.lifeCycleHooks.push(entity);
     this.entities.push(entity);
+    if (entity.isDead()) this.deadEntities.set(entity.id, entity);
     entity.spells.forEach((spell) => {
       spell.battleManager = this;
       this.lifeCycleHooks.push(spell);
@@ -89,23 +109,18 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     }
 
     if (entity.passiveSkills.length > 0) {
-      // we create a fake spell cast event to apply the passive skills
+      const applications = entity.passiveSkills.flatMap((passive) => {
+        const result = this.handler.effect(passive, passive, entity, entity);
+        return result ? [result] : [];
+      });
       this.processEvent({
         eventType: "SPELL_CAST",
         data: {
           spellId: entity.id,
           roll: 0,
-          isCrit: false,
-          effectsApplied: new Map([
-            [entity.id, entity.passiveSkills.map((p) => p.id)],
-          ]),
+          origin: "passive",
+          ...this.handler.mergeHandlerReturns(applications),
         },
-      });
-      entity.passiveSkills.forEach((passive) => {
-        passive.battleManager = this;
-        entity.applyEffect(passive);
-        passive.onApply?.();
-        this.addEffect(passive);
       });
     }
   }
@@ -128,14 +143,14 @@ export class BM implements BattleManager, RoundLifecycleHooks {
 
     this.rounds.push(round);
 
-    this.lifeCycleHooks.forEach((hook) => {
-      hook.onPreRound?.();
+    [...this.lifeCycleHooks].forEach((hook) => {
+      if (this.lifeCycleHooks.includes(hook)) hook.onPreRound?.();
     });
   }
 
   onPostRound(): void {
-    this.lifeCycleHooks.forEach((hook) => {
-      hook.onPostRound?.();
+    [...this.lifeCycleHooks].forEach((hook) => {
+      if (this.lifeCycleHooks.includes(hook)) hook.onPostRound?.();
     });
   }
 
@@ -144,6 +159,14 @@ export class BM implements BattleManager, RoundLifecycleHooks {
   }
 
   processEvent(event: TimelineEvent): void {
+    if (
+      event.eventType === "SPELL_CAST" ||
+      event.eventType === "EFFECT_TRIGGER"
+    ) {
+      event.data.version = 2;
+      event.data.impacts = this.pendingImpacts;
+      this.pendingImpacts = [];
+    }
     const round = this.getCurrentRoundNumber();
     this.events.push({ round, event });
 
@@ -155,6 +178,10 @@ export class BM implements BattleManager, RoundLifecycleHooks {
       this.spellCastBuffer = [];
       buffered.forEach((event) => this.processEvent(event));
     }
+  }
+
+  recordImpact(impact: BattleImpact): void {
+    this.pendingImpacts.push(impact);
   }
 
   getTeam(team: Team): Entity[] {
@@ -268,27 +295,13 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     spell: Spell,
     targetIds: string[],
   ): SpellCastEvent[] | null {
-    const targets = targetIds
-      .map((id) => this.getEntityById(id))
-      .filter((e): e is Entity => e !== undefined);
-
-    const targetType = spell.getTargetType();
-
-    console.log(
-      "casting spell",
-      spell.config.id,
-      spell.config.cooldown,
-      targets.map((t) => t.id),
-    );
-    const myTeam = caster.team;
-    const targetEnemies = targets
-      .filter((t) => t.team !== myTeam)
-      .slice(0, targetType.enemies);
-    const targetAllies = targets
-      .filter((t) => t.team === myTeam)
-      .slice(0, targetType.allies);
-    const allTargets = [...targetEnemies, ...targetAllies];
-    return spell.cast(caster, allTargets);
+    const targets: Entity[] = [];
+    for (const id of targetIds) {
+      const target = this.getEntityById(id);
+      if (!target) return null;
+      targets.push(target);
+    }
+    return spell.cast(caster, targets);
   }
 
   safeCastSpell(
@@ -316,6 +329,7 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     }
     const events = this.castSpell(entity, spell, targetIds);
     if (events) {
+      this.finishedActorId = entityId;
       events.forEach((event) => this.processEvent(event));
     }
 
@@ -323,69 +337,66 @@ export class BM implements BattleManager, RoundLifecycleHooks {
   }
 
   preTurn() {
-    // we just **read** from the queue here
-    const currentEntityId = this.getCurrentRound().orderQueue[0];
-    if (!currentEntityId) {
-      return;
-    }
-    const currentEntity = this.getEntityById(currentEntityId);
-    if (!currentEntity) {
-      return;
-    }
-    const upkeepEvents = currentEntity.onUpkeep?.();
-    if (upkeepEvents) {
-      upkeepEvents.forEach((event) => this.processEvent(event));
+    while (!this.isGameOver()) {
+      const currentEntityId = this.getCurrentRound().orderQueue[0];
+      if (!currentEntityId) {
+        this.advanceRound();
+        continue;
+      }
+      const entity = this.getEntityById(currentEntityId);
+      if (
+        !entity ||
+        entity.isDead() ||
+        entity.activeEffects.some((effect) => effect.preventsAction)
+      ) {
+        // Blocked turns still consume the actor's turn clock. Charge callbacks
+        // may change liveness and the queue; re-read both before any upkeep.
+        this.postTurn(currentEntityId);
+        continue;
+      }
+      if (this.preparedActorId === currentEntityId) return;
+      this.preparedActorId = currentEntityId;
+      entity.onUpkeep?.()?.forEach((event) => this.processEvent(event));
+      if (
+        !entity.isDead() &&
+        this.getCurrentRound().orderQueue[0] === currentEntityId
+      )
+        return;
     }
   }
 
-  postTurn() {
-    // we remove from the queue here
-    const currentEntityId = this.getCurrentRound().orderQueue.shift();
+  postTurn(
+    currentEntityId = this.finishedActorId ??
+      this.getCurrentRound().orderQueue[0],
+  ) {
+    this.finishedActorId = undefined;
+    this.preparedActorId = undefined;
     if (!currentEntityId) {
+      this.advanceRound();
       return;
     }
+    const queue = this.getCurrentRound().orderQueue;
+    const index = queue.indexOf(currentEntityId);
+    if (index !== -1) queue.splice(index, 1);
     const currentEntity = this.getEntityById(currentEntityId);
-    if (!currentEntity) {
-      return;
-    }
-    const endStepEvents = currentEntity.onEndStep?.();
-    if (endStepEvents) {
-      endStepEvents.forEach((event) => this.processEvent(event));
+    if (currentEntity && !currentEntity.isDead()) {
+      currentEntity.onEndStep?.()?.forEach((event) => this.processEvent(event));
     }
 
     // if we've gone through all the entities in the round, start a new round
     if (this.getCurrentRound().orderQueue.length === 0) {
-      this.onPostRound();
-      this.onPreRound();
+      this.advanceRound();
     }
+  }
+
+  private advanceRound() {
+    if (this.isGameOver()) return;
+    this.onPostRound();
+    if (!this.isGameOver()) this.onPreRound();
   }
 
   private calculateOrderQueue(): string[] {
     return this.getAliveEntities()
-      .filter((e) => {
-        const stunEffects = e.activeEffects.filter(
-          (ef) => ef.effectType === "STUN",
-        );
-        const isStunned = stunEffects.length > 0;
-        stunEffects
-          .flatMap((ef) => ef.onEndStep?.())
-          .filter((e) => !!e)
-          .forEach((e) => this.processEvent(e));
-
-        return !isStunned;
-      })
-      .filter((e) => {
-        const chargeEffects = e.activeEffects.filter(
-          (ef) => ef.effectType === "CHARGE",
-        );
-        const isCharging = chargeEffects.length > 0;
-        chargeEffects
-          .flatMap((ef) => ef.onEndStep?.())
-          .filter((e) => !!e)
-          .forEach((e) => this.processEvent(e));
-
-        return !isCharging;
-      })
       .sort((a, b) => b.getAttribute("agility") - a.getAttribute("agility"))
       .map((e) => e.id);
   }

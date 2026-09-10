@@ -10,12 +10,14 @@ export class ReflectionEffect extends BaseEffect {
   }
 
   beforeTakingDamage(args: DamageHookArgs): number {
+    if (args.cause === "reflection" || args.damage <= 0) return args.damage;
     const damage = this.battleManager.handler.damage(
       this,
       args.damage * this.reflectionPercentage,
       args.type,
       this.getTarget(), // this is us the person buffed. because we are the target of the effect
       args.attacker, // this is the attacker. as is it the source of the damage
+      { cause: "reflection" },
     );
     this.battleManager.addEventToSpellCastBuffer({
       eventType: "EFFECT_TRIGGER",

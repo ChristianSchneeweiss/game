@@ -1,31 +1,30 @@
-import seedrandom from "seedrandom";
+import type seedrandom from "seedrandom";
 
 export const randomInArray = <T>(
-  array: T[],
+  array: readonly T[],
   rng: seedrandom.PRNG,
 ): T | null => {
   if (array.length === 0) {
-    console.error("No random element found");
     return null;
   }
-  const res = array[Math.round(rng() * (array.length - 1))];
-  if (!res) {
-    console.error("No random element found");
-    return array[0]!;
-  }
-  return res;
+  return array[Math.floor(rng() * array.length)]!;
 };
 
 export const uniqueRandomFromArray = <T>(
-  array: T[],
+  array: readonly T[],
   count: number,
   rng: seedrandom.PRNG,
 ): T[] => {
-  const set = new Set(array);
-  while (set.size > count) {
-    const randomElement = randomInArray(array, rng);
-    if (!randomElement) throw new Error("No random element found");
-    set.delete(randomElement);
+  if (count < 0 || (count !== Infinity && !Number.isSafeInteger(count))) {
+    throw new RangeError(
+      "Selection count must be a nonnegative integer or Infinity",
+    );
   }
-  return Array.from(set);
+  const pool = [...new Set(array)];
+  if (count >= pool.length) return pool;
+  if (count === 0) return [];
+  // Remove uniformly from the remaining pool, retaining the input order of
+  // survivors. Each draw removes exactly one entry, so the loop is bounded.
+  while (pool.length > count) pool.splice(Math.floor(rng() * pool.length), 1);
+  return pool;
 };

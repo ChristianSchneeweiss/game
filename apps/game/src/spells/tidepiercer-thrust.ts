@@ -14,11 +14,16 @@ export class TidepiercerThrustSpell extends DamageSpell {
         targetType: { enemies: 1, allies: 0 },
         tier: "A",
       },
-      new MinMaxDamageModule("PHYSICAL", {
-        min: 20,
-        max: 25,
-        attributeScaling: ({ caster }) => caster.getAttribute("strength") * 0.6,
-      }),
+      new MinMaxDamageModule(
+        "PHYSICAL",
+        {
+          min: 20,
+          max: 25,
+          attributeScaling: ({ caster }) =>
+            caster.getAttribute("strength") * 0.6,
+        },
+        { chance: 0.3, ignoreDefense: 0.25 },
+      ),
     );
   }
 

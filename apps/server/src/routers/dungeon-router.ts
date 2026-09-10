@@ -130,28 +130,47 @@ export const dungeonRouter = router({
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { db } = ctx;
-      const dungeon = await dungeonManager.getDungeon(input.id, db);
-
-      if (dungeon.activeBattle) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Dungeon is already in a battle",
-        });
-      }
-
-      if (dungeon.cleared) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Dungeon is already cleared",
-        });
-      }
-
       const battleId = id();
       await db.transaction(async (tx) => {
-        await tx
+        const [claimed] = await tx
           .update(TB_dungeonData)
-          .set({ activeBattle: true })
-          .where(eq(TB_dungeonData.id, input.id));
+          .set({ activeBattle: true, activeBattleId: battleId })
+          .where(
+            and(
+              eq(TB_dungeonData.id, input.id),
+              eq(TB_dungeonData.activeBattle, false),
+              eq(TB_dungeonData.cleared, false),
+            ),
+          )
+          .returning();
+        if (!claimed)
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Dungeon is unavailable, already in a battle, or cleared",
+          });
+        if (claimed.createdBy !== ctx.session.id) {
+          const [participant] = await tx
+            .select({ id: TB_character.id })
+            .from(TB_dungeonParticipant)
+            .innerJoin(
+              TB_character,
+              eq(TB_dungeonParticipant.characterId, TB_character.id),
+            )
+            .where(
+              and(
+                eq(TB_dungeonParticipant.dungeonId, input.id),
+                eq(TB_character.userId, ctx.session.id),
+              ),
+            )
+            .limit(1);
+          if (!participant)
+            throw new TRPCError({
+              code: "FORBIDDEN",
+              message:
+                "Only the dungeon creator or a participant's owner may start a battle",
+            });
+        }
+        const dungeon = await dungeonManager.getDungeon(input.id, tx);
         await tx.insert(TB_dungeonBattle).values({
           dungeonId: input.id,
           battleId: battleId,

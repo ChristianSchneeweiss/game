@@ -16,6 +16,10 @@ A turn-based dungeon crawler RPG with real-time battle mechanics.
 
 ## Game Reference
 
+- [Current game overview](docs/game-overview.md): player loop, features, mechanics, implementation gaps, and the boundaries for future 2D/3D prototypes.
+- [Complete content catalog](docs/game-content-catalog.md): all configured dungeon waves, enemy kits, spells, passive skills, equipment, and acquisition paths.
+- [Three.js research and prototype plan](docs/threejs-research.md): recommended React integration, battle playback architecture, asset pipeline, examples, and prototype acceptance criteria.
+- [Three.js prototype handoff](docs/threejs-prototype-handoff.md): implementation brief for the next agent, with required reading, scope, milestones, and validation criteria.
 - [Biome encounter presentation](docs/biome-encounter-milestone.md): the five arena families, spell effects, enemy appearances, development previews, and verification results.
 
 ## Technical Decisions

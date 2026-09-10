@@ -1,4 +1,5 @@
 import { MinMaxDamageModule } from "../modules/damage.module";
+import type { Entity } from "../entity-types";
 import { DamageSpell } from "./base/damage.spell";
 
 export class FinalVerdictSpell extends DamageSpell {
@@ -19,8 +20,8 @@ export class FinalVerdictSpell extends DamageSpell {
         min: 18,
         max: 24,
         attributeScaling: ({ caster, target }) => {
-          const targetHpPercent = (target.health / target.maxHealth) * 100;
-          if (targetHpPercent <= this.executionThreshold) {
+          const targetHealthFraction = target.health / target.maxHealth;
+          if (targetHealthFraction <= this.executionThreshold) {
             return target.maxHealth;
           }
 
@@ -28,5 +29,10 @@ export class FinalVerdictSpell extends DamageSpell {
         },
       }),
     );
+  }
+
+  protected textDescription(caster: Entity): string {
+    const scaling = caster.getAttribute("strength") * 0.8;
+    return `Deals ${18 + scaling}-${24 + scaling} physical damage. Executes targets at or below ${this.executionThreshold * 100}% health.`;
   }
 }

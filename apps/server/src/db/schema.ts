@@ -13,7 +13,9 @@ import {
   pgTable,
   text,
   timestamp,
+  unique,
 } from "drizzle-orm/pg-core";
+import type { SuperJSONResult } from "superjson";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { customAlphabet } from "nanoid";
 import { COL_characterDungeonData } from "./character-dungeon-data";
@@ -105,6 +107,7 @@ export const TB_dungeonData = pgTable("dungeon_data", {
   round: integer("round").notNull().default(0),
   cleared: boolean("cleared").notNull().default(false),
   activeBattle: boolean("active_battle").notNull().default(false),
+  activeBattleId: text("active_battle_id"),
   createdBy: text("created_by")
     .notNull()
     .references(() => TB_user.id),
@@ -144,9 +147,17 @@ export const TB_dungeonBattle = pgTable("dungeon_battle", {
   dungeonId: text("dungeon_id")
     .notNull()
     .references(() => TB_dungeonData.id),
-  battleId: text("battle_id").notNull(),
+  battleId: text("battle_id").notNull().unique(),
   round: integer("round").notNull(),
+  completedAt: timestamp("completed_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+});
+
+// Kept after transient participants are cleaned up. Resource values and the
+// loadout are captured together, before any battle hooks run.
+export const TB_battleStart = pgTable("battle_start", {
+  battleId: text("battle_id").primaryKey(),
+  builds: json("builds").$type<SuperJSONResult>().notNull(),
 });
 
 export const TB_battleParticipants = pgTable("battle_participants", {
@@ -185,15 +196,21 @@ export const TB_battleResult = pgTable("battle_result", {
 //   fromDriver: (value: unknown) => LootEntitySchema.array().parse(value),
 // });
 
-export const TB_loot = pgTable("loot", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => id()),
-  battleId: text("battle_id").notNull(),
-  userId: text("user_id")
-    .notNull()
-    .references(() => TB_user.id),
-  items: json("items").$type<LootEntity[]>().notNull(),
-  gold: integer("gold").notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
-});
+export const TB_loot = pgTable(
+  "loot",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => id()),
+    battleId: text("battle_id").notNull(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => TB_user.id),
+    items: json("items").$type<LootEntity[]>().notNull(),
+    gold: integer("gold").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  },
+  (table) => [
+    unique("loot_battle_user_unique").on(table.battleId, table.userId),
+  ],
+);

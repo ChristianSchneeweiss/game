@@ -4,6 +4,7 @@ import type { Entity } from "../entity-types";
 import { TotalDamageModule } from "../modules/damage.module";
 import { EffectModule } from "../modules/effect.module";
 import { BaseSpell } from "./base/base.spell";
+import { survivingTargets } from "./base/targets";
 
 export class ArcaneChannelingSpell extends BaseSpell {
   damageModule = new TotalDamageModule("MAGICAL", ({ caster, target, roll }) =>
@@ -40,13 +41,9 @@ export class ArcaneChannelingSpell extends BaseSpell {
     roll: number;
     targets: Entity[];
   }): void {
-    if (!this.validateTargets(args.caster, args.targets)) {
-      return;
-    }
-
     const damage = this.damageModule.applyRawDamage(
       args.caster,
-      args.targets,
+      survivingTargets(args.caster, args.targets, this),
       args.roll,
       args.caster.battleManager,
       this,
@@ -56,6 +53,7 @@ export class ArcaneChannelingSpell extends BaseSpell {
       data: {
         ...damage,
         spellId: this.config.id,
+        origin: "delayed",
         roll: args.roll,
       },
     });

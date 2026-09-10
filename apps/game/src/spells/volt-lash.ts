@@ -6,6 +6,7 @@ import { EffectModule } from "../modules/effect.module";
 import type { OptionalSpellCastEvent } from "../timeline-events";
 import { randomInArray } from "../utils/random-in-array";
 import { BaseSpell } from "./base/base.spell";
+import { canResolveImpact, livingEnemies } from "./base/targets";
 
 export class VoltLashSpell extends BaseSpell {
   damageModule: DamageModule;
@@ -42,15 +43,14 @@ export class VoltLashSpell extends BaseSpell {
   ): OptionalSpellCastEvent {
     if (!this.battleManager) throw new Error("Battle manager not set");
 
-    const enemies = this.battleManager
-      .getAliveEntities()
-      .filter((e) => e.team !== caster.team);
-
     const events: HandlerReturn[] = [];
 
     for (let i = 0; i < 4; i++) {
-      const randomEnemy = randomInArray(enemies, this.battleManager.getPRNG());
-      if (!randomEnemy) return null;
+      const randomEnemy = randomInArray(
+        livingEnemies(caster),
+        this.battleManager.getPRNG(),
+      );
+      if (!randomEnemy) break;
       const damage = this.damageModule.applyRawDamage(
         caster,
         [randomEnemy],
@@ -59,7 +59,10 @@ export class VoltLashSpell extends BaseSpell {
         this,
       );
       events.push(damage);
-      if (this.getRNG() < this.effectChance) {
+      if (
+        canResolveImpact(caster, randomEnemy) &&
+        this.getRNG() < this.effectChance
+      ) {
         const effect = this.effectModule.applyRawEffect(
           caster,
           [randomEnemy],

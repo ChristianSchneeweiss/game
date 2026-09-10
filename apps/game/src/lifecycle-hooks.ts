@@ -1,6 +1,6 @@
 import type { Entity } from "./entity-types";
 import type { TimelineEvent } from "./timeline-events";
-import type { DamageType, Effect } from "./types";
+import type { DamageCause, DamageType, Effect } from "./types";
 
 export interface RoundLifecycleHooks {
   onPreRound?: () => void;
@@ -25,6 +25,7 @@ export type BaseEffectHookArgs = {
 export type DamageHookArgs = BaseEffectHookArgs & {
   damage: number;
   type: DamageType;
+  cause: DamageCause;
 };
 
 export type HealingHookArgs = BaseEffectHookArgs & {

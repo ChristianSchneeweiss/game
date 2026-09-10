@@ -8,13 +8,14 @@ export class ThornCarapacePassive extends BasePassive {
   }
 
   beforeTakingDamage(args: DamageHookArgs): number {
-    console.log("beforeTakingDamage", args.damage);
+    if (args.cause === "reflection" || args.damage <= 0) return args.damage;
     const damage = this.battleManager.handler.damage(
       this,
       args.damage * 0.2,
       args.type,
       this.getHolder(),
       args.attacker,
+      { cause: "reflection" },
     );
     this.battleManager.addEventToSpellCastBuffer({
       eventType: "EFFECT_TRIGGER",
