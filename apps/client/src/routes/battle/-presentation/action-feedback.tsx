@@ -3,16 +3,14 @@ import { useFrame } from "@react-three/fiber";
 import { Group, Vector3 } from "three";
 import type { VisualCue } from "./timeline";
 import { impactFraction } from "./visual-manifest";
-
-export function cueColor(style: VisualCue["style"] | undefined) {
-  return style === "heal"
-    ? "#9ef0b7"
-    : style === "ward"
-      ? "#eacb82"
-      : style === "spell"
-        ? "#9bd9ef"
-        : "#ffbd90";
-}
+import {
+  cueColor,
+  natureEffectFor,
+  elementalEffectFor,
+} from "./spell-appearance";
+import { NatureFeedback } from "./nature-feedback";
+import { ElementalFeedback } from "./elemental-feedback";
+import type { TimelineEventFull } from "@loot-game/game/timeline-events";
 
 /** A resolved event supplies the endpoints; movement carries no game meaning. */
 export function ActionFeedback({
@@ -23,6 +21,7 @@ export function ActionFeedback({
   speed,
   durationMs,
   reducedMotion,
+  event,
 }: {
   cue?: VisualCue;
   cueKey: string;
@@ -31,16 +30,50 @@ export function ActionFeedback({
   speed: number;
   durationMs: number;
   reducedMotion: boolean;
+  event?: TimelineEventFull["event"];
 }) {
   if (!cue || cue.kind !== "SPELL_CAST" || !cue.casterId) return null;
   const source = positions.get(cue.casterId);
   if (!source) return null;
+  const nature = natureEffectFor(cue);
   return (
     <>
-      {cue.targetIds.map((id) => {
+      {[...new Set(cue.targetIds)].map((id) => {
         const target = positions.get(id);
-        if (!target || cue.style === "melee" || cue.style === "effect")
+        const elemental = elementalEffectFor(cue, id, event);
+        if (
+          !target ||
+          (!nature &&
+            !elemental &&
+            (cue.style === "melee" || cue.style === "effect"))
+        )
           return null;
+        if (elemental)
+          return (
+            <ElementalFeedback
+              key={`${cueKey}:${id}`}
+              source={source}
+              target={target}
+              effect={elemental}
+              impact={impact}
+              speed={speed}
+              durationMs={durationMs}
+              reducedMotion={reducedMotion}
+            />
+          );
+        if (nature)
+          return (
+            <NatureFeedback
+              key={`${cueKey}:${id}`}
+              source={source}
+              target={target}
+              effect={nature}
+              impact={impact}
+              speed={speed}
+              durationMs={durationMs}
+              reducedMotion={reducedMotion}
+            />
+          );
         return (
           <SpellTrace
             key={`${cueKey}:${id}`}
@@ -92,7 +125,8 @@ function SpellTrace({
     const travel = Math.min(1, elapsed.current / impactFraction);
     if (projectile.current) {
       projectile.current.position.copy(start).lerp(end, travel);
-      projectile.current.position.y += Math.sin(travel * Math.PI) * 0.8;
+      projectile.current.position.y =
+        start.y + (end.y - start.y) * travel + Math.sin(travel * Math.PI) * 0.8;
       projectile.current.visible = !impact && !reducedMotion && travel < 1;
     }
     if (seal.current && !reducedMotion) {

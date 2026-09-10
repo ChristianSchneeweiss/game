@@ -1,0 +1,64 @@
+.battle-3d[data-encounter="crypt"] {
+  --ink: #eee8de;
+  --gold: #b9c3d6;
+  --muted: #a9adbb;
+  --line: #45495c;
+  --encounter-surface: #232632;
+  --encounter-deep: #171b26;
+  background: #1c1e29;
+}
+.battle-3d[data-encounter="ashen"] {
+  --ink: #f1e1cb;
+  --gold: #dba274;
+  --muted: #baa49d;
+  --line: #594344;
+  --encounter-surface: #31252a;
+  --encounter-deep: #251c22;
+  background: #231a1e;
+}
+.battle-3d[data-encounter="storm"] {
+  --ink: #e9e9e4;
+  --gold: #a8c9e9;
+  --muted: #a6b5c9;
+  --line: #425975;
+  --encounter-surface: #263347;
+  --encounter-deep: #1b283c;
+  background: #1c283b;
+}
+.battle-3d[data-encounter="tides"] {
+  --ink: #ede9d4;
+  --gold: #b4d1c2;
+  --muted: #a4bdb7;
+  --line: #42635f;
+  --encounter-surface: #243b3b;
+  --encounter-deep: #172d31;
+  background: #1a3033;
+}
+.battle-3d:is(
+    [data-encounter="crypt"],
+    [data-encounter="ashen"],
+    [data-encounter="storm"],
+    [data-encounter="tides"]
+  )
+  .battle-inspector {
+  background: var(--encounter-surface);
+}
+.battle-3d:is(
+    [data-encounter="crypt"],
+    [data-encounter="ashen"],
+    [data-encounter="storm"],
+    [data-encounter="tides"]
+  )
+  .battle-actor-label {
+  background: linear-gradient(var(--encounter-surface), var(--encounter-deep));
+  border-bottom-color: var(--line);
+}
+.battle-3d:is(
+    [data-encounter="crypt"],
+    [data-encounter="ashen"],
+    [data-encounter="storm"],
+    [data-encounter="tides"]
+  )
+  .battle-event-caption {
+  background: linear-gradient(transparent, var(--encounter-deep));
+}

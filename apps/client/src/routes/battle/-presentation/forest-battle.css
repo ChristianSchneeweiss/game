@@ -1,0 +1,31 @@
+.battle-3d[data-encounter="forest"] {
+  --ink: #ebe8d3;
+  --gold: #c9cf8a;
+  --muted: #a6b5a0;
+  --line: #3e5141;
+  background: #14221b;
+}
+.battle-3d[data-encounter="forest"] .battle-stage-heading h1 {
+  color: #f0ebd6;
+}
+.battle-3d[data-encounter="forest"] .battle-stage-heading h1 span {
+  color: #d2d7a0;
+  border-color: #526743;
+}
+.battle-3d[data-encounter="forest"] .battle-viewport {
+  background: #101c18;
+}
+.battle-3d[data-encounter="forest"] .battle-inspector {
+  background: #1d2b21;
+}
+.battle-3d[data-encounter="forest"] .battle-actor-label {
+  background: linear-gradient(180deg, #18271dea, #14211aeb);
+  border-bottom-color: #6c815d;
+}
+.battle-3d[data-encounter="forest"] .battle-event-caption {
+  background: linear-gradient(transparent, #102017ee);
+}
+.battle-3d[data-encounter="forest"] .battle-scene-caption {
+  color: #d6ddbb;
+  text-shadow: 0 1px 5px #0c1812;
+}

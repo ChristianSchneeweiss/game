@@ -8,21 +8,54 @@ import type { SpellDescription } from "@loot-game/game/types";
 import BattleView3D from "../src/routes/battle/-presentation/battle-view-3d";
 import { usePlayback } from "../src/routes/battle/-presentation/use-playback";
 import fixture from "../../../tests/battle/recordings/six-entity.json";
+import forestFixture from "../../../tests/battle/recordings/forest-showcase.json";
+import cryptFixture from "../../../tests/battle/recordings/crypt-showcase.json";
+import ashenFixture from "../../../tests/battle/recordings/ashen-showcase.json";
+import stormFixture from "../../../tests/battle/recordings/storm-showcase.json";
+import tidesFixture from "../../../tests/battle/recordings/tides-showcase.json";
 import { enemyModelRoster } from "./enemy-model-roster";
 
+const recordings = {
+  original: fixture,
+  forest: forestFixture,
+  crypt: cryptFixture,
+  ashen: ashenFixture,
+  storm: stormFixture,
+  tides: tidesFixture,
+};
+const recordingLabels: Record<keyof typeof recordings, string> = {
+  original: "Original encounter",
+  forest: "Forest spell showcase",
+  crypt: "Crypt spell showcase",
+  ashen: "Ashen spell showcase",
+  storm: "Storm spell showcase",
+  tides: "Tides spell showcase",
+};
+const requested =
+  new URLSearchParams(location.search).get("encounter") ?? "original";
+const recordingId = Object.hasOwn(recordings, requested)
+  ? (requested as keyof typeof recordings)
+  : "original";
+const showcase = recordingId !== "original";
 const recording = SuperJSON.deserialize<{
   participants: Entity[];
   events: TimelineEventFull[];
   effects: EffectTracking;
   descriptions: Map<string, SpellDescription>;
-}>(fixture as unknown as Parameters<typeof SuperJSON.deserialize>[0]);
+}>(
+  recordings[recordingId] as unknown as Parameters<
+    typeof SuperJSON.deserialize
+  >[0],
+);
 const lineups = Array.from(
   { length: Math.ceil(enemyModelRoster.length / 4) },
   (_, index) => enemyModelRoster.slice(index * 4, index * 4 + 4),
 );
 function Replay() {
   const [lineup, setLineup] = useState(
-    Number(new URLSearchParams(location.search).get("lineup") ?? -1),
+    showcase
+      ? -1
+      : Number(new URLSearchParams(location.search).get("lineup") ?? -1),
   );
   const participants = useMemo(() => {
     const preview = lineups[lineup];
@@ -42,6 +75,21 @@ function Replay() {
     true,
   );
   const [mounted, setMounted] = useState(true);
+  const [holdImpact, setHoldImpact] = useState(false);
+  useEffect(() => {
+    if (!holdImpact || !playback.impact || !playback.playing) return;
+    const timer = window.setTimeout(() => playback.setPlaying(false), 140);
+    return () => window.clearTimeout(timer);
+  }, [holdImpact, playback.impact, playback.playing, playback.setPlaying]);
+  const spellMoments = useMemo(() => {
+    const moments = new Map<string, { cursor: number; label: string }>();
+    playback.frames.forEach((frame, index) => {
+      const cue = frame.cue;
+      if (cue?.skillType && !moments.has(cue.skillType))
+        moments.set(cue.skillType, { cursor: index - 1, label: cue.label });
+    });
+    return [...moments.values()];
+  }, [playback.frames]);
   const [metrics, setMetrics] = useState("");
   useEffect(() => {
     const timer = setInterval(
@@ -97,9 +145,29 @@ function Replay() {
           connection or combat input
         </span>
         <label>
+          Recording{" "}
+          <select
+            aria-label="Recording"
+            value={recordingId}
+            onChange={(event) => {
+              const url = new URL(location.href);
+              url.searchParams.set("encounter", event.target.value);
+              url.searchParams.delete("lineup");
+              location.href = url.href;
+            }}
+          >
+            {Object.entries(recordingLabels).map(([id, label]) => (
+              <option key={id} value={id}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
           Enemy art preview{" "}
           <select
             aria-label="Enemy art preview"
+            disabled={showcase}
             value={lineup}
             onChange={(event) => {
               const value = Number(event.target.value);
@@ -118,6 +186,40 @@ function Replay() {
           </select>
         </label>
         {lineup >= 0 && <span>Art preview · recorded actions unchanged</span>}
+        {showcase && (
+          <span>
+            Art showcase · assembled {recordingId} roster · development party
+            stats
+          </span>
+        )}
+        <label>
+          Jump to spell{" "}
+          <select
+            aria-label="Jump to spell"
+            value=""
+            onChange={(event) => {
+              playback.seek(Number(event.target.value));
+              playback.setPlaying(true);
+            }}
+          >
+            <option value="" disabled>
+              Choose a recorded cast…
+            </option>
+            {spellMoments.map((moment) => (
+              <option key={moment.cursor} value={moment.cursor}>
+                {moment.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            checked={holdImpact}
+            onChange={(event) => setHoldImpact(event.target.checked)}
+          />{" "}
+          Hold at impact
+        </label>
         <label>
           Failure check{" "}
           <select

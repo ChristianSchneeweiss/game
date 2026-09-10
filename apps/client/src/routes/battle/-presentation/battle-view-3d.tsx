@@ -11,6 +11,9 @@ import { BattleCommandPanel } from "./battle-command-panel";
 import { BattleInspector } from "./battle-inspector";
 import { buildActionHistory, cueLabel } from "./action-history";
 import "./battle-view.css";
+import { encounterFor } from "./encounter-presentation";
+import "./forest-battle.css";
+import "./encounter-battle.css";
 
 type Props = {
   participants: Entity[];
@@ -84,6 +87,7 @@ export default function BattleView3D({
         : [...selected, id],
     );
   };
+  const encounter = encounterFor(participants);
   const status = !session
     ? "Recorded battle · read only"
     : !playback.caughtUp
@@ -101,6 +105,7 @@ export default function BattleView3D({
     <section
       className="battle-3d"
       data-mode={session ? "live" : "replay"}
+      data-encounter={encounter.id}
       aria-label={session ? "Live 3D battle" : "Recorded 3D battle"}
     >
       <header className="battle-stage-heading">
@@ -109,7 +114,8 @@ export default function BattleView3D({
             Shards of Affinity / {session ? "Live encounter" : "Battle replay"}
           </span>
           <h1>
-            The hollow court<span>3D prototype</span>
+            {encounter.title}
+            <span>{encounter.location}</span>
           </h1>
         </div>
         <div className="battle-visual-controls">
@@ -192,6 +198,9 @@ export default function BattleView3D({
                 inspected={inspected?.id}
                 onPick={target}
                 cue={playback.cue}
+                resolvedEvent={
+                  playback.frames[playback.cursor + 1]?.event?.event
+                }
                 cueKey={playback.cueKey}
                 impact={playback.impact}
                 speed={playback.playing ? playback.speed : 0}

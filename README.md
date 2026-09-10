@@ -14,6 +14,10 @@ A turn-based dungeon crawler RPG with real-time battle mechanics.
 - Real-time battle updates over WebSockets via Durable Objects
 - Authenticated player accounts using Clerk
 
+## Game Reference
+
+- [Biome encounter presentation](docs/biome-encounter-milestone.md): the five arena families, spell effects, enemy appearances, development previews, and verification results.
+
 ## Technical Decisions
 
 - **Monorepo with Bun workspaces**: keeps the client, server, and shared game engine in one repo while making local development and shared types straightforward.

@@ -16,8 +16,13 @@ import {
   type MiniatureAssetResult,
 } from "./miniature";
 import { miniatureFor, sceneFault } from "./visual-manifest";
-import { ActionFeedback, cueColor } from "./action-feedback";
+import { ActionFeedback } from "./action-feedback";
+import { cueColor, hasSpellFeedback } from "./spell-appearance";
+import type { TimelineEventFull } from "@loot-game/game/timeline-events";
 import { entityLabel } from "./entity-label";
+import { BattleEnvironment } from "./battle-environment";
+import { encounterFor } from "./encounter-presentation";
+import { appearanceFor } from "./miniature-appearance";
 import { ConditionIcons } from "./condition-icons";
 import type { ConditionDetail } from "./battle-effects";
 
@@ -32,6 +37,7 @@ type Props = {
   inspected?: string;
   onPick: (id: string) => void;
   cue?: VisualCue;
+  resolvedEvent?: TimelineEventFull["event"];
   cueKey: string;
   impact: boolean;
   speed: number;
@@ -241,68 +247,11 @@ function Diorama({
         onFailure={onFailure}
         cueKind={props.speed > 0 ? props.cue?.kind : undefined}
       />
-      <color attach="background" args={["#11191a"]} />
-      <fog attach="fog" args={["#11191a", 19, 37]} />
-      <ambientLight intensity={1.5} color="#c7d4e0" />
-      <directionalLight
-        position={[-3, 9, 8]}
-        intensity={2.7}
-        color="#ffe2b0"
-        castShadow
-        shadow-mapSize={[1024, 1024]}
-        shadow-camera-left={-12}
-        shadow-camera-right={13}
-        shadow-camera-top={8}
-        shadow-camera-bottom={-8}
-        shadow-bias={-0.001}
+      <BattleEnvironment
+        encounter={encounterFor(props.participants)}
+        reducedMotion={props.reducedMotion}
+        speed={props.speed}
       />
-      <directionalLight position={[4, 6, -6]} intensity={2.2} color="#8caed0" />
-      <mesh
-        rotation={[-Math.PI / 2, 0, 0]}
-        position={[0, -0.18, 0]}
-        receiveShadow
-      >
-        <planeGeometry args={[200, 200]} />
-        <meshStandardMaterial color="#141c1d" roughness={1} />
-      </mesh>
-      <mesh position={[1.4, -0.12, 0]} receiveShadow>
-        <boxGeometry args={[22.2, 0.3, 9.2]} />
-        <meshStandardMaterial color="#303a38" roughness={1} />
-      </mesh>
-      {Array.from({ length: 28 }, (_, i) => (
-        <mesh
-          key={i}
-          position={[-7.9 + (i % 7) * 3.1, 0.045, -3 + Math.floor(i / 7) * 2]}
-          receiveShadow
-        >
-          <boxGeometry args={[3.07, 0.05, 1.97]} />
-          <meshStandardMaterial
-            color={i % 3 === 0 ? "#37413d" : "#323b38"}
-            roughness={1}
-          />
-        </mesh>
-      ))}
-      {[-1, 1].flatMap((side) =>
-        [-1, 1].map((end) => (
-          <group
-            key={`${side}:${end}`}
-            position={[1.4 + side * 10.6, 0, end * 4.2]}
-          >
-            <mesh position={[0, 0.35, 0]} castShadow>
-              <boxGeometry args={[0.65, 0.7, 0.65]} />
-              <meshStandardMaterial color="#464740" />
-            </mesh>
-            <mesh position={[0, 0.92, 0]}>
-              <octahedronGeometry args={[0.18]} />
-              <meshStandardMaterial
-                color="#edba6d"
-                emissive="#db8f32"
-                emissiveIntensity={1.5}
-              />
-            </mesh>
-          </group>
-        )),
-      )}
       {props.participants.map((entity) => (
         <Actor
           key={entity.id}
@@ -313,6 +262,7 @@ function Diorama({
         />
       ))}
       <ActionFeedback
+        event={props.resolvedEvent}
         cue={props.cue}
         cueKey={props.cueKey}
         positions={positions}
@@ -417,7 +367,7 @@ function Actor({
             <meshBasicMaterial color="#ffdf9c" />
           </mesh>
         ))}
-      {hit && (
+      {hit && props.cue && !hasSpellFeedback(props.cue) && (
         <mesh position={[0, 1.2, 0]}>
           <sphereGeometry args={[0.9, 12, 8]} />
           <meshBasicMaterial
@@ -436,6 +386,7 @@ function Actor({
         {asset ? (
           <Miniature
             asset={asset}
+            appearance={appearanceFor(entity, props.participants)}
             definition={definition}
             action={action}
             cueKey={dead ? "death" : casting || hit ? props.cueKey : action}

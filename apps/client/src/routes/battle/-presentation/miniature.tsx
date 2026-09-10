@@ -13,6 +13,10 @@ import {
 import { GLTFLoader, type GLTF } from "three/addons/loaders/GLTFLoader.js";
 import { clone } from "three/addons/utils/SkeletonUtils.js";
 import type { MiniatureAction, MiniatureDefinition } from "./visual-manifest";
+import {
+  dressMiniature,
+  type MiniatureAppearance,
+} from "./miniature-appearance";
 
 // Each URL has independent ownership. Instances share immutable asset data,
 // while retaining their own skeletons and animation mixers.
@@ -126,6 +130,7 @@ export function useMiniatureAssets(urls: string[]) {
 
 type Props = {
   asset: GLTF;
+  appearance: MiniatureAppearance;
   definition: MiniatureDefinition;
   action: MiniatureAction;
   cueKey: string;
@@ -136,6 +141,7 @@ type Props = {
 };
 export function Miniature({
   asset,
+  appearance,
   definition,
   action,
   cueKey,
@@ -157,6 +163,10 @@ export function Miniature({
     });
     return { root, mixer: new AnimationMixer(root) };
   }, [asset]);
+  useEffect(
+    () => dressMiniature(instance.root, appearance),
+    [instance, appearance],
+  );
   useEffect(
     () => () => {
       instance.mixer.stopAllAction();
