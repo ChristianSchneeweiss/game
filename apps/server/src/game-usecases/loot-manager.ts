@@ -34,7 +34,8 @@ export class LootManager {
       const [loot] = await tx
         .select()
         .from(TB_loot)
-        .where(and(eq(TB_loot.id, lootId), eq(TB_loot.userId, this.userId)));
+        .where(and(eq(TB_loot.id, lootId), eq(TB_loot.userId, this.userId)))
+        .for("update");
 
       if (!loot) {
         throw new Error("Loot not found");

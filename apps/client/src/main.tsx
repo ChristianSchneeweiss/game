@@ -1,10 +1,8 @@
 import { ClerkProvider } from "@clerk/clerk-react";
-import { getDefaultConfig } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import * as Sentry from "@sentry/react";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import ReactDOM from "react-dom/client";
-import { avalancheFuji } from "wagmi/chains";
 import { registerRecipes } from "../../server/src/lib/superjson-recipes";
 import Loader from "./components/loader";
 import { routeTree } from "./routeTree.gen";
@@ -15,12 +13,6 @@ Sentry.init({
   // For example, automatic IP address collection on events
   sendDefaultPii: true,
   enabled: import.meta.env.PROD,
-});
-
-export const config = getDefaultConfig({
-  appName: "ShardsofAffinity",
-  projectId: "SOA",
-  chains: [avalancheFuji],
 });
 
 const router = createRouter({

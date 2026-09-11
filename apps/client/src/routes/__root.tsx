@@ -2,7 +2,7 @@ import Header from "@/components/header";
 import Loader from "@/components/loader";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
-import { config } from "@/main";
+import { config } from "@/utils/wallet-config";
 import { TRPCProvider } from "@/utils/trpc-provider";
 import { userStore } from "@/utils/user-store";
 import { useUser } from "@clerk/clerk-react";

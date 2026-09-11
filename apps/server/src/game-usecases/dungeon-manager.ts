@@ -15,7 +15,7 @@ import type {
 } from "@loot-game/game/dungeons/types";
 import type { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
 import type { LootEntity } from "@loot-game/game/types";
-import { and, eq, inArray, isNull } from "drizzle-orm";
+import { and, asc, eq, inArray, isNull } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import seedrandom from "seedrandom";
 import {
@@ -42,6 +42,12 @@ export const dungeonManager = {
     db: PostgresJsDatabase,
   ) => {
     const config = dungeonManager.getDungeonConfig(key);
+    if (
+      characters.length === 0 ||
+      new Set(characters.map((c) => c.id)).size !== characters.length
+    ) {
+      throw new Error("Choose at least one character, without duplicates");
+    }
     if (characters.length > config.maxPartySize) {
       throw new Error("Max party size exceeded");
     }
@@ -93,7 +99,8 @@ export const dungeonManager = {
     const battles = await db
       .select()
       .from(TB_dungeonBattle)
-      .where(eq(TB_dungeonBattle.dungeonId, id));
+      .where(eq(TB_dungeonBattle.dungeonId, id))
+      .orderBy(asc(TB_dungeonBattle.createdAt), asc(TB_dungeonBattle.id));
     return battles;
   },
 

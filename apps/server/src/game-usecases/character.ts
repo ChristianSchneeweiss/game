@@ -4,7 +4,7 @@ import {
   statPointsReceived,
   xpNeededForLevelUp,
 } from "@loot-game/game/utils/xp-curve";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import type { PgTransaction } from "drizzle-orm/pg-core";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import {
@@ -59,17 +59,30 @@ export const renameCharacter = async (
 export const equipSpell = async (
   characterId: string,
   spellId: string,
-  db: PostgresJsDatabase,
+  userId: string,
+  db: Database,
 ) => {
   await db.transaction(async (tx) => {
     const [character] = await tx
       .select()
       .from(TB_character)
-      .where(eq(TB_character.id, characterId));
+      .where(eq(TB_character.id, characterId))
+      .for("update");
 
     if (!character) throw new Error("Character not found");
+    if (character.userId !== userId) throw new Error("Not your character");
 
-    // todo check if we own the spell
+    const [spell] = await tx
+      .select()
+      .from(TB_spellStats)
+      .where(eq(TB_spellStats.id, spellId))
+      .for("update");
+    if (!spell || spell.userId !== userId)
+      throw new Error("Spell not found in your collection");
+    if (spell.equippedBy === characterId) return;
+    if (spell.equippedBy)
+      throw new Error("Unequip this spell from its current character first");
+
     const equippedSpells = await tx
       .select()
       .from(TB_spellStats)
@@ -84,11 +97,17 @@ export const equipSpell = async (
   });
 };
 
-export const unequipSpell = async (spellId: string, db: PostgresJsDatabase) => {
+export const unequipSpell = async (
+  spellId: string,
+  userId: string,
+  db: Database,
+) => {
   await db
     .update(TB_spellStats)
     .set({ equippedBy: null })
-    .where(eq(TB_spellStats.id, spellId));
+    .where(
+      and(eq(TB_spellStats.id, spellId), eq(TB_spellStats.userId, userId)),
+    );
 };
 
 export const equipPassiveSkill = async (

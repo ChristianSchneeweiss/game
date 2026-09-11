@@ -10,7 +10,7 @@ import { deserialize, serialize, type SuperJSONResult } from "superjson";
 import { z } from "zod";
 import { COL_characterDungeonDataSchema } from "../db/character-dungeon-data";
 import { TB_battleResult, type Database } from "../db/schema";
-import { battleResultSchema } from "../workflows/battle-done.workflow";
+import { battleResultSchema } from "../battle/result";
 
 const storageSchema = z.object({
   startEntityData: COL_characterDungeonDataSchema,

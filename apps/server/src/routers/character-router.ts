@@ -60,14 +60,14 @@ export const characterRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       const { db } = ctx;
-      await equipSpell(input.characterId, input.spellId, db);
+      await equipSpell(input.characterId, input.spellId, ctx.session.id, db);
     }),
 
   unequipSpell: protectedProcedure
     .input(z.object({ spellId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { db } = ctx;
-      await unequipSpell(input.spellId, db);
+      await unequipSpell(input.spellId, ctx.session.id, db);
     }),
 
   equipPassiveSkill: protectedProcedure

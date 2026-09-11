@@ -34,7 +34,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { DungeonEnterDialog } from "./-dungeon-enter.dialog";
+import { FeaturedExpedition } from "@/features/expedition/featured-expedition";
 
 dayjs.extend(relativeTime);
 
@@ -108,7 +108,6 @@ export const Route = createFileRoute("/dungeons/")({
 });
 
 function RouteComponent() {
-  const [selectedDungeon, setSelectedDungeon] = useState<DungeonKey | null>(null);
   const [removeDungeonId, setRemoveDungeonId] = useState<string | null>(null);
   const [entryTab, setEntryTab] = useState<"recommended" | "others">("recommended");
   const [expandedClearedId, setExpandedClearedId] = useState<string | null>(null);
@@ -188,6 +187,7 @@ function RouteComponent() {
   return (
     <RpgPage>
       <div className="space-y-8">
+        <FeaturedExpedition/>
         <RpgHero
           eyebrow="Expedition board"
           title={
@@ -287,7 +287,6 @@ function RouteComponent() {
                 key={dungeon.key}
                 dungeon={dungeon}
                 recommended={recommendedDungeonKeys.has(dungeon.key)}
-                onSelect={() => setSelectedDungeon(dungeon.key)}
               />
             ))}
           </div>
@@ -350,13 +349,6 @@ function RouteComponent() {
         </section>
       </div>
 
-      {selectedDungeon && (
-        <DungeonEnterDialog
-          dungeonKey={selectedDungeon}
-          isOpen={!!selectedDungeon}
-          onOpenChange={(open) => !open && setSelectedDungeon(null)}
-        />
-      )}
       <AlertDialog
         open={!!removeDungeonId}
         onOpenChange={() => setRemoveDungeonId(null)}
@@ -436,17 +428,15 @@ function EmptyBlock({
 function DungeonEntryCard({
   dungeon,
   recommended,
-  onSelect,
 }: {
   dungeon: (typeof dungeonCatalog)[number];
   recommended: boolean;
-  onSelect: () => void;
 }) {
   return (
-    <button
-      type="button"
-      onClick={onSelect}
-      className="rpg-panel group relative p-6 text-left transition-all duration-200 hover:border-[#b89656]/50"
+    <Link
+      to="/dungeons/prepare"
+      search={{ key: dungeon.key, party: undefined }}
+      className="rpg-panel group relative p-6 text-left transition-colors duration-200 hover:border-[#b89656]/50"
     >
       <div
         aria-hidden="true"
@@ -487,7 +477,7 @@ function DungeonEntryCard({
           <ArrowRight className="h-4 w-4" />
         </div>
       </div>
-    </button>
+    </Link>
   );
 }
 
@@ -666,7 +656,7 @@ function ClearedDungeonRow({
               </span>
             ) : null}
             <span className="inline-flex items-center gap-2 rounded-full border border-[#8a7753]/28 bg-[#2b241b]/85 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-[#b8aa89]">
-              Round {dungeon.round + 1}
+              {dungeon.round} waves cleared
             </span>
             <span className="rpg-icon-frame h-10 w-10 text-[#ead7aa] transition-transform duration-200 group-hover:scale-[1.02]">
               <ChevronDown
@@ -698,10 +688,10 @@ function ClearedDungeonRow({
                 <div className="rpg-stat-tile">
                   <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#b6ab92]">
                     <MapPin className="h-3.5 w-3.5" />
-                    Final round
+                    Waves cleared
                   </div>
                   <p className="mt-2 text-sm font-semibold text-[#f1e8d4]">
-                    {dungeon.round + 1}
+                    {dungeon.round}
                   </p>
                 </div>
                 <div className="rpg-stat-tile">

@@ -7,10 +7,9 @@ import { BattleChatBar } from "./-components/battle-chat-bar";
 import { useBattle } from "./-hooks/use-battle";
 import { useChat as useBattleChat } from "./-hooks/use-battle-chat";
 import { PresentationBoundary } from "./-presentation-boundary";
+import { BattleRunNav } from "@/features/expedition/battle-run-nav";
 
-const BattleView3D = import.meta.env.DEV
-  ? lazy(() => import("./-presentation/battle-view-3d"))
-  : null;
+const BattleView3D = lazy(() => import("./-presentation/battle-view-3d"));
 export const Route = createFileRoute("/battle/$id")({
   component: RouteComponent,
   beforeLoad: async ({ params }) => {
@@ -32,7 +31,7 @@ function RouteComponent() {
 function LiveBattle({ id }: { id: string }) {
   const session = useBattle(id);
   const chat = useBattleChat(id);
-  const [threeD, setThreeD] = useState(false);
+  const [threeD, setThreeD] = useState(true);
   const [resultReady, setResultReady] = useState(false);
   useEffect(() => {
     if (!session.winner) return;
@@ -49,13 +48,14 @@ function LiveBattle({ id }: { id: string }) {
   const connected = session.readyState === ReadyState.OPEN;
   return (
     <div>
+      <BattleRunNav battleId={id} />
       {!connected && (
         <div className="p-4 text-center" role="status">
           Connecting to the battle… Casting is disabled. Your selection will
           reset on reconnect.
         </div>
       )}
-      {import.meta.env.DEV && !threeD && (
+      {!threeD && (
         <div
           className="flex justify-end gap-2 px-6 py-3"
           aria-label="Battle presentation"
@@ -72,7 +72,7 @@ function LiveBattle({ id }: { id: string }) {
             aria-pressed={threeD}
             onClick={() => setThreeD(true)}
           >
-            3D prototype
+            3D battlefield
           </button>
         </div>
       )}

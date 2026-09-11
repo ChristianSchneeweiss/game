@@ -10,11 +10,28 @@ import {
   TB_dungeonParticipant,
 } from "../db/schema";
 import { dungeonManager } from "../game-usecases/dungeon-manager";
+import {
+  getDungeonBattleContext,
+  getDungeonRun,
+} from "../game-usecases/dungeon-run";
 import { EntityFactory } from "../game-usecases/entity-factory";
 import { SyncFactory } from "../game-usecases/sync-factory";
 import { protectedProcedure, router } from "../lib/trpc";
 
 export const dungeonRouter = router({
+  getConfig: protectedProcedure
+    .input(z.object({ key: DungeonKeySchema }))
+    .query(({ input }) => dungeonManager.getDungeonConfig(input.key)),
+  getRun: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(({ ctx, input }) => getDungeonRun(input.id, ctx.session.id, ctx.db)),
+
+  getBattleContext: protectedProcedure
+    .input(z.object({ battleId: z.string() }))
+    .query(({ ctx, input }) =>
+      getDungeonBattleContext(input.battleId, ctx.session.id, ctx.db),
+    ),
+
   enterDungeon: protectedProcedure
     .input(z.object({ key: DungeonKeySchema, characters: z.string().array() }))
     .mutation(async ({ ctx, input }) => {
@@ -171,6 +188,12 @@ export const dungeonRouter = router({
             });
         }
         const dungeon = await dungeonManager.getDungeon(input.id, tx);
+        if (!dungeon.playerTeam.some((character) => character.health > 0)) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Your party has fallen. Prepare a new run to recover.",
+          });
+        }
         await tx.insert(TB_dungeonBattle).values({
           dungeonId: input.id,
           battleId: battleId,

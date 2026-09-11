@@ -1,5 +1,4 @@
 import type { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
-import { EnemyTypeSchema } from "@loot-game/game/enemies/base/enemy-types";
 import {
   WorkflowEntrypoint,
   WorkflowStep,
@@ -7,7 +6,6 @@ import {
 } from "cloudflare:workers";
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
-import z from "zod";
 import { TB_activeBattle, TB_dungeonBattle } from "../db/schema";
 import { bmStorage } from "../game-usecases/bm-storage";
 import { dungeonManager } from "../game-usecases/dungeon-manager";
@@ -18,28 +16,13 @@ export type Params = {
   battleId: string;
 };
 
-export const characterDataSchema = z.object({
-  id: z.string(),
-  health: z.number(),
-  mana: z.number(),
-  dead: z.boolean(),
-});
-
-export const enemyDataSchema = z.object({
-  id: z.string(),
-  type: EnemyTypeSchema,
-  health: z.number(),
-  dead: z.boolean(),
-});
-
-export const battleResultSchema = z.object({
-  winner: z.union([z.literal("TEAM_A"), z.literal("TEAM_B")]),
-  teamA: z.array(characterDataSchema),
-  teamB: z.array(enemyDataSchema),
-});
-
-export type CharacterData = z.infer<typeof characterDataSchema>;
-export type BattleResult = z.infer<typeof battleResultSchema>;
+export {
+  characterDataSchema,
+  enemyDataSchema,
+  battleResultSchema,
+  type CharacterData,
+  type BattleResult,
+} from "../battle/result";
 
 export class BattleDoneWorkflow extends WorkflowEntrypoint<Env, Params> {
   async run(event: WorkflowEvent<Params>, step: WorkflowStep) {

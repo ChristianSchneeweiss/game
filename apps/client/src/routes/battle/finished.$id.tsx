@@ -1,145 +1,147 @@
 import { trpc } from "@/utils/trpc";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
-import { ArrowLeft, ScrollText, Sparkles } from "lucide-react";
+import "@/features/expedition/expedition.css";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { lazy, Suspense, useState } from "react";
-import { serialize } from "superjson";
+import { RunRewards } from "@/features/expedition/run-rewards";
+import { resultCopy } from "@/features/expedition/run-info";
 import {
-  RpgBackLink,
-  RpgInset,
-  RpgPage,
-  RpgPanel,
-  RpgSectionHeading,
-  RpgStatTile,
-} from "@/components/rpg-ui";
-import { BattleRender } from "./-battle-render";
-import { useStatsTimeline } from "./-hooks/use-stats-timeline";
-import { PresentationBoundary } from "./-presentation-boundary";
+  ResultHeading,
+  ResultParty,
+  ResultNextStep,
+} from "@/features/expedition/result-details";
 
-const RecordedBattle = import.meta.env.DEV
-  ? lazy(() => import("./-presentation/recorded-battle"))
-  : null;
-
+const ResultReplay = lazy(() => import("./-result-replay"));
 export const Route = createFileRoute("/battle/finished/$id")({
-  component: RouteComponent,
+  component: BattleResult,
 });
-
-function RouteComponent() {
+function BattleResult() {
   const { id } = Route.useParams();
   const { data } = useSuspenseQuery(trpc.getBattle.queryOptions(id));
-
-  const { statsTimeline } = useStatsTimeline(
-    data.timelineData,
-    data.participants,
-    data.startEntityData,
+  const context = useQuery(
+    trpc.dungeon.getBattleContext.queryOptions(
+      { battleId: id },
+      {
+        refetchInterval: (query) =>
+          query.state.data && !query.state.data.attempt.completedAt
+            ? 1500
+            : false,
+      },
+    ),
   );
-
-  const [visibleEvents, setVisibleEvents] = useState(0);
-  const [threeD, setThreeD] = useState(false);
-  const stats = statsTimeline[visibleEvents]?.stats;
-  const currentEvent = data.timelineData[visibleEvents];
-
-  if (threeD && RecordedBattle)
-    return (
-      <>
-        <div className="p-5">
-          <RpgBackLink to="/dungeons">Back to dungeons</RpgBackLink>
-        </div>
-        <PresentationBoundary onFallback={() => setThreeD(false)}>
-          <Suspense
-            fallback={<div className="p-8">Loading recorded 3D playback…</div>}
-          >
-            <RecordedBattle data={data} onFallback={() => setThreeD(false)} />
-          </Suspense>
-        </PresentationBoundary>
-      </>
-    );
-
+  const [replay, setReplay] = useState(false);
+  const run = context.data?.run;
+  const victory = data.winner === "TEAM_A";
+  const saved = Boolean(context.data?.attempt.completedAt);
+  const defeated = data.teamB.filter((enemy) => enemy.dead).length;
+  const pending = context.isPending || Boolean(context.data && !saved);
+  const copy = resultCopy(victory, context.data ?? undefined);
   return (
-    <RpgPage>
-      <div className="space-y-8">
-        <RpgBackLink to="/dungeons">Back to dungeons</RpgBackLink>
-        {import.meta.env.DEV && (
-          <button className="rpg-badge" onClick={() => setThreeD(true)}>
-            3D replay prototype
-          </button>
-        )}
-
-        <RpgPanel className="px-6 py-6 sm:px-8 sm:py-8">
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-end">
-            <div className="max-w-3xl">
-              <div className="rpg-badge">
-                <Sparkles className="h-3.5 w-3.5" />
-                Battle replay
-              </div>
-              <h1 className="rpg-heading mt-5 text-4xl font-semibold tracking-[0.06em] uppercase sm:text-5xl lg:text-6xl">
-                Replay the encounter
-              </h1>
-              <p className="rpg-copy mt-5 max-w-2xl text-base leading-8 sm:text-lg">
-                Scrub the battle ledger, inspect the current event payload, and
-                trace the exact state that produced the final result.
-              </p>
+    <>
+      <main className="expedition">
+        <div className="expedition-shell">
+          {run ? (
+            <Link
+              className="expedition-back"
+              to="/dungeons/$id"
+              params={{ id: run.id }}
+            >
+              ← {run.name}
+            </Link>
+          ) : (
+            <Link className="expedition-back" to="/dungeons">
+              ← All expeditions
+            </Link>
+          )}
+          <ResultHeading
+            victory={victory}
+            context={context.data ?? undefined}
+          />
+          <div className="expedition-result-stats">
+            <div>
+              <small>Foes defeated</small>
+              <strong>
+                {defeated} / {data.teamB.length}
+              </strong>
             </div>
-
-            <RpgInset variant="parchment" className="p-5">
-              <p className="rpg-title text-[0.62rem] text-[#cfbf97]/75">
-                Replay pulse
-              </p>
-              <div className="mt-4 grid grid-cols-2 gap-3">
-                <RpgStatTile label="Step" value={`${visibleEvents}`} />
-                <RpgStatTile
-                  label="Total"
-                  value={`${data.timelineData.length}`}
-                />
-              </div>
-              <RpgInset variant="stone" className="mt-4 p-4">
-                <div className="flex items-center gap-2 text-[0.68rem] font-semibold tracking-[0.18em] text-[#b6ab92] uppercase">
-                  <ScrollText className="h-4 w-4" />
-                  Battle ID
-                </div>
-                <p className="mt-2 font-mono text-sm text-[#f1e8d4]">{id}</p>
-              </RpgInset>
-            </RpgInset>
+            <div>
+              <small>Party standing</small>
+              <strong>
+                {data.teamA.filter((hero) => !hero.dead).length} /{" "}
+                {data.teamA.length}
+              </strong>
+            </div>
+            <div>
+              <small>Waves cleared</small>
+              <strong>
+                {run ? `${run.round} / ${run.actualEnemies.length}` : "—"}
+              </strong>
+            </div>
           </div>
-        </RpgPanel>
-
-        <RpgPanel className="px-6 py-6">
-          <RpgSectionHeading
-            icon={<ArrowLeft className="h-5 w-5" />}
-            eyebrow="Timeline control"
-            title={`Visible event ${visibleEvents} of ${data.timelineData.length}`}
-          />
-          <RpgInset variant="parchment" className="mt-5 p-5">
-            <input
-              type="range"
-              min={0}
-              max={data.timelineData.length}
-              value={visibleEvents}
-              onChange={(e) => setVisibleEvents(Number(e.target.value))}
-              className="w-full"
-            />
-          </RpgInset>
-        </RpgPanel>
-
-        <RpgPanel className="px-6 py-6">
-          <RpgSectionHeading
-            icon={<ScrollText className="h-5 w-5" />}
-            eyebrow="Event snapshot"
-            title="Current event payload"
-          />
-          <pre className="rpg-scroll-frame mt-5 overflow-x-auto p-4 text-xs leading-6 text-[#e7dcc7]">
-            {JSON.stringify(serialize(currentEvent).json, null, 2)}
-          </pre>
-        </RpgPanel>
-
-        <BattleRender
-          participants={data.participants}
-          stats={stats}
-          effectTracking={data.effectTracking}
-          battleId={id}
-          mode="replay"
-        />
-      </div>
-    </RpgPage>
+          <div className="expedition-layout">
+            <section>
+              <div className="expedition-section-heading">
+                <div>
+                  <small>After the encounter</small>
+                  <h2>The company</h2>
+                </div>
+              </div>
+              <ResultParty
+                data={data}
+                context={context.data ?? undefined}
+                pending={pending}
+              />
+              <RunRewards
+                rewards={run?.loot.filter((loot) => loot.battleId === id) ?? []}
+                pending={pending}
+              />
+              {context.error && (
+                <p role="alert" className="expedition-error">
+                  Could not load the expedition: {context.error.message}{" "}
+                  <button onClick={() => void context.refetch()}>
+                    Try again
+                  </button>
+                </p>
+              )}
+            </section>
+            <aside className="expedition-departure">
+              <small>{copy.nextEyebrow}</small>
+              <h2>{copy.nextTitle}</h2>
+              <p>{copy.nextDescription}</p>
+              <ResultNextStep
+                run={run}
+                saved={saved}
+                pending={pending}
+                victory={victory}
+              />
+              {pending && (
+                <p role="status">
+                  The result is recorded. Waiting for rewards and expedition
+                  progress to finish saving.
+                </p>
+              )}
+              <button
+                className="expedition-replay-toggle"
+                onClick={() => setReplay(!replay)}
+                aria-expanded={replay}
+              >
+                {replay ? "Close battle replay ↑" : "Watch battle replay ↓"}
+              </button>
+            </aside>
+          </div>
+        </div>
+      </main>
+      {replay && (
+        <Suspense
+          fallback={
+            <div className="p-8" role="status">
+              Loading battle replay…
+            </div>
+          }
+        >
+          <ResultReplay data={data} />
+        </Suspense>
+      )}
+    </>
   );
 }

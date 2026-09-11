@@ -46,9 +46,6 @@ export class EntityFactory {
       .from(TB_character)
       .where(eq(TB_character.userId, userId));
 
-    if (charactersDb.length === 0) {
-      throw new Error("No characters found");
-    }
     const characters: Character[] = await Promise.all(
       charactersDb.map((character) => this.createCharacter(character.id, db)),
     );

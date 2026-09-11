@@ -1,0 +1,608 @@
+body:has(.expedition) [data-game-header] {
+  padding: 0;
+  background: #141c18;
+}
+body:has(.expedition) [data-game-header] > div {
+  max-width: none;
+}
+body:has(.expedition) [data-game-header] .rpg-panel {
+  border-radius: 0;
+  border-width: 0 0 1px;
+}
+body:has(.expedition) [data-header-content] {
+  padding: 6px 22px;
+}
+body:has(.expedition) [data-header-decoration],
+body:has(.expedition) [data-header-subtitle] {
+  display: none;
+}
+body:has(.expedition) [data-header-brand] {
+  border: 0;
+  padding: 4px 0;
+  background: none;
+  box-shadow: none;
+}
+body:has(.expedition) [data-header-brand] .rpg-icon-frame {
+  width: 28px;
+  height: 28px;
+}
+body:has(.expedition) [data-header-brand] p {
+  font-size: 15px;
+}
+body:has(.expedition) [data-header-nav] a {
+  padding: 6px 10px;
+  font-size: 10px;
+  border-radius: 3px;
+}
+.expedition {
+  --exp-paper: #f0e8d5;
+  --exp-dim: #a9b4a7;
+  --exp-gold: #d7c68e;
+  --exp-line: #9ca88430;
+  min-height: calc(100vh - 90px);
+  color: var(--exp-paper);
+  background:
+    radial-gradient(ellipse at 15% 0%, #26392b 0, transparent 55%), #101b17;
+  font-family: "Avenir Next", "Segoe UI", sans-serif;
+  padding: 28px 36px 80px;
+}
+.expedition-shell {
+  max-width: 1300px;
+  margin: 0 auto;
+}
+.expedition-back {
+  display: inline-block;
+  color: var(--exp-dim);
+  font-size: 12px;
+  padding: 8px 0;
+}
+.expedition a:hover {
+  color: #fff5d8;
+}
+.expedition-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 28px;
+  padding: 34px 0 32px;
+}
+.expedition-eyebrow,
+.expedition small,
+.expedition-feature small {
+  text-transform: uppercase;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.17em;
+  color: var(--exp-dim, #adb7a1);
+}
+.expedition h1,
+.expedition h2,
+.expedition h3,
+.expedition-feature strong {
+  font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  font-weight: 400;
+}
+.expedition h1 {
+  font-size: clamp(36px, 4.5vw, 64px);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  margin: 13px 0 16px;
+}
+.expedition-title p:last-child {
+  max-width: 710px;
+  line-height: 1.8;
+  color: var(--exp-dim);
+  font-size: 14px;
+}
+.expedition-seal {
+  width: 100px;
+  height: 100px;
+  flex-shrink: 0;
+  border: 1px solid #b1ba984d;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font:
+    38px Georgia,
+    serif;
+  color: var(--exp-gold);
+  outline: 1px solid #b1ba9824;
+  outline-offset: 7px;
+}
+.expedition-seal small {
+  margin-top: 8px;
+  font:
+    9px "Avenir Next",
+    sans-serif;
+  letter-spacing: 0.2em;
+}
+.expedition-trail {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  list-style: none;
+  padding: 24px 0 32px;
+  margin: 0 0 32px;
+  border-block: 1px solid var(--exp-line);
+}
+.expedition-trail li {
+  position: relative;
+  padding: 0 16px 0 0;
+}
+.expedition-trail li::before {
+  content: "";
+  height: 1px;
+  background: var(--exp-line);
+  left: 38px;
+  right: 0;
+  top: 18px;
+  position: absolute;
+}
+.expedition-trail li:last-child::before {
+  display: none;
+}
+.expedition-station {
+  display: grid;
+  place-items: center;
+  height: 36px;
+  width: 36px;
+  border: 1px solid var(--exp-line);
+  border-radius: 50%;
+  color: #889c89;
+  font:
+    13px Georgia,
+    serif;
+  margin-bottom: 16px;
+}
+.expedition-trail strong {
+  font:
+    18px Georgia,
+    serif;
+  display: block;
+  margin: 7px 0;
+}
+.expedition-trail p {
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--exp-dim);
+  text-transform: capitalize;
+}
+.expedition-trail [data-state="current"] .expedition-station {
+  border-color: var(--exp-gold);
+  color: var(--exp-gold);
+  box-shadow: 0 0 24px #d7c68e15;
+}
+.expedition-trail [data-state="current"] strong,
+.expedition-trail [data-state="current"] small {
+  color: var(--exp-gold);
+}
+.expedition-trail [data-state="complete"] .expedition-station {
+  background: #314d39;
+  color: #c3deb0;
+}
+.expedition-trail [data-state="ahead"] {
+  opacity: 0.55;
+}
+.expedition-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(320px, 0.9fr);
+  gap: 42px;
+  align-items: start;
+}
+.expedition h2 {
+  font-size: 31px;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin-top: 7px;
+}
+.expedition h3 {
+  font-size: 23px;
+  line-height: 1.2;
+}
+.expedition-section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+.expedition-section-heading > span {
+  color: var(--exp-dim);
+  font-size: 11px;
+  white-space: nowrap;
+}
+.expedition-muted {
+  color: var(--exp-dim);
+  font-size: 12px;
+  line-height: 1.8;
+  margin: 12px 0;
+}
+.expedition-roster {
+  display: grid;
+  gap: 14px;
+  margin-top: 22px;
+}
+.expedition-hero-card {
+  border: 1px solid var(--exp-line);
+  background: #ffffff03;
+  padding: 20px;
+}
+.expedition-hero-card[data-selected="true"] {
+  border-color: #bcbd805c;
+  background: #acba8210;
+}
+.expedition-hero-heading {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+.expedition-hero-heading h3 {
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+}
+.expedition-monogram {
+  display: grid;
+  place-items: center;
+  border: 1px solid #a7b49b45;
+  height: 48px;
+  width: 44px;
+  flex-shrink: 0;
+  font:
+    26px Georgia,
+    serif;
+  color: var(--exp-gold);
+  background: #8a9d6812;
+}
+.expedition-select {
+  margin-left: auto;
+  border: 1px solid #abbf8244;
+  padding: 8px 12px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.expedition-select[aria-pressed="true"] {
+  color: var(--exp-gold);
+}
+.expedition-resources {
+  display: flex;
+  gap: 24px;
+  font-size: 13px;
+  color: #b6cba7;
+  padding: 17px 0 13px;
+}
+.expedition-resources > span:last-child {
+  color: #a6bbd4;
+}
+.expedition-resources small {
+  letter-spacing: 0.07em;
+  font-size: 9px;
+}
+.expedition-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  padding-top: 12px;
+  border-top: 1px solid var(--exp-line);
+}
+.expedition-skills > span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+}
+.expedition-departure {
+  border-top: 2px solid #9b9e67;
+  background: linear-gradient(135deg, #acb97e15, #acb97e06);
+  padding: 26px;
+}
+.expedition-departure h2 {
+  font-size: 34px;
+  margin: 10px 0 15px;
+}
+.expedition-departure > p {
+  font-size: 13px;
+  color: var(--exp-dim);
+  line-height: 1.8;
+  margin: 14px 0;
+}
+.expedition-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 12px 20px;
+  background: #d6c58c;
+  color: #182218;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid #dfcf9c;
+  transition: background 150ms;
+}
+.expedition .expedition-button {
+  width: 100%;
+}
+.expedition-button:hover,
+.expedition a.expedition-button:hover {
+  background: #e5d6a7;
+  color: #101b17;
+}
+.expedition button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.expedition button:focus-visible,
+.expedition a:focus-visible,
+.expedition summary:focus-visible {
+  outline: 2px solid #e7d79e;
+  outline-offset: 4px;
+}
+.expedition-enemies {
+  list-style: none;
+  margin: 20px 0;
+}
+.expedition-enemies li {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--exp-line);
+}
+.expedition-enemies strong {
+  display: block;
+  font-weight: 500;
+  text-transform: capitalize;
+  font-size: 13px;
+}
+.expedition-enemies span {
+  display: block;
+  font-size: 11px;
+  color: var(--exp-dim);
+  margin-top: 5px;
+}
+.expedition-tabs {
+  display: flex;
+  gap: 5px;
+  margin-top: 26px;
+  border-bottom: 1px solid var(--exp-line);
+}
+.expedition-tabs button {
+  font-size: 11px;
+  padding: 10px 13px;
+  border-bottom: 2px solid transparent;
+}
+.expedition-tabs [aria-pressed="true"] {
+  color: var(--exp-gold);
+  border-color: var(--exp-gold);
+}
+.expedition-loadout {
+  padding-top: 22px;
+}
+.expedition-spell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--exp-line);
+}
+.expedition-spell > div {
+  flex: 1;
+  min-width: 0;
+}
+.expedition-spell strong {
+  text-transform: capitalize;
+  font-weight: 500;
+  font-size: 12px;
+}
+.expedition-spell p {
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--exp-dim);
+  margin-top: 5px;
+}
+.expedition-spell button {
+  padding: 7px 9px;
+  border: 1px solid var(--exp-line);
+  font-size: 11px;
+}
+.expedition-collection summary {
+  cursor: pointer;
+  padding: 16px 0;
+  font-size: 12px;
+  color: var(--exp-gold);
+}
+.expedition-collection .expedition-spell-list {
+  max-height: 440px;
+  overflow: auto;
+  padding-right: 8px;
+}
+.expedition-rewards {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--exp-line);
+}
+.expedition-reward-bundle {
+  border: 1px solid var(--exp-line);
+  padding: 18px;
+  margin-top: 14px;
+}
+.expedition-drop {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 18px;
+}
+.expedition-drop strong {
+  display: block;
+  text-transform: capitalize;
+  font:
+    22px Georgia,
+    serif;
+  margin-top: 4px;
+}
+.expedition-error {
+  color: #f2bcb0;
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 14px 0;
+}
+.expedition-text-link {
+  display: inline-block;
+  padding: 20px 0 0;
+  color: var(--exp-gold);
+  font-size: 12px;
+}
+.expedition-feature {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  padding: 28px 34px;
+  background: radial-gradient(ellipse at 20% 0%, #39513a, #14261e);
+  color: #eee7d1;
+  border: 1px solid #b7bc6a55;
+}
+.expedition-feature > span:first-child {
+  display: grid;
+  gap: 10px;
+}
+.expedition-feature strong {
+  font-size: 36px;
+  line-height: 1.15;
+}
+.expedition-feature > span:first-child > span {
+  font-size: 13px;
+  color: #afbea4;
+}
+.expedition-battle-nav {
+  background: #14221b;
+  border-bottom: 1px solid #bbc18e30;
+  color: #c4cbb9;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px 28px;
+  font-size: 12px;
+}
+.expedition-result-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-block: 1px solid var(--exp-line);
+  margin: 28px 0;
+}
+.expedition-result-stats > div {
+  padding: 22px 0;
+}
+.expedition-result-stats strong {
+  font:
+    32px Georgia,
+    serif;
+  display: block;
+  margin-top: 9px;
+  color: var(--exp-gold);
+}
+.expedition-result-party {
+  display: grid;
+  gap: 12px;
+}
+.expedition-result-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 17px 0;
+  border-bottom: 1px solid var(--exp-line);
+}
+.expedition-result-hero strong {
+  font:
+    21px Georgia,
+    serif;
+}
+.expedition-result-hero p {
+  color: var(--exp-dim);
+  font-size: 12px;
+  margin-top: 7px;
+}
+.expedition-result-hero > span {
+  color: var(--exp-gold);
+  font-size: 13px;
+}
+.expedition-replay-toggle {
+  padding: 16px 0;
+  font-size: 12px;
+  color: var(--exp-gold);
+}
+@media (max-width: 900px) {
+  .expedition {
+    padding-inline: 22px;
+  }
+  .expedition-layout {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .expedition-trail strong {
+    font-size: 15px;
+  }
+  .expedition-trail p {
+    display: none;
+  }
+  .expedition-feature {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+@media (max-width: 560px) {
+  .expedition {
+    padding: 18px 16px 50px;
+  }
+  .expedition-seal {
+    display: none;
+  }
+  .expedition-title {
+    padding-top: 24px;
+  }
+  .expedition-trail {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .expedition-trail li {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 0;
+  }
+  .expedition-trail li::before {
+    left: 17px;
+    top: 37px;
+    height: 24px;
+    width: 1px;
+  }
+  .expedition-trail strong {
+    margin: 3px 0;
+    font-size: 16px;
+  }
+  .expedition-station {
+    margin: 0;
+    flex-shrink: 0;
+  }
+  .expedition-trail small {
+    font-size: 8px;
+  }
+  .expedition-hero-card {
+    padding: 14px;
+  }
+  .expedition-select {
+    padding: 8px;
+  }
+  .expedition-hero-heading h3 {
+    font-size: 19px;
+  }
+  .expedition-departure {
+    padding: 22px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .expedition * {
+    transition: none !important;
+  }
+}

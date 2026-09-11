@@ -16,6 +16,7 @@ import { Route as SpellsIndexRouteImport } from './routes/spells/index'
 import { Route as ItemsIndexRouteImport } from './routes/items/index'
 import { Route as DungeonsIndexRouteImport } from './routes/dungeons/index'
 import { Route as CharactersIndexRouteImport } from './routes/characters/index'
+import { Route as DungeonsPrepareRouteImport } from './routes/dungeons/prepare'
 import { Route as DungeonsIdRouteImport } from './routes/dungeons/$id'
 import { Route as CharactersCharacterIdRouteImport } from './routes/characters/$character-id'
 import { Route as BattleIdRouteImport } from './routes/battle/$id'
@@ -56,6 +57,11 @@ const CharactersIndexRoute = CharactersIndexRouteImport.update({
   path: '/characters/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DungeonsPrepareRoute = DungeonsPrepareRouteImport.update({
+  id: '/dungeons/prepare',
+  path: '/dungeons/prepare',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DungeonsIdRoute = DungeonsIdRouteImport.update({
   id: '/dungeons/$id',
   path: '/dungeons/$id',
@@ -84,6 +90,7 @@ export interface FileRoutesByFullPath {
   '/battle/$id': typeof BattleIdRoute
   '/characters/$character-id': typeof CharactersCharacterIdRoute
   '/dungeons/$id': typeof DungeonsIdRoute
+  '/dungeons/prepare': typeof DungeonsPrepareRoute
   '/characters/': typeof CharactersIndexRoute
   '/dungeons/': typeof DungeonsIndexRoute
   '/items/': typeof ItemsIndexRoute
@@ -97,6 +104,7 @@ export interface FileRoutesByTo {
   '/battle/$id': typeof BattleIdRoute
   '/characters/$character-id': typeof CharactersCharacterIdRoute
   '/dungeons/$id': typeof DungeonsIdRoute
+  '/dungeons/prepare': typeof DungeonsPrepareRoute
   '/characters': typeof CharactersIndexRoute
   '/dungeons': typeof DungeonsIndexRoute
   '/items': typeof ItemsIndexRoute
@@ -111,6 +119,7 @@ export interface FileRoutesById {
   '/battle/$id': typeof BattleIdRoute
   '/characters/$character-id': typeof CharactersCharacterIdRoute
   '/dungeons/$id': typeof DungeonsIdRoute
+  '/dungeons/prepare': typeof DungeonsPrepareRoute
   '/characters/': typeof CharactersIndexRoute
   '/dungeons/': typeof DungeonsIndexRoute
   '/items/': typeof ItemsIndexRoute
@@ -126,6 +135,7 @@ export interface FileRouteTypes {
     | '/battle/$id'
     | '/characters/$character-id'
     | '/dungeons/$id'
+    | '/dungeons/prepare'
     | '/characters/'
     | '/dungeons/'
     | '/items/'
@@ -139,6 +149,7 @@ export interface FileRouteTypes {
     | '/battle/$id'
     | '/characters/$character-id'
     | '/dungeons/$id'
+    | '/dungeons/prepare'
     | '/characters'
     | '/dungeons'
     | '/items'
@@ -152,6 +163,7 @@ export interface FileRouteTypes {
     | '/battle/$id'
     | '/characters/$character-id'
     | '/dungeons/$id'
+    | '/dungeons/prepare'
     | '/characters/'
     | '/dungeons/'
     | '/items/'
@@ -166,6 +178,7 @@ export interface RootRouteChildren {
   BattleIdRoute: typeof BattleIdRoute
   CharactersCharacterIdRoute: typeof CharactersCharacterIdRoute
   DungeonsIdRoute: typeof DungeonsIdRoute
+  DungeonsPrepareRoute: typeof DungeonsPrepareRoute
   CharactersIndexRoute: typeof CharactersIndexRoute
   DungeonsIndexRoute: typeof DungeonsIndexRoute
   ItemsIndexRoute: typeof ItemsIndexRoute
@@ -224,6 +237,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CharactersIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dungeons/prepare': {
+      id: '/dungeons/prepare'
+      path: '/dungeons/prepare'
+      fullPath: '/dungeons/prepare'
+      preLoaderRoute: typeof DungeonsPrepareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dungeons/$id': {
       id: '/dungeons/$id'
       path: '/dungeons/$id'
@@ -262,6 +282,7 @@ const rootRouteChildren: RootRouteChildren = {
   BattleIdRoute: BattleIdRoute,
   CharactersCharacterIdRoute: CharactersCharacterIdRoute,
   DungeonsIdRoute: DungeonsIdRoute,
+  DungeonsPrepareRoute: DungeonsPrepareRoute,
   CharactersIndexRoute: CharactersIndexRoute,
   DungeonsIndexRoute: DungeonsIndexRoute,
   ItemsIndexRoute: ItemsIndexRoute,
