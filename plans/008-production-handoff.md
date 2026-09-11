@@ -1,12 +1,12 @@
 # Plan 008: Turn the playable prototype into a maintainable first release
 
-**Status:** TODO · **Priority:** P1 · **Effort:** L, several focused changes · **Risk:** high around persisted combat and rewards.
+**Status:** Local candidate implemented; release qualification incomplete — see [current evidence](008-production-evidence.md). **Priority:** P1 · **Effort:** L, several focused changes · **Risk:** high around persisted combat and rewards.
 
 **Planned on 11 September 2026 against `017644e13311973702a86969dacd70f5fb41b6b2` on `prototype`, plus the 22 uncommitted files in [the prototype manifest](008-prototype-manifest.json).** Those files contain the newest dungeon routes and loot balance. Checking out the commit alone loses that work.
 
 This is the implementation handoff for **Shards of Affinity**, a small-party, turn-based dungeon RPG built around collecting spells and combining character builds. The user wants to move beyond prototyping through refactoring, cleanup, review, and release preparation. Preserve the working game and its visual direction while making its behavior, persistence, operations, and ownership boundaries reliable enough for a first release.
 
-This document specifies future implementation. Preparing it did not refactor application code, commit the route changes, deploy the game, or modify a shared database. “First release” here means a production-capable version of the current desktop game loop. Broader content, mobile qualification, monetization, and a new economy are separate product work.
+This document records the implementation scope; current results and incomplete release gates are in the evidence document above. The original handoff preparation did not refactor or deploy the game. “First release” here means a production-capable version of the current desktop game loop. Broader content, mobile qualification, monetization, and a new economy are separate product work.
 
 ## Start here
 
@@ -321,15 +321,15 @@ Stop the dependent operation and report concrete evidence if:
 
 ## Completion criteria
 
-- [ ] Complete prototype transferred, including the 22 route/balance files; baseline commit and drift resolution recorded.
-- [ ] Phases A–G have evidence and explicit results; module boundaries and ownership are understandable without this conversation.
-- [ ] Types cover application code and all intended tests/recorders; production build succeeds with reviewed warnings.
-- [ ] Current behavior tests pass; only the exact three historical assertions remain accepted; all 34 protected files are unchanged.
+- [x] Complete prototype transferred, including the 22 route/balance files; baseline commit and drift resolution recorded.
+- [x] Phases A–G have evidence and explicit results; module boundaries and ownership are understandable without this conversation. Incomplete runtime gates are named in the evidence.
+- [x] Types cover application code and all intended tests/recorders; production build succeeds with reviewed warnings. Four exact protected-test diagnostics are explicitly accepted and remain visible.
+- [x] Current behavior tests pass; only the exact three historical assertions remain accepted; all 34 protected files are unchanged.
 - [ ] PostgreSQL concurrency and Cloudflare staging recovery checks pass beyond the local substitutes.
-- [ ] Permission and abuse review covers exposed tRPC/HTTP/WS/chat surfaces; identified release-blocking issues are fixed.
+- [x] Permission and abuse review covers exposed tRPC/HTTP/WS/chat surfaces; demonstrated high-impact application defects are fixed. Remaining dependency and staging dispositions are named separately.
 - [ ] Complete player-loop, route, gear, replay, fallback, keyboard, and desktop performance checks have evidence.
 - [ ] Fresh install, upgrade, backup restoration, release, and rollback procedures are reproducible; no secret values appear in artifacts.
-- [ ] Cleanup/review is complete; setup and milestone references accurately distinguish current behavior from historical scope.
+- [x] Local cleanup and independent review are complete; setup and milestone references accurately distinguish current behavior from historical scope. Fresh React diagnostics remain blocked as documented.
 - [ ] The final response names the candidate commit/PR, verification results, unresolved decisions, and actual deployment status.
 
 ## Reference map and maintenance notes

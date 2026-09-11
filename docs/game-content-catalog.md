@@ -1,5 +1,7 @@
 # Shards of Affinity — current content catalog
 
+> Historical content snapshot. Later [equipment](equipment-milestone.md), [route balance](branching-dungeon-milestone.md), and [combat repairs](../plans/verification-results.md) supersede conflicting mechanics/acquisition details below. See the [current project guide](../README.md).
+
 **Snapshot: 9 September 2026 · source base `351f33e`**
 
 Companion to the [game overview](game-overview.md). This catalog covers every registered content type and configured dungeon wave in the current code. Counts and concrete kits were checked by constructing all 39 spells, 22 enemies, and 10 passives through their factories locally. Factory construction does not establish that every ability works during combat or is obtainable by players. The descriptions below follow implementations where tooltips disagree.

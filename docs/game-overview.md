@@ -1,5 +1,7 @@
 # Shards of Affinity — the game we have today
 
+> Historical snapshot. Combat repairs, 3D, full runs, equipment, weighted routes, and production migration work have advanced since 9 September. Start with the [current project guide](../README.md) and [release evidence](../plans/008-production-evidence.md); deferred features and gaps below describe this document's original date.
+
 **Current-state reference for future 2D and 3D prototypes · 9 September 2026**
 
 Based on the local source at commit `351f33e` and the current working tree. This describes code and connected player flows, not a certification of the deployed game. Content factories were executed locally to check the inventory; a complete authenticated playthrough was not performed. Implementation gaps are called out explicitly.

@@ -1,0 +1,96 @@
+{
+  "recordedAt": "2026-09-11",
+  "scope": "Local renderer subset; not full browser/release qualification",
+  "device": {
+    "model": "MacBookPro18,2",
+    "chip": "Apple M1 Max",
+    "cpuCores": 10,
+    "memoryGiB": 32
+  },
+  "browser": "Codex in-app browser, Chrome/152.0.0.0",
+  "viewport": [
+    1280,
+    720
+  ],
+  "build": "Production-mode temporary QA gallery with only its mount guard enabled; shipped artifact separate",
+  "coldLocalLoad": {
+    "controlsReadyMs": 132.6,
+    "modelsReadyMs": 402.3,
+    "modelEncodedBytes": 1025292,
+    "modelTransferBytes": 1026192
+  },
+  "playback": {
+    "events": 991,
+    "speed": 4,
+    "rollingFrameLimit": 1800,
+    "p50Ms": 16.6,
+    "p95Ms": 23.5,
+    "maxMs": 33.1,
+    "kinds": [
+      "SPELL_CAST",
+      "EFFECT_TRIGGER",
+      "EFFECT_REMOVAL",
+      "DEATH"
+    ]
+  },
+  "repeatEntries": [
+    {
+      "entry": 1,
+      "frames": 1620,
+      "p50Ms": 16.7,
+      "p95Ms": 21.3,
+      "calls": 125,
+      "triangles": 64558,
+      "geometries": 70,
+      "textures": 20
+    },
+    {
+      "entry": 2,
+      "frames": 840,
+      "p50Ms": 16.7,
+      "p95Ms": 21.6,
+      "calls": 125,
+      "triangles": 64558,
+      "geometries": 67,
+      "textures": 20
+    },
+    {
+      "entry": 3,
+      "frames": 1260,
+      "p50Ms": 16.7,
+      "p95Ms": 18.7,
+      "calls": 125,
+      "triangles": 64558,
+      "geometries": 67,
+      "textures": 20
+    },
+    {
+      "entry": 4,
+      "frames": 240,
+      "p50Ms": 16.6,
+      "p95Ms": 19.1,
+      "calls": 125,
+      "triangles": 64558,
+      "geometries": 70,
+      "textures": 20
+    }
+  ],
+  "budgets": {
+    "p50Ms": 20,
+    "p95Ms": 33.3,
+    "controlsReadyMs": 500,
+    "modelsReadyMs": 1000,
+    "modelEncodedBytes": 1100000,
+    "idleGeometries": 70,
+    "idleTextures": 20
+  },
+  "limits": [
+    "Timing collector holds rolling samples, not all frames of the run",
+    "Local asset transfer is not hosted cold-load evidence",
+    "Per-renderer counts do not prove retired renderers or whole GPU/process heap were reclaimed",
+    "A resized/concurrently loaded run had p95 51ms and max 715.6ms and is excluded from this fixed-viewport cohort",
+    "An interrupted preview caused missing assets on a later mount; restoring the preview resolved it",
+    "Second engine, live authenticated combat, actual WebGL context loss and hosted runtime remain unqualified"
+  ],
+  "budgetResult": "PASS for the recorded local subset"
+}

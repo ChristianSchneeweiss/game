@@ -1,0 +1,117 @@
+{
+  "startedAt": "2026-09-11T11:05:57.806Z",
+  "artifactDirectory": "/tmp/loot-production-candidate-final",
+  "server": {
+    "database": "loot_production_admin",
+    "version": "15.3 (Debian 15.3-1.pgdg110+1)",
+    "collation": "en_US.utf8",
+    "pid": 339
+  },
+  "migrations": {
+    "historicalCommit": "3835a6098bd0081e5ac942ae78557a1edf4ae51c",
+    "historicalSources": {
+      "apps/server/src/db/schema.ts": "7a279a43a17035fd7424a70348bf86cd6fde665e39406caa4f776132f874a740",
+      "apps/server/src/db/character-dungeon-data.ts": "c8fd54e848cb0a672ef0993460fa21e428a9607890cc807119baf0e77e199a25"
+    },
+    "files": {
+      "fresh.sql": "2512d1e739f27d1641b12eecb1bfdc49be8672081ff80b9838d976085f8676bf",
+      "audited-3835a60.sql": "9e075dc6ff916a2f27ba51082982528740e03096ee9596190eb8aac5113fe8fe",
+      "../manual/20260910_dungeon_attempts.sql": "92fd1acc8928169d72d6d263707693a4ffa219650da0379949969a8eb3ac59d7",
+      "../manual/20260911_dungeon_routes.sql": "203fb34fa0500c11592e2da0db6f85a671f75a37096901511414e27ebf419260"
+    }
+  },
+  "interruptedFreshInstall": "Injected error after DDL rolled back every table and constraint",
+  "schemaFingerprints": {
+    "empty": "4e1d75893abc7a52490325c585ddd9b6522f498abc076502bf11ec5fcb8b6c09",
+    "audited": "7549ab33986d3d10f916cee5ac832ce354ded2b85022cf6330260f77a3e57dde",
+    "current": "0d92481b3697ee206855e3530a6cefeb26a22b51505d85a12766b1154bad5e92"
+  },
+  "upgradePreflight": "Active attempts, missing results, duplicate attempts, and duplicate rewards each rejected with unchanged legacy schema/data",
+  "interruptedUpgrade": "Injected post-DDL error rolled back new columns, completion markers, constraints, and snapshot table",
+  "upgrade": "Exact manual migrations match fresh schema; historical completion/resources/results preserved, NULL routes remain linear, uniqueness enforced, repeat migration preserves existing route state",
+  "backupRestore": {
+    "bytes": 24196,
+    "result": "pg_dump custom archive restored with pg_restore; every table row, constraint, column and migration-history row agrees"
+  },
+  "concurrency": {
+    "backendPids": [
+      356,
+      357
+    ],
+    "collation": "C",
+    "observations": [
+      {
+        "scenario": "overlapping dungeon starts",
+        "waitingConnections": 2,
+        "results": [
+          "rejected",
+          "fulfilled"
+        ]
+      },
+      {
+        "scenario": "route choice versus battle start",
+        "waitingConnections": 2,
+        "results": [
+          "fulfilled",
+          "fulfilled"
+        ]
+      },
+      {
+        "scenario": "duplicate completion and rewards",
+        "waitingConnections": 2,
+        "results": [
+          "fulfilled",
+          "fulfilled"
+        ]
+      },
+      {
+        "scenario": "duplicate inventory claims",
+        "waitingConnections": 2,
+        "results": [
+          "rejected",
+          "fulfilled"
+        ]
+      },
+      {
+        "scenario": "simultaneous weapon replacements",
+        "waitingConnections": 2,
+        "results": [
+          "fulfilled",
+          "fulfilled"
+        ]
+      },
+      {
+        "scenario": "mixed-case party snapshot versus passive transfer",
+        "waitingConnections": 2,
+        "results": [
+          "fulfilled",
+          "fulfilled"
+        ]
+      },
+      {
+        "scenario": "equipment removal versus frozen snapshot",
+        "waitingConnections": 2,
+        "results": [
+          "fulfilled",
+          "fulfilled"
+        ]
+      },
+      {
+        "scenario": "concurrent completions in different runs preserve both XP grants",
+        "waitingConnections": 2,
+        "results": [
+          "fulfilled",
+          "fulfilled"
+        ]
+      }
+    ]
+  },
+  "result": "PASS",
+  "finishedAt": "2026-09-11T11:06:01.478Z",
+  "disposableDatabasesRemoved": [
+    "loot_production_restore_1789124757806_92060",
+    "loot_production_interrupted_1789124757806_92060",
+    "loot_production_upgrade_1789124757806_92060",
+    "loot_production_fresh_1789124757806_92060"
+  ]
+}

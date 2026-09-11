@@ -1,100 +1,43 @@
 # Shards of Affinity
 
-A turn-based dungeon crawler RPG with real-time battle mechanics.
+A desktop, turn-based dungeon RPG. Prepare one or two heroes, combine collected spells and equipment, choose weighted routes, and carry surviving health and mana through each expedition. Battles use a 3D miniature presentation with accessible Cards and saved-event replay.
 
-## Main Features
+The production migration is implemented locally on `codex/production-v1`. **It has not been deployed or qualified for release.** See the [candidate evidence and remaining gates](plans/008-production-evidence.md).
 
-- Dungeon runs with multiple rounds of enemies
-- Turn-based combat with timeline-based battle events
-- Shared game logic between frontend and backend for consistent combat rules
-- Characters with progression-based stats like health, mana, level, and XP
-- Spell system with mana costs, target rules, damage/healing logic, and effects
-- Enemy definitions with reusable combat behavior and stat blocks
-- Persistent dungeon state, participants, enemies, loot, and battle results
-- Real-time battle updates over WebSockets via Durable Objects
-- Authenticated player accounts using Clerk
+## Start developing
 
-## Game Reference
+Use **Node 22.19.0 and Bun 1.4.0**, then follow the [setup guide](docs/production-setup.md) for isolated authentication and services.
 
-- [Current game overview](docs/game-overview.md): player loop, features, mechanics, implementation gaps, and the boundaries for future 2D/3D prototypes.
-- [Complete content catalog](docs/game-content-catalog.md): all configured dungeon waves, enemy kits, spells, passive skills, equipment, and acquisition paths.
-- [Three.js research and prototype plan](docs/threejs-research.md): recommended React integration, battle playback architecture, asset pipeline, examples, and prototype acceptance criteria.
-- [Three.js prototype handoff](docs/threejs-prototype-handoff.md): implementation brief for the next agent, with required reading, scope, milestones, and validation criteria.
-- [Biome encounter presentation](docs/biome-encounter-milestone.md): the five arena families, spell effects, enemy appearances, development previews, and verification results.
-
-## Technical Decisions
-
-- **Monorepo with Bun workspaces**: keeps the client, server, and shared game engine in one repo while making local development and shared types straightforward.
-- **Shared `apps/game` package**: combat logic lives in a pure TypeScript package so battles are not reimplemented differently on the client and server.
-- **React + Vite on the client**: fast local iteration, simple build pipeline, and a lightweight setup for a game UI.
-- **TanStack Router**: file-based routing with solid TypeScript support and predictable route organization.
-- **TanStack Query + tRPC**: typed end-to-end API calls with good client-side caching and minimal API glue code.
-- **Cloudflare Workers + Hono on the server**: low-overhead edge runtime with a small, fast HTTP framework.
-- **Durable Objects for battle sessions**: a natural fit for real-time battle state and WebSocket coordination.
-- **Drizzle ORM + PostgreSQL**: typed schema-driven database access without giving up SQL clarity.
-- **Clerk for authentication**: offloads auth complexity and keeps the app focused on game systems.
-- **Seeded RNG in battles**: deterministic battle behavior makes replays, debugging, and validation much easier.
-
-## Project Structure
-
-This is a monorepo with three main apps:
-
-```text
-apps/
-├── client/   React frontend
-├── server/   Cloudflare Workers API
-└── game/     Shared game logic
+```sh
+nvm use
+bun run check:toolchain
+bun install --frozen-lockfile
+bun run typecheck:all
+bun run test:release
+bun run build:client
 ```
 
-## Tech Stack
+`build:client` produces a static production-mode artifact in `apps/client/dist` without retrieving production secrets. A runnable preview also needs a matching development Clerk publishable key and API. The [release runbook](docs/production-release.md) covers local runtime configuration, disposable PostgreSQL proof, staging, migrations, backup restoration, and rollback. `release:check` includes the real PostgreSQL rehearsal and requires its dedicated local target.
 
-### Client
+The original battle runner intentionally retains three historical resimulation failures. The release verifier accepts only their exact signatures; all other failures fail the gate. Complete TypeScript coverage similarly prints and checks four explicitly accepted diagnostics in protected historical tests. Application types remain clean. All 34 historical test/fixture files are immutable.
 
-- React 19
-- Vite
-- TanStack Router
-- TanStack Query
-- Zustand
-- Tailwind CSS v4
-- shadcn/ui
-- tRPC client
+## Architecture and current behavior
 
-### Server
+| Area | Responsibility |
+| --- | --- |
+| `apps/game` | Deterministic combat rules, spells, effects, items, dungeon definitions, and saved route/run contracts. |
+| `apps/server` | Authenticated commands, PostgreSQL transactions and inventory, frozen battle builds, Durable Object sessions, completion workflows. |
+| `apps/client` | Preparation, route maps, live command selection, display-only animation/replay, inventory, and recovery UI. |
 
-- Cloudflare Workers
-- Hono
-- tRPC
-- Drizzle ORM
-- PostgreSQL
-- Clerk
-- Durable Objects
+- [Domain vocabulary](CONTEXT.md) distinguishes combat rounds from dungeon waves and selection from inspection.
+- [Persistence and module boundaries](docs/production-architecture.md) explains run commands, lock order, frozen builds, and version compatibility.
+- [Client session and presentation boundaries](docs/production-client.md) explains connection recovery, uncertain commands, Cards controls, and resource ownership.
+- [Permission and abuse review](docs/production-security-review.md) records fixes, rights, limits, and unresolved release decisions.
+- [Current equipment](docs/equipment-milestone.md), [dungeon runs](docs/dungeon-run-milestone.md), and [weighted routes](docs/branching-dungeon-milestone.md) document the implemented player loop.
+- [Enemy models and licenses](docs/enemy-models/README.md) records the 22-enemy/16-model mapping, provenance, animation fallbacks, and validation caveats.
 
-### Shared Game Engine
+The stack is React 19/Vite, TanStack Router/Query, tRPC, Three.js, Hono/Cloudflare Workers, Drizzle/PostgreSQL, and Clerk. Wallet/token features, a credited gold economy, mobile qualification, audio, and new content systems remain outside this release scope.
 
-- TypeScript
-- Battle system
-- Spells, effects, enemies, items, and dungeon definitions
+## Historical references
 
-## Development
-
-```bash
-# Run everything
-bun run dev
-
-# Run apps individually
-bun run dev:client
-bun run dev:server
-
-# Database commands
-bun run db:push
-bun run db:push:prod
-bun run db:studio
-
-# Deploy
-bun run deploy
-```
-
-## Environment
-
-- Doppler is used for secrets management
-- Dev and production configs are supported
+[Plans 001–007](plans/README.md) and their [verification results](plans/verification-results.md) are completed repair history. [Plan 008](plans/008-production-handoff.md) is the current production handoff. The [game overview](docs/game-overview.md), [content catalog](docs/game-content-catalog.md), and [original 3D handoff](docs/threejs-prototype-handoff.md) predate later milestones; use their dated context together with the current references above.

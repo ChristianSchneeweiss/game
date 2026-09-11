@@ -1,5 +1,7 @@
 # Three.js prototype implementation handoff
 
+> Completed prototype brief, retained for design history. The playable 3D presentation, model pipeline, and later dungeon/equipment/route milestones are implemented. Current work follows [Plan 008](../plans/008-production-handoff.md), with [release evidence](../plans/008-production-evidence.md) recording remaining qualification. Do not interpret the original milestone exclusions below as the current game's feature list.
+
 Implement the first playable 3D battle prototype for **Shards of Affinity** on the existing **`prototype`** branch. The player chooses spells and legal targets, the existing combat rules resolve those choices, enemies respond, and the battle reaches victory or defeat. Deliver a readable battlefield, event presentation, and one proven animated-model pipeline. Use the research already in this repository to make implementation decisions and continue through local verification.
 
 The first milestone is a **playable battle over the existing WebSocket and server-side game logic**. Use the current game flow to enter a battle, choose an available spell and legal targets, and press **Cast**. The server resolves the command and drives enemies and turn progression. Recorded timelines remain useful for repeatable verification and replay. Redesigning the dungeon/reward loop remains outside this milestone.

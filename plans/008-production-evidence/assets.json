@@ -1,0 +1,104 @@
+{
+  "models": 16,
+  "bytes": 7052560,
+  "errors": 0,
+  "warnings": 41,
+  "results": [
+    {
+      "path": "Flying-Dragon.glb",
+      "bytes": 228836,
+      "errors": 0,
+      "warnings": 1
+    },
+    {
+      "path": "Tree01.glb",
+      "bytes": 838576,
+      "errors": 0,
+      "warnings": 1
+    },
+    {
+      "path": "Skeleton_Mage.glb",
+      "bytes": 504784,
+      "errors": 0,
+      "warnings": 8
+    },
+    {
+      "path": "Tree02.glb",
+      "bytes": 1041744,
+      "errors": 0,
+      "warnings": 1
+    },
+    {
+      "path": "Zombie.glb",
+      "bytes": 658224,
+      "errors": 0,
+      "warnings": 2
+    },
+    {
+      "path": "Water_Elemental.glb",
+      "bytes": 112360,
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "path": "snake-animations.glb",
+      "bytes": 215248,
+      "errors": 0,
+      "warnings": 1
+    },
+    {
+      "path": "Flying-Ghost_Skull.glb",
+      "bytes": 258004,
+      "errors": 0,
+      "warnings": 1
+    },
+    {
+      "path": "spider-animations.glb",
+      "bytes": 370716,
+      "errors": 0,
+      "warnings": 1
+    },
+    {
+      "path": "Big-Orc.glb",
+      "bytes": 449520,
+      "errors": 0,
+      "warnings": 3
+    },
+    {
+      "path": "Flying-Ghost.glb",
+      "bytes": 228364,
+      "errors": 0,
+      "warnings": 1
+    },
+    {
+      "path": "Skeleton_Minion.glb",
+      "bytes": 557640,
+      "errors": 0,
+      "warnings": 9
+    },
+    {
+      "path": "Moss_Golem.glb",
+      "bytes": 128228,
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "path": "Big-Fish.glb",
+      "bytes": 424364,
+      "errors": 0,
+      "warnings": 2
+    },
+    {
+      "path": "Flying-Dragon_Evolved.glb",
+      "bytes": 429488,
+      "errors": 0,
+      "warnings": 1
+    },
+    {
+      "path": "Skeleton_Warrior.glb",
+      "bytes": 606464,
+      "errors": 0,
+      "warnings": 9
+    }
+  ]
+}

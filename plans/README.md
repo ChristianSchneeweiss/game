@@ -6,11 +6,11 @@
 
 | Plan | Priority / effort / risk | Dependencies | Status |
 | --- | --- | --- | --- |
-| [008 — First release](008-production-handoff.md) | P1 / L / high | Completed 001–007 and the complete current prototype working tree | TODO |
+| [008 — First release](008-production-handoff.md) | P1 / L / high | Completed 001–007 and the complete current prototype working tree | Local candidate implemented; staging/browser release gates pending |
 
 Written on 11 September 2026 against `017644e` plus **22 uncommitted route/balance files**. The [transfer manifest](008-prototype-manifest.json) identifies those files and their hashes; copy their actual contents when moving to another checkout. The fresh handoff baseline is **560 passing / 3 accepted historical failures**, with client, server, and included test types passing. The 34 test files present in `3835a60` remain byte-identical.
 
-Execute 008 in phases A–G and record implementation evidence in `plans/008-production-evidence.md`. The handoff is prepared; implementation and production rollout have not been performed. The seven completed tasks below are historical work and should not be repeated.
+The complete prototype was preserved in `976ddac` on `codex/production-v1`. Implementation, review fixes, reproducible local checks, and release tooling are recorded in [production evidence](008-production-evidence.md). Actual staging recovery, complete desktop/browser qualification, product decisions, and rollout remain explicit gates; no production deployment has been performed. The seven completed tasks below are historical work and should not be repeated.
 
 ## Completed battle repair tasks
 

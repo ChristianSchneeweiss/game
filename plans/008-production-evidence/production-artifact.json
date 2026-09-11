@@ -1,0 +1,88 @@
+{
+  "passed": true,
+  "scope": "Concrete private sentinels, known forbidden paths/content, entry point, and public asset byte identity; not a universal secret detector",
+  "directory": "apps/client/dist",
+  "files": 137,
+  "bytes": 11123236,
+  "kinds": {
+    ".js": {
+      "files": 37,
+      "bytes": 2415465,
+      "gzipBytes": 687091
+    },
+    ".css": {
+      "files": 5,
+      "bytes": 123055,
+      "gzipBytes": 25320
+    },
+    ".ico": {
+      "files": 1,
+      "bytes": 15406
+    },
+    ".md": {
+      "files": 5,
+      "bytes": 9901
+    },
+    ".webp": {
+      "files": 59,
+      "bytes": 753338
+    },
+    ".json": {
+      "files": 6,
+      "bytes": 31911
+    },
+    ".html": {
+      "files": 1,
+      "bytes": 729,
+      "gzipBytes": 409
+    },
+    ".txt": {
+      "files": 5,
+      "bytes": 3467
+    },
+    ".glb": {
+      "files": 18,
+      "bytes": 7769964
+    }
+  },
+  "largest": [
+    {
+      "file": "models/enemies-v1/Tree02.glb",
+      "bytes": 1041744
+    },
+    {
+      "file": "assets/miniature-Bo9V-zLA.js",
+      "bytes": 959439
+    },
+    {
+      "file": "models/enemies-v1/Tree01.glb",
+      "bytes": 838576
+    },
+    {
+      "file": "assets/index-DvoYZZhu.js",
+      "bytes": 748973
+    },
+    {
+      "file": "models/enemies-v1/Zombie.glb",
+      "bytes": 658224
+    },
+    {
+      "file": "models/enemies-v1/Skeleton_Warrior.glb",
+      "bytes": 606464
+    },
+    {
+      "file": "models/enemies-v1/Skeleton_Minion.glb",
+      "bytes": 557640
+    },
+    {
+      "file": "models/enemies-v1/Skeleton_Mage.glb",
+      "bytes": 504784
+    }
+  ],
+  "manifestSha256": "87dcb7672cf6f3b9a1ae66ad6ac5db7045c476132432c035ecfd33899b8cece0",
+  "publicAssets": {
+    "files": 94,
+    "manifestSha256": "14acee97304d8c00f26971d027c6cc8bf93968838e42f26f650327cc3ade0ecc"
+  },
+  "failures": []
+}
