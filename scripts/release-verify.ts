@@ -64,11 +64,12 @@ export function verifyBattleOutput(log: string, exitCode: number, files: string[
   for (const file of expectedFiles) {
     expectLine(file);
     expectLine(/^bun test v1\.4\.0 \([a-f\d]+\)$/);
-    expectLine(`tests/battle/${file}:`);
+    const githubGroup = lines[cursor] === `::group::tests/battle/${file}:`;
+    expectLine(`${githubGroup ? "::group::" : ""}tests/battle/${file}:`);
     let filePasses = 0;
     let fileFailures = 0;
     const names = new Set<string>();
-    while (cursor < lines.length && !/^ \d+ pass$/.test(lines[cursor]!)) {
+    while (cursor < lines.length && !/^ \d+ pass$/.test(lines[cursor]!) && !(githubGroup && lines[cursor] === "::endgroup::")) {
       const line = lines[cursor]!;
       if (knownDiagnostic(line)) {
         cursor++;
@@ -87,10 +88,19 @@ export function verifyBattleOutput(log: string, exitCode: number, files: string[
           if (actual !== source) throw new Error(`Changed historical failure source: ${actual}`);
         }
         expectLine(/^ +\^$/);
-        expectLine("error: The battle changed. Choose your spell again.");
-        expectLine(/^ +at currentSpell \([^\n()]+\/apps\/server\/src\/battle\/commands\.ts:\d+:\d+\)$/);
-        expectLine(/^ +at castBattleSpell \([^\n()]+\/apps\/server\/src\/battle\/commands\.ts:\d+:\d+\)$/);
-        expectLine(/^ +at <anonymous> \([^\n()]+\/tests\/battle\/live-recordings\.test\.ts:72:7\)$/);
+        const error = expectLine("error: The battle changed. Choose your spell again.");
+        const stack = [
+          expectLine(/^ +at currentSpell \([^\n()]+\/apps\/server\/src\/battle\/commands\.ts:\d+:\d+\)$/),
+          expectLine(/^ +at castBattleSpell \([^\n()]+\/apps\/server\/src\/battle\/commands\.ts:\d+:\d+\)$/),
+          expectLine(/^ +at <anonymous> \([^\n()]+\/tests\/battle\/live-recordings\.test\.ts:72:7\)$/),
+        ];
+        if (githubGroup) {
+          // Bun repeats the validated error as a GitHub annotation. Require an
+          // exact copy so annotations cannot hide a different async failure.
+          const [, line, column] = /:(\d+):(\d+)\)$/.exec(stack[0]!)!;
+          const encodedStack = `\n${stack.join("\n")}`.replaceAll("%", "%25").replaceAll("\r", "%0D").replaceAll("\n", "%0A");
+          expectLine(`::error file=apps/server/src/battle/commands.ts,line=${line},col=${column},title=${error}::${encodedStack}`);
+        }
         failureSignature = true;
       }
       const result = testResult(next());
@@ -107,6 +117,7 @@ export function verifyBattleOutput(log: string, exitCode: number, files: string[
         filePasses++;
       }
     }
+    if (githubGroup) expectLine("::endgroup::");
     expectLine(` ${filePasses} pass`);
     expectLine(` ${fileFailures} fail`);
     expectLine(/^ \d+ expect\(\) calls$/);

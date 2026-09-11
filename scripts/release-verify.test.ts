@@ -17,6 +17,10 @@ error: The battle changed. Choose your spell again.
       at castBattleSpell (/checkout/apps/server/src/battle/commands.ts:60:29)
       at <anonymous> (/checkout/tests/battle/live-recordings.test.ts:72:7)`;
 
+// Bun 1.4.0's raw GitHub Actions format from run 34612302863. The error
+// annotation repeats the preceding stack; only the checkout path is portable.
+const githubAnnotation = "::error file=apps/server/src/battle/commands.ts,line=19,col=67,title=error: The battle changed. Choose your spell again.::%0A      at currentSpell (/checkout/apps/server/src/battle/commands.ts:19:67)%0A      at castBattleSpell (/checkout/apps/server/src/battle/commands.ts:60:29)%0A      at <anonymous> (/checkout/tests/battle/live-recordings.test.ts:72:7)";
+
 function fileOutput(file: string, count: number) {
   const failures = file === historicalFile ? historicalFailures : [];
   const passes = count - failures.length;
@@ -34,6 +38,10 @@ function fileOutput(file: string, count: number) {
 }
 
 const validLog = `${Object.entries(baseline).map(([file, count]) => fileOutput(file, count)).join("\n")}\n25/26 battle test files passed.\nFailed: ${historicalFile}\n`;
+const githubLog = validLog
+  .replaceAll(/^(tests\/battle\/.+:)$/gm, "::group::$1")
+  .replaceAll(/^( \d+ pass)$/gm, "::endgroup::\n$1")
+  .replaceAll(diagnostic, `${diagnostic}\n${githubAnnotation}`);
 
 describe("release regression verifier", () => {
   test("accepts only the complete historical baseline and reports exceptions visibly", () => {
@@ -47,6 +55,29 @@ describe("release regression verifier", () => {
   test("accepts ANSI decoration and the original package runner wrapper", () => {
     const wrapped = `$ bun tests/battle/run.ts\n${validLog.replaceAll("(pass)", "\u001b[32m(pass)\u001b[0m")}error: script "test:battle" exited with code 1\n`;
     expect(verifyBattleOutput(wrapped, 1, files).passed).toBe(560);
+  });
+
+  test("accepts Bun's GitHub Actions groups and exact historical error annotations", () => {
+    expect(verifyBattleOutput(githubLog, 1, files)).toEqual({
+      files: 26,
+      passed: 560,
+      acceptedFailures: historicalFailures,
+    });
+  });
+
+  test("rejects malformed groups and unknown, missing, or changed annotations", () => {
+    for (const log of [
+      githubLog.replace("::group::tests/battle/assets.test.ts:", "::group::unknown test file"),
+      githubLog.replace("::endgroup::\n", ""),
+      githubLog.replace("::endgroup::", "::endgroup::\n::endgroup::"),
+      githubLog.replace(githubAnnotation, "::error::unrelated async exception"),
+      githubLog.replace(githubAnnotation, githubAnnotation.replace("line=19", "line=20")),
+      githubLog.replace(githubAnnotation, githubAnnotation.replace("live-recordings.test.ts:72:7", "live-recordings.test.ts:94:7")),
+      githubLog.replace(`${githubAnnotation}\n`, ""),
+      githubLog.replace(githubAnnotation, `${githubAnnotation}\n::error::unrelated async exception`),
+      githubLog.replace("(pass) scenario 0", "(fail) new regression"),
+      `${githubLog}::notice::unrecognized trailing output\n`,
+    ]) expect(() => verifyBattleOutput(log, 1, files)).toThrow();
   });
 
   test("requires the original runner's exact exit code", () => {
