@@ -13,7 +13,7 @@ import {
   TB_spellStats,
   TB_user,
 } from "../db/schema";
-import { bmStorage } from "../game-usecases/bm-storage";
+import { BattleResultNotFoundError, bmStorage } from "../game-usecases/bm-storage";
 import { createCharacter } from "../game-usecases/character";
 import { EntityFactory } from "../game-usecases/entity-factory";
 import { LootManager } from "../game-usecases/loot-manager";
@@ -118,8 +118,14 @@ export const appRouter = router({
   }),
 
   getBattle: publicProcedure.input(z.string()).query(async ({ input, ctx }) => {
-    const timeline = await bmStorage.get(input, ctx.db);
-    return timeline;
+    try {
+      return await bmStorage.get(input, ctx.db);
+    } catch (error) {
+      if (error instanceof BattleResultNotFoundError) {
+        throw new TRPCError({ code: "NOT_FOUND", message: error.message });
+      }
+      throw error;
+    }
   }),
 
   getMyLoot: protectedProcedure.query(async ({ ctx }) => {

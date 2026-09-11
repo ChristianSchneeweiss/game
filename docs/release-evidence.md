@@ -2,6 +2,10 @@
 
 Status on 11 September 2026: **local candidate implemented; release qualification incomplete; not deployed**.
 
+## Follow-up after the operator's schema push
+
+The [11 September local schema smoke](release-evidence/schema-push-smoke-20260911.md) records a fresh authenticated player loop against the existing development database: preparation, cast/reconnect, defeat/restart, four spell slots, a completed two-wave expedition, saved shrine recovery, XP and reward collection across reloads. It also records the reproduced missing-result HTTP 500 fix, focused tests, exact working-tree hashes, and limits. These observations are against `ed43803` plus the listed changes; the candidate and full release-gate results below are the earlier baseline.
+
 ## Candidate and baseline
 
 - Branch: `codex/production-v1`. Complete prototype checkpoint: `976ddac`, based on `017644e` plus all 25 working-tree files. All 22 prototype-manifest hashes matched before editing.

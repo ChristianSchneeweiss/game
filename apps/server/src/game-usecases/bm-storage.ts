@@ -32,6 +32,8 @@ const storageSchema = z.object({
 });
 type StorageSchema = z.infer<typeof storageSchema>;
 
+export class BattleResultNotFoundError extends Error {}
+
 export const bmStorage = {
   save: async (bm: BM, db: Database) => {
     const entities = cloneDeep(bm.startEntityData);
@@ -95,7 +97,7 @@ export const bmStorage = {
       .select()
       .from(TB_battleResult)
       .where(eq(TB_battleResult.battleId, id));
-    if (!storageData) throw new Error("battle does not exist");
+    if (!storageData) throw new BattleResultNotFoundError("Battle result not found");
     const y = {
       timelineData: deserialize(storageData.timelineData as SuperJSONResult),
       startEntityData: deserialize(
