@@ -47,22 +47,28 @@ export async function createContext({
 
   const user = await clerk.users.getUser(auth.userId);
 
-  // this is kinda bad because we do it a lot
-  const [dbUser] = await db
-    .select()
+  const [existing] = await db
+    .select({ id: TB_user.id })
     .from(TB_user)
-    .where(eq(TB_user.id, auth.userId));
-  if (!dbUser) {
-    await db.insert(TB_user).values({
-      id: auth.userId,
-      email: user.emailAddresses[0].emailAddress,
+    .where(eq(TB_user.id, user.id))
+    .limit(1);
+  if (!existing)
+    await db.transaction(async (tx) => {
+      const [created] = await tx
+        .insert(TB_user)
+        .values({
+          id: user.id,
+          email:
+            user.primaryEmailAddress?.emailAddress ??
+            user.emailAddresses[0]?.emailAddress,
+        })
+        .onConflictDoNothing({ target: TB_user.id })
+        .returning({ id: TB_user.id });
+      if (!created) return;
+      await createSpell(user.id, "cinder-wisp", tx);
+      await createSpell(user.id, "aqua-wave", tx);
+      await createSpell(user.id, "battle-roar", tx);
     });
-
-    // just for now
-    await createSpell(auth.userId, "cinder-wisp", db);
-    await createSpell(auth.userId, "aqua-wave", db);
-    await createSpell(auth.userId, "battle-roar", db);
-  }
 
   return {
     ...context,

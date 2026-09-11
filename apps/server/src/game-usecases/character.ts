@@ -4,7 +4,8 @@ import {
   statPointsReceived,
   xpNeededForLevelUp,
 } from "@loot-game/game/utils/xp-curve";
-import { and, eq } from "drizzle-orm";
+import { TRPCError } from "@trpc/server";
+import { eq } from "drizzle-orm";
 import type { PgTransaction } from "drizzle-orm/pg-core";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import {
@@ -15,6 +16,7 @@ import {
   type Database,
 } from "../db/schema";
 import { EntityFactory } from "./entity-factory";
+import { lockCharacters } from "./character-locks";
 
 export const createCharacter = async (
   name: string,
@@ -102,12 +104,7 @@ export const unequipSpell = async (
   userId: string,
   db: Database,
 ) => {
-  await db
-    .update(TB_spellStats)
-    .set({ equippedBy: null })
-    .where(
-      and(eq(TB_spellStats.id, spellId), eq(TB_spellStats.userId, userId)),
-    );
+  await unequipOwnedItem("Spell", TB_spellStats, spellId, userId, db);
 };
 
 export const equipPassiveSkill = async (
@@ -117,15 +114,35 @@ export const equipPassiveSkill = async (
   db: Database,
 ) => {
   await db.transaction(async (tx) => {
-    const [passiveSkill] = await tx
+    const [before] = await tx
       .select()
       .from(TB_passivSkillStats)
       .where(eq(TB_passivSkillStats.id, passiveSkillId));
-
-    if (!passiveSkill) throw new Error("Passive skill not found");
-    if (passiveSkill.userId !== userId)
-      throw new Error("Not your passive skill");
-
+    if (!before) throw new Error("Passive skill not found");
+    if (before.userId !== userId) throw new Error("Not your passive skill");
+    // Passive transfers are supported; freeze both old and new builds in the
+    // same global character order used by dungeon attempt capture.
+    const characterIds = [characterId, before.equippedBy].filter(
+      (id): id is string => id !== null,
+    );
+    const characters = await lockCharacters(characterIds, tx);
+    if (
+      !characters.some(
+        (character) =>
+          character.id === characterId && character.userId === userId,
+      )
+    )
+      throw new Error("Not your character");
+    const [passiveSkill] = await tx
+      .select()
+      .from(TB_passivSkillStats)
+      .where(eq(TB_passivSkillStats.id, passiveSkillId))
+      .for("update");
+    if (!passiveSkill || passiveSkill.equippedBy !== before.equippedBy)
+      throw new TRPCError({
+        code: "CONFLICT",
+        message: "The item assignment changed. Try again.",
+      });
     await tx
       .update(TB_passivSkillStats)
       .set({ equippedBy: characterId })
@@ -138,21 +155,13 @@ export const unequipPassiveSkill = async (
   userId: string,
   db: Database,
 ) => {
-  await db.transaction(async (tx) => {
-    const [passiveSkill] = await tx
-      .select()
-      .from(TB_passivSkillStats)
-      .where(eq(TB_passivSkillStats.id, passiveSkillId));
-
-    if (!passiveSkill) throw new Error("Passive skill not found");
-    if (passiveSkill.userId !== userId)
-      throw new Error("Not your passive skill");
-
-    await tx
-      .update(TB_passivSkillStats)
-      .set({ equippedBy: null })
-      .where(eq(TB_passivSkillStats.id, passiveSkillId));
-  });
+  await unequipOwnedItem(
+    "Passive skill",
+    TB_passivSkillStats,
+    passiveSkillId,
+    userId,
+    db,
+  );
 };
 
 export const equipEquipment = async (
@@ -204,34 +213,82 @@ export const unequipEquipment = async (
   userId: string,
   db: Database,
 ) => {
-  await db.transaction(async (tx) => {
-    const [equipment] = await tx
-      .select()
-      .from(TB_equipmentStats)
-      .where(eq(TB_equipmentStats.id, equipmentId));
-
-    if (!equipment) throw new Error("Equipment not found");
-    if (equipment.userId !== userId) throw new Error("Not your equipment");
-
-    await tx
-      .update(TB_equipmentStats)
-      .set({ equippedBy: null })
-      .where(eq(TB_equipmentStats.id, equipmentId));
-  });
+  await unequipOwnedItem(
+    "Equipment",
+    TB_equipmentStats,
+    equipmentId,
+    userId,
+    db,
+  );
 };
+
+/** Match snapshot/equip lock order: character first, then its assigned item. */
+async function unequipOwnedItem(
+  label: "Spell" | "Passive skill" | "Equipment",
+  table:
+    | typeof TB_spellStats
+    | typeof TB_passivSkillStats
+    | typeof TB_equipmentStats,
+  itemId: string,
+  userId: string,
+  db: Database,
+) {
+  await db.transaction(async (tx) => {
+    const columns = { userId: table.userId, equippedBy: table.equippedBy };
+    const [before] = await tx
+      .select(columns)
+      .from(table)
+      .where(eq(table.id, itemId));
+    if (!before || before.userId !== userId) {
+      // This endpoint has always treated unowned/missing spell IDs as no-ops.
+      if (label === "Spell") return;
+      throw new Error(
+        !before ? `${label} not found` : `Not your ${label.toLowerCase()}`,
+      );
+    }
+    if (before.equippedBy) {
+      await tx
+        .select({ id: TB_character.id })
+        .from(TB_character)
+        .where(eq(TB_character.id, before.equippedBy))
+        .for("update");
+    }
+    const [item] = await tx
+      .select(columns)
+      .from(table)
+      .where(eq(table.id, itemId))
+      .for("update");
+    if (
+      !item ||
+      item.userId !== userId ||
+      item.equippedBy !== before.equippedBy
+    )
+      throw new TRPCError({
+        code: "CONFLICT",
+        message: "The item assignment changed. Try again.",
+      });
+    await tx
+      .update(table)
+      .set({ equippedBy: null })
+      .where(eq(table.id, itemId));
+  });
+}
 
 export const applyStatIncrease = async (
   characterId: string,
   stats: (keyof EntityAttributes)[],
-  db: PostgresJsDatabase,
+  userId: string,
+  db: Database,
 ) => {
   await db.transaction(async (tx) => {
     const [character] = await tx
       .select()
       .from(TB_character)
-      .where(eq(TB_character.id, characterId));
+      .where(eq(TB_character.id, characterId))
+      .for("update");
 
     if (!character) throw new Error("Character not found");
+    if (character.userId !== userId) throw new Error("Not your character");
 
     const newStatPointsAvailable = character.statPointsAvailable - stats.length;
     if (newStatPointsAvailable < 0) throw new Error("Not enough stat points");
@@ -269,7 +326,8 @@ export const handleXpReceived = async (
   const [character] = await tx
     .select()
     .from(TB_character)
-    .where(eq(TB_character.id, characterId));
+    .where(eq(TB_character.id, characterId))
+    .for("update");
   if (!character) throw new Error("Character not found");
 
   const newXp = character.xp + totalXp;

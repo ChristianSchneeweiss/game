@@ -13,6 +13,13 @@ import cloneDeep from "lodash/cloneDeep";
 import SuperJSON from "superjson";
 import z from "zod";
 import { createClerk } from "../clerk";
+import { diagnostic } from "../lib/diagnostics";
+import {
+  canConnect,
+  socketLimits,
+  SocketBudget,
+  textWithinBytes,
+} from "../lib/socket-limits";
 import type { Database } from "../db/schema";
 import { SyncFactory } from "../game-usecases/sync-factory";
 
@@ -33,6 +40,7 @@ import {
   type StartingBuilds,
 } from "../battle/starting-builds";
 import { reconstructBattle } from "../battle/reconstruct-battle";
+import { decodeStartingBuilds } from "../battle/starting-build-codec";
 import {
   deliverBattle,
   needsDelivery,
@@ -64,10 +72,12 @@ export class BattleWebsocket extends DurableObject {
     failures: 0,
   };
   private operation: Promise<unknown> = Promise.resolve();
+  private budget = new SocketBudget();
 
   constructor(ctx: DurableObjectState, env: Env) {
     super(ctx, env);
     this.env = env;
+    this.clerk = createClerk(env.CLERK_SECRET_KEY);
     this.sessions = new Map();
     this.ctx.getWebSockets().forEach((ws) => {
       const attachment = ws.deserializeAttachment();
@@ -82,12 +92,17 @@ export class BattleWebsocket extends DurableObject {
     this.db = this.getDb();
 
     this.ctx.blockConcurrencyWhile(async () => {
-      const clerkSecretKey = await this.ctx.storage.get("clerkSecretKey");
       const battleId = await this.ctx.storage.get("battleId");
-      if (!clerkSecretKey || !battleId) return;
+      await this.ctx.storage.put("clerkSecretKey", null);
+      if (!battleId) return;
       this.battleId = battleId as string;
-      this.clerk = createClerk(clerkSecretKey as string);
       await this.setupBm();
+      diagnostic({
+        event: "battle.recovered",
+        battleId: this.battleId,
+        revision: this.bm.events.length,
+        version: this.env.CF_VERSION_METADATA?.id,
+      });
       await this.resumeDelivery();
     });
   }
@@ -95,19 +110,25 @@ export class BattleWebsocket extends DurableObject {
   private async setupBm() {
     if (this.bm) return;
 
-    let builds = await this.ctx.storage.get<StartingBuilds>("startingBuilds");
-    if (!builds) {
+    const journalVersion = await this.ctx.storage.get("journalVersion");
+    if (journalVersion !== undefined && journalVersion !== 1)
+      throw new Error("Unsupported battle journal version");
+
+    const savedBuilds = await this.ctx.storage.get<unknown>("startingBuilds");
+    let builds: StartingBuilds;
+    if (savedBuilds === undefined) {
       const { characters, enemies } = await new SyncFactory(this.db).get(
         this.battleId,
       );
       builds = captureStartingBuilds([...characters, ...enemies]);
       await this.ctx.storage.put("startingBuilds", builds);
-    }
+    } else builds = decodeStartingBuilds(savedBuilds);
     this.startingBuilds = builds;
     this.messages = z
       .array(z.string())
       .parse((await this.ctx.storage.get("messages")) ?? []);
     this.bm = reconstructBattle(this.battleId, builds, this.messages);
+    await this.ctx.storage.put("journalVersion", 1);
     this.delivery = (await this.ctx.storage.get<BattleDelivery>(
       "delivery",
     )) ?? {
@@ -119,12 +140,13 @@ export class BattleWebsocket extends DurableObject {
       await saveDelivery(this.ctx.storage, this.delivery);
   }
 
-  async setup(clerkSecretKey: string, battleId: string) {
+  // Keep old RPC callers working during cutover; never retain their secret.
+  async setup(battleIdOrLegacySecret: string, legacyBattleId?: string) {
+    const battleId = legacyBattleId ?? battleIdOrLegacySecret;
     return this.exclusive(async () => {
       if (this.battleId && this.battleId !== battleId)
         throw new Error("Battle identity cannot change");
-      await this.ctx.storage.put({ clerkSecretKey, battleId });
-      this.clerk = createClerk(clerkSecretKey);
+      await this.ctx.storage.put({ clerkSecretKey: null, battleId });
       this.battleId = battleId;
       await this.setupBm();
       await this.resumeDelivery();
@@ -132,6 +154,8 @@ export class BattleWebsocket extends DurableObject {
   }
 
   async fetch(request: Request): Promise<Response> {
+    if (request.headers.get("Upgrade")?.toLowerCase() !== "websocket")
+      return new Response("WebSocket upgrade required", { status: 426 });
     const webSocketPair = new WebSocketPair();
     const url = new URL(request.url);
     const userId = url.searchParams.get("userId");
@@ -140,6 +164,8 @@ export class BattleWebsocket extends DurableObject {
       throw new Error("No userId");
     }
     const user = await this.clerk.users.getUser(userId);
+    if (!canConnect(this.sessions, user.id))
+      return new Response("Connection limit reached", { status: 429 });
     this.sessions.set(server, { id: user.id });
     server.serializeAttachment({ id: user.id });
 
@@ -176,7 +202,18 @@ export class BattleWebsocket extends DurableObject {
   }
 
   async webSocketMessage(ws: WebSocket, message: ArrayBuffer | string) {
-    if (typeof message !== "string") return;
+    if (!this.sessions.has(ws)) return;
+    if (!textWithinBytes(message, socketLimits.battleFrameBytes)) {
+      ws.close(
+        typeof message === "string" ? 1009 : 1003,
+        "Invalid battle message",
+      );
+      return;
+    }
+    if (!this.budget.take(ws, socketLimits.battleBurst)) {
+      ws.close(1008, "Battle rate limit reached");
+      return;
+    }
     return this.exclusive(() => this.receiveMessage(ws, message));
   }
 
@@ -211,6 +248,11 @@ export class BattleWebsocket extends DurableObject {
       this.messages = messages;
       this.delivery = delivery;
     } catch (error) {
+      diagnostic({
+        event: "battle.command_rejected",
+        battleId: this.battleId,
+        revision: this.bm.events.length,
+      });
       this.send(ws, {
         type: "rejected",
         data: {
@@ -218,7 +260,7 @@ export class BattleWebsocket extends DurableObject {
           message: error instanceof Error ? error.message : "Command rejected.",
         },
       });
-      await this.sendState();
+      await this.sendState(ws);
       return;
     }
     // Transport and external delivery failures cannot contradict a committed
@@ -273,14 +315,26 @@ export class BattleWebsocket extends DurableObject {
           this.delivery = next;
         },
       );
-    } catch (error) {
-      console.error("Battle persistence will retry", this.battleId, error);
+    } catch {
       const retry = { ...this.delivery, failures: this.delivery.failures + 1 };
+      diagnostic({
+        event: "battle.delivery_retry",
+        battleId: this.battleId,
+        revision: this.bm.events.length,
+        failures: retry.failures,
+        version: this.env.CF_VERSION_METADATA?.id,
+      });
       await saveDelivery(this.ctx.storage, retry);
       this.delivery = retry;
       return;
     }
     if (this.delivery.completion === "delivered") {
+      diagnostic({
+        event: "battle.delivery_complete",
+        battleId: this.battleId,
+        revision: this.bm.events.length,
+        version: this.env.CF_VERSION_METADATA?.id,
+      });
       this.ctx.getWebSockets().forEach((ws) =>
         this.send(ws, {
           type: "finished",
@@ -295,6 +349,7 @@ export class BattleWebsocket extends DurableObject {
       ws.send(SuperJSON.stringify(response));
     } catch {
       this.sessions.delete(ws);
+      this.budget.delete(ws);
     }
   }
 
@@ -365,7 +420,7 @@ export class BattleWebsocket extends DurableObject {
     );
   }
 
-  private async sendState() {
+  private async sendState(recipient?: WebSocket) {
     const events = this.bm.events;
     const state: ResponseMessage = {
       type: "state",
@@ -377,7 +432,7 @@ export class BattleWebsocket extends DurableObject {
         availableSpells: availableSpells(this.bm),
       },
     } satisfies ResponseMessage;
-    this.ctx.getWebSockets().forEach((ws) => {
+    (recipient ? [recipient] : this.ctx.getWebSockets()).forEach((ws) => {
       this.send(ws, state);
     });
   }
@@ -398,5 +453,6 @@ export class BattleWebsocket extends DurableObject {
       ws.close(code, "Durable Object is closing WebSocket");
     }
     this.sessions.delete(ws);
+    this.budget.delete(ws);
   }
 }

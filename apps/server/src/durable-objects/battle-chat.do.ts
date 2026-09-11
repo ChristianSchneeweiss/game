@@ -2,6 +2,13 @@ import type { ClerkClient } from "@clerk/backend";
 import { DurableObject } from "cloudflare:workers";
 import z from "zod";
 import { createClerk } from "../clerk";
+import { retainedChatHistory, type ChatMessage } from "../lib/chat-history";
+import {
+  canConnect,
+  socketLimits,
+  SocketBudget,
+  textWithinBytes,
+} from "../lib/socket-limits";
 
 export type ResponseMessage = {
   type: "message";
@@ -21,11 +28,14 @@ export class BattleChat extends DurableObject {
   clerk: ClerkClient = undefined!;
   env: Env;
   battleId: string = undefined!;
-  messages: { user: string; message: string }[] = [];
+  messages: ChatMessage[] = [];
+  private budget = new SocketBudget();
+  private operation: Promise<unknown> = Promise.resolve();
 
   constructor(ctx: DurableObjectState, env: Env) {
     super(ctx, env);
     this.env = env;
+    this.clerk = createClerk(env.CLERK_SECRET_KEY);
     this.sessions = new Map();
     this.ctx.getWebSockets().forEach((ws) => {
       const attachment = ws.deserializeAttachment();
@@ -38,31 +48,30 @@ export class BattleChat extends DurableObject {
     });
 
     this.ctx.blockConcurrencyWhile(async () => {
-      const clerkSecretKey = await this.ctx.storage.get("clerkSecretKey");
       const battleId = await this.ctx.storage.get("battleId");
-      if (!clerkSecretKey || !battleId) return;
+      // Erase legacy credential copies without depending on them for recovery.
+      await this.ctx.storage.put("clerkSecretKey", null);
+      if (!battleId) return;
       this.battleId = battleId as string;
-      this.clerk = createClerk(clerkSecretKey as string);
-      const messages = await this.ctx.storage.get("messages");
-      if (messages) {
-        const messagesArray = z
-          .array(z.object({ user: z.string(), message: z.string() }))
-          .parse(messages);
-        this.messages = messagesArray;
-      }
+      this.messages = retainedChatHistory(
+        await this.ctx.storage.get("messages"),
+      );
+      await this.ctx.storage.put("messages", this.messages);
     });
   }
 
-  async setup(clerkSecretKey: string, battleId: string) {
-    this.ctx.storage.put({
-      clerkSecretKey,
-      battleId,
-    });
-    this.clerk = createClerk(clerkSecretKey);
+  // The old two-argument RPC remains valid during deployment; its key is ignored.
+  async setup(battleIdOrLegacySecret: string, legacyBattleId?: string) {
+    const battleId = legacyBattleId ?? battleIdOrLegacySecret;
+    if (this.battleId && this.battleId !== battleId)
+      throw new Error("Battle identity cannot change");
+    await this.ctx.storage.put({ clerkSecretKey: null, battleId });
     this.battleId = battleId;
   }
 
   async fetch(request: Request): Promise<Response> {
+    if (request.headers.get("Upgrade")?.toLowerCase() !== "websocket")
+      return new Response("WebSocket upgrade required", { status: 426 });
     const webSocketPair = new WebSocketPair();
     const url = new URL(request.url);
     const userId = url.searchParams.get("userId");
@@ -71,10 +80,12 @@ export class BattleChat extends DurableObject {
     if (!userId) {
       throw new Error("No userId");
     }
-    if (!username) {
+    if (!username || !textWithinBytes(username, 128)) {
       throw new Error("No username");
     }
     const user = await this.clerk.users.getUser(userId);
+    if (!canConnect(this.sessions, user.id))
+      return new Response("Connection limit reached", { status: 429 });
     this.sessions.set(server, { id: user.id, username });
     server.serializeAttachment({ id: user.id, username });
 
@@ -91,20 +102,39 @@ export class BattleChat extends DurableObject {
     if (!user) {
       throw new Error("User not found");
     }
-    const m = { user: user.username, message: message as string };
-    this.messages.push(m);
-    await this.ctx.storage.put({
-      messages: this.messages,
-    });
-
-    this.ctx.getWebSockets().forEach((ws) => {
-      ws.send(
-        JSON.stringify({
-          type: "message",
-          data: m,
-        } satisfies ResponseMessage),
+    if (!textWithinBytes(message, socketLimits.chatMessageBytes)) {
+      ws.close(
+        typeof message === "string" ? 1009 : 1003,
+        "Invalid chat message",
       );
+      return;
+    }
+    if (!message.trim()) return;
+    if (!this.budget.take(ws, socketLimits.chatBurst)) {
+      ws.close(1008, "Chat rate limit reached");
+      return;
+    }
+    const m = { user: user.username, message };
+    const pending = this.operation.then(async () => {
+      const messages = retainedChatHistory([...this.messages, m]);
+      await this.ctx.storage.put("messages", messages);
+      this.messages = messages;
+      for (const peer of this.ctx.getWebSockets()) {
+        try {
+          peer.send(
+            JSON.stringify({
+              type: "message",
+              data: m,
+            } satisfies ResponseMessage),
+          );
+        } catch {
+          this.sessions.delete(peer);
+          this.budget.delete(peer);
+        }
+      }
     });
+    this.operation = pending.catch(() => undefined);
+    return pending;
   }
 
   async webSocketClose(
@@ -117,5 +147,6 @@ export class BattleChat extends DurableObject {
       ws.close(code, "Durable Object is closing WebSocket");
     }
     this.sessions.delete(ws);
+    this.budget.delete(ws);
   }
 }

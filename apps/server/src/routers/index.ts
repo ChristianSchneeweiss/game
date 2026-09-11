@@ -49,10 +49,13 @@ export const appRouter = router({
   dungeon: dungeonRouter,
 
   createSpell: protectedProcedure.mutation(async ({ ctx }) => {
-    // throw new TRPCError({
-    //   code: "NOT_IMPLEMENTED",
-    //   message: "Create spell is not implemented",
-    // });
+    const environment = ctx.cfEnv.DOPPLER_ENVIRONMENT;
+    if (environment !== "development" && environment !== "test") {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Spell grants are only available in development or tests",
+      });
+    }
     const spells: SpellType[] = [
       "arcane-channeling",
       "bladestorm-rhythm",

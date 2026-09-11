@@ -126,7 +126,11 @@ export const characterRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       const { db } = ctx;
-      // todo we might need a lock here to only allow this once and not make it possible to spam it
-      await applyStatIncrease(input.characterId, input.stats, db);
+      await applyStatIncrease(
+        input.characterId,
+        input.stats,
+        ctx.session.id,
+        db,
+      );
     }),
 });
