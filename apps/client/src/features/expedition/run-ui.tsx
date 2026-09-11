@@ -2,6 +2,7 @@ import type { Character } from "@loot-game/game/base-entity";
 import { SkillIcon } from "@/components/skill-icon";
 import "./expedition.css";
 import { readable, trailEntries } from "./run-info";
+import { PartySpellSlots } from "./party-spell-slots";
 
 export function WaveTrail({
   dungeonKey,
@@ -74,14 +75,18 @@ export function PartyCard({
           ✦ {Math.ceil(character.mana)} / {character.maxMana} <small>MP</small>
         </span>
       </div>
-      <div className="expedition-skills">
-        {character.spells.map((spell) => (
-          <span key={spell.config.id}>
-            <SkillIcon type={spell.config.type} size={34} />
-            <span>{spell.config.name}</span>
-          </span>
-        ))}
-      </div>
+      {onSelect ? (
+        <PartySpellSlots character={character} />
+      ) : (
+        <div className="expedition-skills">
+          {character.spells.map((spell) => (
+            <span key={spell.config.id}>
+              <SkillIcon type={spell.config.type} size={34} />
+              <span>{spell.config.name}</span>
+            </span>
+          ))}
+        </div>
+      )}
       {character.passiveSkills.length > 0 && (
         <p className="expedition-muted">
           Passives:{" "}

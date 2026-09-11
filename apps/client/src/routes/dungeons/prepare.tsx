@@ -10,6 +10,8 @@ import { useState } from "react";
 import { PartyCard, WaveTrail } from "@/features/expedition/run-ui";
 import { nature, prepSearch } from "@/features/expedition/run-info";
 import { SpellLoadout } from "@/features/expedition/spell-loadout";
+import { emptySpellSlots } from "@/features/expedition/spell-slot-info";
+import { PartyReadiness } from "@/features/expedition/party-readiness";
 
 export const Route = createFileRoute("/dungeons/prepare")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -47,6 +49,7 @@ function PrepareRun() {
   const party = characters.filter((character) => selectedIds.has(character.id));
   const editing =
     party.find((character) => character.id === editingId) ?? party[0];
+  const unfilledPartySlots = Math.max(0, config.maxPartySize - party.length);
   const enter = useMutation(
     trpc.dungeon.enterDungeon.mutationOptions({
       onSuccess: async (run) => {
@@ -100,8 +103,14 @@ function PrepareRun() {
                 <small>01 / Assemble</small>
                 <h2>Choose your party</h2>
               </div>
-              <span>
-                {party.length} / {config.maxPartySize} selected
+              <span
+                className="expedition-slot-status"
+                data-empty={unfilledPartySlots > 0}
+              >
+                {party.length}/{config.maxPartySize} in party
+                {unfilledPartySlots > 0
+                  ? ` · ${unfilledPartySlots} empty`
+                  : " · Full"}
               </span>
             </div>
             <p className="expedition-muted">
@@ -144,6 +153,10 @@ function PrepareRun() {
                   ? party.map((character) => character.name).join(" & ")
                   : "Choose at least one adventurer."}
               </p>
+              <PartyReadiness
+                party={party}
+                maxPartySize={config.maxPartySize}
+              />
               <button
                 className="expedition-button"
                 disabled={
@@ -177,6 +190,14 @@ function PrepareRun() {
                       onClick={() => setEditingId(character.id)}
                     >
                       {character.name}
+                      <span
+                        className="expedition-tab-slots"
+                        data-empty={emptySpellSlots(character) > 0}
+                      >
+                        {emptySpellSlots(character) > 0
+                          ? `${emptySpellSlots(character)} empty`
+                          : "✓ Full"}
+                      </span>
                     </button>
                   ))}
                 </div>

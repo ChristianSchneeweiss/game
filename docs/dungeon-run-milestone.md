@@ -6,6 +6,8 @@ Implemented 10 September 2026, following the [biome presentation milestone](biom
 
 The Dungeons page opens the same preparation screen for all six dungeons. Each entry passes its dungeon key, and the screen uses that dungeon's name, description, waves, and party limit. Players choose their party, inspect resources and passives, and equip or remove owned spells before entering. Party selection survives refresh in the URL. Entering waits for pending spell changes to finish. The former entry dialog was removed when preparation was unified on 11 September 2026.
 
+Preparation shows four spell slots on each character: equipped spells have green borders and labels, while empty slots have amber dashed outlines. Basic Attack is shown separately and consumes no slot. The spellbook uses the same states, opens the collection when slots remain, and labels inventory spells as not equipped. The departure summary identifies empty party slots and selected characters with incomplete spell loadouts without preventing an intentionally smaller party or build from entering.
+
 The run page presents the five authored waves, the party's remaining health and mana, upcoming enemies, unclaimed item rewards, and one action to start or resume the current encounter. Live battles open in 3D with the existing Cards fallback. The result screen shows victory or defeat, survivor XP, collectable item drops, and the next action. Completed or defeated parties can return to preparation, change their spells, and enter a fresh run.
 
 Hollowed Oakwarden now guarantees Nature's Embrace alongside its existing random spell drops. Every successful forest run therefore provides a spell to use in the next build. Other combat rules, wave compositions, and random drop rates remain unchanged. The new reward display does not claim to credit a gold balance; the existing loot system has no gold-wallet operation.
@@ -33,6 +35,8 @@ An authenticated browser session against the local development database complete
 The completed local run is `yb3s0e01vtua`. The fresh run, left ready at wave one, is `oqhazyccod3u`. These are development records, not portable fixtures.
 
 The 11 September preparation update was checked through all six catalog links: Avalanche Lair (2 waves), Crypt (4), Ashen (4), Nature (5), Storm (5), and Tides (5). Each opened the shared party and spellbook controls with its own configuration. Party selection and switching the spellbook between characters were also verified in Tides. The client TypeScript check passed. A fresh local React Doctor run reported existing file-level warnings but its maintainability checks failed, so it did not provide a complete regression comparison for this update.
+
+The subsequent slot-visibility update was verified with zero, one, three, and four equipped spells, including real equip/remove operations. Card counts, spellbook rows, character-tab badges, and the departure summary updated together. Empty-party entry remained disabled; incomplete nonempty parties could still enter. Original character loadouts and party selection were restored afterward. Client TypeScript passed, and the final local React Doctor scan completed with the original 28 findings and no new findings in preparation components.
 
 Automated checks:
 

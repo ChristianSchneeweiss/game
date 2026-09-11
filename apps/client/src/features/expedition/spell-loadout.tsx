@@ -1,9 +1,10 @@
-import { SkillIcon } from "@/components/skill-icon";
 import { queryClient, trpc } from "@/utils/trpc";
 import type { Character } from "@loot-game/game/base-entity";
-import { createSpellFromType } from "@loot-game/game/spells/base/spell-from-type";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { readable } from "./run-info";
+import { spellSlots } from "./spell-slot-info";
+import { SpellSlotStatus } from "./spell-slot-status";
+import { SpellCollection } from "./spell-collection";
+import { EquippedSpells } from "./equipped-spells";
 
 async function refreshBuilds() {
   await Promise.all([
@@ -40,7 +41,7 @@ export function SpellLoadout({ character }: { character: Character }) {
           <small>Spell loadout</small>
           <h3>{character.name}'s spellbook</h3>
         </div>
-        <span>{equipped.length} / 4 slots</span>
+        {spells.data && <SpellSlotStatus count={equipped.length} />}
       </div>
       <p className="expedition-muted">
         Basic Attack is always available. Equip up to four additional spells.
@@ -52,75 +53,25 @@ export function SpellLoadout({ character }: { character: Character }) {
       )}
       {spells.isPending ? (
         <p role="status">Opening your spell collection…</p>
-      ) : (
+      ) : spells.data ? (
         <>
-          <div className="expedition-spell-list">
-            {equipped.map((spell) => (
-              <div className="expedition-spell" key={spell.id}>
-                <SkillIcon type={spell.type} size={42} />
-                <div>
-                  <strong>{readable(spell.type)}</strong>
-                  <p>
-                    {
-                      createSpellFromType(spell.id, spell.type).description(
-                        character,
-                      ).text
-                    }
-                  </p>
-                </div>
-                <button
-                  disabled={busy}
-                  onClick={() => unequip.mutate({ spellId: spell.id })}
-                  aria-label={`Unequip ${readable(spell.type)}`}
-                >
-                  Remove
-                </button>
-              </div>
-            ))}
-          </div>
-          <details
-            className="expedition-collection"
-            open={equipped.length === 0 || undefined}
-          >
-            <summary>Your collection · {available.length} available</summary>
-            {available.length === 0 ? (
-              <p className="expedition-muted">
-                Claim spell drops after battles to grow your collection.
-              </p>
-            ) : (
-              <div className="expedition-spell-list">
-                {available.map((spell) => (
-                  <div className="expedition-spell" key={spell.id}>
-                    <SkillIcon type={spell.type} size={42} />
-                    <div>
-                      <strong>{readable(spell.type)}</strong>
-                      <p>
-                        {
-                          createSpellFromType(spell.id, spell.type).description(
-                            character,
-                          ).text
-                        }
-                      </p>
-                    </div>
-                    <button
-                      disabled={busy || equipped.length >= 4}
-                      onClick={() =>
-                        equip.mutate({
-                          characterId: character.id,
-                          spellId: spell.id,
-                        })
-                      }
-                      aria-label={`Equip ${readable(spell.type)}`}
-                    >
-                      Equip
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </details>
+          <EquippedSpells
+            spells={equipped}
+            character={character}
+            busy={busy}
+            onRemove={(spellId) => unequip.mutate({ spellId })}
+          />
+          <SpellCollection
+            spells={available}
+            character={character}
+            slotsFull={equipped.length >= spellSlots.length}
+            busy={busy}
+            onEquip={(spellId) =>
+              equip.mutate({ characterId: character.id, spellId })
+            }
+          />
         </>
-      )}
+      ) : null}
     </section>
   );
 }
