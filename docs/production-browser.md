@@ -1,6 +1,6 @@
 # Production browser qualification
 
-Observed on 11 September 2026 using the **Codex in-app browser**, as requested. This is a partial local qualification, not a staging or production acceptance pass. The implementation and remaining release requirements are tracked in [Plan 008 evidence](../plans/008-production-evidence.md).
+Observed on 11 September 2026 using the **Codex in-app browser**, as requested. This is a partial local qualification, not a staging or production acceptance pass. Demonstrated results are in [release evidence](release-evidence.md); outstanding work is tracked in the [release checklist](release-checklist.md#authenticated-desktop-acceptance).
 
 ## Authenticated application
 
@@ -23,7 +23,7 @@ Screenshots were captured in the task. The local IDs above identify observed evi
 
 Device: MacBookPro18,2, Apple M1 Max, 10 CPU cores, 32 GiB memory. Browser: Codex in-app browser, Chrome/152.0.0.0. Fixed measurement viewport: **1280×720**. The user-agent compatibility OS string was not treated as an exact macOS version.
 
-A separate temporary gallery was built with locked Vite 7.3.1 and React 19.2.3 in real production mode. Only the existing gallery entry's mount guard was enabled in memory; application source hashes were verified unchanged. There was no global development-mode override or injected authentication. [Harness provenance](../plans/008-production-evidence/qa-harness.json) records source hashes. The gallery is excluded from the shipped artifact.
+A separate temporary gallery was built with locked Vite 7.3.1 and React 19.2.3 in real production mode. Only the existing gallery entry's mount guard was enabled in memory; application source hashes were verified unchanged. There was no global development-mode override or injected authentication. [Harness provenance](release-evidence/qa-harness.json) records source hashes. The gallery is excluded from the shipped artifact.
 
 The Tides showcase uses saved server-command events and its existing development party configuration. It renders two heroes and four enemies, including casts, healing/effects, hit reactions and death. Measurements came from the gallery's visible renderer/performance panel. The collector retains rolling samples up to 1,800 frames, so reported percentiles are not an all-frame trace of the entire 991-event recording.
 
@@ -35,7 +35,7 @@ The Tides showcase uses saved server-command events and its existing development
 | Clean 4× playback sample | p50 16.6 ms / p95 23.5 ms; max 33.1 ms | p50 ≤20 ms / p95 ≤33.3 ms | Pass |
 | Four repeated starting-scene entries | 125 draw calls, 64,558 triangles; 70/67/67/70 geometries, 20 textures each | ≤70 idle geometries / ≤20 textures | Pass |
 
-The limits were selected from this declared device cohort and evaluated against the recorded values; [measurement data and budget result](../plans/008-production-evidence/browser-performance.json) preserve that comparison. They must be remeasured when changing the renderer/assets, and are not an automated cross-device performance CI gate. During effects, geometry counts briefly reached 71 and returned to their idle level. Cached remounts transferred 300 bytes per model validation response.
+The limits were selected from this declared device cohort and evaluated against the recorded values; [measurement data and budget result](release-evidence/browser-performance.json) preserve that comparison. They must be remeasured when changing the renderer/assets, and are not an automated cross-device performance CI gate. During effects, geometry counts briefly reached 71 and returned to their idle level. Cached remounts transferred 300 bytes per model validation response.
 
 The six actor labels, current actor, inspector, health values and fallen pose remained readable in screenshots. A separate run overlapped full builds/tests and a viewport resize to 1514×844; it reached p95 51 ms / maximum 715.6 ms. That contaminated sample is retained as a limitation, not counted as a fixed-viewport pass. One later remount lost assets because the temporary preview process had stopped; restoring that same static preview resolved it. Per-renderer counts do **not** prove that retired renderers, total process memory or GPU allocations were reclaimed.
 
@@ -47,7 +47,4 @@ The authenticated result also opened with the development graphics-failure flag:
 
 ## Remaining acceptance requirements
 
-- Isolated authenticated live play: pending mutations, equipment/0–4 slots, creator/participant/outsider behavior across two accounts, explicit casts, uncertain acknowledgements and reconnect.
-- Real saved four-offer route, all room actions and deterministic win/loss rewards; complete one new five-wave run, claim once, change a build, replay the old snapshot, and verify defeat/restart.
-- Actual hosted SPA/API/WS/assets, cold load, runtime completion failure/recovery, credential revocation and rotation.
-- A second supported browser engine, whole-process/GPU memory checks and actual context loss. No mobile qualification is claimed.
+Complete the [authenticated desktop and staging checks](release-checklist.md#authenticated-desktop-acceptance) before marking browser acceptance complete. The observations above cover read-only saved flows and local renderer measurements; live mutations, recovery, a new full run, the second engine, process/GPU memory and actual context loss still need recorded proof.

@@ -1,6 +1,6 @@
 # Production candidate setup and local release checks
 
-Run commands from the repository root. The prototype was preserved in `976ddac` on `codex/production-v1`; all 22 files in `plans/008-prototype-manifest.json` matched before implementation. Keep that manifest as the transfer record, not as an assertion that subsequent intentional edits are forbidden.
+Run commands from the repository root. The complete prototype was preserved in `976ddac` on `codex/production-v1`. The [release evidence](release-evidence.md) identifies the tested candidate; the [release checklist](release-checklist.md) tracks remaining qualification.
 
 ## Toolchain and installation
 
@@ -67,6 +67,6 @@ Current variable and binding names, without secret values:
 
 ## Release boundary
 
-These commands prove local types, current regression behavior under a precise historical policy, protected-file identity, asset compilation, and migration/backup restoration plus eight contended use-case scenarios on the dedicated local PostgreSQL version recorded in the proof. They do not establish Cloudflare cold-start/workflow/alarm recovery, authenticated multi-account browser flows, the actual deployment database version, or a deployed release. Follow `plans/008-production-handoff.md` and `apps/server/migrations/manual/README.md` for those remaining gates, and record actual evidence against the final candidate commit.
+These commands prove local types, current regression behavior under a precise historical policy, protected-file identity, asset compilation, and migration/backup restoration plus eight contended use-case scenarios on the dedicated local PostgreSQL version recorded in the proof. They do not establish Cloudflare cold-start/workflow/alarm recovery, authenticated multi-account browser flows, the actual deployment database version, or a deployed release. Follow the [release checklist](release-checklist.md) and [release runbook](production-release.md) for those remaining gates, and record actual evidence against the final candidate commit.
 
 The checked-in workflow uses [checkout](https://github.com/actions/checkout) with full history, [setup-node](https://github.com/actions/setup-node) and [setup-bun](https://github.com/oven-sh/setup-bun) with version files, and [upload-artifact](https://github.com/actions/upload-artifact) to retain the raw evidence. Its first remote run must be inspected after the operator authorizes publishing the branch; merely adding the workflow does not demonstrate CI success.

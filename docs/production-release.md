@@ -1,6 +1,6 @@
 # Release, migration, and recovery runbook
 
-This is the production-candidate procedure. **No staging or production deployment has been performed.** The local PostgreSQL proof is executable; actual Cloudflare account, staging database, Clerk instance, KV namespace, and hosting origin still need target-specific verification and release authorization.
+This is the production-candidate procedure. **No staging or production deployment has been performed.** The local PostgreSQL proof is executable; actual Cloudflare account, staging database, Clerk instance, KV namespace, and hosting origin still need target-specific verification and release authorization. Track completion in the [release checklist](release-checklist.md) and retain results in [release evidence](release-evidence.md).
 
 ## Reproduce the local database proof
 

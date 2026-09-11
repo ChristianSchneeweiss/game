@@ -1,6 +1,6 @@
 # Production candidate: persistence and module boundaries
 
-This records the implementation of Plan 008 against complete prototype checkpoint `976ddac`. Release proof and deployment status belong in [the evidence document](../plans/008-production-evidence.md).
+This records the production migration from complete prototype checkpoint `976ddac`. See [release evidence](release-evidence.md) for demonstrated results and the [release checklist](release-checklist.md) for remaining qualification.
 
 ## Run commands and read models
 
@@ -36,4 +36,4 @@ Clerk credentials now come from runtime bindings; setup clears the old persisted
 
 New integration coverage exercises phase derivation, legacy/future route and build versions, malformed completion rollback, safe removal, ownership, transport input, and consistent character lock order. Real PostgreSQL rehearsal adds independent-session contention, migration preflight/rollback, and full backup restoration. Historical tests and fixtures remain byte-identical; new regressions have separate paths.
 
-No combat formula, authored encounter, route weight, drop probability, asset, or saved-event result was intentionally changed by this migration. The permissions report separately records remaining product questions about cooperative party entry, spectators, and the prototype spell grant.
+No combat formula, authored encounter, route weight, drop probability, asset, or saved-event result was intentionally changed by this migration. Existing cooperative party entry and spectator/replay behavior remain the accepted baseline. Unlimited manual spell grants are development/testing only; starter and earned loot are unchanged. The [permissions report](production-security-review.md#local-remediation-results) records these boundaries and the remaining runtime verification.

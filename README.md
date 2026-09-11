@@ -2,7 +2,7 @@
 
 A desktop, turn-based dungeon RPG. Prepare one or two heroes, combine collected spells and equipment, choose weighted routes, and carry surviving health and mana through each expedition. Battles use a 3D miniature presentation with accessible Cards and saved-event replay.
 
-The production migration is implemented locally on `codex/production-v1`. **It has not been deployed or qualified for release.** See the [candidate evidence and remaining gates](plans/008-production-evidence.md).
+The production migration is implemented locally on `codex/production-v1`. **It has not been deployed or qualified for release.** See the [remaining release checklist](docs/release-checklist.md) and [candidate evidence](docs/release-evidence.md).
 
 ## Start developing
 
@@ -38,6 +38,6 @@ The original battle runner intentionally retains three historical resimulation f
 
 The stack is React 19/Vite, TanStack Router/Query, tRPC, Three.js, Hono/Cloudflare Workers, Drizzle/PostgreSQL, and Clerk. Wallet/token features, a credited gold economy, mobile qualification, audio, and new content systems remain outside this release scope.
 
-## Historical references
+## Documentation
 
-[Plans 001–007](plans/README.md) and their [verification results](plans/verification-results.md) are completed repair history. [Plan 008](plans/008-production-handoff.md) is the current production handoff. The [game overview](docs/game-overview.md), [content catalog](docs/game-content-catalog.md), and [original 3D handoff](docs/threejs-prototype-handoff.md) predate later milestones; use their dated context together with the current references above.
+The [documentation index](docs/README.md) collects current guides. Completed plans have been retired; dated audit findings, prototype research and presentation evidence are in the [archive](docs/archive/README.md). The release checklist is the active source for remaining work.

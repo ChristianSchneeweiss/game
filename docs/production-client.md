@@ -1,6 +1,6 @@
 # Production client: battle sessions and presentation
 
-This records the Phase B/E client changes made against prototype checkpoint `976ddac` during the production handoff. The overall release status and browser/staging evidence belong in `plans/008-production-evidence.md`.
+This records the client changes made against prototype checkpoint `976ddac` during the production migration. See [release evidence](release-evidence.md) for demonstrated results and the [release checklist](release-checklist.md) for remaining browser/staging qualification.
 
 ## Session ownership
 
