@@ -1,4 +1,3 @@
-import { TRPCError } from "@trpc/server";
 import { and, eq, inArray } from "drizzle-orm";
 import { routeRewardKey } from "@loot-game/game/dungeons/route";
 import {
@@ -10,26 +9,32 @@ import {
 import { bmStorage } from "./bm-storage";
 import { dungeonManager } from "./dungeon-manager";
 import { EntityFactory } from "./entity-factory";
+import { readDungeon, getDungeonBattles } from "./dungeon-queries";
+import { getDungeonParty, requireDungeonParty } from "./dungeon-access";
+import { TRPCError } from "@trpc/server";
 
 /** A persisted run and only the current player's unclaimed rewards. */
-export async function getDungeonRun(id: string, userId: string, db: Database) {
-  const [dungeon, [record], battles] = await Promise.all([
-    dungeonManager.getDungeon(id, db),
-    db.select().from(TB_dungeonData).where(eq(TB_dungeonData.id, id)),
-    dungeonManager.getDungeonBattles(id, db),
-  ]);
-  if (
-    record.createdBy !== userId &&
-    !dungeon.playerTeam.some((c) => c.userId === userId)
-  ) {
-    throw new TRPCError({
-      code: "FORBIDDEN",
-      message: "This run belongs to another party",
-    });
-  }
+export function getDungeonRun(id: string, userId: string, db: Database) {
+  return db.transaction((tx) => readDungeonRun(id, userId, tx), {
+    isolationLevel: "repeatable read",
+    accessMode: "read only",
+  });
+}
+
+async function readDungeonRun(id: string, userId: string, db: Database) {
+  const [record] = await db
+    .select()
+    .from(TB_dungeonData)
+    .where(eq(TB_dungeonData.id, id));
+  if (!record)
+    throw new TRPCError({ code: "NOT_FOUND", message: "Dungeon not found" });
+  const party = await getDungeonParty(id, db);
+  requireDungeonParty(record.createdBy, party, userId);
+  const dungeon = await readDungeon(record, db);
+  const battles = await getDungeonBattles(id, db);
   const rewardKeys = [
     ...battles.map((battle) => battle.battleId),
-    ...(record.route?.decisions ?? []).map((decision) =>
+    ...(dungeon.route?.decisions ?? []).map((decision) =>
       routeRewardKey(id, decision.wave),
     ),
   ];
@@ -50,7 +55,18 @@ export async function getDungeonRun(id: string, userId: string, db: Database) {
   };
 }
 
-export async function getDungeonBattleContext(
+export function getDungeonBattleContext(
+  battleId: string,
+  userId: string,
+  db: Database,
+) {
+  return db.transaction((tx) => readBattleContext(battleId, userId, tx), {
+    isolationLevel: "repeatable read",
+    accessMode: "read only",
+  });
+}
+
+async function readBattleContext(
   battleId: string,
   userId: string,
   db: Database,
@@ -60,7 +76,7 @@ export async function getDungeonBattleContext(
     .from(TB_dungeonBattle)
     .where(eq(TB_dungeonBattle.battleId, battleId));
   if (!attempt) return null;
-  const run = await getDungeonRun(attempt.dungeonId, userId, db);
+  const run = await readDungeonRun(attempt.dungeonId, userId, db);
   // The saved replay may arrive before the reward transaction commits.
   const result = attempt.completedAt ? await bmStorage.get(battleId, db) : null;
   const xp =

@@ -2,24 +2,19 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { queryClient, trpc } from "@/utils/trpc";
 import {
-  routeNeedsChoice,
   type RouteAction,
   type RouteDecision,
 } from "@loot-game/game/dungeons/route";
 import { DungeonMap } from "./dungeon-map";
 import { RouteOfferCard } from "./route-offer-card";
 import { encounterDisplay, gearName } from "./route-display";
-import { waveName, type DungeonRunData } from "./run-info";
+import { runPhase, waveName, type DungeonRunData } from "./run-info";
 import "./route.css";
 
 export function RoutePlanner({ run }: { run: DungeonRunData }) {
   const fork = run.route?.forks.find((entry) => entry.wave === run.round);
   const [preview, setPreview] = useState(fork?.offers[0]?.id);
-  const pending =
-    !run.activeBattle &&
-    !run.cleared &&
-    run.playerTeam.some((hero) => hero.health > 0) &&
-    routeNeedsChoice(run.route, run.round, run.actualEnemies.length);
+  const pending = runPhase(run) === "choice";
   const decision = run.route?.decisions.find(
     (entry) => entry.wave === run.round,
   );

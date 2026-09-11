@@ -1,16 +1,10 @@
 import { DungeonKeySchema } from "@loot-game/game/dungeons/dungeon-keys";
-import {
-  routeActionSchema,
-  routeNeedsChoice,
-} from "@loot-game/game/dungeons/route";
+import { routeActionSchema } from "@loot-game/game/dungeons/route";
 import { chooseDungeonPath } from "../game-usecases/dungeon-route";
-import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import z from "zod";
 import {
-  id,
   TB_character,
-  TB_dungeonBattle,
   TB_dungeonData,
   TB_dungeonParticipant,
 } from "../db/schema";
@@ -20,7 +14,7 @@ import {
   getDungeonRun,
 } from "../game-usecases/dungeon-run";
 import { EntityFactory } from "../game-usecases/entity-factory";
-import { SyncFactory } from "../game-usecases/sync-factory";
+import { beginDungeonAttempt } from "../game-usecases/dungeon-attempt";
 import { protectedProcedure, router } from "../lib/trpc";
 
 export const dungeonRouter = router({
@@ -177,83 +171,7 @@ export const dungeonRouter = router({
 
   fightDungeon: protectedProcedure
     .input(z.object({ id: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      const { db } = ctx;
-      const battleId = id();
-      await db.transaction(async (tx) => {
-        const [claimed] = await tx
-          .update(TB_dungeonData)
-          .set({ activeBattle: true, activeBattleId: battleId })
-          .where(
-            and(
-              eq(TB_dungeonData.id, input.id),
-              eq(TB_dungeonData.activeBattle, false),
-              eq(TB_dungeonData.cleared, false),
-            ),
-          )
-          .returning();
-        if (!claimed)
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Dungeon is unavailable, already in a battle, or cleared",
-          });
-        if (claimed.createdBy !== ctx.session.id) {
-          const [participant] = await tx
-            .select({ id: TB_character.id })
-            .from(TB_dungeonParticipant)
-            .innerJoin(
-              TB_character,
-              eq(TB_dungeonParticipant.characterId, TB_character.id),
-            )
-            .where(
-              and(
-                eq(TB_dungeonParticipant.dungeonId, input.id),
-                eq(TB_character.userId, ctx.session.id),
-              ),
-            )
-            .limit(1);
-          if (!participant)
-            throw new TRPCError({
-              code: "FORBIDDEN",
-              message:
-                "Only the dungeon creator or a participant's owner may start a battle",
-            });
-        }
-        const dungeon = await dungeonManager.getDungeon(input.id, tx);
-        if (
-          routeNeedsChoice(
-            claimed.route,
-            dungeon.round,
-            dungeon.actualEnemies.length,
-          )
-        )
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Choose your path before starting the next encounter",
-          });
-        if (!dungeon.playerTeam.some((character) => character.health > 0)) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Your party has fallen. Prepare a new run to recover.",
-          });
-        }
-        await tx.insert(TB_dungeonBattle).values({
-          dungeonId: input.id,
-          battleId: battleId,
-          round: dungeon.round,
-        });
-
-        const syncFactory = new SyncFactory(tx);
-
-        await syncFactory.add(
-          battleId,
-          dungeon.playerTeam,
-          dungeon.actualEnemies[dungeon.round],
-        );
-      });
-
-      return battleId;
-    }),
+    .mutation(({ ctx, input }) => beginDungeonAttempt(input.id, ctx.session.id, ctx.db)),
 
   removeDungeon: protectedProcedure
     .input(z.object({ id: z.string() }))

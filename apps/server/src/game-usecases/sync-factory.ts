@@ -2,12 +2,11 @@ import { Character } from "@loot-game/game/base-entity";
 import type { BattleManager } from "@loot-game/game/battle-types";
 import { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
 import { eq } from "drizzle-orm";
-import SuperJSON from "superjson";
 import {
   captureStartingBuilds,
   restoreStartingBuilds,
-  type StartingBuilds,
 } from "../battle/starting-builds";
+import { deserializeStartingBuilds, serializeStartingBuilds } from "../battle/starting-build-codec";
 import {
   TB_battleParticipants,
   TB_battleStart,
@@ -28,7 +27,7 @@ export class SyncFactory {
     await this.db.transaction(async (tx) => {
       await tx.insert(TB_battleStart).values({
         battleId,
-        builds: SuperJSON.serialize(
+        builds: serializeStartingBuilds(
           captureStartingBuilds([...characters, ...enemies]),
         ),
       });
@@ -59,7 +58,7 @@ export class SyncFactory {
       .where(eq(TB_battleStart.battleId, battleId));
     if (snapshot) {
       const entities = restoreStartingBuilds(
-        SuperJSON.deserialize<StartingBuilds>(snapshot.builds),
+        deserializeStartingBuilds(snapshot.builds),
       );
       return {
         characters: entities.filter((entity) => entity instanceof Character),

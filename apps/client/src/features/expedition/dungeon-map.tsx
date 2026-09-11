@@ -1,6 +1,5 @@
 import { Check, Crown, Swords } from "lucide-react";
-import { routeNeedsChoice } from "@loot-game/game/dungeons/route";
-import { waveName, type DungeonRunData } from "./run-info";
+import { runPhase, waveName, type DungeonRunData } from "./run-info";
 import { encounterDisplay } from "./route-display";
 
 const stageX = (wave: number, count: number) =>
@@ -22,10 +21,7 @@ export function DungeonMap({
   onPreview: (offerId: string) => void;
 }) {
   const total = run.actualEnemies.length;
-  const pending =
-    !run.activeBattle &&
-    routeNeedsChoice(run.route, run.round, total) &&
-    run.playerTeam.some((hero) => hero.health > 0);
+  const pending = runPhase(run) === "choice";
   const forks = run.route?.forks ?? [];
   const decisions = new Map(
     run.route?.decisions.map((decision) => [decision.wave, decision.offerId]),

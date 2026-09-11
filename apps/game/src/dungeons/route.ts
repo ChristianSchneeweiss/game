@@ -36,7 +36,8 @@ export type DungeonRoute = {
   decisions: RouteDecision[];
 };
 
-export const routeRules = {
+/** Immutable rules promised to persisted route version 1. Add a new version to change them. */
+export const routeRules = Object.freeze({
   healthRecovery: 0.3,
   manaRecovery: 0.4,
   gambleChance: 0.5,
@@ -44,7 +45,7 @@ export const routeRules = {
   eliteHealth: 1.4,
   eliteAttributes: 1.25,
   eliteRewardChance: 0.5,
-} as const;
+} as const);
 
 export const routeRecovery = (
   current: number,

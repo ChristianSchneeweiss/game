@@ -10,15 +10,13 @@ import {
   type RouteAction,
   type RouteDecision,
 } from "@loot-game/game/dungeons/route";
-import {
-  TB_character,
-  TB_dungeonData,
-  TB_dungeonParticipant,
-  TB_loot,
-  type Database,
-} from "../db/schema";
+import { TB_dungeonData, TB_loot, type Database } from "../db/schema";
 import { EntityFactory } from "./entity-factory";
 import { dungeonManager } from "./dungeon-manager";
+import { getDungeonParty, requireDungeonParty } from "./dungeon-access";
+import { readDungeonRoute } from "@loot-game/game/dungeons/route-state";
+import { dungeonRunPhase } from "@loot-game/game/dungeons/run-state";
+import { lockCharacters } from "./character-locks";
 
 export async function chooseDungeonPath(
   dungeonId: string,
@@ -36,23 +34,14 @@ export async function chooseDungeonPath(
       .for("update");
     if (!record)
       throw new TRPCError({ code: "NOT_FOUND", message: "Dungeon not found" });
-    const participants = await tx
-      .select({ characterId: TB_character.id, userId: TB_character.userId })
-      .from(TB_dungeonParticipant)
-      .innerJoin(
-        TB_character,
-        eq(TB_character.id, TB_dungeonParticipant.characterId),
-      )
-      .where(eq(TB_dungeonParticipant.dungeonId, dungeonId));
-    if (
-      record.createdBy !== userId &&
-      !participants.some((hero) => hero.userId === userId)
-    )
-      throw new TRPCError({
-        code: "FORBIDDEN",
-        message: "Only this party may choose its path",
-      });
-    const route = record.route;
+    const participants = await getDungeonParty(dungeonId, tx);
+    requireDungeonParty(
+      record.createdBy,
+      participants,
+      userId,
+      "Only this party may choose its path",
+    );
+    const route = readDungeonRoute(record.route);
     if (!route)
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -69,9 +58,15 @@ export async function chooseDungeonPath(
     }
     const total = dungeonManager.getDungeonConfig(record.key).availableEnemies
       .length;
+    const phase = dungeonRunPhase({
+      ...record,
+      totalWaves: total,
+      resources: record.characterData,
+      route,
+    });
     if (
-      record.activeBattle ||
-      record.cleared ||
+      phase === "fighting" ||
+      phase === "complete" ||
       wave !== record.round ||
       wave < 1 ||
       wave >= total
@@ -80,7 +75,7 @@ export async function chooseDungeonPath(
         code: "BAD_REQUEST",
         message: "Choose a path after clearing the current encounter",
       });
-    if (!record.characterData.some((hero) => hero.health > 0))
+    if (phase === "defeated")
       throw new TRPCError({
         code: "BAD_REQUEST",
         message: "Your party has fallen. Prepare a new expedition.",
@@ -122,6 +117,10 @@ export async function chooseDungeonPath(
       if (won) decision.rewards = [rewards.rareReward];
     }
     const nextResources = [];
+    await lockCharacters(
+      participants.map((hero) => hero.characterId),
+      tx,
+    );
     for (const saved of record.characterData) {
       const next = { ...saved };
       if (

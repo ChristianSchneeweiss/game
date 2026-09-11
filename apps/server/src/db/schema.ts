@@ -159,7 +159,7 @@ export const TB_dungeonBattle = pgTable("dungeon_battle", {
 // loadout are captured together, before any battle hooks run.
 export const TB_battleStart = pgTable("battle_start", {
   battleId: text("battle_id").primaryKey(),
-  builds: json("builds").$type<SuperJSONResult>().notNull(),
+  builds: json("builds").$type<SuperJSONResult & { version?: number }>().notNull(),
 });
 
 export const TB_battleParticipants = pgTable("battle_participants", {

@@ -1,7 +1,7 @@
 import type { trpcClient } from "@/utils/trpc";
 import type { DungeonKey } from "@loot-game/game/dungeons/dungeon-keys";
 import { trialOfTheNature } from "@loot-game/game/dungeons/trial-of-the-nature";
-import { routeNeedsChoice } from "@loot-game/game/dungeons/route";
+import { dungeonRunPhase } from "@loot-game/game/dungeons/run-state";
 import type { LootEntity } from "@loot-game/game/types";
 
 export type DungeonRunData = Awaited<
@@ -86,12 +86,12 @@ export function groupDrops(items: LootEntity[]) {
   return Array.from(drops.values());
 }
 export function runPhase(run: DungeonRunData) {
-  if (run.cleared) return "cleared";
-  if (run.activeBattle) return "battle";
-  if (run.playerTeam.every((hero) => hero.health <= 0)) return "fallen";
-  return routeNeedsChoice(run.route, run.round, run.actualEnemies.length)
-    ? "choice"
-    : "ready";
+  const phase = dungeonRunPhase({ ...run, totalWaves: run.actualEnemies.length, resources: run.playerTeam });
+  const presentation = {
+    complete: "cleared", fighting: "battle", defeated: "fallen",
+    "awaiting-choice": "choice", prepared: "ready", ready: "ready",
+  } as const;
+  return presentation[phase];
 }
 export function runCopy(run: DungeonRunData) {
   const phase = runPhase(run);

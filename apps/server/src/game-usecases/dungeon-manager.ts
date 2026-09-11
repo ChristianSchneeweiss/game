@@ -12,7 +12,6 @@ import { trialOfTheTides } from "@loot-game/game/dungeons/trial-of-the-tides";
 import {
   routeEquipmentDrop,
   routeRewards,
-  strengthenEliteEncounter,
 } from "@loot-game/game/dungeons/route";
 import { rollDungeonRoute } from "@loot-game/game/dungeons/route-catalog";
 import type {
@@ -21,7 +20,7 @@ import type {
 } from "@loot-game/game/dungeons/types";
 import type { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
 import type { LootEntity } from "@loot-game/game/types";
-import { and, asc, eq, inArray, isNull } from "drizzle-orm";
+import { and, eq, inArray, isNull } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import seedrandom from "seedrandom";
 import {
@@ -36,8 +35,11 @@ import {
 } from "../db/schema";
 import type { CharacterData as BattleResultCharacterData } from "../workflows/battle-done.workflow";
 import { handleXpReceived } from "./character";
+import { lockCharacters } from "./character-locks";
 import { createEnemyFromType } from "./enemy-factory";
-import { EntityFactory } from "./entity-factory";
+import { getDungeon, getDungeonBattles } from "./dungeon-queries";
+import { readDungeonRoute } from "@loot-game/game/dungeons/route-state";
+import { TRPCError } from "@trpc/server";
 import { LootManager } from "./loot-manager";
 
 export const dungeonManager = {
@@ -110,65 +112,8 @@ export const dungeonManager = {
     return dungeon;
   },
 
-  getDungeonBattles: async (id: string, db: Database) => {
-    const battles = await db
-      .select()
-      .from(TB_dungeonBattle)
-      .where(eq(TB_dungeonBattle.dungeonId, id))
-      .orderBy(asc(TB_dungeonBattle.createdAt), asc(TB_dungeonBattle.id));
-    return battles;
-  },
-
-  getDungeon: async (id: string, db: Database) => {
-    const [dungeon] = await db
-      .select()
-      .from(TB_dungeonData)
-      .where(eq(TB_dungeonData.id, id));
-    if (!dungeon) {
-      throw new Error("Dungeon not found");
-    }
-    const participants = await db
-      .select()
-      .from(TB_dungeonParticipant)
-      .where(eq(TB_dungeonParticipant.dungeonId, id));
-    const enemyData = await db
-      .select()
-      .from(TB_dungeonEnemy)
-      .where(eq(TB_dungeonEnemy.dungeonId, id));
-
-    const enemies = EntityFactory.createEnemyFromDb(enemyData);
-    for (const decision of dungeon.route?.decisions ?? []) {
-      if (decision.action === "elite" && enemies[decision.wave])
-        strengthenEliteEncounter(enemies[decision.wave]!);
-    }
-    const playerTeam: Character[] = [];
-    for (const participant of participants) {
-      const character = await EntityFactory.createCharacter(
-        participant.characterId,
-        db,
-      );
-      const characterData = dungeon.characterData.find(
-        (c) => c.characterId === character.id,
-      );
-      if (!characterData) {
-        throw new Error("Character data not found");
-      }
-      character.health = characterData.health;
-      character.mana = characterData.mana;
-      playerTeam.push(character);
-    }
-
-    return {
-      id,
-      playerTeam,
-      round: dungeon.round,
-      actualEnemies: enemies,
-      key: dungeon.key,
-      cleared: dungeon.cleared,
-      activeBattle: dungeon.activeBattle,
-      route: dungeon.route,
-    } as DungeonData;
-  },
+  getDungeonBattles,
+  getDungeon,
 
   handleDungeonCleared: async (
     dungeonId: string,
@@ -206,11 +151,25 @@ export const dungeonManager = {
       if (dungeon.activeBattleId && dungeon.activeBattleId !== battleId) {
         throw new Error("Completion does not match the active dungeon attempt");
       }
+      const partyIds = new Set(
+        dungeon.characterData.map((hero) => hero.characterId),
+      );
+      if (
+        characters.length !== partyIds.size ||
+        new Set(characters.map((hero) => hero.id)).size !== partyIds.size ||
+        characters.some((hero) => !partyIds.has(hero.id))
+      ) {
+        throw new Error("Completion does not match the expedition party");
+      }
 
       if (winningTeam === "TEAM_A") {
         dungeon.round = attempt.round + 1;
       }
       const totalXp = enemies.reduce((acc, enemy) => acc + enemy.xp, 0);
+      await lockCharacters(
+        characters.filter((hero) => !hero.dead).map((hero) => hero.id),
+        tx,
+      );
       for (const character of characters) {
         if (character.dead) {
           continue;
@@ -231,7 +190,7 @@ export const dungeonManager = {
         );
       const userIds = new Set(users.map((user) => user.userId));
 
-      const eliteChoice = dungeon.route?.decisions.find(
+      const eliteChoice = readDungeonRoute(dungeon.route)?.decisions.find(
         (decision) =>
           decision.wave === attempt.round && decision.action === "elite",
       );
@@ -278,13 +237,6 @@ export const dungeonManager = {
           activeBattle: false,
           activeBattleId: null,
           characterData: characters.map((character) => {
-            // const characterFromBattle = bm
-            //   .getTeam("TEAM_A")
-            //   .find((c) => c.id === character.id);
-            // if (!characterFromBattle) {
-            //   throw new Error("Character not found");
-            // }
-
             return {
               characterId: character.id,
               health: character.health,
@@ -336,16 +288,39 @@ export const dungeonManager = {
 
   removeDungeon: async (id: string, userId: string, db: Database) => {
     await db.transaction(async (tx) => {
-      const [dungeon] = await db
+      const [dungeon] = await tx
         .select()
         .from(TB_dungeonData)
-        .where(eq(TB_dungeonData.id, id));
+        .where(eq(TB_dungeonData.id, id))
+        .for("update");
       if (!dungeon) {
         throw new Error("Dungeon not found");
       }
       if (dungeon.createdBy !== userId) {
         throw new Error("Dungeon not found");
       }
+
+      if (dungeon.activeBattle || dungeon.activeBattleId) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Finish the active battle before removing this expedition",
+        });
+      }
+      const [pending] = await tx
+        .select({ id: TB_dungeonBattle.id })
+        .from(TB_dungeonBattle)
+        .where(
+          and(
+            eq(TB_dungeonBattle.dungeonId, id),
+            isNull(TB_dungeonBattle.completedAt),
+          ),
+        )
+        .limit(1);
+      if (pending)
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Battle rewards are still being delivered",
+        });
 
       await tx
         .delete(TB_dungeonParticipant)
