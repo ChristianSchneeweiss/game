@@ -1,18 +1,19 @@
 import { ClerkProvider } from "@clerk/clerk-react";
-import "@rainbow-me/rainbowkit/styles.css";
 import * as Sentry from "@sentry/react";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import ReactDOM from "react-dom/client";
 import { registerRecipes } from "../../server/src/lib/superjson-recipes";
+import { redactTelemetry } from "../../server/src/lib/diagnostics";
 import Loader from "./components/loader";
 import { routeTree } from "./routeTree.gen";
+import { TRPCProvider } from "./utils/trpc-provider";
 
 Sentry.init({
   dsn: "https://8f3eeafa92a5c43dca0983588439eb9a@o4510053990334464.ingest.de.sentry.io/4510053992169552",
-  // Setting this option to true will send default PII data to Sentry.
-  // For example, automatic IP address collection on events
-  sendDefaultPii: true,
+  sendDefaultPii: false,
   enabled: import.meta.env.PROD,
+  environment: import.meta.env.PROD ? "production" : "development",
+  beforeSend: redactTelemetry,
 });
 
 const router = createRouter({
@@ -47,7 +48,9 @@ if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
-      <RouterProvider router={router} />
+      <TRPCProvider>
+        <RouterProvider router={router} />
+      </TRPCProvider>
     </ClerkProvider>,
   );
 }

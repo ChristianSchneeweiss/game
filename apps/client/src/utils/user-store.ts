@@ -15,14 +15,14 @@ type Actions = {
   logout: () => void;
 };
 
-export const userStore = create<State & Actions>((set) => ({
+export const userStore = create<State & Actions>((set, get) => ({
   user: null,
   setUser: (user) => {
+    if (get().user?.id !== user?.id) queryClient.clear();
     set({ user });
-    queryClient.invalidateQueries();
   },
   logout: () => {
-    set({ user: null });
     queryClient.clear();
+    set({ user: null });
   },
 }));

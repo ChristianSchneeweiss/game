@@ -9,22 +9,20 @@ import {
   RpgSectionHeading,
   RpgStatTile,
 } from "@/components/rpg-ui";
-import { useCharacterContract } from "@/hooks/use-character-contract";
 import { queryClient, trpc } from "@/utils/trpc";
 import { userStore } from "@/utils/user-store";
+import { SignInButton } from "@clerk/clerk-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowRight,
   Heart,
   PlusIcon,
-  ScrollText,
   Shield,
   Sparkles,
   Swords,
   Zap,
 } from "lucide-react";
-import { usePublicClient } from "wagmi";
 
 export const Route = createFileRoute("/characters/")({
   component: CharactersComponent,
@@ -32,39 +30,30 @@ export const Route = createFileRoute("/characters/")({
 
 function CharactersComponent() {
   const { user } = userStore();
-  const contract = useCharacterContract();
-  const publicClient = usePublicClient();
 
-  const { mutateAsync: createCharacter, isPending: isCreatingCharacter } =
-    useMutation(
-      trpc.character.createCharacter.mutationOptions({
-        onSuccess: async () => {
-          if (!contract) throw new Error("Contract not found");
-          if (!publicClient) throw new Error("Public client not found");
-
-          const tx = await contract.write.mintCharacter();
-          await publicClient.waitForTransactionReceipt({
-            hash: tx,
-          });
-
-          await queryClient.invalidateQueries(
-            trpc.character.getCharacters.queryOptions(),
-          );
-        },
-      }),
-    );
-
-
-
+  const {
+    mutate: createCharacter,
+    isPending: isCreatingCharacter,
+    error: creationError,
+  } = useMutation(
+    trpc.character.createCharacter.mutationOptions({
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(
+          trpc.character.getCharacters.queryOptions(),
+        );
+      },
+    }),
+  );
   const { data: characters, isLoading } = useQuery(
     trpc.character.getCharacters.queryOptions(undefined, {
       enabled: !!user,
       staleTime: 60_000,
+      throwOnError: true,
     }),
   );
 
   const ensureCharacterDetail = (id: string) => {
-    queryClient.ensureQueryData(
+    void queryClient.prefetchQuery(
       trpc.character.getCharacter.queryOptions(
         { id },
         {
@@ -81,18 +70,33 @@ function CharactersComponent() {
   return (
     <RpgPage>
       <div className="space-y-8">
-        {showRosterPanel && <RpgHero
-          eyebrow="Character roster"
-          title={
-            <>
-              Shape the party
-              <br />
-              before the dungeon does
-            </>
-          }
-          description="Inspect the roster, forge new entries, and keep every adventurer readable at a glance. This page should feel like a living party ledger, not a web dashboard."
-          aside={
-            showRosterPanel ? (
+        {creationError && (
+          <p role="alert" className="expedition-error">
+            {creationError.message}
+          </p>
+        )}
+        {!user && (
+          <div>
+            <p role="status">
+              Sign in to create a character and manage your party.
+            </p>
+            <SignInButton mode="modal">
+              <Button className="mt-3">Sign in</Button>
+            </SignInButton>
+          </div>
+        )}
+        {showRosterPanel && (
+          <RpgHero
+            eyebrow="Character roster"
+            title={
+              <>
+                Shape the party
+                <br />
+                before the dungeon does
+              </>
+            }
+            description="Create an adventurer, inspect their strengths, and prepare a party for the next expedition."
+            aside={
               <RpgInset variant="parchment" className="p-5">
                 <p className="rpg-title text-[0.62rem] text-[#cfbf97]/75">
                   Character roster
@@ -107,51 +111,30 @@ function CharactersComponent() {
                 <Button
                   size="lg"
                   variant="relic"
-                  disabled={isCreatingCharacter}
+                  disabled={!user || isCreatingCharacter}
                   className="mt-5 w-full"
-                  onClick={async () => {
-                    await createCharacter();
-                  }}
+                  onClick={() => createCharacter()}
                 >
                   <PlusIcon className="h-4 w-4" />
                   {isCreatingCharacter ? "Forging..." : "Create character"}
                 </Button>
               </RpgInset>
-            ) : hasCharacters ? (
-              <RpgInset
-                variant="stone"
-                className="ml-auto w-fit min-w-52 px-4 py-3 lg:mt-0 lg:self-start"
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="rpg-title text-[0.55rem] text-[#cfbf97]/70">
-                      Roster pulse
-                    </p>
-                    <p className="mt-1 text-lg font-semibold text-[#f1e8d4]">
-                      {characterCount} active
-                    </p>
-                  </div>
-                  <RpgBadge className="px-2.5 py-1 text-[0.58rem]">
-                    {isLoading ? "Syncing" : "Ready"}
-                  </RpgBadge>
-                </div>
-              </RpgInset>
-            ) : null
-          }
-        />}
+            }
+          />
+        )}
 
-         <Button
-                  size="lg"
-                  variant="relic"
-                  disabled={isCreatingCharacter}
-                  className="mt-5 w-full"
-                  onClick={async () => {
-                    await createCharacter();
-                  }}
-                >
-                  <PlusIcon className="h-4 w-4" />
-                  {isCreatingCharacter ? "Forging..." : "Create character"}
-                </Button>
+        {hasCharacters && (
+          <Button
+            size="lg"
+            variant="relic"
+            disabled={!user || isCreatingCharacter}
+            className="mt-5 w-full"
+            onClick={() => createCharacter()}
+          >
+            <PlusIcon className="h-4 w-4" />
+            {isCreatingCharacter ? "Forging..." : "Create character"}
+          </Button>
+        )}
 
         {isLoading ? (
           <section className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
@@ -199,7 +182,7 @@ function CharactersComponent() {
                           to="/characters/$character-id"
                           params={{ "character-id": character.id }}
                         >
-                          <h3 className="rpg-heading mt-2 text-3xl leading-none font-semibold uppercase tracking-[0.05em] transition-colors duration-200 group-hover:text-[#f2dfb5]">
+                          <h3 className="rpg-heading mt-2 text-3xl leading-none font-semibold tracking-[0.05em] uppercase transition-colors duration-200 group-hover:text-[#f2dfb5]">
                             {character.name}
                           </h3>
                         </Link>
@@ -222,39 +205,36 @@ function CharactersComponent() {
                   </div>
 
                   <RpgInset variant="parchment" className="mt-5 p-4">
-                    <div className="mb-3 flex items-center gap-2 text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-[#b6ab92]">
+                    <div className="mb-3 flex items-center gap-2 text-[0.68rem] font-semibold tracking-[0.18em] text-[#b6ab92] uppercase">
                       <Shield className="h-4 w-4" />
                       Core attributes
                     </div>
                     <div className="grid grid-cols-2 gap-2">
-                      {[
-                        "intelligence",
-                        "vitality",
-                        "agility",
-                        "strength",
-                      ].map((attr) => (
-                        <RpgInset
-                          key={attr}
-                          variant="stone"
-                          className="px-3 py-2.5"
-                        >
-                          <p className="text-[0.7rem] uppercase tracking-[0.16em] text-[#ac9f85]">
-                            {attr}
-                          </p>
-                          <p className="mt-1 text-lg font-semibold text-[#f1e8d4]">
-                            {
-                              character.baseAttributes[
-                                attr as keyof typeof character.baseAttributes
-                              ]
-                            }
-                          </p>
-                        </RpgInset>
-                      ))}
+                      {["intelligence", "vitality", "agility", "strength"].map(
+                        (attr) => (
+                          <RpgInset
+                            key={attr}
+                            variant="stone"
+                            className="px-3 py-2.5"
+                          >
+                            <p className="text-[0.7rem] tracking-[0.16em] text-[#ac9f85] uppercase">
+                              {attr}
+                            </p>
+                            <p className="mt-1 text-lg font-semibold text-[#f1e8d4]">
+                              {
+                                character.baseAttributes[
+                                  attr as keyof typeof character.baseAttributes
+                                ]
+                              }
+                            </p>
+                          </RpgInset>
+                        ),
+                      )}
                     </div>
                   </RpgInset>
 
                   <RpgInset variant="parchment" className="mt-5 p-4">
-                    <div className="mb-3 flex items-center gap-2 text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-[#b6ab92]">
+                    <div className="mb-3 flex items-center gap-2 text-[0.68rem] font-semibold tracking-[0.18em] text-[#b6ab92] uppercase">
                       <Sparkles className="h-4 w-4" />
                       Equipped spells
                     </div>
@@ -300,26 +280,7 @@ function CharactersComponent() {
           <RpgEmptyState
             icon={<Shield className="h-8 w-8" />}
             title="Your roster is empty"
-            copy="Forge the first character now and start shaping a party that can survive the dungeon's attrition loop."
-            action={
-              <div className="flex flex-wrap items-center justify-center gap-3">
-                <Button
-                  size="lg"
-                  variant="relic"
-                  disabled={isCreatingCharacter}
-                  onClick={async () => {
-                    await createCharacter();
-                  }}
-                >
-                  <PlusIcon className="h-4 w-4" />
-                  {isCreatingCharacter ? "Forging..." : "Create first character"}
-                </Button>
-                <RpgBadge>
-                  <ScrollText className="h-4 w-4" />
-                  Party building starts here
-                </RpgBadge>
-              </div>
-            }
+            copy="Create your first character above, then prepare their spells and equipment for an expedition."
           />
         ) : null}
       </div>

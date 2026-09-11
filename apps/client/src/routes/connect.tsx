@@ -1,10 +1,6 @@
-import { ConnectButton } from '@rainbow-me/rainbowkit'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/connect')({
-  component: RouteComponent,
-})
-
-function RouteComponent() {
-  return <ConnectButton/>
-}
+// Preserve old bookmarks from the wallet experiment.
+export const Route = createFileRoute("/connect")({
+  beforeLoad: () => { throw redirect({ to: "/characters" }); },
+});
