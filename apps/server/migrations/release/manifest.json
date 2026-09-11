@@ -1,0 +1,13 @@
+{
+  "historicalCommit": "3835a6098bd0081e5ac942ae78557a1edf4ae51c",
+  "historicalSources": {
+    "apps/server/src/db/schema.ts": "7a279a43a17035fd7424a70348bf86cd6fde665e39406caa4f776132f874a740",
+    "apps/server/src/db/character-dungeon-data.ts": "c8fd54e848cb0a672ef0993460fa21e428a9607890cc807119baf0e77e199a25"
+  },
+  "files": {
+    "fresh.sql": "2512d1e739f27d1641b12eecb1bfdc49be8672081ff80b9838d976085f8676bf",
+    "audited-3835a60.sql": "9e075dc6ff916a2f27ba51082982528740e03096ee9596190eb8aac5113fe8fe",
+    "../manual/20260910_dungeon_attempts.sql": "92fd1acc8928169d72d6d263707693a4ffa219650da0379949969a8eb3ac59d7",
+    "../manual/20260911_dungeon_routes.sql": "203fb34fa0500c11592e2da0db6f85a671f75a37096901511414e27ebf419260"
+  }
+}

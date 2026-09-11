@@ -1,0 +1,80 @@
+name: Release checks
+
+on:
+  pull_request:
+  push:
+    branches: [main, prototype, "codex/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  release-checks:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:15.19-alpine
+        env:
+          POSTGRES_DB: loot_production_admin
+          POSTGRES_USER: postgres
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - "127.0.0.1:55439:5432"
+        options: >-
+          --health-cmd "pg_isready -U postgres -d loot_production_admin"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      RELEASE_ARTIFACT_DIR: /tmp/loot-release-evidence
+      # Synthetic public key for static compilation only; no live Clerk account.
+      VITE_CLERK_PUBLISHABLE_KEY: pk_test_bG9vdC1jaS5jbGVyay5hY2NvdW50cy5kZXYk
+      TEST_DATABASE_URL: postgres://postgres@127.0.0.1:55439/loot_production_admin
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .bun-version
+      - name: Verify supported toolchain
+        run: bun run check:toolchain
+      - name: Install locked dependencies
+        run: bun install --frozen-lockfile
+      - name: Ensure installation preserved the lockfile
+        run: git diff --exit-code -- bun.lock
+      - name: Verify protected historical files
+        run: bun run check:protected
+      - name: Complete TypeScript coverage
+        run: bun run typecheck:all
+      - name: Verify release-gate failure detection
+        run: bun run test:release:verifier
+      - name: PostgreSQL migration, restoration, and concurrent use-case proof
+        env:
+          TEST_PG_CONTAINER: ${{ job.services.postgres.id }}
+        run: bun run test:database
+      - name: Original isolated battle suite and precise historical exceptions
+        run: bun run test:release
+      - name: Production-mode static client build
+        run: bun run build:client:verify
+      - name: Diff hygiene and generated-source drift
+        run: |
+          git diff --check
+          git diff --exit-code -- bun.lock apps/client/src/routeTree.gen.ts
+      - name: Retain raw regression output, including failed runs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-evidence-${{ github.sha }}
+          path: ${{ env.RELEASE_ARTIFACT_DIR }}
+          if-no-files-found: warn
+          retention-days: 14

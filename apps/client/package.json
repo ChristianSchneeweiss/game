@@ -5,8 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "doppler run -- vite --port=3001",
+    "dev:isolated": "bun --env-file=../server/.dev.vars ../../scripts/production-dev.ts client",
     "dev:prd": "doppler run -c prd -- vite --port=3001",
-    "build": "doppler run -c prd -- vite build --emptyOutDir --outDir ../server/dist",
+    "build": "node ../../node_modules/vite/bin/vite.js build --mode production --outDir dist --emptyOutDir",
+    "build:production": "doppler run -c prd -- vite build --emptyOutDir --outDir ../server/dist",
     "serve": "vite preview",
     "start": "vite"
   },

@@ -65,7 +65,7 @@ for (const source of sources) {
   if (source.sha256 && sha256 !== source.sha256)
     throw new Error(`Source changed: ${source.file}`);
   const model = new FBXLoader(manager).parse(
-    input.buffer.slice(input.byteOffset, input.byteOffset + input.byteLength),
+    Uint8Array.from(input).buffer,
     directory + "/",
   );
   model.traverse((node) => {

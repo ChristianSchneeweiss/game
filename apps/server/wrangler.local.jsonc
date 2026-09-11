@@ -1,0 +1,24 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "loot-development-local",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-04-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+  "vars": { "DOPPLER_ENVIRONMENT": "development" },
+  "assets": { "directory": "../client/dist", "not_found_handling": "single-page-application" },
+  "version_metadata": { "binding": "CF_VERSION_METADATA" },
+  "workflows": [{ "name": "loot-development-battle-done", "binding": "BATTLE_DONE_WORKFLOW", "class_name": "BattleDoneWorkflow" }],
+  "durable_objects": {
+    "bindings": [
+      { "name": "BATTLE_WEBSOCKET", "class_name": "BattleWebsocket" },
+      { "name": "BATTLE_CHAT", "class_name": "BattleChat" }
+    ]
+  },
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["BattleWebsocket"] },
+    { "tag": "v2", "new_sqlite_classes": ["BattleChat"] }
+  ],
+  // A local-only placeholder. The starter always passes --local, disabling remote bindings.
+  "kv_namespaces": [{ "binding": "GAME", "id": "00000000000000000000000000000000" }]
+}

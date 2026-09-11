@@ -1,10 +1,11 @@
 {
   "name": "@loot-game/server",
   "main": "src/index.ts",
-  "packageManager": "bun@1.2.23",
+  "packageManager": "bun@1.4.0",
   "type": "module",
   "scripts": {
     "dev": "doppler run --mount .env -- bunx wrangler dev --port 3000",
+    "dev:isolated": "bun --no-env-file ../../scripts/production-dev.ts server",
     "dev:prd": "doppler run -c prd --mount .env -- bunx wrangler dev --port 3000",
     "types": "doppler run --mount .env -- bunx wrangler types",
     "start": "bun run src/index.ts",

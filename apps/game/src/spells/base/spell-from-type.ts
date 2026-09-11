@@ -23,7 +23,7 @@ import { OceanBlessingSpell } from "../ocean-blessing";
 import { PreciseThrustSpell } from "../precise-thrust";
 import { RootgraspSpell } from "../rootgrasp";
 import { RuptureSpell } from "../rupture";
-import { SingleHealSpell } from "../single-heal";
+import { SingleHealSpell } from "../Single-Heal";
 import { SoulflareSpell } from "../soulflare";
 import { SplinterShotSpell } from "../splinter-shot";
 import { StaggeringJabSpell } from "../staggering-jab";

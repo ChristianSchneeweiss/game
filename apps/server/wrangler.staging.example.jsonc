@@ -1,0 +1,27 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  // Copy to an ignored target file after the real staging account/bindings are known.
+  // Empty identifiers deliberately make this template undeployable.
+  "name": "loot-staging",
+  "account_id": "",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-04-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "observability": { "enabled": true },
+  "vars": { "DOPPLER_ENVIRONMENT": "staging" },
+  "assets": { "directory": "../client/dist", "not_found_handling": "single-page-application" },
+  "version_metadata": { "binding": "CF_VERSION_METADATA" },
+  "workflows": [{ "name": "loot-staging-battle-done", "binding": "BATTLE_DONE_WORKFLOW", "class_name": "BattleDoneWorkflow" }],
+  "durable_objects": {
+    "bindings": [
+      { "name": "BATTLE_WEBSOCKET", "class_name": "BattleWebsocket" },
+      { "name": "BATTLE_CHAT", "class_name": "BattleChat" }
+    ]
+  },
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["BattleWebsocket"] },
+    { "tag": "v2", "new_sqlite_classes": ["BattleChat"] }
+  ],
+  "kv_namespaces": [{ "binding": "GAME", "id": "" }]
+}

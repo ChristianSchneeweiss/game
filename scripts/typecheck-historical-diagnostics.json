@@ -1,0 +1,34 @@
+[
+  {
+    "file": "tests/battle/live-recordings.test.ts",
+    "line": 58,
+    "character": 13,
+    "code": 2769,
+    "length": 19,
+    "message": "No overload matches this call.\n  Overload 1 of 2, '(expected: string | undefined): void', gave the following error.\n    Argument of type 'unknown' is not assignable to parameter of type 'string | undefined'.\n  Overload 2 of 2, '(expected: string | undefined): void', gave the following error.\n    Argument of type 'unknown' is not assignable to parameter of type 'string | undefined'."
+  },
+  {
+    "file": "tests/battle/live-recordings.test.ts",
+    "line": 73,
+    "character": 44,
+    "code": 2769,
+    "length": 13,
+    "message": "No overload matches this call.\n  Overload 1 of 2, '(expected: Team | null): void', gave the following error.\n    Argument of type 'string' is not assignable to parameter of type 'Team | null'.\n  Overload 2 of 2, '(expected: Team | null): void', gave the following error.\n    Argument of type 'string' is not assignable to parameter of type 'Team | null'."
+  },
+  {
+    "file": "tests/battle/playback.test.tsx",
+    "line": 55,
+    "character": 24,
+    "code": 2352,
+    "length": 161,
+    "message": "Conversion of type '(callback: () => void, delay: number) => number' to type '(callback: Function, delay?: number | undefined, ...args: unknown[]) => Timeout' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.\n  Type 'number' is not comparable to type 'Timeout'."
+  },
+  {
+    "file": "tests/battle/timeline.test.ts",
+    "line": 26,
+    "character": 3,
+    "code": 2352,
+    "length": 60,
+    "message": "Conversion of type '{ json: { version: number; battleId: string; participants: ({ id: string; name: string; team: string; health: number; maxHealth: number; mana: number; maxMana: number; isBot: boolean; userId: string; baseAttributes: { ...; }; ... 6 more ...; passiveSkills: never[]; } | { ...; })[]; ... 5 more ...; final: { ...; }[];...' to type 'SuperJSONResult' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.\n  The types of 'meta.values' are incompatible between these types.\n    Type '{ \"participants.0.spells.2.config.targetType.enemies\": string[]; \"participants.1.spells.1.config.targetType.allies\": string[]; \"participants.1.spells.2.config.targetType.enemies\": string[]; ... 71 more ...; \"final.5.cooldowns\": string[]; }' is not comparable to type 'MinimisedTree<TypeAnnotation>'.\n      Type '{ \"participants.0.spells.2.config.targetType.enemies\": string[]; \"participants.1.spells.1.config.targetType.allies\": string[]; \"participants.1.spells.2.config.targetType.enemies\": string[]; ... 71 more ...; \"final.5.cooldowns\": string[]; }' is not comparable to type 'Record<string, Tree<TypeAnnotation>>'.\n        Property '\"participants.0.spells.2.config.targetType.enemies\"' is incompatible with index signature.\n          Type 'string[]' is not comparable to type 'Tree<TypeAnnotation>'.\n            Type 'string[]' is not comparable to type 'Leaf<TypeAnnotation>'.\n              Target requires 1 element(s) but source may have fewer."
+  }
+]
