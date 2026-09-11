@@ -5,7 +5,12 @@ import { useStatsTimeline } from "./-hooks/use-stats-timeline";
 import { PresentationBoundary } from "./-presentation-boundary";
 import RecordedBattle from "./-presentation/recorded-battle";
 
-export default function ResultReplay({ data }: { data: BattleResultData }) {
+type ReplayData = Pick<
+  BattleResultData,
+  "timelineData" | "participants" | "startEntityData" | "effectTracking"
+>;
+
+export default function ResultReplay({ data }: { data: ReplayData }) {
   const [threeD, setThreeD] = useState(true);
   if (threeD)
     return (
@@ -13,17 +18,35 @@ export default function ResultReplay({ data }: { data: BattleResultData }) {
         <RecordedBattle data={data} onFallback={() => setThreeD(false)} />
       </PresentationBoundary>
     );
-  return <CardReplay data={data} />;
+  return <CardReplay data={data} onShow3D={() => setThreeD(true)} />;
 }
-function CardReplay({ data }: { data: BattleResultData }) {
+function CardReplay({
+  data,
+  onShow3D,
+}: {
+  data: ReplayData;
+  onShow3D: () => void;
+}) {
   const { statsTimeline } = useStatsTimeline(
     data.timelineData,
     data.participants,
     data.startEntityData,
+    data.effectTracking,
   );
   const [step, setStep] = useState(0);
   return (
     <section className="p-6" aria-label="Battle replay in Cards">
+      <div
+        className="mb-4 flex justify-end gap-2"
+        aria-label="Battle presentation"
+      >
+        <button className="rpg-badge" aria-pressed={true}>
+          Cards
+        </button>
+        <button className="rpg-badge" aria-pressed={false} onClick={onShow3D}>
+          3D battlefield
+        </button>
+      </div>
       <label className="mb-6 flex items-center gap-4">
         Replay step {step} / {statsTimeline.length - 1}
         <input

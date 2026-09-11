@@ -6,14 +6,12 @@ import type {
 } from "@loot-game/game/entity-types";
 import { useEffect, useState } from "react";
 import SuperJSON from "superjson";
-import type {
-  BattleMessage,
-  ResponseMessage,
-} from "../../../../../server/src/durable-objects/battle-ws";
+import type { BattleMessage } from "../../../../../server/src/battle/protocol";
+import type { BattleConnectionEvent } from "./use-battle-connection";
 
 export const useAttributes = (
   sendMessage: (message: string) => void,
-  wsEvents: TinyEmitter<ResponseMessage>,
+  wsEvents: TinyEmitter<BattleConnectionEvent>,
 ) => {
   const [attributes, setAttributes] = useState<
     Map<
@@ -29,7 +27,7 @@ export const useAttributes = (
   useEffect(() => {
     if (!wsEvents) return;
 
-    const unsubscribe = wsEvents.on((response: ResponseMessage) => {
+    const unsubscribe = wsEvents.on((response) => {
       if (response.type === "characterAttributes") {
         setAttributes((prev) => {
           return new Map(prev).set(response.data.entityId, response.data);
