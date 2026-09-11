@@ -1,4 +1,9 @@
 import { DungeonKeySchema } from "@loot-game/game/dungeons/dungeon-keys";
+import {
+  routeActionSchema,
+  routeNeedsChoice,
+} from "@loot-game/game/dungeons/route";
+import { chooseDungeonPath } from "../game-usecases/dungeon-route";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import z from "zod";
@@ -33,7 +38,13 @@ export const dungeonRouter = router({
     ),
 
   enterDungeon: protectedProcedure
-    .input(z.object({ key: DungeonKeySchema, characters: z.string().array() }))
+    .input(
+      z.object({
+        key: DungeonKeySchema,
+        characters: z.string().array(),
+        branching: z.boolean().optional(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       const { db, session } = ctx;
       const characters = await Promise.all(
@@ -46,9 +57,30 @@ export const dungeonRouter = router({
         input.key,
         session.id,
         db,
+        { branching: input.branching },
       );
       return dungeon;
     }),
+
+  choosePath: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        wave: z.number().int().positive(),
+        offerId: z.string().min(1),
+        action: routeActionSchema,
+      }),
+    )
+    .mutation(({ ctx, input }) =>
+      chooseDungeonPath(
+        input.id,
+        input.wave,
+        input.offerId,
+        input.action,
+        ctx.session.id,
+        ctx.db,
+      ),
+    ),
 
   activeDungeons: protectedProcedure.query(async ({ ctx }) => {
     const { session, db } = ctx;
@@ -188,6 +220,17 @@ export const dungeonRouter = router({
             });
         }
         const dungeon = await dungeonManager.getDungeon(input.id, tx);
+        if (
+          routeNeedsChoice(
+            claimed.route,
+            dungeon.round,
+            dungeon.actualEnemies.length,
+          )
+        )
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Choose your path before starting the next encounter",
+          });
         if (!dungeon.playerTeam.some((character) => character.health > 0)) {
           throw new TRPCError({
             code: "BAD_REQUEST",

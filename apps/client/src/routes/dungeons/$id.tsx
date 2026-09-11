@@ -4,6 +4,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { PartyCard, WaveTrail } from "@/features/expedition/run-ui";
 import { runCopy } from "@/features/expedition/run-info";
 import { RunDeparture } from "@/features/expedition/run-departure";
+import { RoutePlanner } from "@/features/expedition/route-planner";
 import { RunRewards } from "@/features/expedition/run-rewards";
 
 export const Route = createFileRoute("/dungeons/$id")({
@@ -17,7 +18,11 @@ function DungeonRun() {
       { id },
       {
         refetchInterval: (query) =>
-          query.state.data?.activeBattle ? 2000 : false,
+          query.state.data?.activeBattle
+            ? 2000
+            : query.state.data?.cleared
+              ? false
+              : 5000,
       },
     ),
   );
@@ -55,14 +60,18 @@ function DungeonRun() {
             <small>{run.cleared ? "CLEARED" : "WAVE"}</small>
           </span>
         </header>
-        <WaveTrail
-          dungeonKey={run.key}
-          waves={run.actualEnemies.map((wave) =>
-            wave.map((enemy) => enemy.type),
-          )}
-          completed={run.round}
-          active={run.activeBattle}
-        />
+        {run.route ? (
+          <RoutePlanner key={`${run.id}:${run.round}`} run={run} />
+        ) : (
+          <WaveTrail
+            dungeonKey={run.key}
+            waves={run.actualEnemies.map((wave) =>
+              wave.map((enemy) => enemy.type),
+            )}
+            completed={run.round}
+            active={run.activeBattle}
+          />
+        )}
         <div className="expedition-layout">
           <section>
             <div className="expedition-section-heading">

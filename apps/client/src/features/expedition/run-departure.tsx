@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import {
   prepSearch,
-  readable,
   runPhase,
   waveName,
   type DungeonRunData,
@@ -27,7 +26,7 @@ export function RunDeparture({ run, onFight, pending, error }: Props) {
         <ul className="expedition-enemies">
           {enemies.map((enemy) => (
             <li key={enemy.id}>
-              <strong>{readable(enemy.type)}</strong>
+              <strong>{enemy.name}</strong>
               <span>
                 {enemy.health} HP · {enemy.mana} MP
               </span>
@@ -80,7 +79,11 @@ function RunAction({ run, onFight, pending }: Omit<Props, "error">) {
       disabled={pending || phase !== "ready"}
       onClick={onFight}
     >
-      {pending ? "Entering the clearing…" : `Fight wave ${run.round + 1} →`}
+      {pending
+        ? "Entering the clearing…"
+        : phase === "choice"
+          ? "Choose a path above"
+          : `Fight wave ${run.round + 1} →`}
     </button>
   );
 }

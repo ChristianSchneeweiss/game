@@ -27,3 +27,15 @@ roster fallback. Recorded results are displayed from their saved event format;
 new combat rules do not reinterpret historical event summaries.
 
 The migration has not been applied to a shared or production database.
+
+## Branching dungeon routes
+
+`20260911_dungeon_routes.sql` adds a nullable JSON `route` column to
+`dungeon_data`. Apply it before running the branching-route application code.
+The migration is transactional and uses a short lock timeout; it can be retried
+if the table is busy. It does not rewrite existing run state.
+
+Runs created through the preparation screen save their weighted offers and
+choices in this column. Existing runs retain `NULL` and continue linearly.
+The migration was applied to the verified local OrbStack `game` database on
+11 September 2026. It has not been applied to production.

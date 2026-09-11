@@ -1,4 +1,18 @@
-# Battle repair tasks
+# Implementation plans
+
+## First release handoff
+
+[008 — Turn the playable prototype into a maintainable first release](008-production-handoff.md) is the current handoff for refactoring, cleanup, security and operational review, complete verification, migrations, and release preparation. It preserves the working gameplay and the completed repairs below.
+
+| Plan | Priority / effort / risk | Dependencies | Status |
+| --- | --- | --- | --- |
+| [008 — First release](008-production-handoff.md) | P1 / L / high | Completed 001–007 and the complete current prototype working tree | TODO |
+
+Written on 11 September 2026 against `017644e` plus **22 uncommitted route/balance files**. The [transfer manifest](008-prototype-manifest.json) identifies those files and their hashes; copy their actual contents when moving to another checkout. The fresh handoff baseline is **560 passing / 3 accepted historical failures**, with client, server, and included test types passing. The 34 test files present in `3835a60` remain byte-identical.
+
+Execute 008 in phases A–G and record implementation evidence in `plans/008-production-evidence.md`. The handoff is prepared; implementation and production rollout have not been performed. The seven completed tasks below are historical work and should not be repeated.
+
+## Completed battle repair tasks
 
 Planned against `3835a60` on 10 September 2026. These seven tasks cover all 26 audited findings, the configured critical-damage defect, and the confirmed product decisions. Each task is a coherent implementation/PR scope with a shared rule to repair. The [audit](battle-audit/README.md) and [maintained regression suite](../tests/battle/README.md) remain the evidence.
 

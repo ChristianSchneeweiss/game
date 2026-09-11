@@ -1,5 +1,6 @@
 import { faker } from "@faker-js/faker";
 import type { EnemyType } from "@loot-game/game/enemies/base/enemy-types";
+import type { DungeonRoute } from "@loot-game/game/dungeons/route";
 import type { Team } from "@loot-game/game/entity-types";
 import type { ItemType } from "@loot-game/game/items/item-types";
 import type { PassiveType } from "@loot-game/game/passive-skills/base/passive-types";
@@ -108,6 +109,7 @@ export const TB_dungeonData = pgTable("dungeon_data", {
   cleared: boolean("cleared").notNull().default(false),
   activeBattle: boolean("active_battle").notNull().default(false),
   activeBattleId: text("active_battle_id"),
+  route: json("route").$type<DungeonRoute>(),
   createdBy: text("created_by")
     .notNull()
     .references(() => TB_user.id),

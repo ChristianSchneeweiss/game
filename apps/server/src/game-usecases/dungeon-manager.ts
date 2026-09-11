@@ -9,6 +9,12 @@ import { trialOfTheAshen } from "@loot-game/game/dungeons/trial-of-the-ashen";
 import { trialOfTheNature } from "@loot-game/game/dungeons/trial-of-the-nature";
 import { trialOfTheStorm } from "@loot-game/game/dungeons/trial-of-the-storm";
 import { trialOfTheTides } from "@loot-game/game/dungeons/trial-of-the-tides";
+import {
+  routeEquipmentDrop,
+  routeRewards,
+  strengthenEliteEncounter,
+} from "@loot-game/game/dungeons/route";
+import { rollDungeonRoute } from "@loot-game/game/dungeons/route-catalog";
 import type {
   DungeonConfig,
   DungeonData,
@@ -40,6 +46,7 @@ export const dungeonManager = {
     key: DungeonKey,
     userId: string,
     db: PostgresJsDatabase,
+    options: { branching?: boolean } = {},
   ) => {
     const config = dungeonManager.getDungeonConfig(key);
     if (
@@ -52,14 +59,21 @@ export const dungeonManager = {
       throw new Error("Max party size exceeded");
     }
 
+    const dungeonId = id();
     const dungeon = {
-      id: id(),
+      id: dungeonId,
       playerTeam: characters,
       round: 0,
       actualEnemies: dungeonManager.rollEnemies(config),
       key: key,
       cleared: false,
       activeBattle: false,
+      route: options.branching
+        ? rollDungeonRoute(
+            config.availableEnemies.length,
+            seedrandom(`${dungeonId}:route`),
+          )
+        : null,
     } satisfies DungeonData;
 
     await db.transaction(async (tx) => {
@@ -73,6 +87,7 @@ export const dungeonManager = {
           mana: character.mana,
         })),
         createdBy: userId,
+        route: dungeon.route,
       });
       for (const character of characters) {
         await tx.insert(TB_dungeonParticipant).values({
@@ -122,6 +137,10 @@ export const dungeonManager = {
       .where(eq(TB_dungeonEnemy.dungeonId, id));
 
     const enemies = EntityFactory.createEnemyFromDb(enemyData);
+    for (const decision of dungeon.route?.decisions ?? []) {
+      if (decision.action === "elite" && enemies[decision.wave])
+        strengthenEliteEncounter(enemies[decision.wave]!);
+    }
     const playerTeam: Character[] = [];
     for (const participant of participants) {
       const character = await EntityFactory.createCharacter(
@@ -147,6 +166,7 @@ export const dungeonManager = {
       key: dungeon.key,
       cleared: dungeon.cleared,
       activeBattle: dungeon.activeBattle,
+      route: dungeon.route,
     } as DungeonData;
   },
 
@@ -211,6 +231,17 @@ export const dungeonManager = {
         );
       const userIds = new Set(users.map((user) => user.userId));
 
+      const eliteChoice = dungeon.route?.decisions.find(
+        (decision) =>
+          decision.wave === attempt.round && decision.action === "elite",
+      );
+      // Fixed per fork and shared by the party; retries cannot reroll a failed bonus.
+      const eliteBonus =
+        winningTeam === "TEAM_A" &&
+        eliteChoice &&
+        seedrandom(`${dungeonId}:elite:${attempt.round}`)() <
+          (eliteChoice.eliteRewardChance ?? 1);
+
       const rng = seedrandom(battleId);
       for (const userId of userIds) {
         const lootManager = new LootManager(userId, tx);
@@ -221,6 +252,11 @@ export const dungeonManager = {
             droppedLoot.push(...drops);
           }
         }
+
+        if (eliteBonus)
+          droppedLoot.push(
+            routeEquipmentDrop(routeRewards(attempt.round).rareReward),
+          );
 
         await tx.insert(TB_loot).values({
           userId: userId,

@@ -106,6 +106,11 @@ function PrepareRun() {
           </span>
         </header>
         <WaveTrail dungeonKey={search.key} waves={config.availableEnemies} />
+        <p className="expedition-muted">
+          Between encounters, choose from paths discovered for this expedition.
+          Find shrines, challenge elites, or seek treasure. Rare rooms appear
+          less often; each new run brings a different map.
+        </p>
         <div className="expedition-layout">
           <section>
             <div className="expedition-section-heading">
@@ -175,6 +180,7 @@ function PrepareRun() {
                 onClick={() =>
                   enter.mutate({
                     key: search.key,
+                    branching: true,
                     characters: party.map((c) => c.id),
                   })
                 }

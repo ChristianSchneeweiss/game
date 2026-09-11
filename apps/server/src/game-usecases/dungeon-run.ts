@@ -1,5 +1,6 @@
 import { TRPCError } from "@trpc/server";
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
+import { routeRewardKey } from "@loot-game/game/dungeons/route";
 import {
   TB_dungeonBattle,
   TB_dungeonData,
@@ -26,21 +27,25 @@ export async function getDungeonRun(id: string, userId: string, db: Database) {
       message: "This run belongs to another party",
     });
   }
+  const rewardKeys = [
+    ...battles.map((battle) => battle.battleId),
+    ...(record.route?.decisions ?? []).map((decision) =>
+      routeRewardKey(id, decision.wave),
+    ),
+  ];
   const loot = await db
-    .select({ reward: TB_loot })
+    .select()
     .from(TB_loot)
-    .innerJoin(
-      TB_dungeonBattle,
-      eq(TB_loot.battleId, TB_dungeonBattle.battleId),
-    )
-    .where(and(eq(TB_dungeonBattle.dungeonId, id), eq(TB_loot.userId, userId)));
+    .where(
+      and(inArray(TB_loot.battleId, rewardKeys), eq(TB_loot.userId, userId)),
+    );
   return {
     ...dungeon,
     activeBattleId:
       record.activeBattleId ??
       (record.activeBattle ? battles.at(-1)?.battleId : null),
     battles,
-    loot: loot.map(({ reward }) => reward),
+    loot,
     name: dungeonManager.getDungeonConfig(dungeon.key).name,
   };
 }

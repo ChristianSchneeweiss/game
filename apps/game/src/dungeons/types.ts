@@ -4,6 +4,7 @@ import type { BM } from "../bm";
 import type { BaseEnemy } from "../enemies/base/base.enemy";
 import type { EnemyType } from "../enemies/base/enemy-types";
 import type { DungeonKey } from "./dungeon-keys";
+import type { DungeonRoute } from "./route";
 
 export type DungeonRound = {
   battleManager: BM;
@@ -19,6 +20,7 @@ export type DungeonData = {
   actualEnemies: BaseEnemy[][];
   cleared: boolean;
   activeBattle: boolean;
+  route?: DungeonRoute | null;
 };
 
 export type DungeonConfig = {

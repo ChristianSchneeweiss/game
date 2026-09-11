@@ -1,6 +1,7 @@
 import type { trpcClient } from "@/utils/trpc";
 import type { DungeonKey } from "@loot-game/game/dungeons/dungeon-keys";
 import { trialOfTheNature } from "@loot-game/game/dungeons/trial-of-the-nature";
+import { routeNeedsChoice } from "@loot-game/game/dungeons/route";
 import type { LootEntity } from "@loot-game/game/types";
 
 export type DungeonRunData = Awaited<
@@ -87,7 +88,10 @@ export function groupDrops(items: LootEntity[]) {
 export function runPhase(run: DungeonRunData) {
   if (run.cleared) return "cleared";
   if (run.activeBattle) return "battle";
-  return run.playerTeam.every((hero) => hero.health <= 0) ? "fallen" : "ready";
+  if (run.playerTeam.every((hero) => hero.health <= 0)) return "fallen";
+  return routeNeedsChoice(run.route, run.round, run.actualEnemies.length)
+    ? "choice"
+    : "ready";
 }
 export function runCopy(run: DungeonRunData) {
   const phase = runPhase(run);
@@ -107,6 +111,13 @@ export function runCopy(run: DungeonRunData) {
       title: "A lesson from the wild.",
       description:
         "Your party can go no further. Keep the rewards you found, refine your spells, and return with recovered resources.",
+    };
+  if (phase === "choice")
+    return {
+      eyebrow: `Your expedition / Fork ${run.round}`,
+      title: "A fork in the trail.",
+      description:
+        "Your scouts have found several ways onward. Weigh the reward, tend to your party, and choose a path.",
     };
   return {
     eyebrow: `Your expedition / Wave ${run.round + 1} of ${run.actualEnemies.length}`,
@@ -149,6 +160,8 @@ export function resultCopy(victory: boolean, context?: BattleContext) {
     nextDescription:
       complete || !victory
         ? "Equip your collected spells and gear, then prepare a fresh expedition. Your party recovers its resources for the new run."
-        : "The party carries its remaining health and mana into the next wave.",
+        : run?.route
+          ? "Choose your next path on the dungeon map. Health and mana carry onward; a shrine may offer relief."
+          : "The party carries its remaining health and mana into the next wave.",
   };
 }
