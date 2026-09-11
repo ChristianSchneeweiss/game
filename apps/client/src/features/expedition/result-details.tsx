@@ -99,7 +99,7 @@ export function ResultNextStep({
           run.key,
         )}
       >
-        Equip spells & run again →
+        Equip & run again →
       </Link>
     );
   return (

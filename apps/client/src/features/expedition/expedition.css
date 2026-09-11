@@ -286,6 +286,33 @@ body:has(.expedition) [data-header-nav] a {
   border-top: 1px solid var(--exp-line);
   padding-top: 14px;
 }
+.expedition-equipment-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border: 1px solid var(--exp-line);
+  color: var(--exp-gold);
+  background: #d7c68e09;
+}
+.expedition-party-gear {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding: 0 0 16px;
+}
+.expedition-party-gear > span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+}
+.expedition-party-gear small {
+  display: block;
+  font-size: 8px;
+  margin-bottom: 4px;
+}
 .expedition-slot-heading {
   display: flex;
   align-items: center;

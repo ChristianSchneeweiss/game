@@ -2,6 +2,8 @@
 
 Implemented 10 September 2026, following the [biome presentation milestone](biome-encounter-milestone.md).
 
+The subsequent [equipment milestone](equipment-milestone.md) adds visible gear, stat comparisons, and guaranteed forest equipment rewards to this loop.
+
 ## Player flow
 
 The Dungeons page opens the same preparation screen for all six dungeons. Each entry passes its dungeon key, and the screen uses that dungeon's name, description, waves, and party limit. Players choose their party, inspect resources and passives, and equip or remove owned spells before entering. Party selection survives refresh in the URL. Entering waits for pending spell changes to finish. The former entry dialog was removed when preparation was unified on 11 September 2026.

@@ -28,6 +28,7 @@ export class HollowedOakwarden extends BaseEnemy {
             data: { spellType: "natures-embrace" },
             dropRate: 1,
           },
+          { type: "ITEM", data: { itemType: "oakwarden-staff" }, dropRate: 1 },
         ],
       },
       spells: [

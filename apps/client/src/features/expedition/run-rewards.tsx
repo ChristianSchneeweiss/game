@@ -3,6 +3,7 @@ import { queryClient, trpc } from "@/utils/trpc";
 import type { LootEntity } from "@loot-game/game/types";
 import { useMutation } from "@tanstack/react-query";
 import { groupDrops, readable } from "./run-info";
+import { EquipmentIcon } from "./equipment-icon";
 
 type Reward = { id: string; items: LootEntity[]; battleId: string };
 export function RunRewards({
@@ -52,14 +53,19 @@ export function RunRewards({
         <p role="status">Securing your rewards and saving the party…</p>
       ) : itemRewards.length === 0 ? (
         <p className="expedition-muted">
-          No unclaimed rewards. Collected spells are in your spellbook.
+          No unclaimed rewards. Collected spells and gear are ready in
+          preparation.
         </p>
       ) : (
         itemRewards.map((reward) => (
           <div className="expedition-reward-bundle" key={reward.id}>
             {groupDrops(reward.items).map((drop) => (
               <div className="expedition-drop" key={drop.type}>
-                <SkillIcon type={drop.type} size={48} />
+                {drop.label === "Equipment" ? (
+                  <EquipmentIcon type={drop.type} />
+                ) : (
+                  <SkillIcon type={drop.type} size={48} />
+                )}
                 <div>
                   <small>{drop.label}</small>
                   <strong>

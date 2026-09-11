@@ -3,6 +3,7 @@ import { SkillIcon } from "@/components/skill-icon";
 import "./expedition.css";
 import { readable, trailEntries } from "./run-info";
 import { PartySpellSlots } from "./party-spell-slots";
+import { EquipmentIcon } from "./equipment-icon";
 
 export function WaveTrail({
   dungeonKey,
@@ -75,6 +76,22 @@ export function PartyCard({
           ✦ {Math.ceil(character.mana)} / {character.maxMana} <small>MP</small>
         </span>
       </div>
+      {onSelect && (
+        <div className="expedition-party-gear">
+          {(["WEAPON", "ARMOR"] as const).map((slot) => (
+            <span key={slot}>
+              <EquipmentIcon
+                type={character.equipped[slot]?.itemType}
+                slot={slot}
+              />
+              <span>
+                <small>{slot}</small>
+                {character.equipped[slot]?.name ?? "Empty slot"}
+              </span>
+            </span>
+          ))}
+        </div>
+      )}
       {onSelect ? (
         <PartySpellSlots character={character} />
       ) : (

@@ -162,16 +162,26 @@ export const equipEquipment = async (
   db: Database,
 ) => {
   await db.transaction(async (tx) => {
+    const [owner] = await tx
+      .select()
+      .from(TB_character)
+      .where(eq(TB_character.id, characterId))
+      .for("update");
+    if (!owner || owner.userId !== userId)
+      throw new Error("Not your character");
     const character = await EntityFactory.createCharacter(characterId, tx);
-    if (character.userId !== userId) throw new Error("Not your character");
 
     const [equipment] = await tx
       .select()
       .from(TB_equipmentStats)
-      .where(eq(TB_equipmentStats.id, equipmentId));
+      .where(eq(TB_equipmentStats.id, equipmentId))
+      .for("update");
 
     if (!equipment) throw new Error("Equipment not found");
     if (equipment.userId !== userId) throw new Error("Not your equipment");
+    if (equipment.equippedBy === characterId) return;
+    if (equipment.equippedBy)
+      throw new Error("Unequip this item from its current character first");
     const equipmentItem = itemFactory(equipment.type, equipmentId, character);
 
     const currentItemAtSlot = character.equipped[equipmentItem.equipmentSlot];

@@ -1,23 +1,12 @@
-import { queryClient, trpc } from "@/utils/trpc";
+import { trpc } from "@/utils/trpc";
 import type { Character } from "@loot-game/game/base-entity";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { spellSlots } from "./spell-slot-info";
 import { SpellSlotStatus } from "./spell-slot-status";
 import { SpellCollection } from "./spell-collection";
 import { EquippedSpells } from "./equipped-spells";
+import { refreshBuilds } from "./refresh-builds";
 
-async function refreshBuilds() {
-  await Promise.all([
-    queryClient.invalidateQueries({
-      queryKey: trpc.character.getCharacters.queryKey(),
-    }),
-    queryClient.invalidateQueries({
-      queryKey: trpc.character.getCharacter.queryKey(),
-    }),
-    queryClient.invalidateQueries({ queryKey: trpc.getMySpells.queryKey() }),
-    queryClient.invalidateQueries({ queryKey: trpc.dungeon.getRun.queryKey() }),
-  ]);
-}
 export function SpellLoadout({ character }: { character: Character }) {
   const spells = useQuery(trpc.getMySpells.queryOptions());
   const equip = useMutation(

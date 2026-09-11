@@ -10,6 +10,7 @@ import {
   TB_character,
   TB_dungeonBattle,
   TB_dungeonData,
+  TB_equipmentStats,
   TB_loot,
   TB_spellStats,
   TB_user,
@@ -17,6 +18,7 @@ import {
 import { bmStorage } from "../../../apps/server/src/game-usecases/bm-storage";
 import {
   equipSpell,
+  equipEquipment,
   unequipSpell,
 } from "../../../apps/server/src/game-usecases/character";
 import { dungeonManager } from "../../../apps/server/src/game-usecases/dungeon-manager";
@@ -157,6 +159,10 @@ describe("the complete dungeon run", () => {
       ),
     ).toBe(true);
     await new LootManager(owner, data.db).claim(bossReward.id);
+    const [staff] = await data.db.select().from(TB_equipmentStats)
+      .where(eq(TB_equipmentStats.type, "oakwarden-staff"));
+    expect(staff).toBeDefined();
+    await equipEquipment("audit-hero", staff!.id, owner, data.db);
     const [spell] = await data.db
       .select()
       .from(TB_spellStats)
@@ -168,6 +174,7 @@ describe("the complete dungeon run", () => {
     });
     expect(next.id).not.toBe(entered.id);
     expect(next.round).toBe(0);
+    expect(next.playerTeam[0]!.equipped.WEAPON?.itemType).toBe("oakwarden-staff");
     expect(
       next.playerTeam[0]!.spells.some(
         (equipped) => equipped.config.id === spell!.id,

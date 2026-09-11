@@ -43,7 +43,7 @@ export function RunDeparture({ run, onFight, pending, error }: Props) {
       )}
       <p className="expedition-muted">
         {ended
-          ? "Collected spells are ready to equip during preparation."
+          ? "Collected spells and equipment are ready to equip during preparation."
           : "Health and mana carry into the next wave. Progress is saved after each battle."}
       </p>
     </aside>

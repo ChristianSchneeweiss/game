@@ -20,6 +20,9 @@ export class ElderTreant extends BaseEnemy {
       xp: 50,
       loot: {
         gold: 75,
+        items: [
+          { type: "ITEM", data: { itemType: "iron-cuirass" }, dropRate: 1 },
+        ],
       },
       spells: ["rootgrasp", "crushing-blow", "basic-attack"],
       passiveSkills: ["stoneform-resolve"],

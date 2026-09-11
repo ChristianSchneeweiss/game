@@ -12,6 +12,8 @@ import { nature, prepSearch } from "@/features/expedition/run-info";
 import { SpellLoadout } from "@/features/expedition/spell-loadout";
 import { emptySpellSlots } from "@/features/expedition/spell-slot-info";
 import { PartyReadiness } from "@/features/expedition/party-readiness";
+import { EquipmentLoadout } from "@/features/expedition/equipment-loadout";
+import { equipmentBuildPreview } from "@loot-game/game/items/equipment/build-preview";
 
 export const Route = createFileRoute("/dungeons/prepare")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -37,8 +39,16 @@ function PrepareRun() {
   const unequipping = useIsMutating({
     mutationKey: trpc.character.unequipSpell.mutationKey(),
   });
-  const updatingBuild = equipping + unequipping > 0;
+  const equippingGear = useIsMutating({
+    mutationKey: trpc.character.equipEquipment.mutationKey(),
+  });
+  const unequippingGear = useIsMutating({
+    mutationKey: trpc.character.unequipEquipment.mutationKey(),
+  });
+  const updatingBuild =
+    equipping + unequipping + equippingGear + unequippingGear > 0;
   const [editingId, setEditingId] = useState<string>();
+  const [buildTab, setBuildTab] = useState<"equipment" | "spells">("equipment");
   const partyIds =
     search.party ??
     characters
@@ -144,8 +154,8 @@ function PrepareRun() {
               <h2>Begin the expedition.</h2>
               {search.key === nature.key && (
                 <p>
-                  Defeat the Oakwarden to earn Nature’s Embrace, a healing spell
-                  for your next build.
+                  The Elder Treant drops an Iron Cuirass. Defeat the Oakwarden
+                  to earn its staff and Nature’s Embrace for your next build.
                 </p>
               )}
               <p>
@@ -201,7 +211,35 @@ function PrepareRun() {
                     </button>
                   ))}
                 </div>
-                <SpellLoadout key={editing.id} character={editing} />
+                <div
+                  className="expedition-build-tabs"
+                  aria-label="Build section"
+                >
+                  <button
+                    aria-pressed={buildTab === "equipment"}
+                    onClick={() => setBuildTab("equipment")}
+                  >
+                    Gear & appearance
+                  </button>
+                  <button
+                    aria-pressed={buildTab === "spells"}
+                    onClick={() => setBuildTab("spells")}
+                  >
+                    Spell loadout
+                  </button>
+                </div>
+                {buildTab === "equipment" ? (
+                  <EquipmentLoadout
+                    key={editing.id}
+                    character={editing}
+                    party={party}
+                  />
+                ) : (
+                  <SpellLoadout
+                    key={editing.id}
+                    character={equipmentBuildPreview(editing)}
+                  />
+                )}
               </>
             )}
           </aside>

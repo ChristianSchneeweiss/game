@@ -1,0 +1,207 @@
+.expedition-build-tabs {
+  display: flex;
+  gap: 8px;
+  margin-top: 18px;
+}
+.expedition-build-tabs button {
+  flex: 1;
+  border: 1px solid var(--exp-line);
+  padding: 11px;
+  font-size: 11px;
+}
+.expedition-build-tabs [aria-pressed="true"] {
+  background: #a0e2b815;
+  border-color: #a0e2b860;
+  color: var(--exp-filled);
+}
+.expedition-equipment {
+  padding-top: 24px;
+}
+.expedition-gear-preview {
+  border: 1px solid #7d9d7950;
+  background: radial-gradient(ellipse at 50% 45%, #304d39, #13251d 70%);
+}
+.expedition-gear-preview[data-previewing="true"] {
+  border-color: var(--exp-empty);
+}
+.expedition-gear-canvas {
+  height: 330px;
+  position: relative;
+}
+.expedition-preview-fallback {
+  min-height: 300px;
+  display: grid;
+  place-items: center;
+  padding: 30px;
+  text-align: center;
+  color: var(--exp-dim);
+  font-size: 12px;
+  line-height: 1.7;
+}
+.expedition-preview-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  position: absolute;
+  inset: auto 0 12px;
+  font-size: 10px;
+  color: var(--exp-dim);
+}
+.expedition-preview-controls button {
+  width: 34px;
+  height: 30px;
+  border: 1px solid var(--exp-line);
+  background: #101b17bf;
+  color: var(--exp-gold);
+  font-size: 20px;
+}
+.expedition-preview-caption {
+  text-align: center;
+  padding: 15px;
+  border-top: 1px solid var(--exp-line);
+  background: #101b1770;
+}
+.expedition-preview-caption strong {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 7px;
+}
+.expedition-preview-caption button {
+  font-size: 11px;
+  color: var(--exp-gold);
+  text-decoration: underline;
+  margin-top: 9px;
+}
+.expedition-gear-preview[data-previewing="true"] small {
+  color: var(--exp-empty);
+}
+.expedition-equipment-stats {
+  margin: 18px 0;
+}
+.expedition-equipment-stats dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+.expedition-equipment-stats dl > div {
+  padding: 12px;
+  border: 1px solid var(--exp-line);
+}
+.expedition-equipment-stats dt {
+  font-size: 10px;
+  color: var(--exp-dim);
+}
+.expedition-equipment-stats dd {
+  font-size: 19px;
+  margin-top: 7px;
+}
+.expedition-equipment-stats dd small {
+  margin-left: 8px;
+  color: #eea499;
+  letter-spacing: 0;
+}
+.expedition-equipment-stats dd [data-gain="true"] {
+  color: var(--exp-filled);
+}
+.expedition-stat-before {
+  font-size: 12px;
+  color: var(--exp-dim);
+}
+.expedition-equipment-slots {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.expedition-equipment-slots button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--exp-line);
+  text-align: left;
+}
+.expedition-equipment-slots [aria-pressed="true"] {
+  border-color: var(--exp-gold);
+  background: #d7c68e0c;
+}
+.expedition-equipment-slots strong {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  margin-top: 6px;
+}
+.expedition-remove-gear {
+  color: var(--exp-dim);
+  font-size: 11px;
+  margin: 12px 0;
+  padding: 6px 0;
+  text-decoration: underline;
+}
+.expedition-gear-collection {
+  margin-top: 22px;
+}
+.expedition-gear-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--exp-line);
+}
+.expedition-gear-item > div:first-of-type {
+  flex: 1;
+  min-width: 0;
+}
+.expedition-gear-item strong {
+  display: block;
+  margin-top: 5px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.expedition-gear-item p {
+  color: var(--exp-dim);
+  font-size: 11px;
+  line-height: 1.6;
+  margin-top: 6px;
+}
+.expedition-gear-item small {
+  letter-spacing: 0.07em;
+  font-size: 8px;
+}
+.expedition-gear-item[data-equipped="true"] small {
+  color: var(--exp-filled);
+}
+.expedition-gear-item[data-preview="true"] {
+  background: #d7c68e08;
+}
+.expedition-gear-actions {
+  display: grid;
+  gap: 7px;
+}
+.expedition-gear-actions button {
+  border: 1px solid var(--exp-line);
+  padding: 8px;
+  font-size: 10px;
+}
+.expedition-gear-actions button:last-child {
+  border-color: #a0e2b860;
+  color: var(--exp-filled);
+}
+.expedition-gear-actions button[aria-pressed="true"] {
+  color: var(--exp-empty);
+  border-color: var(--exp-empty);
+}
+@media (max-width: 560px) {
+  .expedition-gear-canvas {
+    height: 300px;
+  }
+  .expedition-equipment-slots button {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .expedition-gear-item {
+    flex-wrap: wrap;
+  }
+}

@@ -11,9 +11,20 @@ import {
   type Material,
 } from "three";
 import { dressEnemyVariant, type EnemyAdornment } from "./enemy-adornments";
+import {
+  dressHeroEquipment,
+  heroAppearanceFor,
+  type HeroAppearance,
+  type HeroEquipmentIdentity,
+} from "./hero-equipment";
 
-type Identity = { id: string; team: string; type?: string };
+type Identity = {
+  id: string;
+  team: string;
+  type?: string;
+} & HeroEquipmentIdentity;
 export type MiniatureAppearance =
+  | HeroAppearance
   | EnemyAdornment
   | "amber"
   | "teal"
@@ -44,7 +55,10 @@ export function appearanceFor(
       if (participant.team === "TEAM_A") ids.push(participant.id);
     }
     ids.sort();
-    return ids.indexOf(entity.id) % 2 === 0 ? "amber" : "teal";
+    return heroAppearanceFor(
+      entity,
+      ids.indexOf(entity.id) % 2 === 0 ? "amber" : "teal",
+    );
   }
   if (entity.type === "barkhide-shaman") return "shaman";
   if (entity.type === "elder-treant") return "elder";
@@ -57,6 +71,8 @@ export function dressMiniature(
   root: Object3D,
   appearance: MiniatureAppearance,
 ) {
+  if (typeof appearance === "object")
+    return dressHeroEquipment(root, appearance);
   if (adornmentNames.has(appearance))
     return dressEnemyVariant(root, appearance as EnemyAdornment);
   const materials = new Set<Material>();

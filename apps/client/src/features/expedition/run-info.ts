@@ -140,7 +140,7 @@ export function resultCopy(victory: boolean, context?: BattleContext) {
         ? "The journey continues"
         : "Prepare for the return",
     nextTitle: complete
-      ? "A new spell. A new approach."
+      ? "Shape your next build."
       : victory
         ? forest
           ? "Deeper into the forest."
@@ -148,7 +148,7 @@ export function resultCopy(victory: boolean, context?: BattleContext) {
         : "Come back stronger.",
     nextDescription:
       complete || !victory
-        ? "Equip your collected spells and prepare a fresh expedition. Your party recovers its resources for the new run."
+        ? "Equip your collected spells and gear, then prepare a fresh expedition. Your party recovers its resources for the new run."
         : "The party carries its remaining health and mana into the next wave.",
   };
 }
