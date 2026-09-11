@@ -9,6 +9,7 @@
     "dev:prd": "doppler run -c prd -- vite --port=3001",
     "build": "node ../../node_modules/vite/bin/vite.js build --mode production --outDir dist --emptyOutDir",
     "build:production": "doppler run -c prd -- vite build --emptyOutDir --outDir ../server/dist",
+    "build:cloudflare": "bun --no-env-file ../../scripts/check-client-build-env.ts && node ../../node_modules/vite/bin/vite.js build --mode production --emptyOutDir --outDir ../server/dist",
     "serve": "vite preview",
     "start": "vite"
   },

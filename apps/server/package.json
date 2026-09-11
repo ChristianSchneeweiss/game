@@ -10,6 +10,7 @@
     "types": "doppler run --mount .env -- bunx wrangler types",
     "start": "bun run src/index.ts",
     "deploy": "doppler run -c prd --mount .env -- bunx wrangler secret bulk .env && bunx wrangler deploy",
+    "deploy:cloudflare": "node ../../node_modules/wrangler/bin/wrangler.js deploy --keep-vars --env-file /dev/null",
     "db:push": "doppler run -- env DOTENV_CONFIG_PATH=/dev/null bun --no-env-file x --bun --no-install drizzle-kit push",
     "db:push:prod": "doppler run -c prd -- env DOTENV_CONFIG_PATH=/dev/null bun --no-env-file x --bun --no-install drizzle-kit push",
     "db:studio": "doppler run -- env DOTENV_CONFIG_PATH=/dev/null bun --no-env-file x --bun --no-install drizzle-kit studio",

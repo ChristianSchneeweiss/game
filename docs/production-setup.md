@@ -49,7 +49,11 @@ The successful fault-injection tests print closed structured retry diagnostics. 
 
 `build:client` does not load the production secret wrapper. Vite still reads its normal local `.env` files and inherited `VITE_*` variables; review those public values before creating an artifact. CI supplies only a synthetic `VITE_CLERK_PUBLISHABLE_KEY` for compilation. It is not an authentication-enabled preview. For a runnable isolated preview, supply the matching development Clerk publishable key and verified local API/WS services.
 
-`build:client:production` is the explicitly named existing Doppler `prd` build to `apps/server/dist`. `deploy` retains the existing production build/deploy sequence; neither is part of local release checks or CI. Running a build is not release authorization.
+`bun run deploy` is the Cloudflare Workers Builds entry point. It builds the client into `apps/server/dist` from the build environment, then deploys with Wrangler using Cloudflare's build credentials. It does not require Doppler or upload a local secrets file. Wrangler's `--keep-vars` retains dashboard-managed runtime variables; existing Worker secrets remain in Cloudflare.
+
+Set `VITE_CLERK_PUBLISHABLE_KEY` to the intended production Clerk publishable key in the `game` Worker's **build variables** before deploying. The build rejects a missing or blank key before compiling assets or deploying. Build variables and runtime variables are separate: `DATABASE_URL`, `CLERK_SECRET_KEY`, and `CLERK_PUBLISHABLE_KEY` must remain configured on the Worker for runtime use. See [Cloudflare's build configuration](https://developers.cloudflare.com/workers/ci-cd/builds/configuration/).
+
+For a local deployment that loads Doppler `prd` and uploads its secrets, use `bun run deploy:doppler`. `build:client:production` also retains its existing Doppler `prd` build to `apps/server/dist`. Neither deployment command is part of local release checks or GitHub's validation workflow. Running a build is not release authorization.
 
 Current variable and binding names, without secret values:
 
