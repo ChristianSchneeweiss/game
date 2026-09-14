@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import {
   BookOpen,
-  Search,
   Shield,
   Skull,
   SlidersHorizontal,
@@ -22,10 +21,12 @@ import {
 } from "@loot-game/game/library/types";
 import { LibraryDetail, LibraryIcon } from "./library-entry";
 import { targetingLabel } from "./library-format";
+import { MightBadge, MightRange } from "./library-might";
+import { LibraryToolbar } from "./library-toolbar";
+import { mightFamilyLabel } from "@loot-game/game/might/might";
 import {
   filterLibrary,
   libraryCategories,
-  libraryTiers,
   parseLibrarySearch,
   type LibrarySearch,
 } from "./library-search";
@@ -70,25 +71,47 @@ export function LibraryPage({
   const [attributes, setAttributes] = useState<LibraryAttributes>(
     DEFAULT_LIBRARY_ATTRIBUTES,
   );
+  const [rangeReset, setRangeReset] = useState(0);
   const spells = useMemo(() => createSpellLibrary(attributes), [attributes]);
   const entries = useMemo(() => [...spells, ...staticEntries], [spells]);
   const categoryEntries = entries.filter(
     (entry) => entry.category === search.category,
   );
-  const groups = [...new Set(categoryEntries.map((entry) => entry.group))];
   const filtered = filterLibrary(entries, search);
   const selected =
     filtered.find((entry) => entry.type === search.entry) ?? filtered[0];
   const currentCategory = categories[search.category];
   const change = (patch: Partial<LibrarySearch>) =>
     onSearchChange({ ...search, ...patch });
-  const inspect = (reference: LibraryReference) =>
+  const inspect = (reference: LibraryReference) => {
+    setRangeReset((value) => value + 1);
     onSearchChange({
       ...parseLibrarySearch({ category: reference.category }),
       entry: reference.type,
     });
+  };
+  const clearFilters = () => {
+    setRangeReset((value) => value + 1);
+    change({
+      q: "",
+      tier: "all",
+      group: "all",
+      entry: "",
+      mightMin: undefined,
+      mightMax: undefined,
+    });
+  };
   const isFiltered =
-    search.q !== "" || search.tier !== "all" || search.group !== "all";
+    search.q !== "" ||
+    search.tier !== "all" ||
+    search.group !== "all" ||
+    search.mightMin !== undefined ||
+    search.mightMax !== undefined;
+  const familyGroups =
+    search.category === "items" &&
+    (search.sort === "mightAsc" || search.sort === "mightDesc")
+      ? [...new Set(filtered.map((entry) => entry.family))]
+      : [];
 
   return (
     <main className="rpg-page library-page">
@@ -140,155 +163,36 @@ export function LibraryPage({
             <div className="library-browser-heading">
               <h2>{currentCategory.name}</h2>
               <p>{currentCategory.description}</p>
+              <p>
+                Might values overall power, including special effects, among
+                comparable content under standard conditions. Unrated entries
+                have not been assessed yet.
+              </p>
             </div>
-            <div className="library-toolbar">
-              <label className="library-search">
-                <Search size={17} />
-                <span className="sr-only">Search library</span>
-                <input
-                  type="search"
-                  placeholder={`Search ${currentCategory.name.toLowerCase()}…`}
-                  value={search.q}
-                  onChange={(event) =>
-                    change({ q: event.target.value, entry: "" })
-                  }
-                />
-              </label>
-              {search.category !== "enemies" ? (
-                <label>
-                  <span>Tier</span>
-                  <select
-                    aria-label="Filter by tier"
-                    value={search.tier}
-                    onChange={(event) =>
-                      change({ tier: event.target.value, entry: "" })
-                    }
-                  >
-                    <option value="all">All tiers</option>
-                    {libraryTiers.map((tier) => (
-                      <option key={tier} value={tier}>
-                        Tier {tier}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              ) : null}
-              {groups.length > 1 ? (
-                <label>
-                  <span>
-                    {search.category === "spells" ? "Recipients" : "Slot"}
-                  </span>
-                  <select
-                    aria-label="Filter by type"
-                    value={search.group}
-                    onChange={(event) =>
-                      change({ group: event.target.value, entry: "" })
-                    }
-                  >
-                    <option value="all">All types</option>
-                    {groups.map((group) => (
-                      <option key={group} value={group}>
-                        {group}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              ) : null}
-              <label>
-                <span>Order</span>
-                <select
-                  aria-label="Sort entries"
-                  value={search.sort}
-                  onChange={(event) =>
-                    change({
-                      sort: parseLibrarySearch({
-                        category: search.category,
-                        sort: event.target.value,
-                      }).sort,
-                    })
-                  }
-                >
-                  <option value="name">Name A–Z</option>
-                  {search.category !== "enemies" ? (
-                    <option value="tier">Tier S–E</option>
-                  ) : (
-                    <option value="health">Health: high first</option>
-                  )}
-                  {search.category === "spells" ? (
-                    <>
-                      <option value="mana">Mana: low first</option>
-                      <option value="cooldown">Cooldown: low first</option>
-                      <option value="directDamage">
-                        Est. damage: high first
-                      </option>
-                    </>
-                  ) : null}
-                </select>
-              </label>
-            </div>
+            <LibraryToolbar
+              search={search}
+              categoryName={currentCategory.name}
+              entries={categoryEntries}
+              onChange={change}
+            />
+            <MightRange
+              key={`${search.category}:${rangeReset}`}
+              mightMin={search.mightMin}
+              mightMax={search.mightMax}
+              onChange={(bounds) => change({ ...bounds, entry: "" })}
+            />
             {search.category === "spells" ? (
-              <details className="library-preview">
-                <summary>
-                  <SlidersHorizontal size={16} /> Preview attributes{" "}
-                  <span>
-                    STR {attributes.strength} · INT {attributes.intelligence} ·
-                    VIT {attributes.vitality} · AGI {attributes.agility}
-                  </span>
-                </summary>
-                <p>
-                  Adjust the hero and target attributes to compare spell
-                  scaling. Both have 100/100 health, zero defenses and
-                  affinities, and no passives. Basic Attack uses the unarmed
-                  profile.
-                </p>
-                <div className="library-attributes">
-                  {(
-                    Object.keys(
-                      DEFAULT_LIBRARY_ATTRIBUTES,
-                    ) as (keyof LibraryAttributes)[]
-                  ).map((attribute) => (
-                    <label key={attribute}>
-                      <span>{attribute}</span>
-                      <input
-                        type="number"
-                        min={0}
-                        max={500}
-                        step={1}
-                        value={attributes[attribute]}
-                        onChange={(event) => {
-                          const value = event.target.valueAsNumber;
-                          setAttributes((previous) => ({
-                            ...previous,
-                            [attribute]: Number.isFinite(value)
-                              ? Math.max(0, Math.min(500, Math.round(value)))
-                              : 0,
-                          }));
-                        }}
-                      />
-                    </label>
-                  ))}
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setAttributes({ ...DEFAULT_LIBRARY_ATTRIBUTES })
-                    }
-                  >
-                    Reset
-                  </button>
-                </div>
-              </details>
+              <LibraryPreview
+                attributes={attributes}
+                onChange={setAttributes}
+              />
             ) : null}
             <div className="library-results">
               <span role="status">
                 {filtered.length} of {categoryEntries.length} entries
               </span>
               {isFiltered ? (
-                <button
-                  type="button"
-                  onClick={() =>
-                    change({ q: "", tier: "all", group: "all", entry: "" })
-                  }
-                >
+                <button type="button" onClick={clearFilters}>
                   Clear filters
                 </button>
               ) : (
@@ -298,22 +202,31 @@ export function LibraryPage({
             <div className="library-content">
               <div className="library-list">
                 {filtered.length ? (
-                  <LibraryTable
-                    entries={filtered}
-                    selected={selected?.type}
-                    onInspect={(entry) => change({ entry: entry.type })}
-                  />
+                  familyGroups.length ? (
+                    familyGroups.map((family) => (
+                      <LibraryTable
+                        key={family}
+                        familyLabel={mightFamilyLabel(family)}
+                        entries={filtered.filter(
+                          (entry) => entry.family === family,
+                        )}
+                        selected={selected?.type}
+                        onInspect={(entry) => change({ entry: entry.type })}
+                      />
+                    ))
+                  ) : (
+                    <LibraryTable
+                      entries={filtered}
+                      selected={selected?.type}
+                      onInspect={(entry) => change({ entry: entry.type })}
+                    />
+                  )
                 ) : (
                   <div className="library-empty">
                     <BookOpen size={32} />
                     <h3>No matching entries</h3>
-                    <p>Try another name, effect, or tier.</p>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        change({ q: "", tier: "all", group: "all", entry: "" })
-                      }
-                    >
+                    <p>Try another name, effect, tier, or Might range.</p>
+                    <button type="button" onClick={clearFilters}>
                       Clear filters
                     </button>
                   </div>
@@ -334,26 +247,87 @@ export function LibraryPage({
   );
 }
 
+function LibraryPreview({
+  attributes,
+  onChange,
+}: {
+  attributes: LibraryAttributes;
+  onChange: (attributes: LibraryAttributes) => void;
+}) {
+  return (
+    <details className="library-preview">
+      <summary>
+        <SlidersHorizontal size={16} /> Preview attributes{" "}
+        <span>
+          STR {attributes.strength} · INT {attributes.intelligence} · VIT{" "}
+          {attributes.vitality} · AGI {attributes.agility}
+        </span>
+      </summary>
+      <p>
+        Adjust the hero and target attributes to compare spell scaling. Both
+        have 100/100 health, zero defenses and affinities, and no passives.
+        Basic Attack uses the unarmed profile. Preview attributes do not change
+        Might or tier.
+      </p>
+      <div className="library-attributes">
+        {(
+          Object.keys(DEFAULT_LIBRARY_ATTRIBUTES) as (keyof LibraryAttributes)[]
+        ).map((attribute) => (
+          <label key={attribute}>
+            <span>{attribute}</span>
+            <input
+              type="number"
+              min={0}
+              max={500}
+              step={1}
+              value={attributes[attribute]}
+              onChange={(event) => {
+                const value = event.target.valueAsNumber;
+                onChange({
+                  ...attributes,
+                  [attribute]: Number.isFinite(value)
+                    ? Math.max(0, Math.min(500, Math.round(value)))
+                    : 0,
+                });
+              }}
+            />
+          </label>
+        ))}
+        <button
+          type="button"
+          onClick={() => onChange({ ...DEFAULT_LIBRARY_ATTRIBUTES })}
+        >
+          Reset
+        </button>
+      </div>
+    </details>
+  );
+}
+
 function LibraryTable({
   entries,
   selected,
   onInspect,
+  familyLabel,
 }: {
   entries: LibraryEntry[];
   selected?: string;
   onInspect: (entry: LibraryEntry) => void;
+  familyLabel?: string;
 }) {
   const category = entries[0].category;
   const headings =
     category === "spells"
-      ? ["Tier", "Mana", "CD", "Est. dmg", "Range"]
+      ? ["Might", "Mana", "CD", "Est. dmg", "Range"]
       : category === "enemies"
-        ? ["HP", "Mana", "XP"]
-        : ["Tier", category === "items" ? "Slot" : "Effect"];
+        ? ["Might", "HP", "Mana", "XP"]
+        : ["Might", category === "items" ? "Slot" : "Effect"];
   return (
     <table className="library-table">
-      <caption className="sr-only">
-        {categories[category].name} catalogue
+      <caption className={familyLabel ? "library-family-heading" : "sr-only"}>
+        {familyLabel
+          ? `${familyLabel} · Might comparison`
+          : `${categories[category].name} catalogue`}
       </caption>
       <thead>
         <tr>
@@ -370,7 +344,6 @@ function LibraryTable({
           const cells =
             category === "spells"
               ? [
-                  entry.tier,
                   entry.mana,
                   entry.cooldown,
                   entry.directDamage === undefined
@@ -385,10 +358,7 @@ function LibraryTable({
                     entry.stats.find((stat) => stat.label === "XP reward")
                       ?.value,
                   ]
-                : [
-                    entry.tier,
-                    category === "items" ? entry.group : entry.description,
-                  ];
+                : [category === "items" ? entry.group : entry.description];
           return (
             <tr key={entry.type} data-selected={entry.type === selected}>
               <th scope="row">
@@ -401,22 +371,19 @@ function LibraryTable({
                   <span>{entry.name}</span>
                 </button>
               </th>
+              <td>
+                <MightBadge entry={entry} />
+              </td>
               {cells.map((cell, index) => (
                 <td
-                  key={headings[index]}
+                  key={headings[index + 1]}
                   className={
-                    category === "passives" && index === 1
+                    category === "passives" && index === 0
                       ? "library-effect-cell"
                       : undefined
                   }
                 >
-                  {index === 0 && entry.tier ? (
-                    <span className="library-tier" data-tier={entry.tier}>
-                      {cell}
-                    </span>
-                  ) : (
-                    cell
-                  )}
+                  {cell}
                 </td>
               ))}
             </tr>

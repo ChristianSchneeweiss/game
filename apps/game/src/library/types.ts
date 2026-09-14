@@ -1,24 +1,27 @@
 import type { EntityAttributes } from "../entity-types";
 import type { Targeting } from "../tactical/types";
 import type { Tier } from "../types";
+import type { MightFamily, MightRating } from "../might/might";
 
 export type LibraryCategory = "spells" | "items" | "passives" | "enemies";
 export type LibraryReference = { category: LibraryCategory; type: string };
 export type LibraryStat = { label: string; value: string | number };
-export type LibraryEntry = LibraryReference & {
-  name: string;
-  description: string;
-  tier?: Tier;
-  group: string;
-  stats: LibraryStat[];
-  targeting?: Targeting;
-  mana?: number;
-  cooldown?: number;
-  directDamage?: number;
-  health?: number;
-  related: LibraryReference[];
-  drops?: (LibraryReference & { chance: number })[];
-};
+export type LibraryEntry = LibraryReference &
+  MightRating & {
+    name: string;
+    description: string;
+    legacyTier?: Tier;
+    family: MightFamily;
+    group: string;
+    stats: LibraryStat[];
+    targeting?: Targeting;
+    mana?: number;
+    cooldown?: number;
+    directDamage?: number;
+    health?: number;
+    related: LibraryReference[];
+    drops?: (LibraryReference & { chance: number })[];
+  };
 
 export type LibraryAttributes = Pick<
   EntityAttributes,

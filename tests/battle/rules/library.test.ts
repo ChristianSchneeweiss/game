@@ -38,6 +38,13 @@ test("library includes every authored type and every combat-kit and drop referen
   );
   expect(keys.size).toBe(entries.length);
   for (const entry of entries) {
+    expect(entry).toMatchObject({
+      might: null,
+      tier: null,
+      assessmentStatus: "unrated",
+      referenceId: null,
+    });
+    expect(entry.family.length).toBeGreaterThan(0);
     expect(entry.name.length).toBeGreaterThan(0);
     expect(entry.description.length).toBeGreaterThan(0);
     for (const reference of [...entry.related, ...(entry.drops ?? [])]) {
@@ -113,7 +120,11 @@ test("search combines case-insensitive terms, tier and recipients; numeric sort 
   expect(
     filterLibrary(
       entries,
-      parseLibrarySearch({ q: " FIREBALL ", tier: "A", group: "enemies" }),
+      parseLibrarySearch({
+        q: " FIREBALL ",
+        tier: "unrated",
+        group: "enemies",
+      }),
     ).map((entry) => entry.type),
   ).toEqual(["fireball"]);
   expect(
@@ -142,9 +153,9 @@ test("search combines case-insensitive terms, tier and recipients; numeric sort 
   const enemySearch = parseLibrarySearch({
     category: "enemies",
     sort: "health",
-    tier: "A",
+    tier: "unrated",
   });
-  expect(enemySearch.tier).toBe("all");
+  expect(enemySearch.tier).toBe("unrated");
   const enemies = createEnemyLibrary();
   expect(filterLibrary(enemies, enemySearch)[0]?.health).toBe(
     Math.max(...enemies.map((entry) => entry.health!)),

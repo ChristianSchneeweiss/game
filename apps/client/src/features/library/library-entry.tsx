@@ -8,6 +8,14 @@ import type {
 import type { Targeting } from "@loot-game/game/tactical/types";
 import { ArrowUpRight, Skull } from "lucide-react";
 import { targetingLabel } from "./library-format";
+import { MightBadge } from "./library-might";
+import { mightFamilyLabel } from "@loot-game/game/might/might";
+
+const assessmentDescriptions = {
+  unrated: " No Might assessment yet; this does not mean zero power.",
+  estimated: " Estimated: a provisional assessment under standard conditions.",
+  assessed: " Assessed under standard conditions.",
+};
 
 export function LibraryIcon({
   entry,
@@ -109,7 +117,10 @@ export function LibraryDetail({
         onClick={() => onInspect(reference)}
       >
         <LibraryIcon entry={reference} size={28} />
-        <span>{related?.name ?? libraryName(reference.type)}</span>
+        <span>
+          {related?.name ?? libraryName(reference.type)}
+          {related ? <MightBadge entry={related} /> : null}
+        </span>
         {suffix ? <small>{suffix}</small> : <ArrowUpRight size={14} />}
       </button>
     );
@@ -132,11 +143,18 @@ export function LibraryDetail({
                 enemies: "Enemy",
               }[entry.category]
             }
-            {entry.tier ? ` · Tier ${entry.tier}` : ""}
           </p>
           <h2>{entry.name}</h2>
+          <MightBadge entry={entry} />
         </div>
       </div>
+      <p className="library-note">
+        Comparison family: <strong>{mightFamilyLabel(entry.family)}</strong>.
+        {assessmentDescriptions[entry.assessmentStatus]}
+      </p>
+      {entry.legacyTier ? (
+        <p className="library-note">Legacy tier {entry.legacyTier}</p>
+      ) : null}
       <p className="library-description">{entry.description}</p>
       <section className="library-detail-section">
         <h3>

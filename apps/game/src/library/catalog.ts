@@ -10,6 +10,8 @@ import { createSpellFromType } from "../spells/base/spell-from-type";
 import { SpellTypeSchema } from "../spells/base/spell-types";
 import { WEAPON_PROFILES } from "../tactical/catalogue";
 import type { WeaponAttackProfile } from "../tactical/types";
+import { mightAssessments } from "../might/assessments";
+import { assessMight } from "../might/might";
 import {
   DEFAULT_LIBRARY_ATTRIBUTES,
   type LibraryAttributes,
@@ -61,7 +63,12 @@ export function createSpellLibrary(
       type: config.type,
       name: config.name,
       description: spell.description(caster).text,
-      tier: config.tier,
+      ...assessMight(
+        `spells:${config.type}`,
+        mightAssessments.spells[config.type],
+      ),
+      legacyTier: config.tier,
+      family: "spells",
       group: config.targeting?.recipients ?? "enemies",
       targeting: config.targeting,
       mana: config.manaCost,
@@ -131,7 +138,9 @@ export function createItemLibrary(): LibraryEntry[] {
       type,
       name: item.name,
       description: item.description,
-      tier: item.tier,
+      ...assessMight(`items:${type}`, mightAssessments.items[type]),
+      legacyTier: item.tier,
+      family: `items:${item.equipmentSlot.toLowerCase() as Lowercase<typeof item.equipmentSlot>}`,
       group: item.equipmentSlot.toLowerCase(),
       targeting: profile?.targeting,
       stats: [
@@ -169,7 +178,9 @@ export function createPassiveLibrary(): LibraryEntry[] {
       type,
       name: libraryName(type),
       description: passive.getDescription(),
-      tier: passive.tier,
+      ...assessMight(`passives:${type}`, mightAssessments.passives[type]),
+      legacyTier: passive.tier,
+      family: "passives",
       group: "passive",
       stats: [{ label: "Active for", value: "Battle" }],
       related: [],
@@ -184,6 +195,8 @@ export function createEnemyLibrary(): LibraryEntry[] {
       category: "enemies",
       type,
       name: enemy.name,
+      ...assessMight(`enemies:${type}`, mightAssessments.enemies[type]),
+      family: "enemies",
       description:
         "Base attributes before equipment, passive skills, and combat effects. Inspect the combat kit below for modifiers.",
       group: "enemy",
