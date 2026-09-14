@@ -34,6 +34,7 @@ The original battle runner intentionally retains three historical resimulation f
 - [Client session and presentation boundaries](docs/production-client.md) explains connection recovery, uncertain commands, Cards controls, and resource ownership.
 - [Permission and abuse review](docs/production-security-review.md) records fixes, rights, limits, and unresolved release decisions.
 - [Current equipment](docs/equipment-milestone.md), [dungeon runs](docs/dungeon-run-milestone.md), and [weighted routes](docs/branching-dungeon-milestone.md) document the implemented player loop.
+- [Game library](docs/library.md) covers the full content catalogue, targeting, enemy kits and drops, and local balance previews.
 - [Enemy models and licenses](docs/enemy-models/README.md) records the 22-enemy/16-model mapping, provenance, animation fallbacks, and validation caveats.
 
 The stack is React 19/Vite, TanStack Router/Query, tRPC, Three.js, Hono/Cloudflare Workers, Drizzle/PostgreSQL, and Clerk. Wallet/token features, a credited gold economy, mobile qualification, audio, and new content systems remain outside this release scope.

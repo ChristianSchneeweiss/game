@@ -4,8 +4,9 @@ import { userStore } from "@/utils/user-store";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { Mail } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-export function InvitationBadge() {
+export function InvitationBadge({ className }: { className?: string }) {
   const userId = userStore((state) => state.user?.id);
   const { data } = useQuery(
     trpc.social.getInvitations.queryOptions(undefined, {
@@ -20,7 +21,11 @@ export function InvitationBadge() {
         invitation.recipient.id === userId && invitation.status === "pending",
     ).length ?? 0;
   return (
-    <Button asChild variant="outline" className="h-10 px-3 text-[0.68rem]">
+    <Button
+      asChild
+      variant="outline"
+      className={cn("h-10 px-3 text-[0.68rem]", className)}
+    >
       <Link
         to="/invitations"
         aria-label={`Dungeon invitations${count ? `, ${count} pending` : ""}`}

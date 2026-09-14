@@ -36,6 +36,6 @@ export class StoneformResolvePassive extends BasePassive {
   }
 
   getDescription(): string {
-    return `Increases blessed by 5.`;
+    return `Gain +1 armor and +1 magic resistance after each combat round, up to ${this.max} stacks per battle.`;
   }
 }

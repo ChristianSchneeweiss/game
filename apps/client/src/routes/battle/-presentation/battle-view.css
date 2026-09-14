@@ -545,43 +545,6 @@
 .battle-3d[data-mode="replay"] .battle-viewport {
   height: clamp(340px, calc(100dvh - 340px), 610px);
 }
-/* Compact the surrounding app chrome only while this presentation is open. */
-body:has(.battle-3d) [data-game-header] {
-  padding: 0;
-  background: #141c18;
-}
-body:has(.battle-3d) [data-game-header] > div {
-  max-width: none;
-}
-body:has(.battle-3d) [data-game-header] .rpg-panel {
-  border-radius: 0;
-  border-width: 0 0 1px;
-}
-body:has(.battle-3d) [data-header-content] {
-  padding: 6px 22px;
-}
-body:has(.battle-3d) [data-header-decoration],
-body:has(.battle-3d) [data-header-subtitle] {
-  display: none;
-}
-body:has(.battle-3d) [data-header-brand] {
-  border: 0;
-  padding: 4px 0;
-  background: none;
-  box-shadow: none;
-}
-body:has(.battle-3d) [data-header-brand] .rpg-icon-frame {
-  width: 28px;
-  height: 28px;
-}
-body:has(.battle-3d) [data-header-brand] p {
-  font-size: 15px;
-}
-body:has(.battle-3d) [data-header-nav] a {
-  padding: 6px 10px;
-  font-size: 10px;
-  border-radius: 3px;
-}
 body:has([data-game-header]) .battle-3d[data-mode="replay"] .battle-viewport {
   height: clamp(330px, calc(100dvh - 435px), 570px);
 }
