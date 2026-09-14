@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { RpgBadge } from "@/components/rpg-ui";
 import { trpc } from "@/utils/trpc";
+import { InvitationBadge } from "@/features/social/invitation-badge";
 import {
   SignInButton,
   SignUpButton,
@@ -18,6 +19,7 @@ import {
   Shield,
   Sparkles,
   Users,
+  UserRoundPlus,
 } from "lucide-react";
 
 const navItems = [
@@ -26,6 +28,7 @@ const navItems = [
   { to: "/spells", label: "Spells", icon: Sparkles, exact: false },
   { to: "/items", label: "Items", icon: Package, exact: false },
   { to: "/dungeons", label: "Dungeons", icon: MapPin, exact: true },
+  { to: "/friends", label: "Friends", icon: UserRoundPlus, exact: false },
 ] as const;
 
 const navLinkClass =
@@ -100,6 +103,7 @@ export default function Header() {
 
               <div className="order-2 ml-auto flex items-center gap-2.5 lg:order-3">
                 <SignedIn>
+                  <InvitationBadge />
                   {lootCount > 0 && (
                     <Button
                       asChild

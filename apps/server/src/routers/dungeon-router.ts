@@ -1,7 +1,7 @@
 import { DungeonKeySchema } from "@loot-game/game/dungeons/dungeon-keys";
 import { routeActionSchema } from "@loot-game/game/dungeons/route";
 import { chooseDungeonPath } from "../game-usecases/dungeon-route";
-import { and, eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import z from "zod";
 import {
   TB_character,
@@ -16,6 +16,8 @@ import {
 import { EntityFactory } from "../game-usecases/entity-factory";
 import { beginDungeonAttempt } from "../game-usecases/dungeon-attempt";
 import { protectedProcedure, router } from "../lib/trpc";
+import { TB_preparation } from "../db/shared-preparation-schema";
+import { abandonSharedDungeon } from "../game-usecases/abandon-shared-dungeon";
 
 export const dungeonRouter = router({
   getConfig: protectedProcedure
@@ -93,6 +95,7 @@ export const dungeonRouter = router({
         and(
           eq(TB_character.userId, session.id),
           eq(TB_dungeonData.cleared, false),
+          isNull(TB_dungeonData.abandonedAt),
         ),
       );
 
@@ -115,8 +118,11 @@ export const dungeonRouter = router({
         createdBy: TB_dungeonData.createdBy,
         createdAt: TB_dungeonData.createdAt,
         activeBattle: TB_dungeonData.activeBattle,
+        abandonedAt: TB_dungeonData.abandonedAt,
+        preparationId: TB_preparation.id,
       })
       .from(TB_dungeonData)
+      .leftJoin(TB_preparation, eq(TB_preparation.dungeonId, TB_dungeonData.id))
       .innerJoin(
         TB_dungeonParticipant,
         eq(TB_dungeonData.id, TB_dungeonParticipant.dungeonId),
@@ -137,6 +143,8 @@ export const dungeonRouter = router({
         guest: boolean;
         createdAt: Date;
         activeBattle: boolean;
+        abandonedAt: Date | null;
+        shared: boolean;
       }
     >();
     for (const dungeon of dungeons) {
@@ -148,6 +156,8 @@ export const dungeonRouter = router({
         guest: dungeon.createdBy !== session.id,
         createdAt: dungeon.createdAt ?? new Date(),
         activeBattle: dungeon.activeBattle,
+        abandonedAt: dungeon.abandonedAt,
+        shared: !!dungeon.preparationId,
       });
     }
 
@@ -157,21 +167,30 @@ export const dungeonRouter = router({
   getDungeon: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
-      const { db } = ctx;
-      return dungeonManager.getDungeon(input.id, db);
+      return getDungeonRun(input.id, ctx.session.id, ctx.db);
     }),
 
   getDungeonBattles: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
-      const { db } = ctx;
-      const battles = await dungeonManager.getDungeonBattles(input.id, db);
-      return battles;
+      return (await getDungeonRun(input.id, ctx.session.id, ctx.db)).battles;
     }),
 
   fightDungeon: protectedProcedure
-    .input(z.object({ id: z.string() }))
-    .mutation(({ ctx, input }) => beginDungeonAttempt(input.id, ctx.session.id, ctx.db)),
+    .input(
+      z.object({
+        id: z.string(),
+        expectedRevision: z.number().int().nonnegative().optional(),
+      }),
+    )
+    .mutation(({ ctx, input }) =>
+      beginDungeonAttempt(
+        input.id,
+        ctx.session.id,
+        ctx.db,
+        input.expectedRevision,
+      ),
+    ),
 
   removeDungeon: protectedProcedure
     .input(z.object({ id: z.string() }))
@@ -179,4 +198,9 @@ export const dungeonRouter = router({
       const { db, session } = ctx;
       await dungeonManager.removeDungeon(input.id, session.id, db);
     }),
+  abandon: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ ctx, input }) =>
+      abandonSharedDungeon(input.id, ctx.session.id, ctx.db, ctx.cfEnv),
+    ),
 });

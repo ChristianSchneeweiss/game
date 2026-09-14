@@ -104,6 +104,7 @@ export function useBattleCommands(
     caughtUp &&
     ownsTurn &&
     !pending &&
+    !connection.abandoned &&
     !connection.winner;
   const canCast = canChoose && castReady(command.selection, battleState);
 

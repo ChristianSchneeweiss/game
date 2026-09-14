@@ -15,6 +15,8 @@ export const migrationFiles = [
   "audited-3835a60.sql",
   "../manual/20260910_dungeon_attempts.sql",
   "../manual/20260911_dungeon_routes.sql",
+  "../manual/20260914_shared_preparation.sql",
+  "../manual/20260914_social.sql",
 ] as const;
 
 async function ddl(exports: Record<string, unknown>) {
@@ -73,5 +75,5 @@ if (import.meta.main) {
     }, null, 2) + "\n");
   } else if (process.argv.length > 2) throw new Error("Usage: bun scripts/database-schema.ts [--write]");
   await verifyMigrationArtifacts();
-  console.log("Current schema, audited 3835a60 schema, and both unchanged manual migrations verified.");
+  console.log("Current schema, audited 3835a60 schema, and registered manual migrations verified.");
 }

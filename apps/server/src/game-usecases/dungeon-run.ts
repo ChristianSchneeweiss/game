@@ -12,6 +12,9 @@ import { EntityFactory } from "./entity-factory";
 import { readDungeon, getDungeonBattles } from "./dungeon-queries";
 import { getDungeonParty, requireDungeonParty } from "./dungeon-access";
 import { TRPCError } from "@trpc/server";
+import { TB_preparation } from "../db/shared-preparation-schema";
+import { readPreparation } from "./shared-preparation-read";
+import { areFriends } from "./social-relations";
 
 /** A persisted run and only the current player's unclaimed rewards. */
 export function getDungeonRun(id: string, userId: string, db: Database) {
@@ -31,6 +34,27 @@ async function readDungeonRun(id: string, userId: string, db: Database) {
   const party = await getDungeonParty(id, db);
   requireDungeonParty(record.createdBy, party, userId);
   const dungeon = await readDungeon(record, db);
+  const [preparation] = await db
+    .select()
+    .from(TB_preparation)
+    .where(eq(TB_preparation.dungeonId, id));
+  const shared = preparation
+    ? {
+        ...(await readPreparation(preparation, db)),
+        preparationId: preparation.id,
+        canPlayAgain:
+          !record.abandonedAt &&
+          !record.activeBattle &&
+          (record.cleared ||
+            !record.characterData.some((hero) => hero.health > 0)) &&
+          !!preparation.guestUserId &&
+          (await areFriends(
+            preparation.hostUserId,
+            preparation.guestUserId,
+            db,
+          )),
+      }
+    : null;
   const battles = await getDungeonBattles(id, db);
   const rewardKeys = [
     ...battles.map((battle) => battle.battleId),
@@ -46,6 +70,8 @@ async function readDungeonRun(id: string, userId: string, db: Database) {
     );
   return {
     ...dungeon,
+    abandonedAt: record.abandonedAt,
+    shared,
     activeBattleId:
       record.activeBattleId ??
       (record.activeBattle ? battles.at(-1)?.battleId : null),

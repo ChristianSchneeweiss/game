@@ -20,6 +20,7 @@ export type DungeonData = {
   actualEnemies: BaseEnemy[][];
   cleared: boolean;
   activeBattle: boolean;
+  abandonedAt?: Date | null;
   route?: DungeonRoute | null;
 };
 

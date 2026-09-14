@@ -20,8 +20,7 @@ import type {
 } from "@loot-game/game/dungeons/types";
 import type { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
 import type { LootEntity } from "@loot-game/game/types";
-import { and, eq, inArray, isNull } from "drizzle-orm";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import { and, eq, inArray, isNull, sql } from "drizzle-orm";
 import seedrandom from "seedrandom";
 import {
   id,
@@ -41,14 +40,15 @@ import { getDungeon, getDungeonBattles } from "./dungeon-queries";
 import { readDungeonRoute } from "@loot-game/game/dungeons/route-state";
 import { TRPCError } from "@trpc/server";
 import { LootManager } from "./loot-manager";
+import { TB_preparation } from "../db/shared-preparation-schema";
 
 export const dungeonManager = {
   enterDungeon: async (
     characters: Character[],
     key: DungeonKey,
     userId: string,
-    db: PostgresJsDatabase,
-    options: { branching?: boolean } = {},
+    db: Database,
+    options: { branching?: boolean; sharedPreparationId?: string } = {},
   ) => {
     const config = dungeonManager.getDungeonConfig(key);
     if (
@@ -79,6 +79,42 @@ export const dungeonManager = {
     } satisfies DungeonData;
 
     await db.transaction(async (tx) => {
+      const owners = await lockCharacters(
+        characters.map((character) => character.id),
+        tx,
+      );
+      if (options.sharedPreparationId) {
+        const [preparation] = await tx
+          .select()
+          .from(TB_preparation)
+          .where(eq(TB_preparation.id, options.sharedPreparationId));
+        if (
+          !preparation ||
+          preparation.closedAt ||
+          preparation.dungeonId ||
+          preparation.hostUserId !== userId ||
+          owners.length !== 2 ||
+          characters[0]?.id !== preparation.hostCharacterId ||
+          characters[1]?.id !== preparation.guestCharacterId ||
+          owners.find((owner) => owner.id === preparation.hostCharacterId)
+            ?.userId !== preparation.hostUserId ||
+          owners.find((owner) => owner.id === preparation.guestCharacterId)
+            ?.userId !== preparation.guestUserId
+        )
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Shared entry requires both owners' preparation consent",
+          });
+      } else if (
+        owners.length !== characters.length ||
+        owners.some((owner) => owner.userId !== userId)
+      ) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message:
+            "Solo entry can only include your own characters; invite a friend for shared play",
+        });
+      }
       await tx.insert(TB_dungeonData).values({
         id: dungeon.id,
         key: dungeon.key,
@@ -132,6 +168,10 @@ export const dungeonManager = {
       if (!dungeon) {
         throw new Error("Dungeon not found");
       }
+
+      // Abandonment is serialized on this same run row. A later result cannot
+      // grant rewards for an encounter that had not completed before departure.
+      if (dungeon.abandonedAt) return;
 
       const [attempt] = await tx
         .update(TB_dungeonBattle)
@@ -246,6 +286,15 @@ export const dungeonManager = {
         })
         .where(eq(TB_dungeonData.id, dungeonId));
 
+      await tx
+        .update(TB_preparation)
+        .set({
+          hostReadyRevision: null,
+          guestReadyRevision: null,
+          revision: sql`${TB_preparation.revision} + 1`,
+        })
+        .where(eq(TB_preparation.dungeonId, dungeonId));
+
       const config = dungeonManager.getDungeonConfig(dungeon.key);
       if (dungeon.round >= config.availableEnemies.length) {
         await tx
@@ -299,6 +348,16 @@ export const dungeonManager = {
       if (dungeon.createdBy !== userId) {
         throw new Error("Dungeon not found");
       }
+      const [shared] = await tx
+        .select({ id: TB_preparation.id })
+        .from(TB_preparation)
+        .where(eq(TB_preparation.dungeonId, id));
+      if (shared)
+        throw new TRPCError({
+          code: "CONFLICT",
+          message:
+            "Abandon shared runs to preserve the party's results and rewards",
+        });
 
       if (dungeon.activeBattle || dungeon.activeBattleId) {
         throw new TRPCError({

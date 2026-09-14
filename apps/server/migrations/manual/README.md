@@ -39,3 +39,19 @@ Runs created through the preparation screen save their weighted offers and
 choices in this column. Existing runs retain `NULL` and continue linearly.
 The migration was applied to the verified local OrbStack `game` database on
 11 September 2026. It has not been applied to production.
+
+## Friends and shared preparation
+
+Apply `20260914_shared_preparation.sql` followed by `20260914_social.sql`.
+The first adds character build revisions, terminal abandonment markers, saved
+preparations, and scoped connections. The second adds account codes,
+relationships, blocks, and expiring invitations referencing those preparations.
+Neither adds a global player or character reservation.
+
+`scripts/production-migrate.ts upgrade` applies both through the transactional
+checksum history. The generated fresh schema includes them. The PostgreSQL
+rehearsal checks that upgrades and fresh installations agree and retains old
+results and resources. These migrations have only been applied to disposable
+test databases during issue #2 implementation. See
+[implementation notes](../../../../docs/friends-implementation.md) for the new
+Worker binding and remaining browser verification.

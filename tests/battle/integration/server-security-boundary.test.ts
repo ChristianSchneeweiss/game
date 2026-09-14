@@ -3,6 +3,7 @@ import { eq, sql } from "drizzle-orm";
 import {
   TB_activeBattle,
   TB_dungeonBattle,
+  TB_preparation,
   TB_spellStats,
   TB_user,
   type Database,
@@ -95,6 +96,7 @@ function requestFixture() {
     DATABASE_URL: "in-memory-only",
     BATTLE_WEBSOCKET: namespace,
     BATTLE_CHAT: namespace,
+    PREPARATION_PRESENCE: namespace,
   } as unknown as Env;
   const fetch = (path: string, headers: Record<string, string> = {}) =>
     worker.fetch!(
@@ -111,6 +113,21 @@ function requestFixture() {
     ) as Promise<Response>;
   return { setups, env, fetch };
 }
+
+test("preparation presence validates membership before creating rooms and overwrites supplied identity", async () => {
+  const f = requestFixture();
+  await data.db.insert(TB_preparation).values({ id: "owned-preparation", hostUserId: "audit-owner", key: "dungeon1" });
+  expect((await f.fetch("/api/preparation/missing/presence")).status).toBe(404);
+  expect((await f.fetch("/api/preparation/owned-preparation/presence", { "x-test-user": "outsider" })).status).toBe(403);
+  expect((await f.fetch("/api/preparation/owned-preparation/presence", { "x-test-user": "" })).status).toBe(401);
+  expect((await f.fetch("/api/preparation/owned-preparation/presence", { Origin: "https://outsider.example" })).status).toBe(403);
+  expect(f.setups).toEqual([]);
+  const response = await f.fetch("/api/preparation/owned-preparation/presence?userId=outsider");
+  const body: unknown = await response.json();
+  expect(body).toEqual({ userId: "audit-owner", username: null });
+  expect(f.setups).toEqual([["owned-preparation"]]);
+  expect(probeCloses).toBe(probeOpens);
+});
 
 test("public battle and chat routes overwrite forged identity using upstream authentication", async () => {
   const f = requestFixture();

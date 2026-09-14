@@ -46,6 +46,7 @@ export function useBattle(id: string) {
     ownsTurn,
     playback,
     winner: connection.winner,
+    abandoned: connection.abandoned,
     readyState: connection.readyState,
     ...commands,
     error: commands.error ?? connection.error,

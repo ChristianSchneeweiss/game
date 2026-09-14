@@ -8,6 +8,7 @@ import { cors } from "hono/cors";
 import { bodyLimit } from "hono/body-limit";
 import { HTTPException } from "hono/http-exception";
 import postgres from "postgres";
+import { TRPCError } from "@trpc/server";
 import {
   TB_activeBattle,
   TB_battleResult,
@@ -21,9 +22,11 @@ import { createContext } from "./lib/context";
 import { registerRecipes } from "./lib/superjson-recipes";
 import { appRouter } from "./routers/index";
 import { diagnostic, redactTelemetry } from "./lib/diagnostics";
+import { getPreparation } from "./game-usecases/shared-preparation-read";
 export { BattleChat } from "./durable-objects/battle-chat.do";
 export { BattleWebsocket } from "./durable-objects/battle-ws";
 export { BattleDoneWorkflow } from "./workflows/battle-done.workflow";
+export { PreparationPresence } from "./durable-objects/preparation-presence";
 
 const app = new Hono<{
   Bindings: Env;
@@ -192,6 +195,36 @@ app.get("/api/battle/:id", async (c) => {
     url.searchParams.set("userId", userId);
 
     return await stub.fetch(new Request(url.toString(), c.req.raw));
+  });
+});
+
+app.get("/api/preparation/:id/presence", async (c) => {
+  const origin = c.req.header("Origin");
+  if (origin && !allowedOrigin(origin, c.req.url))
+    return c.json({ error: "Origin not allowed" }, 403);
+  if (c.req.header("Upgrade")?.toLowerCase() !== "websocket")
+    return c.json({ error: "WebSocket upgrade required" }, 426);
+  const userId = getAuth(c)?.userId;
+  if (!userId) return c.json({ error: "No user id" }, 401);
+  const preparationId = c.req.param("id");
+  return withBattleDatabase(c.env.DATABASE_URL, async (db) => {
+    try {
+      const preparation = await getPreparation(preparationId, userId, db);
+      if (preparation.closedAt) return c.json({ error: "Preparation closed" }, 409);
+    } catch (error) {
+      if (error instanceof TRPCError && error.code === "NOT_FOUND")
+        return c.json({ error: "Preparation not found" }, 404);
+      if (error instanceof TRPCError && error.code === "FORBIDDEN")
+        return c.json({ error: "Preparation belongs to another party" }, 403);
+      throw error;
+    }
+    const stub = c.env.PREPARATION_PRESENCE.get(
+      c.env.PREPARATION_PRESENCE.idFromName(preparationId),
+    );
+    await stub.setup(preparationId);
+    const url = new URL(c.req.raw.url);
+    url.searchParams.set("userId", userId);
+    return stub.fetch(new Request(url, c.req.raw));
   });
 });
 

@@ -5,9 +5,11 @@
     "apps/server/src/db/character-dungeon-data.ts": "c8fd54e848cb0a672ef0993460fa21e428a9607890cc807119baf0e77e199a25"
   },
   "files": {
-    "fresh.sql": "2512d1e739f27d1641b12eecb1bfdc49be8672081ff80b9838d976085f8676bf",
+    "fresh.sql": "2e54efc1f45bb8e7fd77ef71de8f28a05377f7b56595487b804714e9fed1b098",
     "audited-3835a60.sql": "9e075dc6ff916a2f27ba51082982528740e03096ee9596190eb8aac5113fe8fe",
     "../manual/20260910_dungeon_attempts.sql": "92fd1acc8928169d72d6d263707693a4ffa219650da0379949969a8eb3ac59d7",
-    "../manual/20260911_dungeon_routes.sql": "203fb34fa0500c11592e2da0db6f85a671f75a37096901511414e27ebf419260"
+    "../manual/20260911_dungeon_routes.sql": "203fb34fa0500c11592e2da0db6f85a671f75a37096901511414e27ebf419260",
+    "../manual/20260914_shared_preparation.sql": "29401038c02241de863b8dbbd7fc425b79c2aee66e230392f7162d0f03116f1f",
+    "../manual/20260914_social.sql": "31d0b59a169dad29419c1084c1170dceece2c3311946e52941a3919a81cdcb85"
   }
 }

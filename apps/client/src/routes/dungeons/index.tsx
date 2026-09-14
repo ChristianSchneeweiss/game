@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { queryClient, trpc } from "@/utils/trpc";
+import { queryClient, trpc, type trpcClient } from "@/utils/trpc";
 import type { DungeonKey } from "@loot-game/game/dungeons/dungeon-keys";
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -35,6 +35,11 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { FeaturedExpedition } from "@/features/expedition/featured-expedition";
+import { SharedPreparations } from "@/features/social/shared-preparations";
+
+type DungeonSummary = Awaited<
+  ReturnType<typeof trpcClient.dungeon.allDungeons.query>
+>[number];
 
 dayjs.extend(relativeTime);
 
@@ -50,7 +55,8 @@ const dungeonCatalog: {
   {
     key: "dungeon1",
     title: "Avalanche Lair",
-    flavor: "Avalanche Lair is a dungeon that is home to the avalanche lizard. It is a dangerous place to explore, and the lizards are known to be aggressive.",
+    flavor:
+      "Avalanche Lair is a dungeon that is home to the avalanche lizard. It is a dangerous place to explore, and the lizards are known to be aggressive.",
     accent: "from-red-500/20 via-red-400/10 to-transparent",
     recommendedMinLevel: 1,
     recommendedMaxLevel: 2,
@@ -77,7 +83,8 @@ const dungeonCatalog: {
   {
     key: "trial-of-the-nature",
     title: "Trial of the Nature",
-    flavor: "Roots, regeneration, and survival pressure force slower decisions.",
+    flavor:
+      "Roots, regeneration, and survival pressure force slower decisions.",
     accent: "from-emerald-500/20 via-green-400/10 to-transparent",
     recommendedMinLevel: 5,
     recommendedMaxLevel: 6,
@@ -109,11 +116,15 @@ export const Route = createFileRoute("/dungeons/")({
 
 function RouteComponent() {
   const [removeDungeonId, setRemoveDungeonId] = useState<string | null>(null);
-  const [entryTab, setEntryTab] = useState<"recommended" | "others">("recommended");
-  const [expandedClearedId, setExpandedClearedId] = useState<string | null>(null);
+  const [entryTab, setEntryTab] = useState<"recommended" | "others">(
+    "recommended",
+  );
+  const [expandedClearedId, setExpandedClearedId] = useState<string | null>(
+    null,
+  );
 
   const { data: dungeons } = useSuspenseQuery(
-    trpc.dungeon.allDungeons.queryOptions(),
+    trpc.dungeon.allDungeons.queryOptions(undefined, { refetchInterval: 5000 }),
   );
   const { data: characters } = useSuspenseQuery(
     trpc.character.getCharacters.queryOptions(),
@@ -135,13 +146,17 @@ function RouteComponent() {
 
   const activeDungeons = useMemo(() => {
     return dungeons.filter(
-      (dungeon) => dungeon.cleared === false && dungeon.activeBattle === false,
+      (dungeon) =>
+        dungeon.cleared === false &&
+        dungeon.activeBattle === false &&
+        !dungeon.abandonedAt,
     );
   }, [dungeons]);
 
   const clearedDungeons = useMemo(() => {
     return dungeons.filter((dungeon) => dungeon.cleared === true);
   }, [dungeons]);
+  const abandonedDungeons = dungeons.filter((dungeon) => dungeon.abandonedAt);
 
   const rosterLevel = useMemo(() => {
     if (characters.length === 0) return 1;
@@ -153,7 +168,9 @@ function RouteComponent() {
 
     return Math.max(
       1,
-      Math.round(topLevels.reduce((sum, level) => sum + level, 0) / topLevels.length),
+      Math.round(
+        topLevels.reduce((sum, level) => sum + level, 0) / topLevels.length,
+      ),
     );
   }, [characters]);
 
@@ -187,7 +204,8 @@ function RouteComponent() {
   return (
     <RpgPage>
       <div className="space-y-8">
-        <FeaturedExpedition/>
+        <FeaturedExpedition />
+        <SharedPreparations />
         <RpgHero
           eyebrow="Expedition board"
           title={
@@ -251,8 +269,10 @@ function RouteComponent() {
                       : "border-[#8a7753]/20 bg-[#241d15]/78 text-[#b8aa89] hover:border-[#8a7753]/38 hover:bg-[#2c241b]/92 hover:text-[#e6d6b0]",
                   )}
                 >
-                  <p className="rpg-title text-[0.58rem] text-current/70">{tab.eyebrow}</p>
-                  <p className="mt-1 text-lg font-semibold uppercase tracking-[0.05em]">
+                  <p className="rpg-title text-[0.58rem] text-current/70">
+                    {tab.eyebrow}
+                  </p>
+                  <p className="mt-1 text-lg font-semibold tracking-[0.05em] uppercase">
                     {tab.label}
                   </p>
                 </button>
@@ -270,10 +290,13 @@ function RouteComponent() {
                     </p>
                     <p className="mt-1 text-sm text-[#d9ccb0]">
                       Recommendations are tuned around a roster level of{" "}
-                      <span className="font-semibold text-[#f1e8d4]">{rosterLevel}</span>.
+                      <span className="font-semibold text-[#f1e8d4]">
+                        {rosterLevel}
+                      </span>
+                      .
                     </p>
                   </div>
-                  <span className="inline-flex items-center gap-2 rounded-full border border-[#8a7753]/35 bg-[#8a7753]/12 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-[#ead7aa]">
+                  <span className="inline-flex items-center gap-2 rounded-full border border-[#8a7753]/35 bg-[#8a7753]/12 px-3 py-1 text-[0.65rem] font-semibold tracking-[0.18em] text-[#ead7aa] uppercase">
                     Best fit
                   </span>
                 </div>
@@ -316,6 +339,11 @@ function RouteComponent() {
             </div>
           )}
         </section>
+
+        <AbandonedExpeditions
+          dungeons={abandonedDungeons}
+          onDelete={setRemoveDungeonId}
+        />
 
         <section>
           <SectionHeader
@@ -380,14 +408,50 @@ function RouteComponent() {
 }
 
 const dungeonEntryTabs = [
-  { value: "recommended" as const, label: "Recommended", eyebrow: "Fitting now" },
+  {
+    value: "recommended" as const,
+    label: "Recommended",
+    eyebrow: "Fitting now",
+  },
   { value: "others" as const, label: "Others", eyebrow: "All remaining" },
 ];
+
+function AbandonedExpeditions({
+  dungeons,
+  onDelete,
+}: {
+  dungeons: DungeonSummary[];
+  onDelete: (id: string) => void;
+}) {
+  if (!dungeons.length) return null;
+  return (
+    <section className="space-y-5">
+      <SectionHeader
+        icon={<MapPin className="h-5 w-5" />}
+        eyebrow="Returned from the trail"
+        title="Abandoned expeditions"
+      />
+      <p className="rpg-copy">
+        These runs have ended. Earned rewards and recorded encounters remain
+        available.
+      </p>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        {dungeons.map((dungeon) => (
+          <DungeonCard
+            key={dungeon.id}
+            dungeon={dungeon}
+            onDelete={() => onDelete(dungeon.id)}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
 
 function SummaryPill({ label, value }: { label: string; value: number }) {
   return (
     <div className="rpg-stat-tile text-center">
-      <p className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-[#b6ab92]">
+      <p className="text-[0.65rem] font-semibold tracking-[0.18em] text-[#b6ab92] uppercase">
         {label}
       </p>
       <p className="mt-2 text-2xl font-semibold text-[#f1e8d4]">{value}</p>
@@ -404,9 +468,7 @@ function SectionHeader({
   eyebrow: string;
   title: string;
 }) {
-  return (
-    <RpgSectionHeading icon={icon} eyebrow={eyebrow} title={title} />
-  );
+  return <RpgSectionHeading icon={icon} eyebrow={eyebrow} title={title} />;
 }
 
 function EmptyBlock({
@@ -449,19 +511,19 @@ function DungeonEntryCard({
           </div>
           <div className="flex flex-wrap items-center justify-end gap-2">
             {recommended ? (
-              <span className="inline-flex items-center gap-2 rounded-full border border-[#5c8f3a]/35 bg-[#5c8f3a]/12 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-[#b2d58e]">
+              <span className="inline-flex items-center gap-2 rounded-full border border-[#5c8f3a]/35 bg-[#5c8f3a]/12 px-3 py-1 text-[0.65rem] font-semibold tracking-[0.18em] text-[#b2d58e] uppercase">
                 Recommended
               </span>
             ) : null}
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#8a7753]/35 bg-[#8a7753]/12 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-[#ead7aa]">
+            <span className="inline-flex items-center gap-2 rounded-full border border-[#8a7753]/35 bg-[#8a7753]/12 px-3 py-1 text-[0.65rem] font-semibold tracking-[0.18em] text-[#ead7aa] uppercase">
               Begin
             </span>
           </div>
         </div>
-        <h3 className="rpg-heading mt-5 text-3xl leading-none font-semibold uppercase tracking-[0.05em]">
+        <h3 className="rpg-heading mt-5 text-3xl leading-none font-semibold tracking-[0.05em] uppercase">
           {dungeon.title}
         </h3>
-        <p className="mt-3 text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-[#cfbf97]/72">
+        <p className="mt-3 text-[0.68rem] font-semibold tracking-[0.18em] text-[#cfbf97]/72 uppercase">
           Suggested level {dungeon.recommendedMinLevel}
           {dungeon.recommendedMinLevel !== dungeon.recommendedMaxLevel
             ? `-${dungeon.recommendedMaxLevel}`
@@ -469,9 +531,7 @@ function DungeonEntryCard({
           {" · "}
           {dungeon.threat} pressure
         </p>
-        <p className="rpg-copy mt-4 text-sm leading-7">
-          {dungeon.flavor}
-        </p>
+        <p className="rpg-copy mt-4 text-sm leading-7">{dungeon.flavor}</p>
         <div className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-[#ead7aa] transition-transform duration-300 group-hover:translate-x-1">
           Select party
           <ArrowRight className="h-4 w-4" />
@@ -493,26 +553,34 @@ function DungeonCard({
     guest: boolean;
     createdAt: Date;
     activeBattle: boolean;
+    shared: boolean;
+    abandonedAt: Date | null;
   };
   onDelete: () => void;
 }) {
-  const status = dungeon.cleared
+  const status = dungeon.abandonedAt
     ? {
-        label: "Cleared",
-        copy: "Dungeon completed.",
-        badge: "border-yellow-300/18 bg-yellow-300/10 text-yellow-100",
+        label: "Abandoned",
+        copy: "The expedition ended. Earned rewards and replays remain available.",
+        badge: "border-stone-300/18 bg-stone-300/10 text-stone-200",
       }
-    : dungeon.activeBattle
+    : dungeon.cleared
       ? {
-          label: "In battle",
-          copy: "An encounter is already underway.",
-          badge: "border-red-300/18 bg-red-400/10 text-red-100",
+          label: "Cleared",
+          copy: "Dungeon completed.",
+          badge: "border-yellow-300/18 bg-yellow-300/10 text-yellow-100",
         }
-      : {
-          label: "Active",
-          copy: "The run is ready for the next round.",
-          badge: "border-emerald-300/18 bg-emerald-300/10 text-emerald-100",
-        };
+      : dungeon.activeBattle
+        ? {
+            label: "In battle",
+            copy: "An encounter is already underway.",
+            badge: "border-red-300/18 bg-red-400/10 text-red-100",
+          }
+        : {
+            label: "Active",
+            copy: "The run is ready for the next round.",
+            badge: "border-emerald-300/18 bg-emerald-300/10 text-emerald-100",
+          };
 
   return (
     <Link
@@ -535,35 +603,38 @@ function DungeonCard({
               <p className="rpg-title text-[0.58rem] text-[#cfbf97]/70">
                 Expedition
               </p>
-              <h3 className="rpg-heading mt-2 text-3xl leading-none font-semibold uppercase tracking-[0.05em]">
+              <h3 className="rpg-heading mt-2 text-3xl leading-none font-semibold tracking-[0.05em] uppercase">
                 {dungeon.key.replaceAll("-", " ")}
               </h3>
             </div>
           </div>
 
-          <Button
-            size="icon"
-            variant="ghostRelic"
-            className="h-9 w-9 border-[#8f342a]/30 bg-[#8f342a]/10 text-[#f0c8be] hover:bg-[#8f342a]/16 hover:text-[#f4dbd4]"
-            onClick={(event) => {
-              event.stopPropagation();
-              event.preventDefault();
-              onDelete();
-            }}
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
+          {!dungeon.shared ? (
+            <Button
+              size="icon"
+              aria-label="Delete dungeon"
+              variant="ghostRelic"
+              className="h-9 w-9 border-[#8f342a]/30 bg-[#8f342a]/10 text-[#f0c8be] hover:bg-[#8f342a]/16 hover:text-[#f4dbd4]"
+              onClick={(event) => {
+                event.stopPropagation();
+                event.preventDefault();
+                onDelete();
+              }}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          ) : null}
         </div>
 
         <div
-          className={`mt-5 inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] ${status.badge}`}
+          className={`mt-5 inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold tracking-[0.18em] uppercase ${status.badge}`}
         >
           {status.label}
         </div>
 
-        {dungeon.guest && (
-          <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-[#3ca6ff]/30 bg-[#3ca6ff]/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-[#9bd0ff]">
-            Guest run
+        {dungeon.shared && (
+          <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-[#3ca6ff]/30 bg-[#3ca6ff]/10 px-3 py-1.5 text-xs font-semibold tracking-[0.18em] text-[#9bd0ff] uppercase">
+            {dungeon.guest ? "Shared run · Guest" : "Shared run · Host"}
           </div>
         )}
 
@@ -571,7 +642,7 @@ function DungeonCard({
 
         <div className="mt-5 grid grid-cols-2 gap-3">
           <div className="rpg-stat-tile">
-            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#b6ab92]">
+            <div className="flex items-center gap-2 text-xs font-semibold tracking-[0.18em] text-[#b6ab92] uppercase">
               <Clock className="h-3.5 w-3.5" />
               Started
             </div>
@@ -580,7 +651,7 @@ function DungeonCard({
             </p>
           </div>
           <div className="rpg-stat-tile">
-            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#b6ab92]">
+            <div className="flex items-center gap-2 text-xs font-semibold tracking-[0.18em] text-[#b6ab92] uppercase">
               <MapPin className="h-3.5 w-3.5" />
               Round
             </div>
@@ -613,6 +684,8 @@ function ClearedDungeonRow({
     guest: boolean;
     createdAt: Date;
     activeBattle: boolean;
+    shared: boolean;
+    abandonedAt: Date | null;
   };
   expanded: boolean;
   onToggle: () => void;
@@ -635,8 +708,10 @@ function ClearedDungeonRow({
         />
         <div className="relative flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="min-w-0">
-            <p className="rpg-title text-[0.58rem] text-[#cfbf97]/70">Cleared archive</p>
-            <h3 className="rpg-heading mt-2 text-2xl leading-none font-semibold uppercase tracking-[0.05em]">
+            <p className="rpg-title text-[0.58rem] text-[#cfbf97]/70">
+              Cleared archive
+            </p>
+            <h3 className="rpg-heading mt-2 text-2xl leading-none font-semibold tracking-[0.05em] uppercase">
               {formatDungeonName(dungeon.key)}
             </h3>
             <div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-[#d3c5a1]">
@@ -647,15 +722,15 @@ function ClearedDungeonRow({
           </div>
 
           <div className="flex flex-wrap items-center gap-2 md:justify-end">
-            <span className="inline-flex items-center gap-2 rounded-full border border-yellow-300/18 bg-yellow-300/10 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-yellow-100">
+            <span className="inline-flex items-center gap-2 rounded-full border border-yellow-300/18 bg-yellow-300/10 px-3 py-1 text-[0.65rem] font-semibold tracking-[0.18em] text-yellow-100 uppercase">
               Cleared
             </span>
             {dungeon.guest ? (
-              <span className="inline-flex items-center gap-2 rounded-full border border-[#3ca6ff]/30 bg-[#3ca6ff]/10 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-[#9bd0ff]">
+              <span className="inline-flex items-center gap-2 rounded-full border border-[#3ca6ff]/30 bg-[#3ca6ff]/10 px-3 py-1 text-[0.65rem] font-semibold tracking-[0.18em] text-[#9bd0ff] uppercase">
                 Guest run
               </span>
             ) : null}
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#8a7753]/28 bg-[#2b241b]/85 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-[#b8aa89]">
+            <span className="inline-flex items-center gap-2 rounded-full border border-[#8a7753]/28 bg-[#2b241b]/85 px-3 py-1 text-[0.65rem] font-semibold tracking-[0.18em] text-[#b8aa89] uppercase">
               {dungeon.round} waves cleared
             </span>
             <span className="rpg-icon-frame h-10 w-10 text-[#ead7aa] transition-transform duration-200 group-hover:scale-[1.02]">
@@ -677,7 +752,7 @@ function ClearedDungeonRow({
               <p className="rpg-copy text-sm leading-7">{metadata}</p>
               <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <div className="rpg-stat-tile">
-                  <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#b6ab92]">
+                  <div className="flex items-center gap-2 text-xs font-semibold tracking-[0.18em] text-[#b6ab92] uppercase">
                     <Clock className="h-3.5 w-3.5" />
                     Cleared entry
                   </div>
@@ -686,7 +761,7 @@ function ClearedDungeonRow({
                   </p>
                 </div>
                 <div className="rpg-stat-tile">
-                  <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#b6ab92]">
+                  <div className="flex items-center gap-2 text-xs font-semibold tracking-[0.18em] text-[#b6ab92] uppercase">
                     <MapPin className="h-3.5 w-3.5" />
                     Waves cleared
                   </div>
@@ -695,7 +770,7 @@ function ClearedDungeonRow({
                   </p>
                 </div>
                 <div className="rpg-stat-tile">
-                  <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#b6ab92]">
+                  <div className="flex items-center gap-2 text-xs font-semibold tracking-[0.18em] text-[#b6ab92] uppercase">
                     <CheckCircle className="h-3.5 w-3.5" />
                     Ownership
                   </div>
@@ -713,14 +788,17 @@ function ClearedDungeonRow({
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
-              <Button
-                size="icon"
-                variant="ghostRelic"
-                className="h-10 w-10 border-[#8f342a]/30 bg-[#8f342a]/10 text-[#f0c8be] hover:bg-[#8f342a]/16 hover:text-[#f4dbd4]"
-                onClick={onDelete}
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
+              {!dungeon.shared ? (
+                <Button
+                  size="icon"
+                  aria-label="Delete dungeon"
+                  variant="ghostRelic"
+                  className="h-10 w-10 border-[#8f342a]/30 bg-[#8f342a]/10 text-[#f0c8be] hover:bg-[#8f342a]/16 hover:text-[#f4dbd4]"
+                  onClick={onDelete}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              ) : null}
             </div>
           </div>
         </div>

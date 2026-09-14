@@ -10,8 +10,11 @@ import { RouteOfferCard } from "./route-offer-card";
 import { encounterDisplay, gearName } from "./route-display";
 import { runPhase, waveName, type DungeonRunData } from "./run-info";
 import "./route.css";
+import { userStore } from "@/utils/user-store";
 
 export function RoutePlanner({ run }: { run: DungeonRunData }) {
+  const userId = userStore((state) => state.user?.id);
+  const canChoosePath = !run.shared || run.shared.hostUserId === userId;
   const fork = run.route?.forks.find((entry) => entry.wave === run.round);
   const [preview, setPreview] = useState(fork?.offers[0]?.id);
   const pending = runPhase(run) === "choice";
@@ -52,9 +55,13 @@ export function RoutePlanner({ run }: { run: DungeonRunData }) {
               <small>
                 Fork {run.round} / Before {waveName(run.key, run.round)}
               </small>
-              <h2>Where will you lead them?</h2>
+              <h2>
+                {canChoosePath
+                  ? "Where will you lead them?"
+                  : "Your host is choosing the path."}
+              </h2>
             </div>
-            <span>Choose one path</span>
+            <span>{canChoosePath ? "Choose one path" : "Host decision"}</span>
           </div>
           <div
             className="expedition-route-offers"
@@ -67,7 +74,7 @@ export function RoutePlanner({ run }: { run: DungeonRunData }) {
                 run={run}
                 selected={preview === offer.id}
                 onPreview={() => setPreview(offer.id)}
-                disabled={choose.isPending}
+                disabled={choose.isPending || !canChoosePath}
                 onChoose={(action) => select(offer.id, action)}
               />
             ))}

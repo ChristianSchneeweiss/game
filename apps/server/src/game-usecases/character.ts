@@ -5,7 +5,7 @@ import {
   xpNeededForLevelUp,
 } from "@loot-game/game/utils/xp-curve";
 import { TRPCError } from "@trpc/server";
-import { eq } from "drizzle-orm";
+import { eq, inArray, sql } from "drizzle-orm";
 import type { PgTransaction } from "drizzle-orm/pg-core";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import {
@@ -96,6 +96,7 @@ export const equipSpell = async (
       .update(TB_spellStats)
       .set({ equippedBy: characterId })
       .where(eq(TB_spellStats.id, spellId));
+    await invalidateBuildReadiness([characterId], tx);
   });
 };
 
@@ -147,6 +148,7 @@ export const equipPassiveSkill = async (
       .update(TB_passivSkillStats)
       .set({ equippedBy: characterId })
       .where(eq(TB_passivSkillStats.id, passiveSkillId));
+    await invalidateBuildReadiness(characterIds, tx);
   });
 };
 
@@ -205,6 +207,7 @@ export const equipEquipment = async (
       .update(TB_equipmentStats)
       .set({ equippedBy: characterId })
       .where(eq(TB_equipmentStats.id, equipmentId));
+    await invalidateBuildReadiness([characterId], tx);
   });
 };
 
@@ -271,6 +274,7 @@ async function unequipOwnedItem(
       .update(table)
       .set({ equippedBy: null })
       .where(eq(table.id, itemId));
+    if (item.equippedBy) await invalidateBuildReadiness([item.equippedBy], tx);
   });
 }
 
@@ -313,6 +317,7 @@ export const applyStatIncrease = async (
         strength: newStrength,
         mana: newIntelligence * 5,
         health: newVitality * 10,
+        buildRevision: character.buildRevision + (stats.length > 0 ? 1 : 0),
       })
       .where(eq(TB_character.id, characterId));
   });
@@ -340,6 +345,7 @@ export const handleXpReceived = async (
       .update(TB_character)
       .set({
         level: newLevel,
+        buildRevision: character.buildRevision + 1,
         xp: newXp - xpNeeded,
         statPointsAvailable:
           character.statPointsAvailable + newStatPointsAvailable,
@@ -354,3 +360,12 @@ export const handleXpReceived = async (
       .where(eq(TB_character.id, character.id));
   }
 };
+
+/** Revision comparison invalidates every waiting run without taking run locks
+ * while holding character locks; frozen encounter snapshots are untouched. */
+async function invalidateBuildReadiness(characterIds: string[], tx: Database) {
+  await tx
+    .update(TB_character)
+    .set({ buildRevision: sql`${TB_character.buildRevision} + 1` })
+    .where(inArray(TB_character.id, characterIds));
+}

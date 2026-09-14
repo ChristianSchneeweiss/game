@@ -63,6 +63,7 @@ export type BattleState = {
 };
 
 export type ResponseMessage =
+  | { type: "abandoned"; data: { dungeonId: string } }
   | { type: "rejected"; data: { message: string; requestId?: string } }
   | { type: "castAccepted"; data: { requestId?: string } }
   | {

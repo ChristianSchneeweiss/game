@@ -24,7 +24,8 @@ export function connection(target: URL, database: string, applicationName: strin
 }
 
 export async function verifyConnection(sql: ReturnType<typeof postgres>, expected: string) {
-  const [identity] = await sql`SELECT current_database() AS database, current_setting('server_version') AS version, current_setting('lc_collate') AS collation, pg_backend_pid() AS pid`;
+  const [identity] = await sql`SELECT current_database() AS database, current_setting('server_version') AS version,
+    (SELECT datcollate FROM pg_database WHERE datname = current_database()) AS collation, pg_backend_pid() AS pid`;
   if (identity?.database !== expected) throw new Error("Database identity mismatch; aborting rehearsal.");
   return { database: String(identity.database), version: String(identity.version), collation: String(identity.collation), pid: Number(identity.pid) };
 }

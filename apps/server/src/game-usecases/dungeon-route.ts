@@ -17,6 +17,7 @@ import { getDungeonParty, requireDungeonParty } from "./dungeon-access";
 import { readDungeonRoute } from "@loot-game/game/dungeons/route-state";
 import { dungeonRunPhase } from "@loot-game/game/dungeons/run-state";
 import { lockCharacters } from "./character-locks";
+import { TB_preparation } from "../db/shared-preparation-schema";
 
 export async function chooseDungeonPath(
   dungeonId: string,
@@ -41,6 +42,21 @@ export async function chooseDungeonPath(
       userId,
       "Only this party may choose its path",
     );
+    if (record.abandonedAt)
+      throw new TRPCError({
+        code: "CONFLICT",
+        message: "This run was abandoned",
+      });
+    const [preparation] = await tx
+      .select()
+      .from(TB_preparation)
+      .where(eq(TB_preparation.dungeonId, dungeonId))
+      .for("update");
+    if (preparation && preparation.hostUserId !== userId)
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Only the host chooses the path",
+      });
     const route = readDungeonRoute(record.route);
     if (!route)
       throw new TRPCError({
@@ -174,6 +190,15 @@ export async function chooseDungeonPath(
       .where(
         and(eq(TB_dungeonData.id, dungeonId), eq(TB_dungeonData.round, wave)),
       );
+    if (preparation)
+      await tx
+        .update(TB_preparation)
+        .set({
+          hostReadyRevision: null,
+          guestReadyRevision: null,
+          revision: preparation.revision + 1,
+        })
+        .where(eq(TB_preparation.id, preparation.id));
     return decision;
   });
 }

@@ -14,6 +14,7 @@ import { emptySpellSlots } from "@/features/expedition/spell-slot-info";
 import { PartyReadiness } from "@/features/expedition/party-readiness";
 import { EquipmentLoadout } from "@/features/expedition/equipment-loadout";
 import { equipmentBuildPreview } from "@loot-game/game/items/equipment/build-preview";
+import { CreateSharedPreparation } from "@/features/social/preparation-actions";
 
 export const Route = createFileRoute("/dungeons/prepare")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -172,6 +173,7 @@ function PrepareRun() {
                 party={party}
                 maxPartySize={config.maxPartySize}
               />
+              <CreateSharedPreparation dungeonKey={search.key} />
               <button
                 className="expedition-button"
                 disabled={

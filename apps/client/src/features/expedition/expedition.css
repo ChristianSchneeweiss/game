@@ -485,6 +485,19 @@ body:has(.expedition) [data-header-nav] a {
 .expedition .expedition-button {
   width: 100%;
 }
+.expedition-button-secondary {
+  width: 100%;
+  min-height: 46px;
+  padding: 12px 20px;
+  border: 1px solid var(--exp-line);
+  color: var(--exp-gold);
+  background: transparent;
+  font-size: 12px;
+  font-weight: 600;
+}
+.expedition-button-secondary:hover {
+  background: #d6c58c18;
+}
 .expedition-button:hover,
 .expedition a.expedition-button:hover {
   background: #e5d6a7;

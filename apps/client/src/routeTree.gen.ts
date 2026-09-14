@@ -10,6 +10,8 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LootRouteImport } from './routes/loot'
+import { Route as InvitationsRouteImport } from './routes/invitations'
+import { Route as FriendsRouteImport } from './routes/friends'
 import { Route as ConnectRouteImport } from './routes/connect'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SpellsIndexRouteImport } from './routes/spells/index'
@@ -20,11 +22,22 @@ import { Route as DungeonsPrepareRouteImport } from './routes/dungeons/prepare'
 import { Route as DungeonsIdRouteImport } from './routes/dungeons/$id'
 import { Route as CharactersCharacterIdRouteImport } from './routes/characters/$character-id'
 import { Route as BattleIdRouteImport } from './routes/battle/$id'
+import { Route as DungeonsCompanyIdRouteImport } from './routes/dungeons/company.$id'
 import { Route as BattleFinishedIdRouteImport } from './routes/battle/finished.$id'
 
 const LootRoute = LootRouteImport.update({
   id: '/loot',
   path: '/loot',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InvitationsRoute = InvitationsRouteImport.update({
+  id: '/invitations',
+  path: '/invitations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FriendsRoute = FriendsRouteImport.update({
+  id: '/friends',
+  path: '/friends',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ConnectRoute = ConnectRouteImport.update({
@@ -77,6 +90,11 @@ const BattleIdRoute = BattleIdRouteImport.update({
   path: '/battle/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DungeonsCompanyIdRoute = DungeonsCompanyIdRouteImport.update({
+  id: '/dungeons/company/$id',
+  path: '/dungeons/company/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BattleFinishedIdRoute = BattleFinishedIdRouteImport.update({
   id: '/battle/finished/$id',
   path: '/battle/finished/$id',
@@ -86,6 +104,8 @@ const BattleFinishedIdRoute = BattleFinishedIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/connect': typeof ConnectRoute
+  '/friends': typeof FriendsRoute
+  '/invitations': typeof InvitationsRoute
   '/loot': typeof LootRoute
   '/battle/$id': typeof BattleIdRoute
   '/characters/$character-id': typeof CharactersCharacterIdRoute
@@ -96,10 +116,13 @@ export interface FileRoutesByFullPath {
   '/items/': typeof ItemsIndexRoute
   '/spells/': typeof SpellsIndexRoute
   '/battle/finished/$id': typeof BattleFinishedIdRoute
+  '/dungeons/company/$id': typeof DungeonsCompanyIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/connect': typeof ConnectRoute
+  '/friends': typeof FriendsRoute
+  '/invitations': typeof InvitationsRoute
   '/loot': typeof LootRoute
   '/battle/$id': typeof BattleIdRoute
   '/characters/$character-id': typeof CharactersCharacterIdRoute
@@ -110,11 +133,14 @@ export interface FileRoutesByTo {
   '/items': typeof ItemsIndexRoute
   '/spells': typeof SpellsIndexRoute
   '/battle/finished/$id': typeof BattleFinishedIdRoute
+  '/dungeons/company/$id': typeof DungeonsCompanyIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/connect': typeof ConnectRoute
+  '/friends': typeof FriendsRoute
+  '/invitations': typeof InvitationsRoute
   '/loot': typeof LootRoute
   '/battle/$id': typeof BattleIdRoute
   '/characters/$character-id': typeof CharactersCharacterIdRoute
@@ -125,12 +151,15 @@ export interface FileRoutesById {
   '/items/': typeof ItemsIndexRoute
   '/spells/': typeof SpellsIndexRoute
   '/battle/finished/$id': typeof BattleFinishedIdRoute
+  '/dungeons/company/$id': typeof DungeonsCompanyIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/connect'
+    | '/friends'
+    | '/invitations'
     | '/loot'
     | '/battle/$id'
     | '/characters/$character-id'
@@ -141,10 +170,13 @@ export interface FileRouteTypes {
     | '/items/'
     | '/spells/'
     | '/battle/finished/$id'
+    | '/dungeons/company/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/connect'
+    | '/friends'
+    | '/invitations'
     | '/loot'
     | '/battle/$id'
     | '/characters/$character-id'
@@ -155,10 +187,13 @@ export interface FileRouteTypes {
     | '/items'
     | '/spells'
     | '/battle/finished/$id'
+    | '/dungeons/company/$id'
   id:
     | '__root__'
     | '/'
     | '/connect'
+    | '/friends'
+    | '/invitations'
     | '/loot'
     | '/battle/$id'
     | '/characters/$character-id'
@@ -169,11 +204,14 @@ export interface FileRouteTypes {
     | '/items/'
     | '/spells/'
     | '/battle/finished/$id'
+    | '/dungeons/company/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ConnectRoute: typeof ConnectRoute
+  FriendsRoute: typeof FriendsRoute
+  InvitationsRoute: typeof InvitationsRoute
   LootRoute: typeof LootRoute
   BattleIdRoute: typeof BattleIdRoute
   CharactersCharacterIdRoute: typeof CharactersCharacterIdRoute
@@ -184,6 +222,7 @@ export interface RootRouteChildren {
   ItemsIndexRoute: typeof ItemsIndexRoute
   SpellsIndexRoute: typeof SpellsIndexRoute
   BattleFinishedIdRoute: typeof BattleFinishedIdRoute
+  DungeonsCompanyIdRoute: typeof DungeonsCompanyIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -193,6 +232,20 @@ declare module '@tanstack/react-router' {
       path: '/loot'
       fullPath: '/loot'
       preLoaderRoute: typeof LootRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/invitations': {
+      id: '/invitations'
+      path: '/invitations'
+      fullPath: '/invitations'
+      preLoaderRoute: typeof InvitationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/friends': {
+      id: '/friends'
+      path: '/friends'
+      fullPath: '/friends'
+      preLoaderRoute: typeof FriendsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/connect': {
@@ -265,6 +318,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BattleIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dungeons/company/$id': {
+      id: '/dungeons/company/$id'
+      path: '/dungeons/company/$id'
+      fullPath: '/dungeons/company/$id'
+      preLoaderRoute: typeof DungeonsCompanyIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/battle/finished/$id': {
       id: '/battle/finished/$id'
       path: '/battle/finished/$id'
@@ -278,6 +338,8 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ConnectRoute: ConnectRoute,
+  FriendsRoute: FriendsRoute,
+  InvitationsRoute: InvitationsRoute,
   LootRoute: LootRoute,
   BattleIdRoute: BattleIdRoute,
   CharactersCharacterIdRoute: CharactersCharacterIdRoute,
@@ -288,6 +350,7 @@ const rootRouteChildren: RootRouteChildren = {
   ItemsIndexRoute: ItemsIndexRoute,
   SpellsIndexRoute: SpellsIndexRoute,
   BattleFinishedIdRoute: BattleFinishedIdRoute,
+  DungeonsCompanyIdRoute: DungeonsCompanyIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

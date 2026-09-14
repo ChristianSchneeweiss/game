@@ -4,7 +4,7 @@
 declare namespace Cloudflare {
   interface GlobalProps {
     mainModule: typeof import("./src/index");
-    durableNamespaces: "BattleWebsocket" | "BattleChat";
+    durableNamespaces: "BattleWebsocket" | "BattleChat" | "PreparationPresence";
   }
   interface Env {
     GAME: KVNamespace;
@@ -19,6 +19,7 @@ declare namespace Cloudflare {
       import("./src/index").BattleWebsocket
     >;
     BATTLE_CHAT: DurableObjectNamespace<import("./src/index").BattleChat>;
+    PREPARATION_PRESENCE: DurableObjectNamespace<import("./src/index").PreparationPresence>;
     BATTLE_DONE_WORKFLOW: Workflow<
       Parameters<import("./src/index").BattleDoneWorkflow["run"]>[0]["payload"]
     >;

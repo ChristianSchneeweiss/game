@@ -6,6 +6,9 @@ import { runCopy } from "@/features/expedition/run-info";
 import { RunDeparture } from "@/features/expedition/run-departure";
 import { RoutePlanner } from "@/features/expedition/route-planner";
 import { RunRewards } from "@/features/expedition/run-rewards";
+import { SharedRunDeparture } from "@/features/social/shared-run-departure";
+import { finishAccountAction } from "@/features/social/social-queries";
+import { userStore } from "@/utils/user-store";
 
 export const Route = createFileRoute("/dungeons/$id")({
   component: DungeonRun,
@@ -13,6 +16,7 @@ export const Route = createFileRoute("/dungeons/$id")({
 function DungeonRun() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
+  const userId = userStore((state) => state.user?.id);
   const { data: run } = useSuspenseQuery(
     trpc.dungeon.getRun.queryOptions(
       { id },
@@ -28,12 +32,15 @@ function DungeonRun() {
   );
   const fight = useMutation(
     trpc.dungeon.fightDungeon.mutationOptions({
-      onSuccess: async (battleId) => {
-        await queryClient.invalidateQueries({
-          queryKey: trpc.dungeon.getRun.queryKey({ id }),
-        });
-        await navigate({ to: "/battle/$id", params: { id: battleId } });
-      },
+      onSuccess: (battleId) =>
+        finishAccountAction(
+          userId,
+          () =>
+            queryClient.invalidateQueries({
+              queryKey: trpc.dungeon.getRun.queryKey({ id }),
+            }),
+          () => navigate({ to: "/battle/$id", params: { id: battleId } }),
+        ),
       onError: () => {
         void queryClient.invalidateQueries({
           queryKey: trpc.dungeon.getRun.queryKey({ id }),
@@ -97,12 +104,23 @@ function DungeonRun() {
             )}
             <RunRewards rewards={run.loot} />
           </section>
-          <RunDeparture
-            run={run}
-            onFight={() => fight.mutate({ id })}
-            pending={fight.isPending}
-            error={fight.error?.message}
-          />
+          {run.shared ? (
+            <SharedRunDeparture
+              run={run}
+              onFight={() =>
+                fight.mutate({ id, expectedRevision: run.shared?.revision })
+              }
+              pending={fight.isPending}
+              error={fight.error?.message}
+            />
+          ) : (
+            <RunDeparture
+              run={run}
+              onFight={() => fight.mutate({ id })}
+              pending={fight.isPending}
+              error={fight.error?.message}
+            />
+          )}
         </div>
       </div>
     </main>

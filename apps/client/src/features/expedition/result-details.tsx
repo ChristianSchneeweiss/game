@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { PlayAgainTogether } from "@/features/social/play-again-together";
 import {
   prepSearch,
   resultCopy,
@@ -89,6 +90,18 @@ export function ResultNextStep({
         {pending ? "Saving your expedition…" : "Expedition unavailable"}
       </button>
     );
+  if (run.abandonedAt)
+    return (
+      <Link
+        className="expedition-button"
+        to="/dungeons/$id"
+        params={{ id: run.id }}
+      >
+        View ended run & rewards →
+      </Link>
+    );
+  if (run.shared && (run.cleared || !victory))
+    return <PlayAgainTogether run={run} />;
   if (run.cleared || !victory)
     return (
       <Link

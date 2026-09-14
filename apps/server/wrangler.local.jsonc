@@ -12,12 +12,14 @@
   "durable_objects": {
     "bindings": [
       { "name": "BATTLE_WEBSOCKET", "class_name": "BattleWebsocket" },
-      { "name": "BATTLE_CHAT", "class_name": "BattleChat" }
+      { "name": "BATTLE_CHAT", "class_name": "BattleChat" },
+      { "name": "PREPARATION_PRESENCE", "class_name": "PreparationPresence" }
     ]
   },
   "migrations": [
     { "tag": "v1", "new_sqlite_classes": ["BattleWebsocket"] },
-    { "tag": "v2", "new_sqlite_classes": ["BattleChat"] }
+    { "tag": "v2", "new_sqlite_classes": ["BattleChat"] },
+    { "tag": "v3", "new_sqlite_classes": ["PreparationPresence"] }
   ],
   // A local-only placeholder. The starter always passes --local, disabling remote bindings.
   "kv_namespaces": [{ "binding": "GAME", "id": "00000000000000000000000000000000" }]

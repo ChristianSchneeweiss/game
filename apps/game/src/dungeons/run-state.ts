@@ -6,7 +6,8 @@ export type RunPhase =
   | "awaiting-choice"
   | "ready"
   | "complete"
-  | "defeated";
+  | "defeated"
+  | "abandoned";
 
 /** Derived from saved state; there is no second mutable status to reconcile. */
 export function dungeonRunPhase(run: {
@@ -16,7 +17,9 @@ export function dungeonRunPhase(run: {
   totalWaves: number;
   resources: readonly { health: number }[];
   route?: DungeonRoute | null;
+  abandonedAt?: Date | null;
 }): RunPhase {
+  if (run.abandonedAt) return "abandoned";
   if (run.cleared) return "complete";
   if (run.activeBattle) return "fighting";
   if (!run.resources.some((hero) => hero.health > 0)) return "defeated";

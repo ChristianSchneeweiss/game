@@ -68,6 +68,7 @@ export async function readDungeon(
     key: dungeon.key,
     cleared: dungeon.cleared,
     activeBattle: dungeon.activeBattle,
+    abandonedAt: dungeon.abandonedAt,
     route,
   };
 }

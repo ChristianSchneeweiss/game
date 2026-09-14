@@ -22,6 +22,9 @@ import { customAlphabet } from "nanoid";
 import { COL_characterDungeonData } from "./character-dungeon-data";
 
 export type Database = PostgresJsDatabase | PgDatabase<any, any, any>;
+export * from "./shared-preparation-schema";
+
+export * from "./social-schema";
 
 export const id = customAlphabet("1234567890abcdefghijklmnopqrstuvwxyz", 12);
 
@@ -62,6 +65,7 @@ export const TB_character = pgTable("character", {
 
   xp: integer("xp").notNull().default(0),
   level: integer("level").notNull().default(1),
+  buildRevision: integer("build_revision").notNull().default(0),
   statPointsAvailable: integer("stat_points_available").notNull().default(0),
 
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
@@ -109,6 +113,7 @@ export const TB_dungeonData = pgTable("dungeon_data", {
   cleared: boolean("cleared").notNull().default(false),
   activeBattle: boolean("active_battle").notNull().default(false),
   activeBattleId: text("active_battle_id"),
+  abandonedAt: timestamp("abandoned_at", { withTimezone: true }),
   route: json("route").$type<DungeonRoute>(),
   createdBy: text("created_by")
     .notNull()
@@ -152,6 +157,7 @@ export const TB_dungeonBattle = pgTable("dungeon_battle", {
   battleId: text("battle_id").notNull().unique(),
   round: integer("round").notNull(),
   completedAt: timestamp("completed_at", { withTimezone: true }),
+  abandonedAt: timestamp("abandoned_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 

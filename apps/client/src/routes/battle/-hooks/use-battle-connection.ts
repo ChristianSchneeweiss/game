@@ -16,6 +16,7 @@ export function useBattleConnection(id: string) {
   const [participants, setParticipants] = useState<Entity[]>([]);
   const [battleState, setBattleState] = useState<BattleState>();
   const [winner, setWinner] = useState<"TEAM_A" | "TEAM_B">();
+  const [abandoned, setAbandoned] = useState<string>();
   const [error, setError] = useState<string>();
   const [reset, setReset] = useState(0);
   const [synchronized, setSynchronized] = useState(false);
@@ -37,12 +38,12 @@ export function useBattleConnection(id: string) {
   const { sendMessage, readyState } = useWebSocket(
     `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/api/battle/${id}`,
     {
-      shouldReconnect: () => mounted.current,
+      shouldReconnect: () => mounted.current && !finished.current,
       reconnectAttempts: 15,
       reconnectInterval: 2000,
       retryOnError: true,
       onOpen: () => {
-        if (!mounted.current) return;
+        if (!mounted.current || finished.current) return;
         open.current = true;
         needsSnapshot.current = true;
         setSynchronized(false);
@@ -52,7 +53,7 @@ export function useBattleConnection(id: string) {
       onClose: () => {
         open.current = false;
         needsSnapshot.current = true;
-        if (!mounted.current) return;
+        if (!mounted.current || finished.current) return;
         setSynchronized(false);
         events.emit({ type: "reset" });
         setError(
@@ -60,7 +61,7 @@ export function useBattleConnection(id: string) {
         );
       },
       onMessage: (event) => {
-        if (!mounted.current || !open.current) return;
+        if (!mounted.current || !open.current || finished.current) return;
         const response = SuperJSON.parse<ResponseMessage>(event.data);
         switch (response.type) {
           case "entities":
@@ -91,6 +92,13 @@ export function useBattleConnection(id: string) {
             events.emit({ type: "reset" });
             setWinner(response.data.winner);
             break;
+          case "abandoned":
+            finished.current = true;
+            needsSnapshot.current = true;
+            setSynchronized(false);
+            setAbandoned(response.data.dungeonId);
+            events.emit({ type: "reset" });
+            break;
         }
         events.emit(response);
       },
@@ -109,13 +117,15 @@ export function useBattleConnection(id: string) {
     return true;
   };
   const sendRead = (message: string) => {
-    if (mounted.current && open.current) sendMessage(message, false);
+    if (mounted.current && open.current && !finished.current)
+      sendMessage(message, false);
   };
 
   return {
     participants,
     battleState,
     winner,
+    abandoned,
     error,
     reset,
     synchronized,

@@ -32,6 +32,8 @@ try {
     } else {
       await applyMigration(sql, "../manual/20260910_dungeon_attempts.sql");
       await applyMigration(sql, "../manual/20260911_dungeon_routes.sql");
+      await applyMigration(sql, "../manual/20260914_shared_preparation.sql");
+      await applyMigration(sql, "../manual/20260914_social.sql");
     }
     console.log("Release SQL committed with transactional checksum history.");
   }

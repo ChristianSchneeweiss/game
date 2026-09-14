@@ -7,6 +7,8 @@ import type postgres from "postgres";
 import seedrandom from "seedrandom";
 import { rollDungeonRoute } from "../apps/game/src/dungeons/route-catalog";
 import { proveConcurrency } from "./database-concurrency";
+import { proveSocialConcurrency } from "./database-social-concurrency";
+import { proveAbandonmentConcurrency } from "./database-abandonment-concurrency";
 import { applyMigration, schemaShape } from "./database-migrations";
 import { checksum, migrationDirectory, verifyMigrationArtifacts } from "./database-schema";
 import { connection, disposableTarget, verifyConnection } from "./database-target";
@@ -131,6 +133,8 @@ try {
 
   await applyMigration(upgrade.sql, attemptMigration);
   await applyMigration(upgrade.sql, "../manual/20260911_dungeon_routes.sql");
+  await applyMigration(upgrade.sql, "../manual/20260914_shared_preparation.sql");
+  await applyMigration(upgrade.sql, "../manual/20260914_social.sql");
   assert.deepEqual(await schemaShape(upgrade.sql), currentShape);
   const [legacyRun] = await upgrade.sql`SELECT active_battle_id, route, character_data FROM dungeon_data WHERE id = 'legacy-run'`;
   assert.equal(legacyRun!.active_battle_id, null);
@@ -155,8 +159,10 @@ try {
   evidence.backupRestore = { bytes: archive.length, result: "pg_dump custom archive restored with pg_restore; every table row, constraint, column and migration-history row agrees" };
 
   evidence.concurrency = await proveConcurrency(target, fresh.name);
+  evidence.socialConcurrency = await proveSocialConcurrency(target, fresh.name);
+  evidence.abandonmentConcurrency = await proveAbandonmentConcurrency(target, fresh.name);
   evidence.result = "PASS";
-  console.log("PostgreSQL proof passed: fresh install, audited upgrade, four preflights, interrupted transactions, real backup restoration, eight contended use-case scenarios.");
+  console.log("PostgreSQL proof passed: fresh install, audited upgrade, preflights, interrupted transactions, backup restoration, and concurrent run/social operations.");
 } catch (error) {
   evidence.result = "FAIL";
   evidence.error = error instanceof Error ? error.message : String(error);

@@ -21,6 +21,8 @@ import { createSpell } from "../game-usecases/spell-factory";
 import { protectedProcedure, publicProcedure, router } from "../lib/trpc";
 import { characterRouter } from "./character-router";
 import { dungeonRouter } from "./dungeon-router";
+import { socialRouter } from "./social-router";
+import { preparationRouter } from "./shared-preparation-router";
 
 export const appRouter = router({
   healthCheck: publicProcedure.query(() => {
@@ -47,6 +49,8 @@ export const appRouter = router({
 
   character: characterRouter,
   dungeon: dungeonRouter,
+  social: socialRouter,
+  preparation: preparationRouter,
 
   createSpell: protectedProcedure.mutation(async ({ ctx }) => {
     const environment = ctx.cfEnv.DOPPLER_ENVIRONMENT;

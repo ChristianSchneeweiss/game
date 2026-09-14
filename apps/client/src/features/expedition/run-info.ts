@@ -86,15 +86,31 @@ export function groupDrops(items: LootEntity[]) {
   return Array.from(drops.values());
 }
 export function runPhase(run: DungeonRunData) {
-  const phase = dungeonRunPhase({ ...run, totalWaves: run.actualEnemies.length, resources: run.playerTeam });
+  const phase = dungeonRunPhase({
+    ...run,
+    totalWaves: run.actualEnemies.length,
+    resources: run.playerTeam,
+  });
   const presentation = {
-    complete: "cleared", fighting: "battle", defeated: "fallen",
-    "awaiting-choice": "choice", prepared: "ready", ready: "ready",
+    complete: "cleared",
+    fighting: "battle",
+    defeated: "fallen",
+    "awaiting-choice": "choice",
+    prepared: "ready",
+    ready: "ready",
+    abandoned: "abandoned",
   } as const;
   return presentation[phase];
 }
 export function runCopy(run: DungeonRunData) {
   const phase = runPhase(run);
+  if (phase === "abandoned")
+    return {
+      eyebrow: "Expedition abandoned",
+      title: "The company returns.",
+      description:
+        "This run has ended for both players. Earned rewards and recorded battles remain yours to collect and revisit.",
+    };
   if (phase === "cleared")
     return {
       eyebrow: "Expedition complete",

@@ -48,8 +48,34 @@ function LiveBattle({ id }: { id: string }) {
   const connected = session.readyState === ReadyState.OPEN;
   return (
     <div>
-      <BattleRunNav battleId={id} />
-      {!connected && (
+      <BattleRunNav
+        battleId={id}
+        activeOwnerId={
+          session.activeEntity &&
+          "userId" in session.activeEntity &&
+          typeof session.activeEntity.userId === "string"
+            ? session.activeEntity.userId
+            : undefined
+        }
+        activeCharacterName={session.activeEntity?.name}
+      />
+      {session.abandoned ? (
+        <div className="space-y-3 p-5 text-center" role="status">
+          <strong>This expedition has been abandoned.</strong>
+          <p>
+            Combat has ended for both players. Earned rewards and saved battles
+            remain available.
+          </p>
+          <Link
+            className="rpg-badge"
+            to="/dungeons/$id"
+            params={{ id: session.abandoned }}
+          >
+            View run & rewards →
+          </Link>
+        </div>
+      ) : null}
+      {!connected && !session.abandoned && (
         <div className="p-4 text-center" role="status">
           Connecting to the battle… Casting is disabled. Your selection will
           reset on reconnect.

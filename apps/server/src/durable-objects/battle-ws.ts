@@ -7,8 +7,8 @@ import type {
   SpecialAttributes,
 } from "@loot-game/game/entity-types";
 import { DurableObject } from "cloudflare:workers";
-import { drizzle as neonDrizzle } from "drizzle-orm/neon-http";
 import { drizzle as postgresDrizzle } from "drizzle-orm/postgres-js";
+import { eq } from "drizzle-orm";
 import cloneDeep from "lodash/cloneDeep";
 import SuperJSON from "superjson";
 import z from "zod";
@@ -20,8 +20,14 @@ import {
   SocketBudget,
   textWithinBytes,
 } from "../lib/socket-limits";
-import type { Database } from "../db/schema";
+import { TB_dungeonBattle, type Database } from "../db/schema";
 import { SyncFactory } from "../game-usecases/sync-factory";
+import { getDungeonRun } from "../game-usecases/dungeon-run";
+import {
+  abandonDungeon,
+  DungeonEncounterChangedError,
+} from "../game-usecases/dungeon-abandon";
+import { bmStorage } from "../game-usecases/bm-storage";
 
 import {
   messageSchema,
@@ -73,6 +79,11 @@ export class BattleWebsocket extends DurableObject {
   };
   private operation: Promise<unknown> = Promise.resolve();
   private budget = new SocketBudget();
+  private abandonment?: {
+    dungeonId: string;
+    userId: string;
+    completed: boolean;
+  };
 
   constructor(ctx: DurableObjectState, env: Env) {
     super(ctx, env);
@@ -136,6 +147,9 @@ export class BattleWebsocket extends DurableObject {
       completion: this.bm.isGameOver() ? "result" : "none",
       failures: 0,
     };
+    this.abandonment =
+      (await this.ctx.storage.get<typeof this.abandonment>("abandonment")) ??
+      undefined;
     if (needsDelivery(this.delivery))
       await saveDelivery(this.ctx.storage, this.delivery);
   }
@@ -187,6 +201,14 @@ export class BattleWebsocket extends DurableObject {
       } satisfies ResponseMessage),
     );
 
+    if (this.abandonment) {
+      this.send(server, {
+        type: "abandoned",
+        data: { dungeonId: this.abandonment.dungeonId },
+      });
+      return new Response(null, { status: 101, webSocket: client });
+    }
+
     if (this.delivery.completion === "delivered") {
       const winner = this.bm.getWinningTeam();
       server.send(SuperJSON.stringify({ type: "finished", data: { winner } }));
@@ -223,6 +245,7 @@ export class BattleWebsocket extends DurableObject {
       const parsed = messageSchema.parse(SuperJSON.parse(message));
       requestId =
         "requestId" in parsed.data ? parsed.data.requestId : undefined;
+      if (this.abandonment) throw new Error("This dungeon run was abandoned");
       if (parsed.type !== "castSpell") {
         await this.handleRead(parsed, ws);
         return;
@@ -302,7 +325,78 @@ export class BattleWebsocket extends DurableObject {
     return this.exclusive(() => this.resumeDelivery());
   }
 
+  async abandon(dungeonId: string, userId: string) {
+    return this.exclusive(async () => {
+      await getDungeonRun(dungeonId, userId, this.db);
+      const [attempt] = await this.db
+        .select()
+        .from(TB_dungeonBattle)
+        .where(eq(TB_dungeonBattle.battleId, this.battleId));
+      if (!attempt || attempt.dungeonId !== dungeonId)
+        throw new Error("Battle does not belong to this dungeon");
+      if (!this.abandonment) {
+        const intent = { dungeonId, userId, completed: false };
+        // A persisted intent freezes later casts even if the database is down.
+        await this.ctx.storage.setAlarm?.(Date.now() + 1000);
+        await this.ctx.storage.put("abandonment", intent);
+        this.abandonment = intent;
+      }
+      return this.finishAbandonment();
+    });
+  }
+
+  private async finishAbandonment() {
+    const intent = this.abandonment!;
+    if (!intent.completed && this.bm.isGameOver())
+      // A committed final cast earned its outcome even if workflow delivery has
+      // not run. The database primitive settles this saved result exactly once.
+      await bmStorage.save(this.bm, this.db);
+    let result;
+    try {
+      result = await abandonDungeon(intent.dungeonId, intent.userId, this.db, {
+        allowActiveBattle: true,
+        expectedBattleId: this.battleId,
+      });
+    } catch (error) {
+      if (!(error instanceof DungeonEncounterChangedError)) throw error;
+      // Another encounter began before this DO froze its journal. Its own DO
+      // must stop that encounter; this object has no authority over that journal.
+      await this.ctx.storage.put("abandonment", null);
+      this.abandonment = undefined;
+      await saveDelivery(this.ctx.storage, this.delivery);
+      return { retry: true as const };
+    }
+    const delivery: BattleDelivery = {
+      activity: false,
+      completion: "none",
+      failures: 0,
+    };
+    await this.ctx.storage.put({
+      abandonment: { ...intent, completed: true },
+      delivery,
+    });
+    this.abandonment = { ...intent, completed: true };
+    this.delivery = delivery;
+    await this.ctx.storage.deleteAlarm?.();
+    for (const ws of this.ctx.getWebSockets())
+      this.send(ws, {
+        type: "abandoned",
+        data: { dungeonId: intent.dungeonId },
+      });
+    return result;
+  }
+
   private async resumeDelivery() {
+    if (this.abandonment) {
+      if (!this.abandonment.completed) {
+        try {
+          await this.finishAbandonment();
+        } catch {
+          await this.ctx.storage.setAlarm?.(Date.now() + 5000);
+        }
+      }
+      return;
+    }
     if (!needsDelivery(this.delivery)) return;
     try {
       await deliverBattle(
@@ -438,9 +532,7 @@ export class BattleWebsocket extends DurableObject {
   }
 
   private getDb() {
-    return process.env.NODE_ENV === "production"
-      ? neonDrizzle(this.env.DATABASE_URL)
-      : postgresDrizzle(this.env.DATABASE_URL);
+    return postgresDrizzle(this.env.DATABASE_URL);
   }
 
   async webSocketClose(

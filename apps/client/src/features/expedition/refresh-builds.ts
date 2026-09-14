@@ -2,6 +2,7 @@ import { queryClient, trpc } from "@/utils/trpc";
 
 export async function refreshBuilds() {
   await Promise.all([
+    queryClient.invalidateQueries({ queryKey: trpc.preparation.pathKey() }),
     queryClient.invalidateQueries({
       queryKey: trpc.character.getCharacters.queryKey(),
     }),
