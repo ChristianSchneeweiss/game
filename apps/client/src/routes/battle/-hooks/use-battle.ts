@@ -6,6 +6,7 @@ import { useSpellDescription } from "./use-spell-description";
 import { usePlayback } from "../-presentation/use-playback";
 import { useBattleConnection } from "./use-battle-connection";
 import { useBattleCommands } from "./use-battle-commands";
+import { useTacticalCommands } from "./use-tactical-commands";
 
 const EMPTY_EVENTS: BattleState["events"] = [];
 const EMPTY_EFFECTS: EffectTracking = new Map();
@@ -27,12 +28,22 @@ export function useBattle(id: string) {
     !!activeEntity &&
     "userId" in activeEntity &&
     activeEntity.userId === user?.id;
-  const commands = useBattleCommands(
+  const legacyCommands = useBattleCommands(
+    connection,
+    ownsTurn && !battleState?.grid,
+    playback.caughtUp,
+    activeEntity,
+  );
+  const tacticalCommands = useTacticalCommands(
     connection,
     ownsTurn,
     playback.caughtUp,
     activeEntity,
+    playback.stats,
   );
+  const commands = battleState?.grid
+    ? tacticalCommands
+    : { ...legacyCommands, tactical: undefined };
   const attributes = useAttributes(connection.sendRead, connection.events);
   const descriptions = useSpellDescription(
     connection.sendRead,

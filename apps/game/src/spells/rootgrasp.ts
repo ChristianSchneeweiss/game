@@ -31,6 +31,6 @@ export class RootgraspSpell extends DamageEffectSpell {
     const min = this.damageModule.getRawDamage(caster, caster, 0);
     const max = this.damageModule.getRawDamage(caster, caster, 20);
 
-    return `A rootgrasp spell that damages all enemies for ${min}-${max} magical damage. ${this.effectChance * 100}% chance to stun all enemies for 1 turn.`;
+    return `Damage ${this.battleManager?.grid ? "covered" : "all"} enemies for ${min}-${max} magical damage, with a ${this.effectChance * 100}% chance to stun them for 1 turn. Stun prevents acting and moving.`;
   }
 }

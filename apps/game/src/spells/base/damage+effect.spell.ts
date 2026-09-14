@@ -74,10 +74,14 @@ export abstract class DamageEffectSpell extends BaseSpell {
     return battleManager.handler.mergeHandlerReturns(results);
   }
 
+  override estimateDamage(caster: Entity, target: Entity): number {
+    return this.damageModule.estimateDamage(caster, target);
+  }
+
   protected textDescription(caster: Entity): string {
     const min = this.damageModule.getRawDamage(caster, caster, 0);
     const max = this.damageModule.getRawDamage(caster, caster, 20);
 
-    return `A charred chains spell that damages all enemies for ${min}-${max} magical damage. ${this.effectChance * 100}% chance to curse all enemies with 10% increased damage taken.`;
+    return `Damage eligible targets for ${min}-${max} damage with a ${this.effectChance * 100}% chance to apply its status effect.`;
   }
 }

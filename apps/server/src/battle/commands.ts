@@ -9,6 +9,8 @@ import {
   targetSelection,
 } from "@loot-game/game/spells/base/targets";
 import type { BattleMessage } from "./protocol";
+import type { BattleCommand, GridCommand } from "./protocol";
+import { planEnemyTurn } from "@loot-game/game/tactical/ai";
 
 type Cast = Extract<BattleMessage, { type: "castSpell" }>["data"];
 type TargetRequest = Extract<BattleMessage, { type: "getTargets" }>["data"];
@@ -38,6 +40,7 @@ export function availableSpells(bm: BM) {
 }
 
 export function getBattleTargets(bm: BM, data: TargetRequest) {
+  if (bm.grid) throw new Error("Use tactical targeting for this battle.");
   const { entity, spell } = currentSpell(bm, data);
   const { targets, enemies, allies, automatic } = targetSelection(
     entity,
@@ -57,6 +60,7 @@ export function getBattleTargets(bm: BM, data: TargetRequest) {
 
 /** The authenticated WebSocket command boundary. Validation precedes any RNG or mutation. */
 export function castBattleSpell(bm: BM, data: Cast, userId: string) {
+  if (bm.grid) throw new Error("This battle requires a spatial cast.");
   const { entity, spell } = currentSpell(bm, data);
   if (!(entity instanceof Character) || entity.userId !== userId) {
     throw new Error("You can only cast for your own character.");
@@ -80,6 +84,68 @@ export function castBattleSpell(bm: BM, data: Cast, userId: string) {
   advanceBots(bm);
 }
 
+export function battleRevision(bm: BM) {
+  return bm.grid ? bm.revision : bm.events.length;
+}
+
+/** Owner and freshness checks are shared by all grid mutations, before rule evaluation. */
+export function validateGridCommandIdentity(
+  bm: BM,
+  command: GridCommand,
+  userId: string,
+) {
+  const data = command.data;
+  const entity = bm.getEntityById(data.entityId);
+  if (!(entity instanceof Character) || entity.userId !== userId)
+    throw new Error("You can only act for your own character.");
+  if (!bm.grid || bm.isGameOver())
+    throw new Error("This tactical battle is unavailable.");
+  if (data.revision !== bm.revision)
+    throw new Error("The battle changed. Choose your action again.");
+  if (
+    bm.grid.activation?.id !== data.activationId ||
+    bm.grid.activation.entityId !== data.entityId
+  )
+    throw new Error("It is not this character's activation.");
+}
+
+export function applyGridCommand(bm: BM, command: GridCommand, userId: string) {
+  validateGridCommandIdentity(bm, command, userId);
+  const data = command.data;
+  switch (command.type) {
+    case "move":
+      if (!bm.moveEntity(data.entityId, command.data.destination))
+        throw new Error("That destination is unavailable.");
+      return;
+    case "castSpatial":
+      if (
+        bm.safeCastSpatial(
+          data.entityId,
+          command.data.spellId,
+          command.data.selection,
+        ) === null
+      )
+        throw new Error("The spell was rejected.");
+      break;
+    case "endTurn":
+      if (!bm.passTurn(data.entityId))
+        throw new Error("The turn cannot be ended.");
+      break;
+  }
+  bm.postTurn();
+  if (!bm.isGameOver()) bm.preTurn();
+  advanceBots(bm);
+}
+
+export function applyBattleCommand(
+  bm: BM,
+  command: BattleCommand,
+  userId: string,
+) {
+  if (command.type === "castSpell") castBattleSpell(bm, command.data, userId);
+  else applyGridCommand(bm, command, userId);
+}
+
 /** Existing automatic enemy turns, independent of display timing. */
 export function advanceBots(bm: BM) {
   // Opening upkeep belongs to the command driver, just like later decisions.
@@ -88,6 +154,19 @@ export function advanceBots(bm: BM) {
   while (!bm.isGameOver()) {
     const next = bm.getEntityById(bm.getCurrentRound().orderQueue[0]);
     if (!(next instanceof BaseEnemy) || !next.isBot) return;
+    if (bm.grid) {
+      const plan = planEnemyTurn(bm);
+      if (plan.destination && !bm.moveEntity(next.id, plan.destination))
+        throw new Error(`Enemy movement rejected: ${next.name}`);
+      if (plan.spellId && plan.selection) {
+        if (bm.safeCastSpatial(next.id, plan.spellId, plan.selection) === null)
+          throw new Error(`Enemy spatial action rejected: ${next.name}`);
+      } else if (!bm.passTurn(next.id))
+        throw new Error(`Enemy pass rejected: ${next.name}`);
+      bm.postTurn();
+      if (!bm.isGameOver()) bm.preTurn();
+      continue;
+    }
     const action = next.getAction();
     if (
       bm.safeCastSpell(

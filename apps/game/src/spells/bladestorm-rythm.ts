@@ -59,6 +59,10 @@ export class BladestormRhythmSpell extends BaseSpell {
     return battleManager.handler.mergeHandlerReturns(results);
   }
 
+  override estimateDamage(caster: Entity, target: Entity): number {
+    return this.damageModule.estimateDamage(caster, target) * 2;
+  }
+
   protected textDescription(caster: Entity): string {
     const min = this.damageModule.getRawDamage(caster, caster, 0);
     const max = this.damageModule.getRawDamage(caster, caster, 20);

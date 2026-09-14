@@ -4,6 +4,7 @@ import { equipmentBuildPreview } from "@loot-game/game/items/equipment/build-pre
 const stats = [
   ["strength", "Strength"],
   ["intelligence", "Intelligence"],
+  ["movement", "Movement"],
   ["armor", "Armor"],
   ["manaRegen", "Mana / round"],
 ] as const;

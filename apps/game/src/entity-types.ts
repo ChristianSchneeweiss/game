@@ -5,6 +5,7 @@ import type {
   TurnLifecycleHooks,
 } from "./lifecycle-hooks";
 import type { AttributeModifier, DamageType, Effect, Spell } from "./types";
+import type { WeaponAttackProfile } from "./tactical/types";
 
 export type Team = "TEAM_A" | "TEAM_B";
 
@@ -13,6 +14,8 @@ export interface EntityAttributes {
   intelligence: number;
   vitality: number;
   agility: number;
+  /** Old character builds omit Movement and receive the base allowance of 3. */
+  movement?: number;
 }
 
 export interface SpecialAttributes {
@@ -75,6 +78,7 @@ export interface Entity
   passiveSkills: Effect[];
   battleManager: BattleManager;
   isBot: boolean;
+  weaponAttackProfile?: WeaponAttackProfile;
 
   // todo: do i need them?
   applyDamage(amount: number, type: DamageType, source: Entity): void;

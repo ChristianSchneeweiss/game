@@ -1,4 +1,5 @@
 import type { DungeonConfig } from "./types";
+import { ENCOUNTER_LAYOUTS } from "../tactical/encounters";
 
 export const cryptOfForgottenEchoes = () =>
   ({
@@ -12,4 +13,5 @@ export const cryptOfForgottenEchoes = () =>
       ["ghoul-knight-ivern"],
     ],
     maxPartySize: 2,
+    battlefields: ENCOUNTER_LAYOUTS["crypt-of-forgotten-echoes"],
   }) satisfies DungeonConfig;

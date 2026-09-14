@@ -35,6 +35,40 @@ export abstract class DamageModule implements SpellModule {
     };
   }
 
+  /** AI heuristic only: current defenses and proc chances, without invoking reactive hooks or RNG. */
+  public estimateDamage(caster: Entity, target: Entity): number {
+    const resistance = target.getAttribute(
+      this.type === "MAGICAL" ? "magicResistance" : "armor",
+    );
+    const penetration = caster.getAttribute(
+      this.type === "MAGICAL" ? "magicPenetration" : "armorPenetration",
+    );
+    const critChance = Math.max(
+      0,
+      Math.min(1, caster.getAttribute("critChance")),
+    );
+    const evaluate = (roll: number, proc?: DamageProc) => {
+      const damage =
+        this.getRawDamage(caster, target, roll) +
+        (proc?.bonusDamage?.({ caster, target, roll }) ?? 0);
+      const defense =
+        resistance * (1 - Math.max(0, Math.min(1, proc?.ignoreDefense ?? 0))) -
+        penetration;
+      const normal = Math.max(0, damage - defense);
+      const critical = Math.max(
+        0,
+        damage * (1 + caster.getAttribute("critDamage")) - defense,
+      );
+      return normal * (1 - critChance) + critical * critChance;
+    };
+    const minRoll = Math.max(0, Math.min(20, caster.getAttribute("blessed")));
+    const withoutProc = (evaluate(minRoll) + evaluate(20)) / 2;
+    if (!this.proc) return withoutProc;
+    const withProc =
+      (evaluate(minRoll, this.proc) + evaluate(20, this.proc)) / 2;
+    return withoutProc * (1 - this.proc.chance) + withProc * this.proc.chance;
+  }
+
   public applyRawDamage(
     caster: Entity,
     targets: Entity[],

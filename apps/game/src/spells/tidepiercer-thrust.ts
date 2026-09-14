@@ -31,6 +31,6 @@ export class TidepiercerThrustSpell extends DamageSpell {
     const min = this.damageModule.getRawDamage(caster, caster, 0);
     const max = this.damageModule.getRawDamage(caster, caster, 20);
 
-    return `A tidepiercer thrust spell that damages a single enemy for ${min}-${max} damage with a 30% chance to ignore 25% of target's defense.`;
+    return `Damage ${this.battleManager?.grid ? "each enemy in the line" : "a single enemy"} for ${min}-${max} damage. Each target has a 30% chance for the attack to ignore 25% of its defense.`;
   }
 }

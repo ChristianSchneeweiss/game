@@ -94,7 +94,9 @@ export function BattleInspector({
             <span className="battle-eyebrow">Entity dossier</span>
             <h2>{name}</h2>
             <p className="battle-muted">
-              {entity?.team === "TEAM_A" ? "Party member" : "Enemy"}
+              {(stats?.team ?? entity?.team) === "TEAM_A"
+                ? "Party member"
+                : "Enemy"}
               {stats?.flags.dead ? " · Fallen" : ""}
             </p>
             {entity && (
@@ -114,6 +116,17 @@ export function BattleInspector({
                       <small> / {entity.maxMana}</small>
                     </strong>
                   </div>
+                  {session?.tactical && (
+                    <div>
+                      <span>Movement</span>
+                      <strong>
+                        {session.battleState?.actors?.find(
+                          (actor) => actor.id === entity.id,
+                        )?.movement ?? 3}
+                        <small> tiles / activation</small>
+                      </strong>
+                    </div>
+                  )}
                 </div>
                 <h3>
                   Conditions <span>{active.length}</span>

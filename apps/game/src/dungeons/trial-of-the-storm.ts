@@ -1,4 +1,5 @@
 import type { DungeonConfig } from "./types";
+import { ENCOUNTER_LAYOUTS } from "../tactical/encounters";
 
 export const trialOfTheStorm = () =>
   ({
@@ -18,4 +19,5 @@ export const trialOfTheStorm = () =>
       ["thundermaw"],
     ],
     maxPartySize: 2,
+    battlefields: ENCOUNTER_LAYOUTS["trial-of-the-storm"],
   }) satisfies DungeonConfig;

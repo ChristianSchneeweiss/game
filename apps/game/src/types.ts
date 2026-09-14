@@ -10,6 +10,7 @@ import type {
 import { PassiveTypeSchema } from "./passive-skills/base/passive-types";
 import { SpellTypeSchema, type SpellType } from "./spells/base/spell-types";
 import type { SpellCastEvent } from "./timeline-events";
+import type { CastSelection, Targeting } from "./tactical/types";
 
 export type DamageType = "PHYSICAL" | "MAGICAL";
 export type DamageCause = "direct" | "periodic" | "reflection";
@@ -66,6 +67,7 @@ export interface SpellDescription {
   targetType: TargetType;
   cooldown: number;
   manaCost: number;
+  targeting?: Targeting;
 }
 
 export interface Spell
@@ -79,7 +81,13 @@ export interface Spell
   canCast(caster: Entity): boolean;
   getValidTargets(caster: Entity): Entity[];
   cast(caster: Entity, targets: Entity[]): SpellCastEvent[] | null;
+  castSpatial?(
+    caster: Entity,
+    selection: CastSelection,
+  ): SpellCastEvent[] | null;
   description(caster: Entity): SpellDescription;
+  /** Read-only AI heuristic; null identifies a spell without direct damage. */
+  estimateDamage?(caster: Entity, target: Entity): number | null;
 
   /** allows to override the target type for a spell. So we can have dynamic target types based on stuff */
   getTargetType(): TargetType;
@@ -93,6 +101,7 @@ export interface SpellConfig {
   cooldown: number;
   targetType: TargetType;
   tier: Tier;
+  targeting?: Targeting;
 }
 
 export interface Loot {

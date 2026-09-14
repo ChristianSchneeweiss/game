@@ -31,6 +31,6 @@ export class CharredChainsSpell extends DamageEffectSpell {
     const min = this.damageModule.getRawDamage(caster, caster, 0);
     const max = this.damageModule.getRawDamage(caster, caster, 20);
 
-    return `A charred chains spell that damages all enemies for ${min}-${max} magical damage. ${this.effectChance * 100}% chance to curse all enemies with 10% increased damage taken.`;
+    return `Damage ${this.battleManager?.grid ? "covered" : "all"} enemies for ${min}-${max} magical damage, with a ${this.effectChance * 100}% chance to increase their damage taken by 10%.`;
   }
 }

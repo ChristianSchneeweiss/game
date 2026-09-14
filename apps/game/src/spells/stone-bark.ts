@@ -35,6 +35,6 @@ export class StoneBarkSpell extends ApplyStatusSpell {
   }
 
   protected textDescription(caster: Entity): string {
-    return `A stone bark spell that gives a single ally a 25% increased armor for 2 turns.`;
+    return `Increase your armor by 25% for 2 turns.`;
   }
 }

@@ -1,0 +1,278 @@
+.battle-command-panel[data-compact] {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+  padding: 10px;
+  border-top: 0;
+}
+
+.battle-command-panel[data-compact] .battle-command-title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.battle-command-panel[data-compact] .tactical-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px;
+  flex: none;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
+}
+
+.battle-command-panel[data-compact] .tactical-movement {
+  grid-column: 1;
+  align-self: center;
+}
+
+.battle-command-panel[data-compact] .tactical-movement strong {
+  font-size: 15px;
+  line-height: 18px;
+}
+
+.battle-command-panel[data-compact] .tactical-movement > span {
+  display: none;
+}
+
+.battle-command-panel[data-compact] .tactical-directions {
+  display: grid;
+  grid-template-columns: repeat(4, 44px);
+  grid-column: 2;
+  grid-row: 1;
+  gap: 2px;
+  margin: 0;
+}
+
+.battle-command-panel[data-compact] .tactical-action-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-column: 1 / -1;
+  gap: 4px;
+  margin: 0;
+}
+
+.battle-command-panel[data-compact] .tactical-actions button {
+  min-height: 44px;
+  min-width: 0;
+  padding: 4px;
+  font-size: 11px;
+  line-height: 14px;
+}
+
+.battle-command-panel[data-compact] .tactical-directions button {
+  font-size: 10px;
+}
+
+.battle-command-panel[data-compact] .tactical-plan-status {
+  grid-column: 1 / -1;
+  max-height: 32px;
+  min-height: 0;
+  margin: 0;
+  overflow-y: auto;
+  font-size: 11px;
+  line-height: 16px;
+  scrollbar-width: thin;
+}
+
+/* A rejected command replaces routine guidance while its error is displayed. */
+.battle-command-panel[data-compact]:has(.battle-command-error) .tactical-plan-status {
+  display: none;
+}
+
+.battle-command-panel[data-compact] .battle-spell-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: 48px;
+  align-content: start;
+  flex: 1 1 156px;
+  gap: 5px;
+  min-height: 48px;
+  max-height: 156px;
+  overflow-y: auto;
+  padding: 1px;
+  scrollbar-width: thin;
+}
+
+.battle-command-panel[data-compact] .battle-spell-list button {
+  min-height: 48px;
+  gap: 6px;
+  padding: 5px;
+}
+
+.battle-command-panel[data-compact] .battle-spell-list button strong {
+  font-size: 11px;
+  line-height: 13px;
+}
+
+.battle-command-panel[data-compact] .battle-spell-list button small {
+  margin-top: 2px;
+  font-size: 9px;
+  line-height: 11px;
+}
+
+.battle-command-panel[data-compact] .battle-cast-row {
+  display: flex;
+  flex-direction: column;
+  flex: none;
+  gap: 6px;
+  min-height: 0;
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.battle-command-panel[data-compact] .battle-prepared-action {
+  flex: none;
+  min-height: 62px;
+  max-height: 70px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.battle-command-panel[data-compact] .battle-prepared-heading {
+  gap: 6px;
+}
+
+.battle-command-panel[data-compact] .battle-prepared-name {
+  margin-top: 2px;
+}
+
+.battle-command-panel[data-compact] .battle-prepared-name strong {
+  font-size: 15px;
+  line-height: 18px;
+}
+
+.battle-command-panel[data-compact] .battle-prepared-targets {
+  margin: 2px 0;
+  font-size: 11px;
+  line-height: 15px;
+}
+
+.battle-command-panel[data-compact] .battle-prepare-hint {
+  margin: 5px 0 0;
+  padding: 0;
+  font-size: 11px;
+  line-height: 16px;
+}
+
+.battle-command-panel[data-compact] .battle-spell-details > summary {
+  cursor: pointer;
+  color: #c4cbb7;
+  font-size: 10px;
+  line-height: 20px;
+}
+
+.battle-command-panel[data-compact] .battle-spell-details > summary:focus-visible {
+  outline: 2px solid #e6c589;
+  outline-offset: -2px;
+}
+
+.battle-command-panel[data-compact] .battle-prepared-copy {
+  max-height: none;
+  margin-top: 2px;
+  overflow: visible;
+}
+
+.battle-command-panel[data-compact] .battle-commit-buttons {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  flex: none;
+  gap: 6px;
+}
+
+.battle-command-panel[data-compact] .battle-commit-buttons > button {
+  min-height: 44px;
+  min-width: 0;
+  padding: 8px 10px;
+  font-size: 12px;
+}
+
+.battle-command-panel[data-compact] .battle-commit-buttons > .battle-cast-button {
+  gap: 8px;
+  font-size: 13px;
+}
+
+.battle-command-panel[data-compact] .battle-command-error {
+  flex: none;
+  max-height: 32px;
+  margin: 0;
+  overflow-y: auto;
+  font-size: 11px;
+  line-height: 16px;
+}
+
+.battle-command-panel[data-compact] .battle-command-error:focus-visible {
+  outline: 2px solid #e6c589;
+  outline-offset: -2px;
+}
+
+@media (max-width: 700px) {
+  .battle-command-panel[data-compact] {
+    gap: 4px;
+    padding: 6px;
+  }
+
+  .battle-command-panel[data-compact] .tactical-plan-status {
+    max-height: 28px;
+    font-size: 10px;
+    line-height: 14px;
+  }
+
+  .battle-command-panel[data-compact] .battle-spell-list {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: 148px;
+    grid-template-rows: 48px;
+    flex: 0 0 50px;
+    max-height: 50px;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .battle-command-panel[data-compact] .battle-cast-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 136px;
+    align-items: start;
+    gap: 6px;
+    padding-top: 5px;
+  }
+
+  .battle-command-panel[data-compact] .battle-prepared-action {
+    min-height: 54px;
+    max-height: 62px;
+  }
+
+  .battle-command-panel[data-compact] .battle-prepared-heading > .battle-eyebrow {
+    display: none;
+  }
+
+  .battle-command-panel[data-compact] .battle-prepared-name strong {
+    font-size: 13px;
+    line-height: 16px;
+  }
+
+  .battle-command-panel[data-compact] .battle-prepared-targets {
+    font-size: 10px;
+    line-height: 14px;
+  }
+
+  .battle-command-panel[data-compact] .battle-commit-buttons {
+    gap: 4px;
+  }
+
+  .battle-command-panel[data-compact] .battle-commit-buttons > button {
+    padding: 6px;
+    font-size: 11px;
+  }
+}

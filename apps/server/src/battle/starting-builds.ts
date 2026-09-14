@@ -1,4 +1,5 @@
 import { Character } from "@loot-game/game/base-entity";
+import { prepareTacticalEntity } from "@loot-game/game/bm";
 import { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
 import { itemFactory } from "@loot-game/game/items/equipment/item-factory";
 import { passiveSkillFactory } from "@loot-game/game/passive-skills/base/passive-skill.factory";
@@ -7,7 +8,11 @@ import cloneDeep from "lodash/cloneDeep";
 import { createEnemyFromType } from "../game-usecases/enemy-factory";
 
 /** Capture before joining BM: equipment and passives must be applied exactly once. */
-export function captureStartingBuilds(entities: (Character | BaseEnemy)[]) {
+export function captureStartingBuilds(
+  entities: (Character | BaseEnemy)[],
+  tactical = false,
+) {
+  if (tactical) entities.forEach(prepareTacticalEntity);
   return cloneDeep(
     entities.map((entity) => ({
       id: entity.id,
@@ -20,6 +25,7 @@ export function captureStartingBuilds(entities: (Character | BaseEnemy)[]) {
       baseAttributes: entity.baseAttributes,
       baseSpecialAttributes: entity.baseSpecialAttributes,
       baseAffinities: entity.baseAffinities,
+      weaponAttackProfile: entity.weaponAttackProfile,
       character:
         entity instanceof Character
           ? {
@@ -80,6 +86,7 @@ export function restoreStartingBuilds(builds: StartingBuilds) {
       baseAttributes: build.baseAttributes,
       baseSpecialAttributes: build.baseSpecialAttributes,
       baseAffinities: build.baseAffinities,
+      weaponAttackProfile: build.weaponAttackProfile,
     });
     if (entity instanceof BaseEnemy && build.enemy) {
       entity.xp = build.enemy.xp;

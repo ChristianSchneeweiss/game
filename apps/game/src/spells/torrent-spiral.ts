@@ -30,6 +30,6 @@ export class TorrentSpiralSpell extends DamageEffectSpell {
     const min = this.damageModule.getRawDamage(caster, caster, 0);
     const max = this.damageModule.getRawDamage(caster, caster, 20);
 
-    return `A spiraling torrent of water that damages all enemies for ${min}-${max} physical damage. Has a ${this.effectChance * 100}% chance to inflict Soaked (Water vulnerability) for 2 turns.`;
+    return `A spiraling torrent that damages ${this.battleManager?.grid ? "enemies in the eight surrounding tiles" : "all enemies"} for ${min}-${max} physical damage. Has a ${this.effectChance * 100}% chance to apply vulnerability for 2 turns.`;
   }
 }

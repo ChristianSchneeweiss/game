@@ -5,6 +5,7 @@ import type { BaseEnemy } from "../enemies/base/base.enemy";
 import type { EnemyType } from "../enemies/base/enemy-types";
 import type { DungeonKey } from "./dungeon-keys";
 import type { DungeonRoute } from "./route";
+import type { EncounterLayout } from "../tactical/encounters";
 
 export type DungeonRound = {
   battleManager: BM;
@@ -29,6 +30,7 @@ export type DungeonConfig = {
   name: string;
   description: string;
   availableEnemies: AvailableEnemies[];
+  battlefields?: readonly EncounterLayout[];
   maxPartySize: number;
 };
 

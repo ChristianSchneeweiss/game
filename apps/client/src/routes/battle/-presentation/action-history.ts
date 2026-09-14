@@ -39,7 +39,16 @@ export function buildActionHistory(
   for (let index = 1; index < frames.length; index++) {
     const frame = frames[index];
     const cue = frame.cue;
-    if (!cue || cue.kind === "REGEN" || cue.kind === "REDUCE_SPELL_COOLDOWN")
+    if (
+      !cue ||
+      cue.kind === "REGEN" ||
+      cue.kind === "REDUCE_SPELL_COOLDOWN" ||
+      cue.kind === "GRID_START" ||
+      cue.kind === "ACTIVATION_START" ||
+      (cue.kind === "ACTIVATION_END" &&
+        frame.event?.event.eventType === "ACTIVATION_END" &&
+        frame.event.event.data.reason !== "pass")
+    )
       continue;
     const before = frames[index - 1].stats;
     if (
@@ -80,6 +89,14 @@ export function buildActionHistory(
         parts.push("passive active");
       return `${names.get(id) ?? "Unknown entity"}${parts.length ? `: ${parts.join(" · ")}` : ": no health change"}`;
     });
+    if (cue.strikeOrder?.length)
+      results.push(
+        `Strike order: ${cue.strikeOrder.map((id) => names.get(id) ?? "Unknown entity").join(" → ")}`,
+      );
+    if (cue.kind === "MOVE" && cue.path?.length)
+      results.push(
+        `Path: ${cue.path.map((tile) => `${tile.x + 1},${tile.y + 1}`).join(" → ")}`,
+      );
     history.push({
       index,
       round: (frame.event?.round ?? 0) + 1,

@@ -3,6 +3,13 @@ import { ItemTypeSchema } from "@loot-game/game/items/item-types";
 import { PassiveTypeSchema } from "@loot-game/game/passive-skills/base/passive-types";
 import { SpellTypeSchema } from "@loot-game/game/spells/base/spell-types";
 import { LootEntitySchema } from "@loot-game/game/types";
+import {
+  GridSetupSchema,
+  TargetingSchema,
+  WeaponAttackProfileSchema,
+  validateGridSetup,
+  type GridSetup,
+} from "@loot-game/game/tactical/types";
 import SuperJSON, { type SuperJSONResult } from "superjson";
 import z from "zod";
 import type { StartingBuilds } from "./starting-builds";
@@ -12,6 +19,7 @@ const attributes = z.object({
   intelligence: z.number(),
   vitality: z.number(),
   agility: z.number(),
+  movement: z.number().optional(),
 });
 const special = z.object({
   lifesteal: z.number(),
@@ -52,6 +60,7 @@ const buildSchema = z
     baseAttributes: attributes,
     baseSpecialAttributes: special,
     baseAffinities: affinities,
+    weaponAttackProfile: WeaponAttackProfileSchema.optional(),
     character: z
       .object({
         userId: z.string(),
@@ -77,6 +86,7 @@ const buildSchema = z
           cooldown: z.number(),
           targetType: z.object({ enemies: targetCount, allies: targetCount }),
           tier: z.enum(["E", "D", "C", "B", "A", "S"]),
+          targeting: TargetingSchema.optional(),
         }),
         currentCooldown: z.number(),
       }),
@@ -103,31 +113,70 @@ const buildSchema = z
   );
 
 /** Validate saved data before invoking constructors; no current roster or combat hooks. */
-export function decodeStartingBuilds(value: unknown): StartingBuilds {
+export function decodeStartingBuilds(
+  value: unknown,
+  rulesVersion: 1 | 2 = 1,
+): StartingBuilds {
   const parsed = z.array(buildSchema).safeParse(value);
   if (
     !parsed.success ||
     new Set(parsed.data.map((build) => build.id)).size !== parsed.data.length
   )
     throw new Error("Invalid saved battle starting builds");
+  if (
+    rulesVersion === 2 &&
+    parsed.data.some(
+      (build) =>
+        !build.weaponAttackProfile ||
+        build.spells.some(({ config }) => !config.targeting),
+    )
+  )
+    throw new Error(
+      "Invalid saved tactical build: frozen targeting and weapon profiles are required",
+    );
   return parsed.data.map((build) => ({
     ...build,
     character: build.character,
     enemy: build.enemy,
+    weaponAttackProfile: build.weaponAttackProfile,
   }));
 }
 
-/** Additive envelope metadata keeps old SuperJSON readers compatible with the same v1 payload. */
+/** The v2 envelope binds frozen builds to an explicit tactical ruleset and layout. */
 export function serializeStartingBuilds(
   builds: StartingBuilds,
-): SuperJSONResult & { version: 1 } {
-  return { ...SuperJSON.serialize(builds), version: 1 };
+  grid?: GridSetup,
+): SuperJSONResult & { version: 1 | 2; grid?: GridSetup } {
+  if (!grid) return { ...SuperJSON.serialize(builds), version: 1 };
+  const parsed = validateGridSetup(grid, builds);
+  decodeStartingBuilds(builds, 2);
+  return { ...SuperJSON.serialize(builds), version: 2, grid: parsed };
 }
 
 export function deserializeStartingBuilds(
-  value: SuperJSONResult & { version?: number },
+  value: SuperJSONResult & { version?: number; grid?: unknown },
 ): StartingBuilds {
-  if ("version" in value && value.version !== 1)
+  if (
+    ("version" in value && value.version !== 1 && value.version !== 2) ||
+    (value.version === 2 && !value.grid)
+  )
     throw new Error("Unsupported saved battle build version");
-  return decodeStartingBuilds(SuperJSON.deserialize(value));
+  const builds = decodeStartingBuilds(
+    SuperJSON.deserialize(value),
+    value.version === 2 ? 2 : 1,
+  );
+  if (value.version === 2)
+    validateGridSetup(GridSetupSchema.parse(value.grid), builds);
+  else if (value.grid !== undefined)
+    throw new Error("Legacy builds cannot contain a tactical layout");
+  return builds;
+}
+
+/** A v1 snapshot cannot be silently upgraded by today's encounter definitions. */
+export function deserializeStartingGrid(
+  value: SuperJSONResult & { version?: number; grid?: unknown },
+): GridSetup | undefined {
+  const builds = deserializeStartingBuilds(value);
+  if (value.version !== 2) return undefined;
+  return validateGridSetup(GridSetupSchema.parse(value.grid), builds);
 }

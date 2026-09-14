@@ -1,5 +1,16 @@
 import z from "zod";
 
+const tile = z.object({ x: z.number().int(), y: z.number().int() });
+const castSelection = z.discriminatedUnion("aim", [
+  z.object({ aim: z.literal("tile"), tile }),
+  z.object({
+    aim: z.literal("direction"),
+    direction: z.enum(["north", "east", "south", "west"]),
+  }),
+  z.object({ aim: z.literal("caster") }),
+  z.object({ aim: z.literal("global") }),
+]);
+
 const payment = z.object({
   casterId: z.string(),
   manaSpent: z.number().int(),
@@ -35,6 +46,17 @@ const spellCastEvent = z.object({
     damageApplied: z.map(z.string(), z.number().int()).optional(),
     healingApplied: z.map(z.string(), z.number().int()).optional(),
     effectsApplied: z.map(z.string(), z.array(z.string())).optional(),
+    spatial: z
+      .object({
+        casterId: z.string(),
+        activationId: z.string(),
+        selection: castSelection,
+        tiles: z.array(tile),
+        recipientIds: z.array(z.string()),
+        actualRecipientIds: z.array(z.string()),
+      })
+      .optional(),
+    strikeOrder: z.array(z.string()).optional(),
   }),
 });
 
@@ -100,6 +122,57 @@ const allEvents = z.union([
   deathEvent,
   reduceCooldownEvent,
   regenEvent,
+  z.object({
+    eventType: z.literal("GRID_START"),
+    data: z.object({
+      rulesVersion: z.literal(2),
+      battlefield: z.object({
+        width: z.number().int(),
+        height: z.number().int(),
+        blocked: z.array(tile),
+        layoutVersion: z.string(),
+      }),
+      positions: z.record(z.string(), tile),
+    }),
+  }),
+  z.object({
+    eventType: z.literal("MOVE"),
+    data: z.object({
+      entityId: z.string(),
+      activationId: z.string(),
+      from: tile,
+      to: tile,
+      path: z.array(tile),
+      movementSpent: z.number().int(),
+      movementRemaining: z.number().int(),
+      revision: z.number().int(),
+    }),
+  }),
+  z.object({
+    eventType: z.literal("ACTIVATION_START"),
+    data: z.object({
+      id: z.string(),
+      entityId: z.string(),
+      allowance: z.number().int(),
+      spent: z.number().int(),
+    }),
+  }),
+  z.object({
+    eventType: z.literal("ACTIVATION_END"),
+    data: z.object({
+      id: z.string(),
+      entityId: z.string(),
+      reason: z.enum(["cast", "pass", "blocked"]),
+      revision: z.number().int(),
+    }),
+  }),
+  z.object({
+    eventType: z.literal("TEAM_CHANGE"),
+    data: z.object({
+      entityId: z.string(),
+      team: z.enum(["TEAM_A", "TEAM_B"]),
+    }),
+  }),
 ]);
 
 export const timelineEventSchema = z.object({

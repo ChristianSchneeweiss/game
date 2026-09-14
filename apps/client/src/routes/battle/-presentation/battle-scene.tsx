@@ -20,8 +20,14 @@ import { appearanceFor } from "./miniature-appearance";
 import { BattleActor } from "./battle-actor";
 import { BattleLabels } from "./battle-labels";
 import type { ConditionDetail } from "./battle-effects";
+import type { GridState } from "@loot-game/game/tactical/types";
+import type { BattleSession } from "../-hooks/use-battle";
+import { TacticalArena } from "./tactical-arena";
+import { gridCameraZoom, tileToWorld } from "./tactical-presentation";
 
 type Props = {
+  grid?: GridState;
+  tactical?: BattleSession["tactical"];
   participants: Entity[];
   stats: Map<string, Stats>;
   conditions: Map<string, ConditionDetail>;
@@ -113,12 +119,14 @@ function CameraAndMetrics({
   onFailure,
   cueKind,
   participants,
+  grid,
 }: {
   positions: Map<string, [number, number, number]>;
   labels: Map<string, HTMLDivElement>;
   onFailure: () => void;
   cueKind?: string;
   participants: Entity[];
+  grid?: GridState;
 }) {
   const { camera, size, gl } = useThree();
   const times = useRef<number[]>([]);
@@ -143,12 +151,19 @@ function CameraAndMetrics({
   }, [gl, onFailure]);
   useEffect(() => {
     if ("zoom" in camera) {
-      camera.zoom = Math.min(size.width / 24, size.height / 9.3);
-      camera.position.set(1.4, 9.5, 15);
-      camera.lookAt(1.4, 1.65, 0);
+      camera.zoom = grid
+        ? gridCameraZoom(
+            grid.battlefield.width,
+            grid.battlefield.height,
+            size.width,
+            size.height,
+          )
+        : Math.min(size.width / 24, size.height / 9.3);
+      camera.position.set(grid ? 0 : 1.4, grid ? 19 : 9.5, grid ? 18 : 15);
+      camera.lookAt(grid ? 0 : 1.4, grid ? 0 : 1.65, 0);
       camera.updateProjectionMatrix();
     }
-  }, [camera, size]);
+  }, [camera, size, grid?.battlefield.width, grid?.battlefield.height]);
   useFrame((_, delta) => {
     for (const [id, position] of positions) {
       point
@@ -200,9 +215,49 @@ function Diorama({
     definitions.map((definition) => definition.url),
   );
   const positions = useMemo(
-    () => formation(props.participants),
-    [props.participants],
+    () =>
+      props.grid
+        ? new Map(
+            props.participants.map((entity) => [
+              entity.id,
+              tileToWorld(
+                props.grid!.positions[entity.id],
+                props.grid!.battlefield,
+              ),
+            ]),
+          )
+        : formation(props.participants),
+    [props.participants, props.grid],
   );
+  const moveElapsed = useRef(0);
+  useEffect(() => {
+    moveElapsed.current = 0;
+  }, [props.cueKey]);
+  useFrame((_, delta) => {
+    if (
+      !props.grid ||
+      props.cue?.kind !== "MOVE" ||
+      !props.cue.casterId ||
+      !props.cue.path?.length ||
+      props.reducedMotion
+    )
+      return;
+    moveElapsed.current +=
+      (Math.min(delta, 0.1) * props.speed * 1000) / props.durationMs;
+    const route = props.cue.path;
+    const fraction = Math.min(1, moveElapsed.current) * (route.length - 1);
+    const segment = Math.min(route.length - 1, Math.floor(fraction));
+    const start = tileToWorld(route[segment], props.grid.battlefield);
+    const end = tileToWorld(
+      route[Math.min(segment + 1, route.length - 1)],
+      props.grid.battlefield,
+    );
+    const position = positions.get(props.cue.casterId);
+    if (position) {
+      position[0] = start[0] + (end[0] - start[0]) * (fraction - segment);
+      position[2] = start[2] + (end[2] - start[2]) * (fraction - segment);
+    }
+  });
   useEffect(() => {
     const failed = new Set<string>();
     let loading = false;
@@ -236,17 +291,27 @@ function Diorama({
   return (
     <>
       <CameraAndMetrics
+        grid={props.grid}
         positions={positions}
         participants={props.participants}
         labels={labels}
         onFailure={onFailure}
         cueKind={props.speed > 0 ? props.cue?.kind : undefined}
       />
-      <BattleEnvironment
-        encounter={encounterFor(props.participants)}
-        reducedMotion={props.reducedMotion}
-        speed={props.speed}
-      />
+      {props.grid ? (
+        <TacticalArena
+          grid={props.grid}
+          tactical={props.tactical}
+          footprint={props.cue?.tiles}
+          encounter={encounterFor(props.participants).id}
+        />
+      ) : (
+        <BattleEnvironment
+          encounter={encounterFor(props.participants)}
+          reducedMotion={props.reducedMotion}
+          speed={props.speed}
+        />
+      )}
       {props.participants.map((entity) => (
         <BattleActor
           key={entity.id}
@@ -256,6 +321,15 @@ function Diorama({
           selected={props.selected.includes(entity.id)}
           legal={props.legal.includes(entity.id)}
           active={props.activeId === entity.id}
+          // Movement planning picks the ground through the miniature's tall hitbox.
+          onPick={
+            props.tactical &&
+            (!props.tactical.targeting ||
+              (props.tactical.spellGuidance?.castPositions.length ?? 0) > 0) &&
+            props.tactical.reachable.length > 0
+              ? undefined
+              : props.onPick
+          }
           appearance={appearanceFor(entity, props.participants)}
           position={positions.get(entity.id)!}
           asset={assets.get(miniatureFor(entity).url)?.asset}

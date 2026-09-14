@@ -6,11 +6,14 @@ import type {
 } from "../../timeline-events";
 import type { Spell, SpellConfig, TargetType } from "../../types";
 import { completeSelection, legalTargets, targetSelection } from "./targets";
+import { queryCast } from "../../tactical/queries";
+import type { CastSelection } from "../../tactical/types";
 
 export abstract class BaseSpell implements Spell {
   config: SpellConfig;
   currentCooldown: number;
   battleManager: BattleManager;
+  private spatialSelection?: CastSelection;
 
   constructor(config: SpellConfig) {
     this.config = config;
@@ -22,12 +25,25 @@ export abstract class BaseSpell implements Spell {
     return (
       caster.mana >= this.config.manaCost &&
       this.currentCooldown === 0 &&
-      !caster.isDead()
+      !caster.isDead() &&
+      (!this.battleManager?.grid ||
+        !caster.activeEffects.some((effect) => effect.preventsAction))
     );
   }
 
   getValidTargets(caster: Entity): Entity[] {
     if (!this.battleManager) throw new Error("Battle manager not set");
+    if (this.battleManager.grid && this.config.targeting) {
+      const candidates = queryCast(
+        this.battleManager.grid,
+        this.battleManager.entities,
+        caster.id,
+        { aim: "global", recipients: this.config.targeting.recipients },
+        { aim: "global" },
+      );
+      const ids = new Set(candidates.recipientIds);
+      return this.battleManager.entities.filter((target) => ids.has(target.id));
+    }
     return legalTargets(
       caster,
       this.battleManager.entities,
@@ -37,6 +53,8 @@ export abstract class BaseSpell implements Spell {
 
   cast(caster: Entity, targets: Entity[]): SpellCastEvent[] | null {
     if (!this.battleManager) throw new Error("Battle manager not set");
+    // A rules-v2 cast must resolve its own spatial selection, never trust IDs.
+    if (this.battleManager.grid) return null;
     if (!this.canCast(caster)) {
       console.error("cannot cast", this.config.id, this.config.cooldown);
       return null;
@@ -53,6 +71,78 @@ export abstract class BaseSpell implements Spell {
       targets = [caster];
     }
 
+    return this.executeCast(caster, targets);
+  }
+
+  castSpatial(
+    caster: Entity,
+    selection: CastSelection,
+  ): SpellCastEvent[] | null {
+    const grid = this.battleManager?.grid;
+    if (
+      !grid?.activation ||
+      grid.activation.entityId !== caster.id ||
+      this.battleManager.getCurrentRound().orderQueue[0] !== caster.id ||
+      !this.config.targeting ||
+      !this.canCast(caster)
+    )
+      return null;
+    const query = queryCast(
+      grid,
+      this.battleManager.entities,
+      caster.id,
+      this.config.targeting,
+      selection,
+    );
+    if (!query.legal) return null;
+    const targets = query.recipientIds.map(
+      (id) => this.battleManager.getEntityById(id)!,
+    );
+    const activationId = grid.activation.id;
+    let events: SpellCastEvent[];
+    this.spatialSelection = structuredClone(selection);
+    try {
+      events = this.executeCast(caster, targets);
+    } finally {
+      this.spatialSelection = undefined;
+    }
+    return events.map((event) => ({
+      ...event,
+      data: {
+        ...event.data,
+        spatial: {
+          casterId: caster.id,
+          activationId,
+          selection: structuredClone(selection),
+          tiles: query.tiles,
+          recipientIds: query.recipientIds,
+          actualRecipientIds: [
+            ...new Set([
+              ...(event.data.damageApplied?.keys() ?? []),
+              ...(event.data.healingApplied?.keys() ?? []),
+              ...(event.data.effectsApplied?.keys() ?? []),
+            ]),
+          ],
+        },
+      },
+    }));
+  }
+
+  /** Re-query the committed aim after each strike, including deaths and team changes. */
+  protected currentSpatialCandidates(caster: Entity): Entity[] {
+    const grid = this.battleManager.grid;
+    if (!grid || !this.config.targeting || !this.spatialSelection) return [];
+    const { recipientIds } = queryCast(
+      grid,
+      this.battleManager.entities,
+      caster.id,
+      this.config.targeting,
+      this.spatialSelection,
+    );
+    return recipientIds.map((id) => this.battleManager.getEntityById(id)!);
+  }
+
+  private executeCast(caster: Entity, targets: Entity[]): SpellCastEvent[] {
     const roll = this.getRoll(caster);
     this.processCasting(caster);
     const result = this._cast(caster, targets, this.battleManager, roll);
@@ -88,7 +178,12 @@ export abstract class BaseSpell implements Spell {
       targetType: this.getTargetType(),
       cooldown: this.config.cooldown,
       manaCost: this.config.manaCost,
+      ...(this.config.targeting ? { targeting: this.config.targeting } : {}),
     };
+  }
+
+  estimateDamage(_caster: Entity, _target: Entity): number | null {
+    return null;
   }
 
   protected abstract textDescription(caster: Entity): string;

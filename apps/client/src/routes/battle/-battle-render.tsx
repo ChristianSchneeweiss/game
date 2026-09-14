@@ -56,6 +56,7 @@ type Params = {
   validTargets?: string[];
   chosenTargets?: string[];
   setChosenTargets?: (targets: string[]) => void;
+  selectActor?: (entityId: string) => void;
   activeSpell?: string;
   castSpell?: (spellId: string, targetIds: string[]) => void;
   cancelSpell?: () => void;
@@ -100,7 +101,7 @@ function EntityCard({ entity, view }: { entity: Entity; view: Params }) {
     null,
   );
   const user = useUser();
-  const team = entity.team;
+  const team = stats.get(entity.id)?.team ?? entity.team;
   const currentRound = battleState?.round.round ?? 0;
   const activeEntityId = battleState?.round.orderQueue[0];
   const setHoverCharacterOpen = (open: boolean | undefined) => {
@@ -205,6 +206,10 @@ function EntityCard({ entity, view }: { entity: Entity; view: Params }) {
               aria-pressed={isChosenTarget}
               onClick={() => {
                 if (!activeSpell) return;
+                if (view.selectActor) {
+                  view.selectActor(entity.id);
+                  return;
+                }
                 if (isChosenTarget) {
                   setChosenTargets?.(
                     (chosenTargets ?? []).filter(
@@ -370,10 +375,12 @@ function EntityCard({ entity, view }: { entity: Entity; view: Params }) {
 
 export const BattleRender = (view: Params) => {
   const allies = view.participants.filter(
-    (participant) => participant.team === "TEAM_A",
+    (participant) =>
+      (view.stats.get(participant.id)?.team ?? participant.team) === "TEAM_A",
   );
   const enemies = view.participants.filter(
-    (participant) => participant.team === "TEAM_B",
+    (participant) =>
+      (view.stats.get(participant.id)?.team ?? participant.team) === "TEAM_B",
   );
   return (
     <RpgPage>

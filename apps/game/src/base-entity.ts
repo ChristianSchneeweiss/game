@@ -12,6 +12,7 @@ import type {
 import type { PassiveSkill } from "./passive-skills/base/passive-types";
 import type { TimelineEvent } from "./timeline-events";
 import type { AttributeModifier, DamageType, Effect, Spell } from "./types";
+import type { WeaponAttackProfile } from "./tactical/types";
 
 export class BaseEntity implements Entity {
   id: string;
@@ -31,6 +32,7 @@ export class BaseEntity implements Entity {
   equipped: Equipped;
   battleManager: BattleManager;
   isBot = true;
+  weaponAttackProfile?: WeaponAttackProfile;
 
   constructor(
     id: string,
@@ -194,6 +196,8 @@ export class BaseEntity implements Entity {
         return this.baseAttributes.vitality;
       case "agility":
         return this.baseAttributes.agility;
+      case "movement":
+        return this.baseAttributes.movement ?? 3;
 
       // *** calculated attributes ***
       case "lifesteal":

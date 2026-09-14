@@ -59,13 +59,14 @@ export const BattleChatBar = ({
   const unreadCount = messages.length - lastMessageCount;
 
   return (
-    <div className="fixed right-4 bottom-4 z-50">
+    <div data-battle-chat className="fixed right-4 bottom-4 z-50">
       <div className="relative">
         <Button
           onClick={toggleChat}
           variant="outline"
           size="icon"
-          className={`h-14 w-14 rounded-full border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.96),rgba(2,6,23,0.98))] text-white shadow-[0_18px_50px_rgba(0,0,0,0.45)] backdrop-blur-sm transition-all duration-200 hover:scale-105 hover:bg-white/10 ${
+          aria-label={isOpen ? "Close battle chat" : "Open battle chat"}
+          className={`battle-chat-launcher h-14 w-14 rounded-full border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.96),rgba(2,6,23,0.98))] text-white shadow-[0_18px_50px_rgba(0,0,0,0.45)] backdrop-blur-sm transition-all duration-200 hover:scale-105 hover:bg-white/10 ${
             isOpen ? "border-blue-300/18 bg-blue-400/14 hover:bg-blue-400/18" : ""
           }`}
         >

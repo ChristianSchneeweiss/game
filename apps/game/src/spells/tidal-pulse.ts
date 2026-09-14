@@ -46,6 +46,6 @@ export class TidalPulseSpell extends DamageEffectSpell {
     const min = this.damageModule.getRawDamage(caster, caster, 0);
     const max = this.damageModule.getRawDamage(caster, caster, 20);
 
-    return `A magical pulse of tidal energy that damages up to 3 enemies for ${min}-${max} magical damage. Has a ${this.effectChance * 100}% chance to slow affected targets (DEX -2 for 1 turn).`;
+    return `A magical pulse that damages ${this.battleManager?.grid ? "covered" : "all"} enemies for ${min}-${max} magical damage. Has a ${this.effectChance * 100}% chance to reduce Agility by 2 for 1 turn. Movement is unchanged.`;
   }
 }

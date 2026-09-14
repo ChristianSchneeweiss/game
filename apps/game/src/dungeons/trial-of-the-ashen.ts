@@ -1,4 +1,5 @@
 import type { DungeonConfig } from "./types";
+import { ENCOUNTER_LAYOUTS } from "../tactical/encounters";
 
 export const trialOfTheAshen = () =>
   ({
@@ -12,4 +13,5 @@ export const trialOfTheAshen = () =>
       ["emberbound-revenant"],
     ],
     maxPartySize: 2,
+    battlefields: ENCOUNTER_LAYOUTS["trial-of-the-ashen"],
   }) satisfies DungeonConfig;

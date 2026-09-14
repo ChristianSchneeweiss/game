@@ -1,12 +1,17 @@
 import { Character } from "@loot-game/game/base-entity";
 import type { BattleManager } from "@loot-game/game/battle-types";
 import { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
+import type { GridSetup } from "@loot-game/game/tactical/types";
 import { eq } from "drizzle-orm";
 import {
   captureStartingBuilds,
   restoreStartingBuilds,
 } from "../battle/starting-builds";
-import { deserializeStartingBuilds, serializeStartingBuilds } from "../battle/starting-build-codec";
+import {
+  deserializeStartingBuilds,
+  deserializeStartingGrid,
+  serializeStartingBuilds,
+} from "../battle/starting-build-codec";
 import {
   TB_battleParticipants,
   TB_battleStart,
@@ -20,15 +25,28 @@ export class SyncFactory {
   async addBattleManager(bm: BattleManager) {
     const characters = bm.entities.filter((e) => e instanceof Character);
     const enemies = bm.entities.filter((e) => e instanceof BaseEnemy);
-    await this.add(bm.battleId, characters, enemies);
+    const grid = bm.grid
+      ? {
+          rulesVersion: bm.grid.rulesVersion,
+          battlefield: bm.grid.battlefield,
+          positions: bm.grid.positions,
+        }
+      : undefined;
+    await this.add(bm.battleId, characters, enemies, grid);
   }
 
-  async add(battleId: string, characters: Character[], enemies: BaseEnemy[]) {
+  async add(
+    battleId: string,
+    characters: Character[],
+    enemies: BaseEnemy[],
+    grid?: GridSetup,
+  ) {
     await this.db.transaction(async (tx) => {
       await tx.insert(TB_battleStart).values({
         battleId,
         builds: serializeStartingBuilds(
-          captureStartingBuilds([...characters, ...enemies]),
+          captureStartingBuilds([...characters, ...enemies], Boolean(grid)),
+          grid,
         ),
       });
       for (const character of characters) {
@@ -63,6 +81,7 @@ export class SyncFactory {
       return {
         characters: entities.filter((entity) => entity instanceof Character),
         enemies: entities.filter((entity) => entity instanceof BaseEnemy),
+        grid: deserializeStartingGrid(snapshot.builds),
       };
     }
     // Legacy battles created before snapshots were stored retain their existing
@@ -91,6 +110,7 @@ export class SyncFactory {
     return {
       characters,
       enemies,
+      grid: undefined,
     };
   }
 

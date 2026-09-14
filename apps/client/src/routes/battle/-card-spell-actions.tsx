@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Entity } from "@loot-game/game/entity-types";
 import type { SpellDescription } from "@loot-game/game/types";
+import { describeTargeting } from "@loot-game/game/tactical/queries";
 import { CircleQuestionMarkIcon, Sparkles, Zap } from "lucide-react";
 import { SkillIcon } from "@/components/skill-icon";
 import {
@@ -147,16 +148,22 @@ export function CardSpellActions({
                                 {desc.cooldown} CD
                               </span>
                             )}
-                            {desc?.targetType && (
+                            {(desc.targeting || desc.targetType) && (
                               <span className="inline-flex items-center gap-1 rounded-full border border-[#8a7753]/28 bg-[#261f18]/90 px-3 py-1 text-sm font-medium text-[#ddcfad]">
                                 <span className="text-xs">🎯</span>
-                                {desc.targetType.enemies > 0 &&
-                                  `Enemies: ${desc.targetType.enemies}`}
-                                {desc.targetType.allies > 0 &&
-                                  `Allies: ${desc.targetType.allies}`}
-                                {desc.targetType.enemies === 0 &&
-                                  desc.targetType.allies === 0 &&
-                                  "Self"}
+                                {desc.targeting ? (
+                                  describeTargeting(desc.targeting)
+                                ) : (
+                                  <>
+                                    {desc.targetType.enemies > 0 &&
+                                      `Enemies: ${desc.targetType.enemies}`}
+                                    {desc.targetType.allies > 0 &&
+                                      `Allies: ${desc.targetType.allies}`}
+                                    {desc.targetType.enemies === 0 &&
+                                      desc.targetType.allies === 0 &&
+                                      "Self"}
+                                  </>
+                                )}
                               </span>
                             )}
                           </div>

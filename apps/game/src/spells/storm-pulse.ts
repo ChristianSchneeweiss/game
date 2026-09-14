@@ -41,7 +41,7 @@ export class StormPulseSpell extends BaseSpell {
     if (!this.battleManager) throw new Error("Battle manager not set");
 
     const randomTargets = uniqueRandomFromArray(
-      livingEnemies(caster),
+      battleManager.grid ? targets : livingEnemies(caster),
       3,
       this.battleManager.getPRNG(),
     );
@@ -57,9 +57,17 @@ export class StormPulseSpell extends BaseSpell {
     return damage;
   }
 
+  override estimateDamage(caster: Entity, target: Entity): number {
+    const candidates = this.getValidTargets(caster).length;
+    return (
+      this.damageModule.estimateDamage(caster, target) *
+      Math.min(1, 3 / Math.max(1, candidates))
+    );
+  }
+
   protected textDescription(caster: Entity): string {
     const { min, max } = this.damageModule.getDamageRange(caster);
 
-    return `A storm pulse that damages up to 3 random enemies for ${min}-${max} damage.`;
+    return `A storm pulse that damages up to 3 distinct random enemies for ${min}-${max} physical damage.`;
   }
 }

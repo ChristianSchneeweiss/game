@@ -8,7 +8,38 @@ import type {
 } from "@loot-game/game/entity-types";
 import type { TimelineEventFull } from "@loot-game/game/timeline-events";
 import type { SpellDescription } from "@loot-game/game/types";
+import {
+  CastSelectionSchema,
+  TileSchema,
+  type GridState,
+} from "@loot-game/game/tactical/types";
 import z from "zod";
+
+export const castSelectionSchema = CastSelectionSchema;
+const gridCommandIdentity = {
+  entityId: z.string().min(1),
+  activationId: z.string().min(1),
+  revision: z.number().int().nonnegative(),
+  requestId: z.string().min(1).max(128),
+};
+const moveSchema = z.object({
+  type: z.literal("move"),
+  data: z.object({ ...gridCommandIdentity, destination: TileSchema }).strict(),
+});
+const endTurnSchema = z.object({
+  type: z.literal("endTurn"),
+  data: z.object(gridCommandIdentity).strict(),
+});
+const castSpatialSchema = z.object({
+  type: z.literal("castSpatial"),
+  data: z
+    .object({
+      ...gridCommandIdentity,
+      spellId: z.string().min(1),
+      selection: castSelectionSchema,
+    })
+    .strict(),
+});
 
 const castSpellSchema = z.object({
   type: z.literal("castSpell"),
@@ -46,6 +77,9 @@ const getSpellDescriptionSchema = z.object({
 });
 
 export const messageSchema = z.union([
+  moveSchema,
+  endTurnSchema,
+  castSpatialSchema,
   castSpellSchema,
   getTargetsSchema,
   getCharacterAttributesSchema,
@@ -53,6 +87,19 @@ export const messageSchema = z.union([
 ]);
 
 export type BattleMessage = z.infer<typeof messageSchema>;
+export type GridCommand = Extract<
+  BattleMessage,
+  { type: "move" | "endTurn" | "castSpatial" }
+>;
+export type BattleCommand =
+  | Extract<BattleMessage, { type: "castSpell" }>
+  | GridCommand;
+
+export function isBattleCommand(
+  message: BattleMessage,
+): message is BattleCommand {
+  return ["castSpell", "move", "endTurn", "castSpatial"].includes(message.type);
+}
 
 export type BattleState = {
   events: TimelineEventFull[];
@@ -60,6 +107,13 @@ export type BattleState = {
   effectTracking: EffectTracking;
   revision: number;
   availableSpells: string[];
+  grid?: GridState;
+  actors?: Array<{
+    id: string;
+    team: "TEAM_A" | "TEAM_B";
+    health: number;
+    movement: number;
+  }>;
 };
 
 export type ResponseMessage =

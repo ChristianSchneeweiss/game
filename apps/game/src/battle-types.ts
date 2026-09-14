@@ -8,6 +8,7 @@ import type {
   TimelineEventFull,
 } from "./timeline-events";
 import type { DamageOptions, DamageType, Effect, Spell } from "./types";
+import type { GridState } from "./tactical/types";
 
 export interface BattleManager {
   battleId: string;
@@ -17,6 +18,7 @@ export interface BattleManager {
   handler: BattleHandler;
   lifeCycleHooks: RoundLifecycleHooks[];
   events: TimelineEventFull[];
+  grid?: GridState;
 
   getRNG(): number;
   getPRNG(): seedrandom.PRNG;

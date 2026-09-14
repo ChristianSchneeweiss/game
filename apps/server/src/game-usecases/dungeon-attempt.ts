@@ -1,12 +1,14 @@
 import { dungeonRunPhase } from "@loot-game/game/dungeons/run-state";
 import { readDungeonRoute } from "@loot-game/game/dungeons/route-state";
+import { createEncounterGrid } from "@loot-game/game/tactical/encounters";
 import { TRPCError } from "@trpc/server";
-import { eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import {
   id,
   TB_dungeonBattle,
   TB_dungeonData,
   TB_character,
+  TB_battleStart,
   type Database,
 } from "../db/schema";
 import { getDungeonParty, requireDungeonParty } from "./dungeon-access";
@@ -17,6 +19,7 @@ import { lockCharacters } from "./character-locks";
 import { TB_preparation } from "../db/shared-preparation-schema";
 import { connectedPreparationUsers } from "./shared-preparation-presence";
 import { requirePreparationRevision } from "./shared-preparation-membership";
+import { deserializeStartingGrid } from "../battle/starting-build-codec";
 
 /** Run -> preparation -> character locks, then atomic attempt/snapshot writes. */
 export async function beginDungeonAttempt(
@@ -148,7 +151,34 @@ export async function beginDungeonAttempt(
     await tx
       .insert(TB_dungeonBattle)
       .values({ dungeonId, battleId, round: record.round });
-    await new SyncFactory(tx).add(battleId, dungeon.playerTeam, enemies);
+    // Retrying a wave uses its first captured layout even if authoring changed.
+    const [prior] = await tx
+      .select({ builds: TB_battleStart.builds })
+      .from(TB_dungeonBattle)
+      .innerJoin(
+        TB_battleStart,
+        eq(TB_battleStart.battleId, TB_dungeonBattle.battleId),
+      )
+      .where(
+        and(
+          eq(TB_dungeonBattle.dungeonId, dungeonId),
+          eq(TB_dungeonBattle.round, record.round),
+        ),
+      )
+      .orderBy(desc(TB_dungeonBattle.createdAt), desc(TB_dungeonBattle.id))
+      .limit(1);
+    const layout = dungeonManager.getDungeonConfig(record.key).battlefields?.[
+      record.round
+    ];
+    const frozenGrid = prior
+      ? deserializeStartingGrid(prior.builds)
+      : undefined;
+    if (!frozenGrid && !layout)
+      throw new Error("Dungeon encounter layout is missing");
+    const grid =
+      frozenGrid ??
+      createEncounterGrid(layout!, [...dungeon.playerTeam, ...enemies]);
+    await new SyncFactory(tx).add(battleId, dungeon.playerTeam, enemies, grid);
     return battleId;
   });
 }

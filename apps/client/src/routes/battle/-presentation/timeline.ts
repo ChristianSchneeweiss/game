@@ -4,8 +4,10 @@ import type { EffectTracking } from "@loot-game/game/bm";
 import type { TimelineEventFull } from "@loot-game/game/timeline-events";
 import SuperJSON from "superjson";
 import type { SpellType } from "@loot-game/game/spells/base/spell-types";
+import type { GridState, Tile } from "@loot-game/game/tactical/types";
 
 export type Stats = {
+  team?: Entity["team"];
   health: number;
   mana: number;
   deltaHealth: number;
@@ -16,6 +18,9 @@ export type Stats = {
   flags: { casting: boolean; isCrit: boolean; dead: boolean };
 };
 export type VisualCue = {
+  path?: Tile[];
+  tiles?: Tile[];
+  strikeOrder?: string[];
   kind: TimelineEventFull["event"]["eventType"];
   casterId?: string;
   targetIds: string[];
@@ -48,6 +53,7 @@ const meleeSpells = new Set([
 ]);
 export type DisplayFrame = {
   stats: Map<string, Stats>;
+  grid?: GridState;
   cue?: VisualCue;
   event?: TimelineEventFull;
 };
@@ -77,6 +83,7 @@ export function buildTimeline(
         entity.id,
         {
           health,
+          team: entity.team,
           mana: start?.mana ?? entity.mana,
           deltaHealth: 0,
           deltaMana: 0,
@@ -89,7 +96,14 @@ export function buildTimeline(
       ] as const;
     }),
   );
-  const frames: DisplayFrame[] = [{ stats }];
+  const setup = events.find(
+    (full) => full.event.eventType === "GRID_START",
+  )?.event;
+  let grid: GridState | undefined =
+    setup?.eventType === "GRID_START"
+      ? { ...setup.data, activation: null }
+      : undefined;
+  const frames: DisplayFrame[] = [{ stats, grid }];
   for (const full of events) {
     stats = new Map(
       [...stats].map(([id, s]) => [
@@ -112,15 +126,55 @@ export function buildTimeline(
       label: "Battle update",
       style: "update",
     };
-    if (
+    if (event.eventType === "GRID_START") {
+      grid = { ...event.data, activation: null };
+      cue.label = "Battlefield prepared";
+    } else if (event.eventType === "ACTIVATION_START") {
+      if (grid) grid = { ...grid, activation: { ...event.data } };
+      cue.casterId = event.data.entityId;
+      cue.label = "Turn begins";
+    } else if (event.eventType === "ACTIVATION_END") {
+      if (grid) grid = { ...grid, activation: null };
+      cue.casterId = event.data.entityId;
+      cue.label = event.data.reason === "pass" ? "End turn" : "Turn ends";
+    } else if (event.eventType === "TEAM_CHANGE") {
+      const actor = stats.get(event.data.entityId);
+      if (actor) actor.team = event.data.team;
+      cue.label = "Allegiance changes";
+      cue.targetIds = [event.data.entityId];
+    } else if (event.eventType === "MOVE") {
+      if (grid)
+        grid = {
+          ...grid,
+          positions: {
+            ...grid.positions,
+            [event.data.entityId]: event.data.to,
+          },
+          activation: grid.activation
+            ? {
+                ...grid.activation,
+                spent: grid.activation.allowance - event.data.movementRemaining,
+              }
+            : null,
+        };
+      cue.casterId = event.data.entityId;
+      cue.path = [event.data.from, ...event.data.path];
+      cue.label = `Move ${event.data.movementSpent} steps`;
+    } else if (
       event.eventType === "SPELL_CAST" ||
       event.eventType === "EFFECT_TRIGGER"
     ) {
       if (event.eventType === "SPELL_CAST") {
         const data = event.data;
+        cue.tiles = data.spatial?.tiles;
+        cue.strikeOrder = data.strikeOrder;
+        if (data.spatial)
+          cue.targetIds.push(...data.spatial.actualRecipientIds);
         const owner = owners.get(data.spellId);
         cue.casterId =
-          owner?.entity.id ?? participantsById.get(data.spellId)?.id;
+          data.spatial?.casterId ??
+          owner?.entity.id ??
+          participantsById.get(data.spellId)?.id;
         cue.label = owner?.spell.config.name ?? "Effect applied";
         cue.skillType = owner?.spell.config.type;
         cue.major =
@@ -271,7 +325,7 @@ export function buildTimeline(
       cue.targetIds.length > 1
     )
       cue.major = true;
-    frames.push({ stats, cue, event: full });
+    frames.push({ stats, grid, cue, event: full });
   }
   return frames;
 }

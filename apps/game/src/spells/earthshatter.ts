@@ -62,6 +62,6 @@ export class EarthshatterSpell extends DamageEffectSpell {
     // const vitality = caster.getAttribute("vitality");
     // const bonusStunChance = Math.floor(vitality / 20) * 5;
 
-    return `"The ground itself answers my call." Devastating AoE attack that damages all enemies for ${min}-${max} damage. Each enemy has a ${Math.round(stunChance * 100)}% chance to be stunned for 1 turn. If at least 2 enemies are stunned, gain +20 Armor and Magic Resistance until end of battle.`;
+    return `Damage all enemies for ${min}-${max} damage. One cast-level roll has a ${Math.round(stunChance * 100)}% chance to attempt a 1-turn stun on each enemy. If at least 2 stuns apply, gain +20 Armor and Magic Resistance until the end of battle.`;
   }
 }

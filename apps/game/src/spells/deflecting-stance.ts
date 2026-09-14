@@ -25,7 +25,7 @@ export class DeflectingStanceSpell extends ApplyStatusSpell {
   protected textDescription(caster: Entity): string {
     const reflectionPercentage = this.scaling(caster);
 
-    return `"Strike me if you dare – your own blow shall be your undoing." For 1 round, reduces incoming damage by 50% and reflects ${reflectionPercentage * 100}% back to the attacker. Does not stack with Thorn Carapace (chooses stronger effect).`;
+    return `Protect one ally, including yourself, for 1 round: reduce incoming damage by 50% and reflect ${reflectionPercentage * 100}% back to the attacker. Does not stack with Thorn Carapace (chooses the stronger effect).`;
   }
 
   /**

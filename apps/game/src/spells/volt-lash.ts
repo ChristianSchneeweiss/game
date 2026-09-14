@@ -44,13 +44,17 @@ export class VoltLashSpell extends BaseSpell {
     if (!this.battleManager) throw new Error("Battle manager not set");
 
     const events: HandlerReturn[] = [];
+    const strikeOrder: string[] = [];
 
     for (let i = 0; i < 4; i++) {
       const randomEnemy = randomInArray(
-        livingEnemies(caster),
+        battleManager.grid
+          ? this.currentSpatialCandidates(caster)
+          : livingEnemies(caster),
         this.battleManager.getPRNG(),
       );
       if (!randomEnemy) break;
+      strikeOrder.push(randomEnemy.id);
       const damage = this.damageModule.applyRawDamage(
         caster,
         [randomEnemy],
@@ -73,13 +77,23 @@ export class VoltLashSpell extends BaseSpell {
       }
     }
 
-    return battleManager.handler.mergeHandlerReturns(events);
+    return {
+      ...battleManager.handler.mergeHandlerReturns(events),
+      ...(battleManager.grid ? { strikeOrder } : {}),
+    };
+  }
+
+  override estimateDamage(caster: Entity, target: Entity): number {
+    return (
+      (this.damageModule.estimateDamage(caster, target) * 4) /
+      Math.max(1, this.getValidTargets(caster).length)
+    );
   }
 
   protected textDescription(caster: Entity): string {
     const min = this.damageModule.getRawDamage(caster, caster, 0);
     const max = this.damageModule.getRawDamage(caster, caster, 20);
 
-    return `Chains lightning between up to 4 enemies, dealing ${min}-${max} magical damage to each. Each bounce has a 30% chance to stun the target.`;
+    return `Strike a random living enemy up to 4 times for ${min}-${max} magical damage per strike. The same enemy may be hit repeatedly. Each strike has a 30% chance to stun the target.`;
   }
 }

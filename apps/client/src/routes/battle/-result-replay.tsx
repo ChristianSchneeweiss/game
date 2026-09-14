@@ -4,6 +4,7 @@ import { BattleRender } from "./-battle-render";
 import { useStatsTimeline } from "./-hooks/use-stats-timeline";
 import { PresentationBoundary } from "./-presentation-boundary";
 import RecordedBattle from "./-presentation/recorded-battle";
+import { TacticalBoard } from "./-presentation/tactical-board";
 
 type ReplayData = Pick<
   BattleResultData,
@@ -59,6 +60,13 @@ function CardReplay({
           onChange={(event) => setStep(Number(event.target.value))}
         />
       </label>
+      {statsTimeline[step]?.grid && (
+        <TacticalBoard
+          grid={statsTimeline[step].grid!}
+          participants={data.participants}
+          stats={statsTimeline[step].stats}
+        />
+      )}
       <BattleRender
         participants={data.participants}
         stats={statsTimeline[step]?.stats}

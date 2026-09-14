@@ -18,6 +18,38 @@ import type {
   EffectType,
   Spell,
 } from "./types";
+import { SPELL_TARGETING, WEAPON_PROFILES } from "./tactical/catalogue";
+import { queryCast, reachableTiles } from "./tactical/queries";
+import type {
+  CastSelection,
+  GridSetup,
+  GridState,
+  Tile,
+} from "./tactical/types";
+import {
+  TargetingSchema,
+  WeaponAttackProfileSchema,
+  validateGridSetup,
+} from "./tactical/types";
+
+/** Capture authoring defaults before joining, without applying equipment twice. */
+export function prepareTacticalEntity(entity: Entity): void {
+  const weapon = entity.equipped.WEAPON?.itemType;
+  entity.weaponAttackProfile = WeaponAttackProfileSchema.parse(
+    entity.weaponAttackProfile ??
+      (weapon === "iron-sword" || weapon === "oakwarden-staff"
+        ? WEAPON_PROFILES[weapon]
+        : WEAPON_PROFILES[entity.isBot ? "enemy-default" : "unarmed"]),
+  );
+  for (const spell of entity.spells) {
+    spell.config.targeting = TargetingSchema.parse(
+      spell.config.targeting ??
+        (spell.config.type === "basic-attack"
+          ? entity.weaponAttackProfile.targeting
+          : SPELL_TARGETING[spell.config.type]),
+    );
+  }
+}
 
 export type EffectTracking = Map<
   string,
@@ -46,12 +78,19 @@ export class BM implements BattleManager, RoundLifecycleHooks {
   rng: seedrandom.StatefulPRNG<seedrandom.State.Arc4>;
   effectTracking: EffectTracking = new Map();
   spellCastBuffer: TimelineEvent[] = [];
+  grid?: GridState;
+  revision = 0;
+  private activationSequence = 0;
   private effectSequence = 0;
   private finishedActorId?: string;
   private preparedActorId?: string;
   private pendingImpacts: BattleImpact[] = [];
 
-  constructor(entities: Entity[], battleId: string = nanoid(20)) {
+  constructor(
+    entities: Entity[],
+    battleId: string = nanoid(20),
+    setup?: GridSetup,
+  ) {
     this.battleId = battleId;
     this.rng = seedrandom(this.battleId, { state: true });
     this.deadEntities = new Map();
@@ -59,7 +98,10 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     this.handler = new Handler(this);
     this.lifeCycleHooks = [];
     this.entities = [];
+    if (setup)
+      this.grid = { ...validateGridSetup(setup, entities), activation: null };
     for (const entity of entities) {
+      if (setup) prepareTacticalEntity(entity);
       this.join(entity);
     }
   }
@@ -132,6 +174,10 @@ export class BM implements BattleManager, RoundLifecycleHooks {
   start() {
     if (this.rounds.length > 0) return;
     this.startEntityData = _.cloneDeep(this.entities);
+    if (this.grid) {
+      const { activation, ...setup } = this.grid;
+      this.processEvent({ eventType: "GRID_START", data: _.cloneDeep(setup) });
+    }
     this.onPreRound();
   }
 
@@ -309,6 +355,7 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     spellId: string,
     targetIds: string[],
   ): SpellCastEvent[] | null {
+    if (this.grid) return null;
     const currentRound = this.getCurrentRound();
     if (currentRound.orderQueue[0] !== entityId) {
       console.error(
@@ -336,6 +383,111 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     return events;
   }
 
+  private activeEntity(entityId: string): Entity | undefined {
+    if (
+      !this.grid?.activation ||
+      this.grid.activation.entityId !== entityId ||
+      this.getCurrentRound().orderQueue[0] !== entityId ||
+      this.isGameOver()
+    )
+      return;
+    const entity = this.getEntityById(entityId);
+    if (
+      !entity ||
+      entity.isDead() ||
+      entity.activeEffects.some((effect) => effect.preventsAction)
+    )
+      return;
+    return entity;
+  }
+
+  moveEntity(entityId: string, destination: Tile): boolean {
+    if (!this.activeEntity(entityId) || !this.grid?.activation) return false;
+    const grid = this.grid;
+    const activation = grid.activation!;
+    const move = reachableTiles(
+      grid,
+      this.entities,
+      entityId,
+      activation.allowance - activation.spent,
+    ).find(({ tile }) => tile.x === destination.x && tile.y === destination.y);
+    if (!move || move.path.length === 0) return false;
+    const from = { ...grid.positions[entityId]! };
+    grid.positions[entityId] = { ...move.tile };
+    activation.spent += move.path.length;
+    this.revision++;
+    this.processEvent({
+      eventType: "MOVE",
+      data: {
+        entityId,
+        activationId: activation.id,
+        from,
+        to: { ...move.tile },
+        path: _.cloneDeep(move.path),
+        movementSpent: activation.spent,
+        movementRemaining: activation.allowance - activation.spent,
+        revision: this.revision,
+      },
+    });
+    return true;
+  }
+
+  safeCastSpatial(
+    entityId: string,
+    spellId: string,
+    selection: CastSelection,
+  ): SpellCastEvent[] | null {
+    const caster = this.activeEntity(entityId);
+    if (!caster || !this.grid) return null;
+    const spell = caster.spells.find((spell) => spell.config.id === spellId);
+    if (
+      !spell?.castSpatial ||
+      !spell.config.targeting ||
+      !spell.canCast(caster)
+    )
+      return null;
+    if (
+      !queryCast(
+        this.grid,
+        this.entities,
+        entityId,
+        spell.config.targeting,
+        selection,
+      ).legal
+    )
+      return null;
+    const events = spell.castSpatial(caster, selection);
+    if (!events) return null;
+    this.finishedActorId = entityId;
+    events.forEach((event) => this.processEvent(event));
+    this.endActivation("cast");
+    return events;
+  }
+
+  /** Validate a voluntary pass; lifecycle progression remains caller controlled. */
+  passTurn(entityId: string): boolean {
+    if (!this.activeEntity(entityId)) return false;
+    this.finishedActorId = entityId;
+    this.endActivation("pass");
+    return true;
+  }
+
+  private endActivation(reason: "cast" | "pass" | "blocked"): void {
+    const activation = this.grid?.activation;
+    if (!activation || !this.grid) return;
+    this.grid.activation = null;
+    if (reason !== "blocked") this.revision++;
+    this.processEvent({
+      eventType: "ACTIVATION_END",
+      data: {
+        id: activation.id,
+        entityId: activation.entityId,
+        reason,
+        revision: this.revision,
+      },
+    });
+  }
+
   preTurn() {
     while (!this.isGameOver()) {
       const currentEntityId = this.getCurrentRound().orderQueue[0];
@@ -359,9 +511,27 @@ export class BM implements BattleManager, RoundLifecycleHooks {
       entity.onUpkeep?.()?.forEach((event) => this.processEvent(event));
       if (
         !entity.isDead() &&
-        this.getCurrentRound().orderQueue[0] === currentEntityId
-      )
+        this.getCurrentRound().orderQueue[0] === currentEntityId &&
+        (!this.grid ||
+          !entity.activeEffects.some((effect) => effect.preventsAction))
+      ) {
+        if (this.grid) {
+          const movement = entity.getAttribute("movement");
+          this.grid.activation = {
+            id: `${this.battleId}:activation:${this.activationSequence++}`,
+            entityId: entity.id,
+            allowance: Number.isFinite(movement)
+              ? Math.max(0, Math.floor(movement))
+              : 0,
+            spent: 0,
+          };
+          this.processEvent({
+            eventType: "ACTIVATION_START",
+            data: { ...this.grid.activation },
+          });
+        }
         return;
+      }
     }
   }
 
@@ -369,6 +539,8 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     currentEntityId = this.finishedActorId ??
       this.getCurrentRound().orderQueue[0],
   ) {
+    if (this.grid?.activation?.entityId === currentEntityId)
+      this.endActivation("blocked");
     this.finishedActorId = undefined;
     this.preparedActorId = undefined;
     if (!currentEntityId) {

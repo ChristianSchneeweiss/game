@@ -1,4 +1,5 @@
 import type { DungeonConfig } from "./types";
+import { ENCOUNTER_LAYOUTS } from "../tactical/encounters";
 
 export const trialOfTheNature = () =>
   ({
@@ -13,4 +14,5 @@ export const trialOfTheNature = () =>
       ["hollowed-oakwarden"],
     ],
     maxPartySize: 2,
+    battlefields: ENCOUNTER_LAYOUTS["trial-of-the-nature"],
   }) satisfies DungeonConfig;

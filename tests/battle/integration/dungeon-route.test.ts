@@ -11,11 +11,7 @@ import {
   rollDungeonRoute,
   routeEncounterCatalog,
 } from "../../../apps/game/src/dungeons/route-catalog";
-import {
-  advanceBots,
-  castBattleSpell,
-  getBattleTargets,
-} from "../../../apps/server/src/battle/commands";
+import { playTacticalTurn } from "../support/tactical-turn";
 import {
   TB_character,
   TB_dungeonBattle,
@@ -296,25 +292,14 @@ describe("persisted path decisions", () => {
 async function winBattle(runId: string) {
   const battleId = await caller().fightDungeon({ id: runId });
   const snapshot = await new SyncFactory(data.db).get(battleId);
-  const bm = new BM([...snapshot.characters, ...snapshot.enemies], battleId);
+  const bm = new BM(
+    [...snapshot.characters, ...snapshot.enemies],
+    battleId,
+    snapshot.grid,
+  );
   bm.start();
   for (let turn = 0; !bm.isGameOver() && turn < 200; turn++) {
-    const hero = bm.getEntityById(bm.getCurrentRound().orderQueue[0]!)!;
-    const spell =
-      hero.spells.find(
-        (spell) =>
-          spell.config.type === "bladestorm-rhythm" && spell.canCast(hero),
-      ) ?? hero.spells.find((spell) => spell.config.type === "basic-attack")!;
-    const command = { entityId: hero.id, spellId: spell.config.id };
-    const targets = getBattleTargets(bm, command);
-    castBattleSpell(
-      bm,
-      {
-        ...command,
-        targetIds: targets.automatic ? targets.targets : [targets.targets[0]!],
-      },
-      owner,
-    );
+    playTacticalTurn(bm, owner);
   }
   expect(bm.getWinningTeam()).toBe("TEAM_A");
   await bmStorage.save(bm, data.db);
@@ -441,9 +426,14 @@ test("losing an elite encounter does not grant its victory bonus", async () => {
   await caller().choosePath(choice);
   const battleId = await caller().fightDungeon({ id: choice.id });
   const snapshot = await new SyncFactory(data.db).get(battleId);
-  const bm = new BM([...snapshot.characters, ...snapshot.enemies], battleId);
+  const bm = new BM(
+    [...snapshot.characters, ...snapshot.enemies],
+    battleId,
+    snapshot.grid,
+  );
   bm.start();
-  advanceBots(bm);
+  for (let turn = 0; !bm.isGameOver() && turn < 30; turn++)
+    playTacticalTurn(bm, owner, true);
   expect(bm.getWinningTeam()).toBe("TEAM_B");
   await bmStorage.save(bm, data.db);
   const result = await bmStorage.get(battleId, data.db);

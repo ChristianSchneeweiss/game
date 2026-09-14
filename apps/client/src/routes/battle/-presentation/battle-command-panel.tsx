@@ -1,17 +1,21 @@
 import type { BattleSession } from "../-hooks/use-battle";
 import type { Stats } from "./timeline";
 import { SkillIcon } from "../../../components/skill-icon";
+import { TacticalActions } from "./tactical-board";
+import "./battle-command-dock.css";
 
 export function BattleCommandPanel({
   session,
   stats,
   status,
   targetNames,
+  compact = false,
 }: {
   session: BattleSession;
   stats: Map<string, Stats>;
   status: string;
   targetNames: string;
+  compact?: boolean;
 }) {
   const actor = session.activeEntity;
   const spells = actor?.spells ?? [];
@@ -22,7 +26,8 @@ export function BattleCommandPanel({
     selected && session.spellDescription.get(selected.config.id);
   const mana = actor ? (stats.get(actor.id)?.mana ?? actor.mana) : 0;
   return (
-    <div className="battle-command-panel">
+    <div className="battle-command-panel" data-compact={compact || undefined}>
+      {session.tactical && <TacticalActions session={session} />}
       <div className="battle-command-title">
         <span className="battle-eyebrow">
           {actor?.name ?? "Waiting for battle"}
@@ -35,8 +40,9 @@ export function BattleCommandPanel({
             ? (stats.get(actor.id)?.cooldowns.get(spell.config.id) ?? 0)
             : 0;
           const randomTarget =
-            spell.config.type === "storm-pulse" ||
-            spell.config.type === "volt-lash";
+            !session.tactical &&
+            (spell.config.type === "storm-pulse" ||
+              spell.config.type === "volt-lash");
           const unavailable =
             randomTarget ||
             !session.battleState?.availableSpells.includes(spell.config.id);
@@ -48,7 +54,7 @@ export function BattleCommandPanel({
               onFocus={() => session.getSpellDescription(spell.config.id)}
               onClick={() => session.getTargets(spell.config.id)}
             >
-              <SkillIcon type={spell.config.type} size={40} eager />
+              <SkillIcon type={spell.config.type} size={compact ? 32 : 40} eager />
               <span className="battle-spell-text">
                 <strong>{spell.config.name}</strong>
                 <small>
@@ -76,30 +82,51 @@ export function BattleCommandPanel({
             <>
               <div className="battle-prepared-name">
                 <strong>{selected.config.name}</strong>
-                <span>
-                  {selected.config.manaCost} mana · {selected.config.cooldown}
-                  -turn cooldown
-                </span>
+                {!compact && (
+                  <span>
+                    {selected.config.manaCost} mana · {selected.config.cooldown}
+                    -turn cooldown
+                  </span>
+                )}
               </div>
               <p className="battle-prepared-targets">
-                <span>Target</span>{" "}
+                <span>
+                  {selected.config.type === "storm-pulse" ||
+                  selected.config.type === "volt-lash"
+                    ? "Possible recipients"
+                    : "Target"}
+                </span>{" "}
                 {targetNames ||
                   (session.validTargets
                     ? "Choose a legal target"
                     : "Requesting legal targets…")}
               </p>
-              <div
-                className="battle-prepared-copy"
-                role="region"
-                aria-label="Prepared spell description"
-                tabIndex={0}
-              >
-                {description?.text ?? "Loading spell details…"}
-              </div>
+              {compact ? (
+                <details className="battle-spell-details" key={selected.config.id}>
+                  <summary>
+                    Spell details · {selected.config.manaCost} mana ·{" "}
+                    {selected.config.cooldown}-turn cooldown
+                  </summary>
+                  <div className="battle-prepared-copy">
+                    {description?.text ?? "Loading spell details…"}
+                  </div>
+                </details>
+              ) : (
+                <div
+                  className="battle-prepared-copy"
+                  role="region"
+                  aria-label="Prepared spell description"
+                  tabIndex={0}
+                >
+                  {description?.text ?? "Loading spell details…"}
+                </div>
+              )}
             </>
           ) : (
             <p className="battle-prepare-hint">
-              Choose a skill, review its effect and targets, then Cast.
+              {compact
+                ? "Choose a spell to see its reach on the battlefield."
+                : "Choose a skill, review its effect and targets, then Cast."}
             </p>
           )}
         </div>
@@ -121,7 +148,11 @@ export function BattleCommandPanel({
         </div>
       </div>
       {session.error && (
-        <p role="alert" className="battle-command-error">
+        <p
+          role="alert"
+          className="battle-command-error"
+          tabIndex={compact ? 0 : undefined}
+        >
           {session.error}
         </p>
       )}

@@ -1,4 +1,5 @@
 import type { DungeonConfig } from "./types";
+import { ENCOUNTER_LAYOUTS } from "../tactical/encounters";
 
 export const dungeon1 = () =>
   ({
@@ -13,4 +14,5 @@ export const dungeon1 = () =>
       ["ashen-skeleton", "goblin"],
     ],
     maxPartySize: 2,
+    battlefields: ENCOUNTER_LAYOUTS.dungeon1,
   }) satisfies DungeonConfig;

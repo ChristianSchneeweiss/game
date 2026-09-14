@@ -154,7 +154,7 @@ export const CharacterCard = ({
   );
 
   const xpNeeded = xpNeededForLevelUp(character.level);
-  const [statToAdd, setStatToAdd] = useState<(keyof EntityAttributes)[]>([]);
+  const [statToAdd, setStatToAdd] = useState<(typeof coreAttributes)[number][]>([]);
   const remainingPoints = character.statPointsAvailable - statToAdd.length;
   const showStats = tab === "stats";
   const showSpells = tab === "spells";
@@ -224,6 +224,11 @@ export const CharacterCard = ({
               title="Core attributes"
             />
             <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div className="rpg-parchment p-4">
+                <p className="text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-[#ac9f85]">Movement</p>
+                <p className="mt-1 text-2xl font-semibold text-[#f1e8d4]">{character.getAttribute("movement")}</p>
+                <p className="text-xs text-[#ac9f85]">Tiles per activation · modified by equipment and effects</p>
+              </div>
               {coreAttributes.map((attr) => {
                 const queuedPoints = statToAdd.filter((entry) => entry === attr).length;
 

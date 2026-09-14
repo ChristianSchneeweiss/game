@@ -33,6 +33,6 @@ export class FinalVerdictSpell extends DamageSpell {
 
   protected textDescription(caster: Entity): string {
     const scaling = caster.getAttribute("strength") * 0.8;
-    return `Deals ${18 + scaling}-${24 + scaling} physical damage. Executes targets at or below ${this.executionThreshold * 100}% health.`;
+    return `Deal ${18 + scaling}-${24 + scaling} physical damage. Against a target at or below ${this.executionThreshold * 100}% health, replace Strength scaling with its maximum health before defenses and other damage effects.`;
   }
 }

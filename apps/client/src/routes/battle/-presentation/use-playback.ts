@@ -116,6 +116,7 @@ export function usePlayback(
     frames,
     conditions,
     stats: frames[cursor + (position.impact && next ? 1 : 0)].stats,
+    grid: frames[cursor + (position.impact && next ? 1 : 0)].grid,
     shownCursor: cursor + (position.impact && next ? 1 : 0),
     cursor,
     caughtUp: cursor === events.length,

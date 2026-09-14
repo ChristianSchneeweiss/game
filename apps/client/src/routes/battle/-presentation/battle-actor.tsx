@@ -23,7 +23,7 @@ type ActorProps = {
   speed: number;
   durationMs: number;
   reducedMotion: boolean;
-  onPick: (id: string) => void;
+  onPick?: (id: string) => void;
 };
 
 export function BattleActor({
@@ -37,6 +37,7 @@ export function BattleActor({
   legal: isLegal,
   ...props
 }: ActorProps) {
+  const placement = useRef<Group>(null);
   const root = useRef<Group>(null);
   const definition = miniatureFor(entity);
   const dead = stats?.flags.dead;
@@ -63,7 +64,7 @@ export function BattleActor({
       ? "#f2d393"
       : legal
         ? "#b3d7cf"
-        : entity.team === "TEAM_A"
+        : (stats?.team ?? entity.team) === "TEAM_A"
           ? "#719ec0"
           : "#c68873";
   const elapsed = useRef(0);
@@ -71,6 +72,7 @@ export function BattleActor({
     elapsed.current = 0;
   }, [props.cueKey]);
   useFrame((_, delta) => {
+    if (placement.current) placement.current.position.set(...position);
     elapsed.current +=
       Math.min(delta, 0.1) * props.speed * (1000 / props.durationMs);
     if (!root.current) return;
@@ -81,7 +83,7 @@ export function BattleActor({
         : 0;
   });
   return (
-    <group position={position}>
+    <group ref={placement} position={position}>
       <mesh position={[0, 0.1, 0]} receiveShadow>
         <cylinderGeometry args={[0.8, 0.9, 0.14, 32]} />
         <meshStandardMaterial color="#222a29" roughness={0.9} />
@@ -160,10 +162,14 @@ export function BattleActor({
       {/* One stable generous proxy; scenery and model details do not compete for input. */}
       <mesh
         position={[0, 1.3, 0]}
-        onClick={(event) => {
-          event.stopPropagation();
-          props.onPick(entity.id);
-        }}
+        onClick={
+          props.onPick
+            ? (event) => {
+                event.stopPropagation();
+                props.onPick?.(entity.id);
+              }
+            : undefined
+        }
       >
         <boxGeometry args={[1.7, 2.8, 1.7]} />
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />

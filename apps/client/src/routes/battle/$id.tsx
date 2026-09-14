@@ -8,6 +8,9 @@ import { useBattle } from "./-hooks/use-battle";
 import { useChat as useBattleChat } from "./-hooks/use-battle-chat";
 import { PresentationBoundary } from "./-presentation-boundary";
 import { BattleRunNav } from "@/features/expedition/battle-run-nav";
+import { TacticalBoard } from "./-presentation/tactical-board";
+import { BattleCommandPanel } from "./-presentation/battle-command-panel";
+import "./-presentation/battle-view.css";
 
 const BattleView3D = lazy(() => import("./-presentation/battle-view-3d"));
 export const Route = createFileRoute("/battle/$id")({
@@ -47,7 +50,7 @@ function LiveBattle({ id }: { id: string }) {
   }, [session.winner, session.playback.caughtUp, session.playback.skip]);
   const connected = session.readyState === ReadyState.OPEN;
   return (
-    <div>
+    <div data-live-battle>
       <BattleRunNav
         battleId={id}
         activeOwnerId={
@@ -143,44 +146,82 @@ function LiveBattle({ id }: { id: string }) {
         </PresentationBoundary>
       ) : (
         <>
-          <div
-            className="flex flex-wrap items-center justify-center gap-3 p-4"
-            aria-label="Prepared action"
-          >
-            <span>
-              {session.activeEntity?.spells.find(
-                (s) => s.config.id === session.activeSpell,
-              )?.config.name ?? "Choose a spell"}{" "}
-              →{" "}
-              {session.chosenTargets
-                .map(
-                  (id) => session.participants.find((p) => p.id === id)?.name,
-                )
-                .join(", ") || "Choose targets"}
-            </span>
-            <button
-              className="rpg-badge"
-              disabled={!session.activeSpell || session.pending}
-              onClick={session.cancelSpell}
+          {session.tactical && (
+            <div className="battle-3d" aria-label="Tactical Cards controls">
+              {session.playback.grid && (
+                <TacticalBoard
+                  grid={session.playback.grid}
+                  participants={session.participants}
+                  stats={session.playback.stats}
+                  session={session}
+                />
+              )}
+              <BattleCommandPanel
+                session={session}
+                stats={session.playback.stats}
+                status={
+                  session.canChoose
+                    ? "Your turn · prepare an action"
+                    : session.pending
+                      ? "Awaiting the server…"
+                      : "Waiting for the active owner"
+                }
+                targetNames={session.chosenTargets
+                  .map(
+                    (id) =>
+                      session.participants.find((actor) => actor.id === id)
+                        ?.name,
+                  )
+                  .join(", ")}
+              />
+              <button
+                onClick={session.playback.skip}
+                disabled={session.playback.caughtUp}
+              >
+                Skip visuals
+              </button>
+            </div>
+          )}
+          {!session.tactical && (
+            <div
+              className="flex flex-wrap items-center justify-center gap-3 p-4"
+              aria-label="Prepared action"
             >
-              Cancel
-            </button>
-            <button
-              className="rpg-badge"
-              disabled={!session.canCast}
-              onClick={session.castSpell}
-            >
-              {session.pending ? "Casting…" : "Cast"}
-            </button>
-            <button
-              className="rpg-badge"
-              disabled={session.playback.caughtUp}
-              onClick={session.playback.skip}
-            >
-              Skip visuals
-            </button>
-            {session.error && <span role="alert">{session.error}</span>}
-          </div>
+              <span>
+                {session.activeEntity?.spells.find(
+                  (s) => s.config.id === session.activeSpell,
+                )?.config.name ?? "Choose a spell"}{" "}
+                →{" "}
+                {session.chosenTargets
+                  .map(
+                    (id) => session.participants.find((p) => p.id === id)?.name,
+                  )
+                  .join(", ") || "Choose targets"}
+              </span>
+              <button
+                className="rpg-badge"
+                disabled={!session.activeSpell || session.pending}
+                onClick={session.cancelSpell}
+              >
+                Cancel
+              </button>
+              <button
+                className="rpg-badge"
+                disabled={!session.canCast}
+                onClick={session.castSpell}
+              >
+                {session.pending ? "Casting…" : "Cast"}
+              </button>
+              <button
+                className="rpg-badge"
+                disabled={session.playback.caughtUp}
+                onClick={session.playback.skip}
+              >
+                Skip visuals
+              </button>
+              {session.error && <span role="alert">{session.error}</span>}
+            </div>
+          )}
           <BattleRender
             participants={session.participants}
             stats={session.playback.stats}
@@ -197,6 +238,7 @@ function LiveBattle({ id }: { id: string }) {
             isLive={session.canChoose}
             chosenTargets={session.chosenTargets}
             setChosenTargets={session.setChosenTargets}
+            selectActor={session.tactical?.selectActor}
             characterAttributes={session.characterAttributes}
             getCharacterAttributes={session.getCharacterAttributes}
             resetCharacterAttributes={session.resetCharacterAttributes}

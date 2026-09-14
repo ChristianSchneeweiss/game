@@ -30,7 +30,7 @@ export function BattleLabels(props: LabelProps) {
               ? "◆ Acting"
               : props.legal.includes(entity.id)
                 ? "◇ Legal target"
-                : entity.team === "TEAM_A"
+                : (stats?.team ?? entity.team) === "TEAM_A"
                   ? "I Party"
                   : "II Enemy";
         return (

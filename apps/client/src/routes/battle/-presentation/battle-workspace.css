@@ -1,0 +1,235 @@
+/* Live combat uses the space left by navigation; only secondary panels scroll. */
+body:has(.battle-live-workspace) [data-game-shell] {
+  height: 100dvh;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+body:has(.battle-live-workspace) [data-game-header] {
+  flex: none;
+}
+body:has(.battle-live-workspace) [data-game-content],
+[data-live-battle]:has(.battle-live-workspace) {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+[data-live-battle]:has(.battle-live-workspace) > :not(.battle-live-workspace) {
+  flex-shrink: 0;
+}
+[data-live-battle]:has(.battle-live-workspace) {
+  position: relative;
+}
+[data-live-battle]:has(.battle-live-workspace) [data-battle-chat] {
+  position: absolute;
+  right: 370px;
+  bottom: 14px;
+}
+[data-live-battle]:has(.battle-live-workspace) .battle-chat-launcher {
+  width: 32px;
+  height: 32px;
+}
+.battle-live-workspace {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 16px 12px;
+}
+.battle-live-workspace .battle-stage-heading {
+  flex: none;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.battle-live-workspace .battle-stage-heading h1 {
+  font-size: 23px;
+  margin-top: 3px;
+  gap: 10px;
+}
+.battle-live-workspace .battle-visual-controls {
+  gap: 8px;
+}
+.battle-live-workspace .battle-turn-order {
+  flex: none;
+  flex-wrap: nowrap;
+  min-height: 32px;
+  padding-bottom: 8px;
+}
+.battle-live-workspace .battle-composition {
+  flex: 1;
+  min-height: 0;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  grid-template-rows: minmax(0, 1fr);
+}
+.battle-live-workspace .battle-field-column {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.battle-live-workspace .battle-viewport {
+  flex: 1;
+  min-height: 0;
+  height: auto;
+}
+.battle-live-workspace .battle-spell-legend-slot {
+  flex: 0 0 40px;
+  height: 40px;
+  overflow: auto;
+  scrollbar-width: thin;
+}
+.battle-live-workspace .battle-spell-legend-slot > .tactical-spell-guidance {
+  gap: 5px 14px;
+  padding: 3px 10px;
+  font-size: 10px;
+}
+.battle-live-workspace .battle-entity-controls {
+  flex: none;
+  display: flex;
+  overflow-x: auto;
+  padding: 4px 6px;
+  gap: 4px;
+}
+.battle-live-workspace .battle-entity-controls > div {
+  flex: 1 0 96px;
+  max-width: 180px;
+  display: flex;
+  align-items: stretch;
+}
+.battle-live-workspace .battle-inspect-button {
+  min-height: 40px;
+}
+.battle-live-workspace .battle-inspect-button strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.battle-live-workspace
+  .battle-entity-controls
+  button:not(.battle-inspect-button) {
+  width: 46px;
+  flex: none;
+  font-size: 9px;
+}
+.battle-live-workspace .tactical-accessible-controls {
+  flex: none;
+  padding: 0 10px;
+}
+.battle-live-workspace .tactical-accessible-controls > summary {
+  padding: 6px 0;
+  min-height: 28px;
+  font-size: 10px;
+}
+.battle-live-workspace .tactical-accessible-controls > .tactical-board-panel {
+  position: absolute;
+  z-index: 5;
+  inset: 0 0 28px;
+  margin: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+.battle-inspector-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: #050c09b8;
+}
+.battle-inspector-dialog {
+  position: fixed;
+  z-index: 101;
+  inset: 50% auto auto 50%;
+  transform: translate(-50%, -50%);
+  width: min(420px, calc(100vw - 24px));
+  height: min(740px, calc(100dvh - 32px));
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--gold);
+  box-shadow: 0 18px 80px #0009;
+}
+.battle-inspector-dialog-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  gap: 12px;
+}
+.battle-inspector-dialog-heading h2 {
+  font-size: 18px;
+  margin: 0;
+}
+.battle-inspector-dialog > .battle-inspector {
+  flex: 1;
+  max-height: none;
+  border-left: 0;
+}
+@media (max-width: 1050px) {
+  [data-live-battle]:has(.battle-live-workspace) [data-battle-chat] {
+    right: 350px;
+  }
+  .battle-live-workspace .battle-composition {
+    grid-template-columns: minmax(0, 1fr) 320px;
+  }
+  .battle-live-workspace .battle-stage-heading {
+    flex-direction: row;
+    align-items: center;
+  }
+  .battle-live-workspace .battle-stage-heading h1 span,
+  .battle-live-workspace .battle-stage-heading .battle-eyebrow {
+    display: none;
+  }
+  .battle-live-workspace .battle-stage-heading h1 {
+    font-size: 20px;
+  }
+}
+@media (max-width: 700px) {
+  [data-live-battle]:has(.battle-live-workspace) [data-battle-chat] {
+    right: 14px;
+    bottom: 294px;
+  }
+  .battle-live-workspace {
+    padding: 6px;
+  }
+  .battle-live-workspace .battle-stage-heading {
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .battle-live-workspace .battle-stage-heading h1 {
+    font-size: 18px;
+  }
+  .battle-live-workspace .battle-visual-controls {
+    font-size: 10px;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .battle-live-workspace .battle-visual-controls button,
+  .battle-live-workspace .battle-visual-controls select {
+    padding: 6px 8px;
+  }
+  .battle-live-workspace .battle-composition {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(150px, 1fr) 280px;
+  }
+  .battle-live-workspace .battle-scene-caption {
+    top: 8px;
+    left: 10px;
+    right: 10px;
+    font-size: 7px;
+  }
+  .battle-live-workspace .battle-event-caption {
+    bottom: 4px;
+    font-size: 10px;
+  }
+  .battle-live-workspace .battle-event-caption span {
+    padding: 2px 5px;
+  }
+  .battle-live-workspace .battle-entity-controls > div {
+    flex-basis: 104px;
+  }
+  .battle-live-workspace .battle-spell-legend-slot > .tactical-spell-guidance {
+    font-size: 9px;
+    gap: 3px 8px;
+    padding: 3px 6px;
+  }
+}

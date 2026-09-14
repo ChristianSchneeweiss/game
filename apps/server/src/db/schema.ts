@@ -5,6 +5,7 @@ import type { Team } from "@loot-game/game/entity-types";
 import type { ItemType } from "@loot-game/game/items/item-types";
 import type { PassiveType } from "@loot-game/game/passive-skills/base/passive-types";
 import type { SpellType } from "@loot-game/game/spells/base/spell-types";
+import type { GridSetup } from "@loot-game/game/tactical/types";
 import type { LootEntity } from "@loot-game/game/types";
 import {
   boolean,
@@ -165,7 +166,9 @@ export const TB_dungeonBattle = pgTable("dungeon_battle", {
 // loadout are captured together, before any battle hooks run.
 export const TB_battleStart = pgTable("battle_start", {
   battleId: text("battle_id").primaryKey(),
-  builds: json("builds").$type<SuperJSONResult & { version?: number }>().notNull(),
+  builds: json("builds")
+    .$type<SuperJSONResult & { version?: number; grid?: GridSetup }>()
+    .notNull(),
 });
 
 export const TB_battleParticipants = pgTable("battle_participants", {

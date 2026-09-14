@@ -59,10 +59,14 @@ export class ArcaneChannelingSpell extends BaseSpell {
     });
   }
 
+  override estimateDamage(caster: Entity, target: Entity): number {
+    return this.damageModule.estimateDamage(caster, target);
+  }
+
   protected textDescription(caster: Entity): string {
     const intScaling = this.intScaling(caster);
 
-    return `"The air crackles, time itself seems to freeze… until the discharge comes." Channel for 2 rounds, unable to act. Afterward, unleashes a powerful AoE attack dealing ${Math.round(intScaling * 100)}% INT damage to all enemies.`;
+    return `Channel for 2 turns, unable to act or move. Then deal ${Math.round(intScaling * 100)}% Intelligence damage to surviving original enemy targets still on the opposing team. Movement cannot dodge the discharge.`;
   }
 
   /**

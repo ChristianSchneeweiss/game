@@ -44,6 +44,6 @@ export class AquaWaveSpell extends DamageEffectSpell {
     const min = this.damageModule.getRawDamage(caster, caster, 0);
     const max = this.damageModule.getRawDamage(caster, caster, 20);
 
-    return `A magical wave of water that damages a single enemy for ${min}-${max} magical damage. Has a ${this.effectChance * 100}% chance to reduce target's DEX by 2 for 1 turn.`;
+    return `A wave of water that damages ${this.battleManager?.grid ? "covered enemies" : "a single enemy"} for ${min}-${max} magical damage. Has a ${this.effectChance * 100}% chance to reduce Agility by 2 for 1 turn. Movement is unchanged.`;
   }
 }

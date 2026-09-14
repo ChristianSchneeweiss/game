@@ -1,6 +1,11 @@
 import type { ClerkClient } from "@clerk/backend";
 import type { BaseEntity } from "@loot-game/game/base-entity";
 import type { BM } from "@loot-game/game/bm";
+import {
+  GridSetupSchema,
+  validateGridSetup,
+  type GridSetup,
+} from "@loot-game/game/tactical/types";
 import type {
   Affinities,
   EntityAttributes,
@@ -31,12 +36,16 @@ import { bmStorage } from "../game-usecases/bm-storage";
 
 import {
   messageSchema,
+  isBattleCommand,
   type BattleMessage,
+  type BattleCommand,
   type BattleState,
   type ResponseMessage,
 } from "../battle/protocol";
 import {
-  castBattleSpell,
+  applyBattleCommand,
+  battleRevision,
+  validateGridCommandIdentity,
   getBattleTargets,
   availableSpells,
   describeBattleSpell,
@@ -72,6 +81,7 @@ export class BattleWebsocket extends DurableObject {
   messages: string[] = [];
   db: Database;
   private startingBuilds: StartingBuilds = [];
+  private startingGrid?: GridSetup;
   private delivery: BattleDelivery = {
     activity: false,
     completion: "none",
@@ -111,7 +121,7 @@ export class BattleWebsocket extends DurableObject {
       diagnostic({
         event: "battle.recovered",
         battleId: this.battleId,
-        revision: this.bm.events.length,
+        revision: battleRevision(this.bm),
         version: this.env.CF_VERSION_METADATA?.id,
       });
       await this.resumeDelivery();
@@ -122,24 +132,48 @@ export class BattleWebsocket extends DurableObject {
     if (this.bm) return;
 
     const journalVersion = await this.ctx.storage.get("journalVersion");
-    if (journalVersion !== undefined && journalVersion !== 1)
+    if (
+      journalVersion !== undefined &&
+      journalVersion !== 1 &&
+      journalVersion !== 2
+    )
       throw new Error("Unsupported battle journal version");
 
     const savedBuilds = await this.ctx.storage.get<unknown>("startingBuilds");
     let builds: StartingBuilds;
     if (savedBuilds === undefined) {
-      const { characters, enemies } = await new SyncFactory(this.db).get(
+      const { characters, enemies, grid } = await new SyncFactory(this.db).get(
         this.battleId,
       );
       builds = captureStartingBuilds([...characters, ...enemies]);
-      await this.ctx.storage.put("startingBuilds", builds);
-    } else builds = decodeStartingBuilds(savedBuilds);
+      if (journalVersion !== undefined && journalVersion !== (grid ? 2 : 1))
+        throw new Error("Saved battle and journal rules versions disagree");
+      this.startingGrid = grid;
+      await this.ctx.storage.put({
+        startingBuilds: builds,
+        startingGrid: grid ?? null,
+        journalVersion: grid ? 2 : 1,
+      });
+    } else {
+      const savedGrid = await this.ctx.storage.get<unknown>("startingGrid");
+      if (journalVersion === 2)
+        this.startingGrid = GridSetupSchema.parse(savedGrid);
+      else if (savedGrid != null)
+        throw new Error("Legacy journal cannot contain a tactical layout");
+      builds = decodeStartingBuilds(savedBuilds, this.startingGrid ? 2 : 1);
+    }
+    if (this.startingGrid) validateGridSetup(this.startingGrid, builds);
     this.startingBuilds = builds;
     this.messages = z
       .array(z.string())
       .parse((await this.ctx.storage.get("messages")) ?? []);
-    this.bm = reconstructBattle(this.battleId, builds, this.messages);
-    await this.ctx.storage.put("journalVersion", 1);
+    this.bm = reconstructBattle(
+      this.battleId,
+      builds,
+      this.messages,
+      this.startingGrid,
+    );
+    await this.ctx.storage.put("journalVersion", this.startingGrid ? 2 : 1);
     this.delivery = (await this.ctx.storage.get<BattleDelivery>(
       "delivery",
     )) ?? {
@@ -246,19 +280,28 @@ export class BattleWebsocket extends DurableObject {
       requestId =
         "requestId" in parsed.data ? parsed.data.requestId : undefined;
       if (this.abandonment) throw new Error("This dungeon run was abandoned");
-      if (parsed.type !== "castSpell") {
+      if (!isBattleCommand(parsed)) {
         await this.handleRead(parsed, ws);
         return;
       }
       const owner = this.sessions.get(ws)?.id;
       if (!owner) throw new Error("User not found");
+      if (parsed.type !== "castSpell" && this.isAcceptedRetry(parsed, owner)) {
+        this.send(ws, { type: "castAccepted", data: { requestId } });
+        await this.sendState(ws);
+        return;
+      }
+      if (parsed.type !== "castSpell")
+        validateGridCommandIdentity(this.bm, parsed, owner);
       const candidate = reconstructBattle(
         this.battleId,
         this.startingBuilds,
         this.messages,
+        this.startingGrid,
       );
-      castBattleSpell(candidate, parsed.data, owner);
-      const messages = [...this.messages, message];
+      applyBattleCommand(candidate, parsed, owner);
+      // Store the schema-normalized payload so command identity ignores object key order.
+      const messages = [...this.messages, SuperJSON.stringify(parsed)];
       const delivery: BattleDelivery = {
         activity: true,
         completion: candidate.isGameOver() ? "result" : "none",
@@ -274,7 +317,7 @@ export class BattleWebsocket extends DurableObject {
       diagnostic({
         event: "battle.command_rejected",
         battleId: this.battleId,
-        revision: this.bm.events.length,
+        revision: battleRevision(this.bm),
       });
       this.send(ws, {
         type: "rejected",
@@ -294,7 +337,7 @@ export class BattleWebsocket extends DurableObject {
   }
 
   private async handleRead(
-    message: Exclude<BattleMessage, { type: "castSpell" }>,
+    message: Exclude<BattleMessage, BattleCommand>,
     ws: WebSocket,
   ) {
     switch (message.type) {
@@ -313,6 +356,33 @@ export class BattleWebsocket extends DurableObject {
       default:
         throw new Error("Invalid message");
     }
+  }
+
+  /** IDs identify a specific owner's exact accepted command, including its original freshness. */
+  private isAcceptedRetry(
+    command: Exclude<BattleCommand, { type: "castSpell" }>,
+    owner: string,
+  ) {
+    for (const raw of this.messages) {
+      const previous = messageSchema.parse(SuperJSON.parse(raw));
+      if (
+        !isBattleCommand(previous) ||
+        previous.data.requestId !== command.data.requestId
+      )
+        continue;
+      const actorOwner = this.startingBuilds.find(
+        ({ id }) => id === previous.data.entityId,
+      )?.character?.userId;
+      if (
+        actorOwner !== owner ||
+        SuperJSON.stringify(previous) !== SuperJSON.stringify(command)
+      )
+        throw new Error(
+          "This request ID was already used for another command.",
+        );
+      return true;
+    }
+    return false;
   }
 
   private exclusive<T>(operation: () => Promise<T>): Promise<T> {
@@ -414,7 +484,7 @@ export class BattleWebsocket extends DurableObject {
       diagnostic({
         event: "battle.delivery_retry",
         battleId: this.battleId,
-        revision: this.bm.events.length,
+        revision: battleRevision(this.bm),
         failures: retry.failures,
         version: this.env.CF_VERSION_METADATA?.id,
       });
@@ -426,7 +496,7 @@ export class BattleWebsocket extends DurableObject {
       diagnostic({
         event: "battle.delivery_complete",
         battleId: this.battleId,
-        revision: this.bm.events.length,
+        revision: battleRevision(this.bm),
         version: this.env.CF_VERSION_METADATA?.id,
       });
       this.ctx.getWebSockets().forEach((ws) =>
@@ -460,6 +530,7 @@ export class BattleWebsocket extends DurableObject {
       intelligence: character.getAttribute("intelligence"),
       vitality: character.getAttribute("vitality"),
       agility: character.getAttribute("agility"),
+      movement: character.getAttribute("movement"),
     } satisfies EntityAttributes;
     const specialAttributes = {
       lifesteal: character.getAttribute("lifesteal"),
@@ -522,8 +593,19 @@ export class BattleWebsocket extends DurableObject {
         events,
         round: this.bm.getCurrentRound(),
         effectTracking: this.bm.effectTracking,
-        revision: this.bm.events.length,
+        revision: battleRevision(this.bm),
         availableSpells: availableSpells(this.bm),
+        ...(this.bm.grid
+          ? {
+              grid: this.bm.grid,
+              actors: this.bm.entities.map((entity) => ({
+                id: entity.id,
+                team: entity.team,
+                health: entity.health,
+                movement: entity.getAttribute("movement"),
+              })),
+            }
+          : {}),
       },
     } satisfies ResponseMessage;
     (recipient ? [recipient] : this.ctx.getWebSockets()).forEach((ws) => {

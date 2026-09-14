@@ -2,7 +2,12 @@ import type { DisplayFrame, VisualCue } from "./timeline";
 
 export function isBookkeeping(frame?: DisplayFrame) {
   return (
-    frame?.cue?.kind === "REGEN" || frame?.cue?.kind === "REDUCE_SPELL_COOLDOWN"
+    frame?.cue?.kind === "REGEN" ||
+    frame?.cue?.kind === "REDUCE_SPELL_COOLDOWN" ||
+    frame?.cue?.kind === "GRID_START" ||
+    frame?.cue?.kind === "ACTIVATION_START" ||
+    frame?.cue?.kind === "ACTIVATION_END" ||
+    frame?.cue?.kind === "TEAM_CHANGE"
   );
 }
 
@@ -15,6 +20,7 @@ export function afterBookkeeping(frames: DisplayFrame[], cursor: number) {
 
 export function cueDuration(cue?: VisualCue): number {
   if (!cue) return 1000;
+  if (cue.kind === "MOVE") return Math.max(300, (cue.path?.length ?? 1) * 150);
   if (cue.kind === "REGEN" || cue.kind === "REDUCE_SPELL_COOLDOWN") return 0;
   if (cue.kind === "DEATH") return 280;
   if (cue.kind === "EFFECT_REMOVAL") return 140;

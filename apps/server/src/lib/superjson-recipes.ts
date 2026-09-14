@@ -123,6 +123,7 @@ export const registerRecipes = () => {
       "baseAttributes",
       "baseSpecialAttributes",
       "baseAffinities",
+      "weaponAttackProfile",
       "activeEffects",
       "attributeModifiers",
       "spells",

@@ -61,6 +61,23 @@ A combat ability, including physical attacks, magic, healing, and defensive
 actions. Basic Attack is also a spell.
 _Avoid_: Using “spell” to mean only magic.
 
+**Basic Attack**:
+The character's default attack spell, whose range, shape, damage type, and
+attribute scaling are determined by the equipped weapon, with an unarmed fallback.
+
+**Weapon attack profile**:
+The weapon's definition of how Basic Attack targets and damages its recipients.
+It includes the attributes that contribute to the attack's damage.
+
+**Movement**:
+The entity's stat determining its allowance of tile steps, including modifiers
+from equipment, passive skills, and effects. It is distinct from Agility.
+
+**Activation**:
+One occurrence of an entity in the combat turn queue. An actionable activation
+has its own movement allowance and spell use; an extra action is another activation.
+_Avoid_: Combat round when referring to one entity's turn.
+
 **Legal target**:
 An entity permitted as a target for the current caster and spell in the current
 battle situation. Being legal does not mean it has been selected.
@@ -78,6 +95,10 @@ distinct from preparing a choice of spell and targets.
 **Battle**:
 A fight between the party and an enemy team, resolved through combat turns
 until one team has no living entities.
+
+**Battlefield**:
+The grid of tiles on which a battle takes place. Its dimensions and layout are
+defined by the encounter and remain fixed for that battle.
 
 **Battle replay**:
 A view of a battle's already resolved events; watching it does not make new

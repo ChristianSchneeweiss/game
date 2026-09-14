@@ -1,11 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { eq } from "drizzle-orm";
 import { BM } from "../../../apps/game/src/bm";
-import {
-  advanceBots,
-  castBattleSpell,
-  getBattleTargets,
-} from "../../../apps/server/src/battle/commands";
+import { playTacticalTurn } from "../support/tactical-turn";
 import {
   TB_character,
   TB_dungeonBattle,
@@ -92,28 +88,11 @@ describe("the complete dungeon run", () => {
       const bm = new BM(
         [...snapshot.characters, ...snapshot.enemies],
         battleId,
+        snapshot.grid,
       );
       bm.start();
       for (let turn = 0; !bm.isGameOver() && turn < 200; turn++) {
-        const hero = bm.getEntityById(bm.getCurrentRound().orderQueue[0]!)!;
-        const spell =
-          hero.spells.find(
-            (spell) =>
-              spell.config.type === "bladestorm-rhythm" && spell.canCast(hero),
-          ) ??
-          hero.spells.find((spell) => spell.config.type === "basic-attack")!;
-        const command = { entityId: hero.id, spellId: spell.config.id };
-        const targets = getBattleTargets(bm, command);
-        castBattleSpell(
-          bm,
-          {
-            ...command,
-            targetIds: targets.automatic
-              ? targets.targets
-              : [targets.targets[0]!],
-          },
-          owner,
-        );
+        playTacticalTurn(bm, owner);
       }
       expect(
         bm.getWinningTeam(),
@@ -159,7 +138,9 @@ describe("the complete dungeon run", () => {
       ),
     ).toBe(true);
     await new LootManager(owner, data.db).claim(bossReward.id);
-    const [staff] = await data.db.select().from(TB_equipmentStats)
+    const [staff] = await data.db
+      .select()
+      .from(TB_equipmentStats)
       .where(eq(TB_equipmentStats.type, "oakwarden-staff"));
     expect(staff).toBeDefined();
     await equipEquipment("audit-hero", staff!.id, owner, data.db);
@@ -174,7 +155,9 @@ describe("the complete dungeon run", () => {
     });
     expect(next.id).not.toBe(entered.id);
     expect(next.round).toBe(0);
-    expect(next.playerTeam[0]!.equipped.WEAPON?.itemType).toBe("oakwarden-staff");
+    expect(next.playerTeam[0]!.equipped.WEAPON?.itemType).toBe(
+      "oakwarden-staff",
+    );
     expect(
       next.playerTeam[0]!.spells.some(
         (equipped) => equipped.config.id === spell!.id,
@@ -198,9 +181,14 @@ describe("the complete dungeon run", () => {
     });
     const battleId = await caller().fightDungeon({ id: run.id });
     const snapshot = await new SyncFactory(data.db).get(battleId);
-    const bm = new BM([...snapshot.characters, ...snapshot.enemies], battleId);
+    const bm = new BM(
+      [...snapshot.characters, ...snapshot.enemies],
+      battleId,
+      snapshot.grid,
+    );
     bm.start();
-    advanceBots(bm);
+    for (let turn = 0; !bm.isGameOver() && turn < 30; turn++)
+      playTacticalTurn(bm, owner, true);
     expect(bm.getWinningTeam()).toBe("TEAM_B");
     await bmStorage.save(bm, data.db);
     const result = await bmStorage.get(battleId, data.db);
