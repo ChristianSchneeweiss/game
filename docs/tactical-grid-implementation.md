@@ -1,6 +1,10 @@
 # Tactical combat implementation
 
-[Issue #3](https://github.com/ChristianSchneeweiss/game/issues/3) is implemented locally for newly created battles across all 25 authored encounters and all 39 registered spells. Existing battles without grid metadata continue through the legacy command and spell paths. This work has not been deployed.
+[Convert all battles to configurable tactical grids with movement and tile targeting](https://github.com/ChristianSchneeweiss/game/issues/3) is implemented locally for newly created battles across all 25 authored encounters and all 39 registered spells. Existing battles without grid metadata continue through the legacy command and spell paths. This work has not been deployed.
+
+Implementation checkpoint: local commit `cc9e62fee2cfaeb1f63c430829f803d21cfc8883` on `codex/tactical-grid-combat`. At the 14 September planning refresh, that commit was not available on GitHub. The verification below records the implementation session's results; the planning refresh did not rerun those checks or qualify later working-tree changes.
+
+The [approved specification](tactical-grid-spec.md) settles the original design destination. The [feasibility assessment](tactical-grid-feasibility.md) and [spell conversion table](tactical-grid-spell-conversion.md) preserve its background and accepted defaults. Remaining work follows the [release checklist](release-checklist.md), including real authenticated multi-account and deployed networking checks. A full tier/scaling redesign remains outside this conversion's scope.
 
 ## Playing
 

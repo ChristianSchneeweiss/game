@@ -1,5 +1,7 @@
 # [Convert all battles to configurable tactical grids with movement and tile targeting](https://github.com/ChristianSchneeweiss/game/issues/3)
 
+**Status — 14 September 2026:** Design decisions are settled and the full conversion is implemented locally. The [implementation and verification record](tactical-grid-implementation.md) describes the delivered behavior, recorded checks, and outstanding deployment qualification. The requirements below remain the accepted specification; their original problem statement describes the pre-conversion game.
+
 ## Problem Statement
 
 Battles currently let players choose entities to attack or support, but their positions have no combat meaning. A melee strike can reach the same targets as a ranged spell, weapons do not define Basic Attack's reach, and area attacks cannot reward arranging enemies into a particular shape. Players cannot reposition to line up attacks, protect a partner, or choose where to commit to combat.
@@ -220,4 +222,4 @@ The full current catalogue, current encounters, cooperative play, both battle pr
 - Testing follows the previously proposed and approved command/recovery/presentation approach. The implementation may refine internal interfaces without changing the externally observable rules specified here.
 - Stage implementation through one integrated encounter if useful, then finish the complete conversion. Optional experiments in the earlier research do not add requirements beyond this specification.
 - Coordinate presentation work with [Build a playable Three.js battle view with explicit Cast controls](https://github.com/ChristianSchneeweiss/game/issues/1) and preserve the consent and ownership decisions in [Add persistent friends and invitations for concurrent two-player dungeon runs](https://github.com/ChristianSchneeweiss/game/issues/2). These related issues are context, not an instruction to reassign ownership or infer new consent.
-- This publication is a design deliverable. No grid implementation, combat benchmark, or balance experiment has been completed by preparing the specification.
+- The original publication was a design deliverable. The subsequent [local implementation](tactical-grid-implementation.md) covers the complete conversion and records its verification; deployment qualification and the separately deferred tier/scaling work are not established by publishing this specification.

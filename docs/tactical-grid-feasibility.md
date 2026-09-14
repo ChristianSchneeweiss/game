@@ -1,6 +1,8 @@
 # Tactical grid feasibility for Shards of Affinity
 
-The approved implementation specification is published as [Convert all battles to configurable tactical grids with movement and tile targeting](https://github.com/ChristianSchneeweiss/game/issues/3), labelled `ready-for-agent`. It consolidates the decisions below; historical research recommendations do not override that specification.
+**Status — 14 September 2026:** The design is settled in [Convert all battles to configurable tactical grids with movement and tile targeting](https://github.com/ChristianSchneeweiss/game/issues/3), and the complete current-catalogue conversion is implemented locally. See the [implementation and verification record](tactical-grid-implementation.md) for current progress and qualification limits. Deployment qualification remains outstanding; the tier and scaling pass remains outside this conversion's scope.
+
+This document preserves the earlier feasibility assessment at checkout `fdb9914`. Architecture observations, prototype recommendations, and effort estimates below describe that baseline; they are not outstanding design decisions or implementation tasks. The [approved specification](tactical-grid-spec.md) consolidates the accepted decisions and takes precedence over this research.
 
 **A battlefield with movement, range, and tile-shaped spells is feasible in the current codebase. It is a substantial combat feature, with good opportunities to reuse the existing spell effects and presentation assets.** The strongest reason to build it is to make spell builds interact with positioning: moving to line up several enemies, choosing between safety and melee reach, or helping a partner set up a stronger cast.
 
@@ -43,7 +45,7 @@ The destination is a complete conversion of the current battle system to an **en
 
 **The weapon a character has equipped determines their Basic Attack's range, shape, damage type, and attribute scaling.** Basic Attack remains a spell in the combat system, with its attack profile supplied by the equipped weapon. The profile must support additional scaling contributions and future conditional behavior without scattering weapon-specific decisions through targeting, combat commands, and presentation.
 
-This records the design direction; the grid and weapon-dependent attacks are not implemented yet. The current discussion must settle the remaining system decisions and define the conversion before implementation. Earlier prototype recommendations and estimates below remain research context, not a narrower destination. Initial spell assignments and numerical weapon defaults are recorded in the [spell and weapon conversion table](tactical-grid-spell-conversion.md).
+The [approved specification](tactical-grid-spec.md) settled the conversion's system decisions, and the [implementation record](tactical-grid-implementation.md) documents the completed local grid and weapon-dependent attacks. Earlier prototype recommendations and estimates below remain research context. Initial spell assignments and numerical weapon defaults are recorded in the [spell and weapon conversion table](tactical-grid-spell-conversion.md).
 
 **Movement spending:** A dedicated Movement stat starts at 3 and can be modified by equipment, passives, and effects, independently of Agility. Players may spend the available steps across several moves before casting. The allowance refreshes each actionable turn, including extra actions; the earlier single-path restriction is superseded.
 

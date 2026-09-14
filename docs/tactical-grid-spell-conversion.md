@@ -1,10 +1,10 @@
 # Tactical grid spell and weapon conversion — initial defaults
 
-These defaults are included in the published [tactical grid implementation specification](https://github.com/ChristianSchneeweiss/game/issues/3), labelled `ready-for-agent`.
+These defaults are included in [Convert all battles to configurable tactical grids with movement and tile targeting](https://github.com/ChristianSchneeweiss/game/issues/3). **Status — 14 September 2026:** All 39 spells and the initial weapon profiles are implemented locally; the [implementation and verification record](tactical-grid-implementation.md) describes coverage and outstanding deployment qualification.
 
-This table covers all 39 current spell types and both current equipped weapons, plus the unarmed fallback. **These are the agreed starting defaults for the grid conversion, with Fireball explicitly kept single-target.** Board dimensions are configured per encounter, with 7 × 7 as the default. Spell offsets and ranges remain measured in tiles on every board size; global spells use the actual battlefield. These defaults are intended to be easy to change later; a proper tier and scaling pass is deferred. The grid implementation has not been built yet.
+This table covers all 39 current spell types and both current equipped weapons, plus the unarmed fallback. **These are the agreed starting defaults for the grid conversion, with Fireball explicitly kept single-target.** Board dimensions are configured per encounter, with 7 × 7 as the default. Spell offsets and ranges remain measured in tiles on every board size; global spells use the actual battlefield. These defaults remain easy to change later; a proper tier and scaling pass is deferred.
 
-The accepted rules and architecture discussion live in [the feasibility and design notes](tactical-grid-feasibility.md). Movement is a separate stat with base 3, refreshed each actionable activation including extra actions; movement can be spent in several commands before casting; casting ends the activation; footprints use coordinate offsets and presets; directional patterns rotate from north; range limits the selected center; an immediate attack needs at least one eligible enemy in its area; selected higher-level spells can remain global.
+The accepted rules live in [the approved specification](tactical-grid-spec.md); [the feasibility and design notes](tactical-grid-feasibility.md) preserve the earlier discussion. Movement is a separate stat with base 3, refreshed each actionable activation including extra actions; movement can be spent in several commands before casting; casting ends the activation; footprints use coordinate offsets and presets; directional patterns rotate from north; range limits the selected center; an immediate attack needs at least one eligible enemy in its area; selected higher-level spells can remain global.
 
 ## Reading the assignments
 
@@ -106,9 +106,9 @@ Support multiple scaling contributions as a list, not a single hardcoded scaling
 
 **Lines and secondary effects:** Lines hit all listed enemy-occupied cells. Drains such as Vital Strike and Soulflare still heal the caster even though their offensive footprint excludes the caster. Existing damage/status effects remain attached to their recipients when those entities move. Agility penalties remain Agility penalties; they do not acquire Movement penalties by name alone.
 
-## Source discrepancies to resolve in presentation
+## Historical source discrepancies
 
-These are observed mismatches between existing descriptions and executable behavior. The initial conversion preserves executable behavior except for the explicit targeting changes above, and updates descriptions so the grid UI is truthful. This does not prevent later spell redesign.
+These observations were recorded against the pre-conversion code on 14 September 2026. They explain the specification's description corrections and retained execution behavior; they are not a current list of unresolved presentation defects. The initial conversion preserves executable behavior except for the explicit targeting changes above. Later spell redesign remains a separate effort.
 
 - Almost all current spells, including Basic Attack, carry tier A. Global assignments therefore cannot be inferred from tier alone. Retiering the entire collection is deferred.
 - Storm Pulse's config currently looks self-targeted, but its implementation attacks random enemies. It deals physical damage despite its magical theme.
@@ -121,8 +121,8 @@ These are observed mismatches between existing descriptions and executable behav
 
 ## Completion beyond this table
 
-This table settles the initial spell/weapon assignments, not the full conversion design. Remaining design work covers authored enemy/encounter placement, AI choices and passing, board controls in both presentations, saved-battle compatibility and replay, and the verification criteria for a complete conversion. These remain in scope under the agreed destination. A full tier and scaling redesign is later balancing work, not a prerequisite for using these initial defaults.
+The [approved specification](tactical-grid-spec.md) also settles authored enemy/encounter placement, AI choices and passing, board controls in both presentations, saved-battle compatibility and replay, and verification criteria. These areas are covered by the [local implementation and its recorded checks](tactical-grid-implementation.md). Deployment qualification remains outstanding under the [release checklist](release-checklist.md). A full tier and scaling redesign is outside this conversion's scope and would need its own destination before further wayfinding.
 
 ## Local evidence
 
-Inspected September 14, 2026. The authoritative spell inventory is [the spell type schema](../apps/game/src/spells/base/spell-types.ts); definitions are in [the spell directory](../apps/game/src/spells). Custom behavior was read in Storm Pulse, Volt Lash, Arcane Channeling, Vital Strike, Soulflare, Iron Will, Earthshatter, and Bladestorm Rhythm. Current equipment is defined in [the item factory](../apps/game/src/items/equipment/item-factory.ts); current Basic Attack and the damage modules establish the numerical baseline. No gameplay implementation or balance experiment was performed while producing these defaults.
+Initially inspected September 14, 2026, before the conversion. The authoritative spell inventory is [the spell type schema](../apps/game/src/spells/base/spell-types.ts); definitions are in [the spell directory](../apps/game/src/spells). Custom behavior was read in Storm Pulse, Volt Lash, Arcane Channeling, Vital Strike, Soulflare, Iron Will, Earthshatter, and Bladestorm Rhythm. Equipment is defined in [the item factory](../apps/game/src/items/equipment/item-factory.ts); the original Basic Attack and damage modules established the numerical baseline. Producing these defaults did not itself implement or balance the grid; subsequent implementation evidence lives in the [implementation record](tactical-grid-implementation.md).
