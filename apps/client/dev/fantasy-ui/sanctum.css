@@ -1,0 +1,472 @@
+/* A: an architectural frame around a cinematic expedition. */
+.sanctum-layout {
+  display: grid;
+  grid-template-columns: 218px minmax(0, 1fr);
+  background:
+    radial-gradient(ellipse at 75% 8%, #66795114, transparent 45%), #111713;
+  min-height: 100vh;
+}
+.sanctum-sidebar {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--f-line-soft);
+  background: linear-gradient(90deg, #0d130f, #151c16);
+  padding: 32px 19px 100px;
+  min-height: 100vh;
+}
+.sanctum-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  color: var(--f-accent);
+  gap: 17px;
+  margin-bottom: 17px;
+}
+.sanctum-brand > span {
+  font-family: var(--f-heading);
+  font-size: 16px;
+  line-height: 1.65;
+  letter-spacing: 0.1em;
+}
+.sanctum-brand i {
+  font: italic 13px var(--f-body);
+  text-transform: lowercase;
+  letter-spacing: 0;
+}
+.sanctum-brand strong {
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: 0.17em;
+}
+.nav-eyebrow {
+  font-size: 8px;
+  color: #9a9a83;
+  margin: 27px 12px 13px;
+}
+.sanctum-sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.sanctum-sidebar nav button {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 13px 12px;
+  background: none;
+  border: 1px solid transparent;
+  color: var(--f-muted);
+  text-align: left;
+  font-size: 12px;
+}
+.sanctum-sidebar nav button > svg {
+  width: 16px;
+  height: 16px;
+}
+.sanctum-sidebar nav button > span {
+  flex: 1;
+}
+.sanctum-sidebar nav button > small {
+  font-size: 10px;
+  opacity: 0.55;
+}
+.sanctum-sidebar nav button.active {
+  color: #ead7a7;
+  background: linear-gradient(90deg, #b8a0641e, #b8a06404);
+  border: 1px solid #85764a55;
+  box-shadow: inset 2px 0 #c3a46a;
+}
+.sanctum-sidebar nav button:hover {
+  background: #c3a46a12;
+  color: var(--f-text);
+}
+.sidebar-library {
+  border-top: 1px solid var(--f-line-soft);
+  margin-top: 30px;
+  padding: 25px 12px;
+}
+.sidebar-library .f-eyebrow {
+  color: #8e937d;
+  font-size: 7px;
+}
+.sidebar-library button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  background: none;
+  border: 0;
+  padding: 15px 0;
+  color: var(--f-muted);
+}
+.sidebar-library button:hover {
+  color: var(--f-accent);
+}
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 40px;
+}
+.sidebar-quote {
+  font-style: italic;
+  color: #848e79;
+  font-size: 12px;
+  text-align: center;
+  line-height: 1.9;
+  margin-bottom: 20px;
+}
+.f-account {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 14px;
+}
+.f-account > span {
+  display: grid;
+  place-content: center;
+  width: 33px;
+  height: 33px;
+  border: 1px solid var(--f-line);
+  background: #c3a46a10;
+  font: 15px var(--f-heading);
+  color: var(--f-accent);
+}
+.f-account > div {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.f-account strong {
+  font-size: 12px;
+  font-weight: 400;
+}
+.f-account small {
+  font-size: 10px;
+  color: var(--f-muted);
+}
+.f-account > svg {
+  color: var(--f-muted);
+}
+.sanctum-topbar {
+  height: 64px;
+  border-bottom: 1px solid var(--f-line-soft);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+}
+.sanctum-topbar > span:first-child {
+  font: 8px var(--f-heading);
+  color: var(--f-muted);
+  letter-spacing: 0.16em;
+}
+.sanctum-topbar i {
+  margin: 0 15px;
+  opacity: 0.45;
+}
+.sanctum-main main {
+  max-width: 1480px;
+  padding: 34px 40px 110px;
+  margin: auto;
+}
+.sanctum-intro {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 29px;
+}
+.sanctum-intro .f-eyebrow {
+  margin-bottom: 10px;
+}
+.sanctum-intro h1 {
+  font-size: clamp(25px, 2.15vw, 34px);
+}
+.sanctum-intro p:last-child {
+  color: var(--f-muted);
+  margin-top: 9px;
+  font-size: 13px;
+}
+.sanctum-sigil {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  color: var(--f-accent);
+  opacity: 0.65;
+}
+.sanctum-sigil span {
+  font: 7px var(--f-heading);
+  letter-spacing: 0.2em;
+}
+.sanctum-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(310px, 1fr);
+  gap: 22px;
+}
+.dungeon-hero {
+  position: relative;
+  border: 1px solid #a0916166;
+  min-height: 454px;
+  display: flex;
+  flex-direction: column;
+  isolation: isolate;
+  overflow: hidden;
+  background: #152720;
+}
+.dungeon-hero::after {
+  content: "";
+  position: absolute;
+  inset: 7px;
+  border: 1px solid #c3a46a45;
+  z-index: -1;
+  pointer-events: none;
+}
+.dungeon-hero-art {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    linear-gradient(90deg, #06100ad9, #06100a20 80%),
+    linear-gradient(0deg, #09120cef, transparent 68%),
+    url("/art/fantasy-ui-prototype/hollow-sanctuary.png") 58% 50% / cover;
+  transition: transform 1.6s;
+}
+.dungeon-hero:hover .dungeon-hero-art {
+  transform: scale(1.025);
+}
+.hero-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 26px 0;
+}
+.f-tag {
+  display: inline-flex;
+  gap: 9px;
+  align-items: center;
+  border: 1px solid #a8bb8b48;
+  background: #0b1719a1;
+  color: #bdcaaa;
+  font: 8px var(--f-heading);
+  letter-spacing: 0.1em;
+  padding: 7px 10px;
+  text-transform: uppercase;
+}
+.hero-number {
+  font: 22px var(--f-heading);
+  color: #d9d2a9a3;
+  border: 1px solid #c3a46a60;
+  width: 37px;
+  height: 43px;
+  display: grid;
+  place-content: center;
+}
+.hero-content {
+  margin-top: auto;
+  padding: 36px 31px 23px;
+}
+.hero-content > .f-eyebrow {
+  font-size: 8px;
+  color: #c3b692;
+  margin-bottom: 10px;
+}
+.hero-content h2 {
+  font-family: var(--f-heading);
+  font-size: clamp(31px, 2.6vw, 45px);
+  line-height: 1.25;
+  text-shadow: 0 2px 25px #0009;
+  color: #f1e5c8;
+}
+.hero-content > p:not(.f-eyebrow) {
+  font-size: 13px;
+  color: #c5c9b6;
+  line-height: 1.65;
+  margin-top: 13px;
+}
+.hero-meta {
+  display: flex;
+  align-items: center;
+  gap: 23px;
+  margin: 21px 0;
+  color: #d4caa9;
+  font-size: 10px;
+}
+.hero-meta > span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.hero-footer {
+  border-top: 1px solid #aaa17433;
+  margin: 0 15px;
+  padding: 12px 12px 15px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 8px;
+  color: #b0b59c;
+}
+.hero-footer > span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.hero-footer > span:last-child {
+  font: 6px var(--f-heading);
+  letter-spacing: 0.08em;
+}
+.party-panel .f-panel-heading {
+  padding: 20px 21px 16px;
+}
+.party-selector {
+  margin: 0 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.party-selector > button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 6px;
+  background: transparent;
+  border: 1px solid var(--f-line-soft);
+  text-align: left;
+}
+.party-selector > button[aria-pressed="true"] {
+  border-color: var(--f-accent);
+  background: #c3a46a08;
+}
+.party-selector > button > span {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+.party-selector > button strong {
+  font: 11px var(--f-heading);
+  margin-bottom: 5px;
+}
+.party-selector > button small {
+  font-size: 8px;
+  color: var(--f-muted);
+  white-space: nowrap;
+}
+.party-selector > button > svg {
+  color: var(--f-accent);
+}
+.party-detail {
+  padding: 20px 22px 18px;
+}
+.party-name {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 17px;
+}
+.party-name h3 {
+  font: 19px var(--f-heading);
+}
+.party-name p {
+  color: var(--f-muted);
+  font-size: 11px;
+  font-style: italic;
+}
+.party-detail .f-tabs {
+  margin-top: 4px;
+}
+.party-detail .f-tabs button {
+  flex: 1;
+  padding: 12px 0;
+  font-size: 10px;
+}
+.party-bottom {
+  border-top: 1px solid var(--f-line-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  color: var(--f-muted);
+  font-size: 10px;
+  padding: 12px;
+}
+.f-slot-row {
+  display: flex;
+  gap: 12px;
+  padding: 20px 0 10px;
+}
+.f-equipment {
+  padding: 25px 0;
+  display: grid;
+  grid-template-columns: 20px 1fr 20px 1fr;
+  gap: 8px;
+}
+.f-equipment > svg {
+  width: 18px;
+  color: var(--f-accent);
+}
+.f-equipment strong,
+.f-equipment small {
+  display: block;
+  font-size: 9px;
+  font-weight: 400;
+}
+.f-equipment small {
+  color: var(--f-muted);
+}
+.spell-panel {
+  margin-top: 24px;
+}
+.spell-panel .f-panel-heading {
+  padding: 19px 24px 15px;
+}
+.spell-panel .f-panel-heading h2 {
+  font-size: 16px;
+}
+.sanctum-spells {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding: 8px 24px 25px;
+  gap: 16px;
+}
+.sanctum-spells > div {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+.spell-index {
+  align-self: flex-start;
+  font: 7px var(--f-heading);
+  color: var(--f-accent);
+  opacity: 0.6;
+  padding-top: 1px;
+}
+.sanctum-spells .f-spell-art {
+  width: 49px;
+  height: 54px;
+}
+.sanctum-spells .f-spell {
+  gap: 11px;
+}
+.screen-footer {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-top: 27px;
+  color: #9da48e;
+  font-size: 10px;
+}
+.screen-footer > span:first-child {
+  font: 7px var(--f-heading);
+  letter-spacing: 0.15em;
+}
+.screen-footer > span:nth-child(2) {
+  font-style: italic;
+  flex: 1;
+  padding-left: 15px;
+  border-left: 1px solid var(--f-line-soft);
+}
+.screen-footer > span:last-child {
+  color: var(--f-accent);
+}

@@ -1,0 +1,478 @@
+@media (prefers-reduced-motion: no-preference) {
+  .sanctum-main main,
+  .codex-book,
+  .workbench {
+    animation: enter 0.45s ease-out;
+  }
+  @keyframes enter {
+    from {
+      opacity: 0;
+      transform: translateY(7px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+@media (min-width: 1500px) {
+  .sanctum-grid {
+    grid-template-columns: minmax(0, 1.8fr) minmax(350px, 1fr);
+  }
+  .dungeon-hero {
+    min-height: 500px;
+  }
+  .party-detail {
+    padding-block: 24px;
+  }
+  .party-panel .f-stats {
+    padding-top: 27px;
+  }
+}
+@media (max-width: 1190px) {
+  .sanctum-layout {
+    grid-template-columns: 185px minmax(0, 1fr);
+  }
+  .sanctum-sidebar {
+    padding-inline: 12px;
+  }
+  .sanctum-main main {
+    padding-inline: 24px;
+  }
+  .sanctum-topbar {
+    padding-inline: 24px;
+  }
+  .sanctum-grid {
+    gap: 16px;
+    grid-template-columns: minmax(0, 1fr) 310px;
+  }
+  .hero-content {
+    padding-inline: 23px;
+  }
+  .hero-footer > span:last-child {
+    display: none;
+  }
+  .sanctum-spells {
+    gap: 18px;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .codex-header {
+    padding-inline: 28px;
+    gap: 20px;
+  }
+  .codex-header nav {
+    gap: 15px;
+  }
+  .codex-layout main {
+    padding-inline: 28px;
+  }
+  .codex-left,
+  .codex-right {
+    padding-inline: 25px;
+  }
+  .codex-book {
+    grid-template-columns: 45% 55%;
+  }
+  .codex-right .realm-map {
+    min-height: 280px;
+  }
+  .codex-spells {
+    padding-inline: 3px;
+  }
+  .codex-expedition > h2 {
+    font-size: 30px;
+  }
+  .codex-expedition-meta {
+    gap: 12px;
+  }
+}
+@media (max-width: 940px) {
+  .sanctum-layout {
+    grid-template-columns: 1fr;
+  }
+  .sanctum-sidebar {
+    min-height: 0;
+    padding: 15px 24px;
+    border-right: 0;
+    border-bottom: 1px solid var(--f-line-soft);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  .sanctum-brand {
+    flex-direction: row;
+    gap: 10px;
+    margin: 0;
+    text-align: left;
+  }
+  .sanctum-brand .f-crest {
+    width: 31px;
+    height: 41px;
+  }
+  .sanctum-brand > span {
+    font-size: 10px;
+    line-height: 1.4;
+  }
+  .sanctum-brand strong {
+    font-size: 12px;
+  }
+  .sanctum-sidebar > .f-ornament,
+  .nav-eyebrow,
+  .sidebar-library,
+  .sidebar-footer {
+    display: none;
+  }
+  .sanctum-sidebar nav {
+    flex-direction: row;
+    gap: 2px;
+  }
+  .sanctum-sidebar nav button {
+    padding: 9px;
+    font-size: 10px;
+  }
+  .sanctum-sidebar nav button > small,
+  .sanctum-sidebar nav button:first-child > svg:last-child {
+    display: none;
+  }
+  .sanctum-topbar {
+    height: 44px;
+  }
+  .sanctum-main main {
+    padding-top: 27px;
+  }
+  .codex-header {
+    height: auto;
+    min-height: 81px;
+    flex-wrap: wrap;
+    padding-block: 12px;
+    row-gap: 5px;
+  }
+  .codex-header nav {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    height: 33px;
+  }
+  .codex-header nav button {
+    font-size: 11px;
+  }
+  .codex-title {
+    padding-top: 25px;
+  }
+  .codex-title h1 {
+    font-size: 37px;
+  }
+  .codex-book {
+    grid-template-columns: 1fr 1.12fr;
+  }
+  .codex-left,
+  .codex-right {
+    padding: 24px 20px 40px;
+  }
+  .book-section-title h2 {
+    font-size: 21px;
+  }
+  .codex-characters {
+    gap: 6px;
+  }
+  .codex-characters .f-character-seal {
+    width: 70px;
+    height: 83px;
+  }
+  .codex-spells .f-spell-art {
+    width: 47px;
+    height: 51px;
+  }
+  .codex-expedition > h2 {
+    font-size: 27px;
+  }
+  .codex-expedition-meta {
+    flex-wrap: wrap;
+    gap: 8px 14px;
+  }
+  .codex-expedition .f-button {
+    min-width: 0;
+    width: 100%;
+    padding-inline: 10px;
+    font-size: 8px;
+  }
+  .desktop-break {
+    display: none;
+  }
+  .codex-character-status h3 > span {
+    font-size: 7px;
+  }
+  .book-intro {
+    margin-left: 0;
+  }
+  .workbench-spells {
+    grid-template-columns: 1fr 1fr;
+  }
+  .prototype-label {
+    display: none;
+  }
+}
+@media (max-width: 650px) {
+  .sanctum-sidebar {
+    padding: 13px 17px;
+    gap: 12px;
+  }
+  .sanctum-sidebar nav button {
+    padding: 9px 7px;
+  }
+  .sanctum-sidebar nav button > span {
+    display: none;
+  }
+  .sanctum-sidebar nav button[aria-current] > span {
+    display: block;
+  }
+  .sanctum-topbar {
+    padding: 0 18px;
+  }
+  .sanctum-topbar > span:first-child {
+    font-size: 7px;
+  }
+  .sanctum-topbar .f-loot > span {
+    display: none;
+  }
+  .sanctum-main main {
+    padding: 24px 17px 110px;
+  }
+  .sanctum-intro {
+    margin-bottom: 23px;
+  }
+  .sanctum-intro h1 {
+    font-size: 27px;
+    max-width: 300px;
+  }
+  .sanctum-intro .f-eyebrow {
+    font-size: 8px;
+  }
+  .sanctum-intro p:last-child {
+    font-size: 11px;
+    max-width: 260px;
+  }
+  .sanctum-sigil {
+    display: none;
+  }
+  .sanctum-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .dungeon-hero {
+    min-height: 448px;
+  }
+  .hero-content h2 {
+    font-size: 38px;
+  }
+  .party-selector {
+    gap: 12px;
+  }
+  .party-selector > button {
+    padding: 12px;
+  }
+  .party-detail {
+    padding: 23px;
+  }
+  .spell-panel .f-panel-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+    padding-inline: 20px;
+  }
+  .spell-panel .f-panel-heading h2 {
+    font-size: 15px;
+  }
+  .sanctum-spells {
+    padding-inline: 20px;
+    gap: 22px 15px;
+  }
+  .sanctum-spells .f-spell {
+    gap: 9px;
+  }
+  .sanctum-spells .spell-index {
+    display: none;
+  }
+  .sanctum-spells .f-spell-art {
+    width: 43px;
+    height: 48px;
+  }
+  .f-spell-copy strong {
+    font-size: 9px;
+  }
+  .f-spell-copy > span {
+    font-size: 9px;
+  }
+  .screen-footer {
+    gap: 10px;
+    font-size: 9px;
+  }
+  .screen-footer > span:first-child {
+    font-size: 6px;
+  }
+  .codex-header {
+    padding-inline: 18px;
+  }
+  .codex-brand {
+    gap: 7px;
+    font-size: 18px;
+  }
+  .codex-brand .f-crest {
+    width: 28px;
+    height: 35px;
+  }
+  .codex-header .f-loot > span {
+    display: none;
+  }
+  .codex-header nav {
+    justify-content: space-between;
+    gap: 14px;
+  }
+  .codex-layout main {
+    padding-inline: 18px;
+  }
+  .codex-title {
+    padding-top: 24px;
+  }
+  .codex-title h1 {
+    font-size: 35px;
+  }
+  .codex-title p {
+    font-size: 12px;
+  }
+  .codex-chapter {
+    font-size: 7px;
+  }
+  .codex-book {
+    grid-template-columns: 1fr;
+  }
+  .codex-left,
+  .codex-right {
+    padding: 27px 26px 42px;
+    background: linear-gradient(
+      90deg,
+      #9d88550d,
+      transparent 5%,
+      transparent 95%,
+      #9d885516
+    );
+  }
+  .codex-right {
+    border-left: 0;
+    border-top: 1px solid #b7a578;
+  }
+  .book-section-title h2 {
+    font-size: 25px;
+  }
+  .codex-characters {
+    gap: 18px;
+  }
+  .codex-characters .f-character-seal {
+    width: 86px;
+    height: 100px;
+  }
+  .codex-spells {
+    padding-inline: 5px;
+  }
+  .codex-spells .f-spell-art {
+    width: 58px;
+    height: 61px;
+  }
+  .codex-character-status h3 > span {
+    font-size: 8px;
+  }
+  .codex-note {
+    font-size: 9px;
+  }
+  .codex-right .realm-map {
+    min-height: 0;
+    height: auto;
+  }
+  .codex-expedition > h2 {
+    font-size: 31px;
+  }
+  .codex-expedition .f-button {
+    font-size: 9px;
+  }
+  .codex-below {
+    flex-direction: column;
+    gap: 14px;
+  }
+  .prototype-switcher {
+    bottom: 12px;
+    max-width: calc(100% - 16px);
+    padding: 5px;
+    gap: 2px;
+  }
+  .prototype-switcher button {
+    padding: 7px 8px;
+    min-height: 37px;
+    font-size: 10px;
+    gap: 6px;
+  }
+  .prototype-switcher button > b + span {
+    display: none;
+  }
+  .switcher-separator {
+    margin-inline: 3px;
+  }
+  .prototype-corner {
+    display: none;
+  }
+  .workbench {
+    padding: 24px 17px 100px;
+  }
+  .workbench-title {
+    padding-top: 28px;
+  }
+  .workbench-title h1 {
+    font-size: 28px;
+  }
+  .workbench-title > p:last-of-type {
+    font-size: 12px;
+  }
+  .workbench-grid {
+    grid-template-columns: 1fr;
+  }
+  .workbench .f-panel {
+    padding-inline: 20px;
+  }
+  .workbench .f-panel h2 {
+    font-size: 21px;
+  }
+  .f-palette {
+    gap: 8px;
+  }
+  .f-palette > div > span {
+    height: 40px;
+  }
+  .f-palette strong {
+    font-size: 9px;
+  }
+  .f-palette code {
+    font-size: 8px;
+  }
+  .workbench-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 18px;
+  }
+  .f-search input {
+    width: 100%;
+  }
+  .workbench-spells {
+    gap: 22px 17px;
+  }
+  .workbench-spells .f-spell {
+    gap: 10px;
+  }
+  .workbench-spells .f-spell-art {
+    width: 43px;
+    height: 49px;
+  }
+  .workbench .f-panel-heading {
+    flex-wrap: wrap;
+  }
+}

@@ -10,6 +10,7 @@
     "apps/*"
   ],
   "scripts": {
+    "dev:fantasy-ui": "bun --cwd apps/client ../../node_modules/vite/bin/vite.js --host 127.0.0.1 --port 3012 --open /dev/fantasy-ui.html",
     "dev": "bun run --filter '@loot-game/*' dev",
     "dev:isolated": "bun run --filter '@loot-game/*' dev:isolated",
     "dev:client": "bun run --filter @loot-game/client dev",
