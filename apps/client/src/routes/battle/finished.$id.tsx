@@ -38,7 +38,7 @@ function BattleResult() {
   const copy = resultCopy(victory, context.data ?? undefined);
   return (
     <>
-      <main className="expedition">
+      <main id="main-content" tabIndex={-1} className="expedition">
         <div className="expedition-shell">
           {run ? (
             <Link

@@ -1,0 +1,425 @@
+/* B: an illuminated journal, with a real book gutter and a hand-drawn map. */
+.theme-b {
+  --f-bg: #e5d8b9;
+  --f-panel: #eee4ca;
+  --f-panel-soft: #e1d4b2;
+  --f-text: #293e32;
+  --f-muted: #716e54;
+  --f-accent: #82632e;
+  --f-line: #b7a578;
+  --f-line-soft: #c9bd99;
+  --f-heading: "IM Fell English", Georgia, serif;
+  --f-health: #5c7d52;
+  --f-mana: #5c8092;
+  color-scheme: light;
+  background:
+    radial-gradient(ellipse at 50% 30%, #fffdf0a6, transparent 70%),
+    repeating-linear-gradient(95deg, #94805705 0 1px, transparent 1px 4px),
+    #e5d8b9;
+}
+.theme-b .f-eyebrow {
+  font-family: "Cinzel", serif;
+  font-size: 8px;
+}
+.theme-b .f-button {
+  font-family: "Cinzel", serif;
+  font-size: 10px;
+}
+.theme-b .f-button.primary {
+  background: linear-gradient(120deg, #294c3a, #36553d);
+  border: 1px solid #213e2d;
+  color: #f3e6c5;
+  box-shadow:
+    inset 0 0 0 3px #2c4a35,
+    inset 0 0 0 4px #d8c69a80,
+    0 3px 6px #57472015;
+}
+.theme-b .f-button.primary:hover {
+  background: #3f654b;
+}
+.theme-b .f-button.secondary {
+  border-color: #92804e;
+  color: #43583e;
+}
+.theme-b .f-ready {
+  color: #4b6c45;
+}
+.theme-b .f-meter-label span:last-child {
+  color: #4b5943;
+}
+.theme-b .f-meter-track {
+  height: 6px;
+  background: #b7a57835;
+  border: 0;
+  padding: 0;
+}
+.theme-b .f-meter-track > span {
+  background: #72805a;
+}
+.theme-b .mana .f-meter-track > span {
+  background: #6f8d99;
+}
+.theme-b .xp .f-meter-track > span {
+  background: #b39557;
+}
+.codex-layout {
+  min-height: 100vh;
+  padding-bottom: 120px;
+}
+.codex-header {
+  max-width: 1440px;
+  margin: auto;
+  height: 84px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #b7a57875;
+  padding: 0 52px;
+  gap: 30px;
+}
+.codex-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--f-heading);
+  font-size: 22px;
+}
+.codex-brand .f-crest {
+  color: #536443;
+}
+.codex-brand i {
+  font-size: 17px;
+}
+.codex-header nav {
+  display: flex;
+  height: 100%;
+  gap: 27px;
+  align-items: stretch;
+}
+.codex-header nav button {
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  padding: 0 6px;
+  font-size: 13px;
+  color: var(--f-muted);
+}
+.codex-header nav button[aria-current="page"] {
+  color: var(--f-text);
+  border-bottom-color: #536443;
+}
+.codex-header nav button:hover {
+  color: var(--f-text);
+}
+.codex-layout main {
+  max-width: 1344px;
+  padding: 0 52px;
+  margin: auto;
+}
+.codex-title {
+  text-align: center;
+  padding: 28px 0 17px;
+}
+.codex-chapter {
+  font:
+    8px "Cinzel",
+    serif;
+  letter-spacing: 0.22em;
+  color: #7f774f;
+}
+.codex-chapter > span {
+  font-size: 6px;
+  padding: 0 11px;
+}
+.codex-title h1 {
+  font-family: var(--f-heading);
+  font-size: 46px;
+  margin: 8px 0 2px;
+}
+.codex-title p {
+  font-size: 13px;
+  color: var(--f-muted);
+  font-style: italic;
+}
+.codex-title .f-ornament {
+  width: 245px;
+  margin: 10px auto 0;
+}
+.codex-book {
+  display: grid;
+  grid-template-columns: 43% 57%;
+  position: relative;
+  border: 1px solid #a4906177;
+  background: var(--f-paper);
+  box-shadow:
+    0 2px #d4c6a1,
+    0 3px #a5946b,
+    0 6px #e5d8b9,
+    0 7px #ac9b72,
+    0 10px #ddd0ac,
+    0 11px #b6a278,
+    0 22px 50px #5f482a25;
+}
+.codex-book::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px solid #b9a77a70;
+  pointer-events: none;
+  z-index: 1;
+}
+.codex-left {
+  position: relative;
+  padding: 30px 38px 43px;
+  background:
+    radial-gradient(ellipse at 0% 50%, #fff7e44d, transparent 70%),
+    linear-gradient(90deg, transparent 92%, #9d885532);
+}
+.codex-right {
+  position: relative;
+  padding: 30px 35px 43px;
+  background: linear-gradient(
+    90deg,
+    #72644218,
+    transparent 4%,
+    #fff8e433 12%,
+    transparent 95%
+  );
+  border-left: 1px solid #baa57580;
+}
+.book-section-title {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+.book-section-title > span {
+  font:
+    10px "Cinzel",
+    serif;
+  color: #9e8959;
+}
+.book-section-title h2 {
+  font-size: 25px;
+  flex: 1;
+}
+.book-section-title > svg {
+  color: #7a815d;
+}
+.book-intro {
+  font-size: 12px;
+  font-style: italic;
+  color: var(--f-muted);
+  margin: 12px 0 21px 27px;
+  line-height: 1.8;
+}
+.codex-characters {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.codex-characters > button {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 12px 10px 11px;
+  position: relative;
+}
+.codex-characters > button[aria-pressed="true"] {
+  border-color: #b49b6175;
+  background: #f7eed460;
+}
+.codex-characters > button[aria-pressed="true"]::after {
+  content: "◆";
+  position: absolute;
+  font-size: 7px;
+  color: #917340;
+  bottom: -6px;
+  background: #eee4ca;
+  padding: 0 5px;
+}
+.codex-characters .f-character-seal {
+  width: 82px;
+  height: 91px;
+  border-radius: 50% 50% 43% 43%;
+  margin-bottom: 20px;
+}
+.codex-characters > button > strong {
+  font-size: 23px;
+  font-family: var(--f-heading);
+  font-weight: 400;
+}
+.codex-characters > button > span {
+  color: var(--f-muted);
+  font-size: 10px;
+  font-style: italic;
+}
+.codex-characters > button > small {
+  font:
+    7px "Cinzel",
+    serif;
+  margin-top: 11px;
+  letter-spacing: 0.05em;
+  color: #786c46;
+}
+.codex-characters > button > small > span {
+  padding: 0 5px;
+}
+.codex-character-status {
+  margin-top: 25px;
+}
+.codex-character-status h3 {
+  font-family: var(--f-heading);
+  font-size: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 11px;
+}
+.codex-character-status h3 > span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #5d754d;
+  font: 8px var(--f-body);
+}
+.codex-spells-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--f-line-soft);
+  padding-top: 15px;
+  margin-top: 20px;
+}
+.codex-spells-heading h3 {
+  font: 17px var(--f-heading);
+}
+.codex-spells-heading > span {
+  font:
+    8px "Cinzel",
+    serif;
+  color: var(--f-muted);
+}
+.codex-spells {
+  display: flex;
+  justify-content: space-between;
+  gap: 13px;
+  padding: 15px 15px 5px;
+}
+.codex-spells .f-spell-art {
+  width: 61px;
+  height: 63px;
+  border-color: #a58948;
+  box-shadow: 0 3px 6px #5f482a22;
+}
+.codex-note {
+  font-style: italic;
+  font-size: 10px;
+  color: #817552;
+  text-align: center;
+  margin-top: 13px;
+}
+.book-page-number {
+  position: absolute;
+  bottom: 12px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 10px;
+  color: #a3946a;
+}
+.codex-map-wrap {
+  margin: 7px -18px 0;
+  position: relative;
+}
+.realm-map {
+  width: 100%;
+  height: 280px;
+  display: block;
+  color: #67744e;
+}
+.map-stamp {
+  position: absolute;
+  left: 35px;
+  bottom: 23px;
+  font:
+    6px "Cinzel",
+    serif;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #8b7660;
+  border: 1px solid #ad957872;
+  border-radius: 50%;
+  padding: 9px 8px;
+  transform: rotate(-12deg);
+}
+.codex-expedition {
+  text-align: center;
+  position: relative;
+  padding: 3px 0 7px;
+}
+.codex-expedition::before {
+  content: "";
+  display: block;
+  width: 75%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #b8a576, transparent);
+  margin: 0 auto 17px;
+}
+.codex-expedition > h2 {
+  font-size: 34px;
+  margin: 6px 0 8px;
+}
+.codex-expedition > p:not(.f-eyebrow) {
+  color: var(--f-muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+.codex-expedition-meta {
+  display: flex;
+  justify-content: center;
+  gap: 19px;
+  padding: 18px 0 20px;
+  color: #697456;
+  font-size: 9px;
+}
+.codex-expedition-meta > span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.codex-expedition .f-button {
+  min-width: 280px;
+}
+.codex-expedition > small {
+  display: block;
+  color: #817858;
+  font-size: 9px;
+  font-style: italic;
+  margin-top: 11px;
+}
+.codex-below {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 29px;
+  color: #737657;
+}
+.codex-below > span {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  font-style: italic;
+  font-size: 12px;
+}
+.codex-below button {
+  border: 0;
+  background: transparent;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: #506346;
+  font-size: 11px;
+}

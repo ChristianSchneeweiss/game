@@ -34,7 +34,10 @@ function CompletedCompany({ run }: { run: DungeonRunData }) {
         expedition.
       </p>
       {run.abandonedAt ? (
-        <Link className="expedition-button" to="/dungeons">
+        <Link
+          className="rpg-button rpg-button-primary expedition-button"
+          to="/dungeons"
+        >
           Choose another expedition →
         </Link>
       ) : (
@@ -96,7 +99,7 @@ function SharedRunAction({
   if (phase === "battle" && run.activeBattleId)
     return (
       <Link
-        className="expedition-button"
+        className="rpg-button rpg-button-primary expedition-button"
         to="/battle/$id"
         params={{ id: run.activeBattleId }}
       >
@@ -113,7 +116,7 @@ function SharedRunAction({
     );
   return (
     <button
-      className="expedition-button"
+      className="rpg-button rpg-button-primary expedition-button"
       disabled={
         pending || phase !== "ready" || !connected || !run.shared?.canStart
       }

@@ -1,3 +1,4 @@
+import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { queryClient, trpc } from "@/utils/trpc";
 import { userStore } from "@/utils/user-store";
@@ -33,7 +34,7 @@ export function CreateSharedPreparation({
   return (
     <>
       <button
-        className="expedition-button-secondary mb-3"
+        className="rpg-button rpg-button-outline mb-3 w-full"
         disabled={together.isPending}
         onClick={() => together.mutate({ key: dungeonKey, branching: true })}
       >
@@ -63,9 +64,8 @@ export function PreparationDungeon({
       <label htmlFor="shared-dungeon" className="expedition-eyebrow">
         Host's dungeon choice
       </label>
-      <select
+      <Select
         id="shared-dungeon"
-        className="w-full rounded-lg border border-[#8a7753]/40 bg-[#28271b] p-3 text-[#efdfbd]"
         value={preparation.key}
         disabled={dungeon.isPending}
         onChange={(event) =>
@@ -81,7 +81,7 @@ export function PreparationDungeon({
             {dungeonName(key)}
           </option>
         ))}
-      </select>
+      </Select>
       {dungeon.error ? (
         <p className="expedition-error" role="alert">
           {dungeon.error.message}
@@ -125,7 +125,7 @@ export function StartPreparation({
   return (
     <>
       <button
-        className="expedition-button"
+        className="rpg-button rpg-button-primary expedition-button"
         disabled={!connected || !preparation.canStart || preparing || building}
         onClick={() =>
           start.mutate({

@@ -115,7 +115,7 @@ export function RouteOfferCard({
           <div key={action}>
             <p>{actions[action].detail}</p>
             <button
-              className="expedition-button"
+              className="rpg-button rpg-button-primary expedition-button"
               disabled={disabled || actions[action].unavailable}
               onClick={() => onChoose(action)}
             >

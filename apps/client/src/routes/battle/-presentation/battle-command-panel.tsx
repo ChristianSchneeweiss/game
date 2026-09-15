@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import type { BattleSession } from "../-hooks/use-battle";
 import type { Stats } from "./timeline";
 import { SkillIcon } from "../../../components/skill-icon";
@@ -47,14 +48,19 @@ export function BattleCommandPanel({
             randomTarget ||
             !session.battleState?.availableSpells.includes(spell.config.id);
           return (
-            <button
+            <Button
+              variant="outline"
               key={spell.config.id}
               disabled={!session.canChoose || unavailable}
               aria-pressed={session.activeSpell === spell.config.id}
               onFocus={() => session.getSpellDescription(spell.config.id)}
               onClick={() => session.getTargets(spell.config.id)}
             >
-              <SkillIcon type={spell.config.type} size={compact ? 32 : 40} eager />
+              <SkillIcon
+                type={spell.config.type}
+                size={compact ? 32 : 40}
+                eager
+              />
               <span className="battle-spell-text">
                 <strong>{spell.config.name}</strong>
                 <small>
@@ -68,7 +74,7 @@ export function BattleCommandPanel({
                         : "Ready"}
                 </small>
               </span>
-            </button>
+            </Button>
           );
         })}
       </div>
@@ -102,7 +108,10 @@ export function BattleCommandPanel({
                     : "Requesting legal targets…")}
               </p>
               {compact ? (
-                <details className="battle-spell-details" key={selected.config.id}>
+                <details
+                  className="battle-spell-details"
+                  key={selected.config.id}
+                >
                   <summary>
                     Spell details · {selected.config.manaCost} mana ·{" "}
                     {selected.config.cooldown}-turn cooldown
@@ -131,20 +140,22 @@ export function BattleCommandPanel({
           )}
         </div>
         <div className="battle-commit-buttons">
-          <button
+          <Button
+            variant="default"
             className="battle-cast-button"
             onClick={session.castSpell}
             disabled={!session.canCast}
+            aria-busy={session.pending}
           >
             {session.pending ? "Casting…" : "Cast"}
-            <span aria-hidden="true">↗</span>
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="outline"
             onClick={session.cancelSpell}
             disabled={!session.activeSpell || session.pending}
           >
             Cancel
-          </button>
+          </Button>
         </div>
       </div>
       {session.error && (

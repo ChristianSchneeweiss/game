@@ -1,9 +1,8 @@
-import { SkillIcon } from "@/components/skill-icon";
 import { queryClient, trpc } from "@/utils/trpc";
 import type { LootEntity } from "@loot-game/game/types";
 import { useMutation } from "@tanstack/react-query";
-import { groupDrops, readable } from "./run-info";
-import { EquipmentIcon } from "./equipment-icon";
+import { groupDrops } from "./run-info";
+import { RewardEntry } from "./reward-entry";
 
 type Reward = { id: string; items: LootEntity[]; battleId: string };
 export function RunRewards({
@@ -60,23 +59,14 @@ export function RunRewards({
         itemRewards.map((reward) => (
           <div className="expedition-reward-bundle" key={reward.id}>
             {groupDrops(reward.items).map((drop) => (
-              <div className="expedition-drop" key={drop.type}>
-                {drop.label === "Equipment" ? (
-                  <EquipmentIcon type={drop.type} />
-                ) : (
-                  <SkillIcon type={drop.type} size={48} />
-                )}
-                <div>
-                  <small>{drop.label}</small>
-                  <strong>
-                    {readable(drop.type)}
-                    {drop.count > 1 ? ` ×${drop.count}` : ""}
-                  </strong>
-                </div>
-              </div>
+              <RewardEntry
+                key={drop.type}
+                item={drop.item}
+                count={drop.count}
+              />
             ))}
             <button
-              className="expedition-button"
+              className="rpg-button rpg-button-primary expedition-button"
               disabled={claim.isPending}
               onClick={() => claim.mutate(reward.id)}
             >

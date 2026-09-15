@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
+import { Status } from "@/components/ui/status";
 import { queryClient, trpc, type trpcClient } from "@/utils/trpc";
 import { userStore } from "@/utils/user-store";
 import { useIsMutating, useMutation } from "@tanstack/react-query";
-import { Crown, Circle, Check } from "lucide-react";
+import { Crown } from "lucide-react";
 
 export type PreparationData = Awaited<
   ReturnType<typeof trpcClient.preparation.get.query>
@@ -51,10 +52,7 @@ export function PreparationCompany({
       <h2>Two players. One expedition.</h2>
       <div className="space-y-3">
         {participants.map((participant) => (
-          <div
-            className="rounded-lg border border-[#8a7753]/30 bg-[#171810]/35 p-4"
-            key={participant.userId}
-          >
+          <div className="rpg-stone p-4" key={participant.userId}>
             <div className="flex flex-wrap items-center justify-between gap-2">
               <strong className="flex items-center gap-2">
                 {participant.isHost ? <Crown size={16} /> : null}
@@ -69,17 +67,12 @@ export function PreparationCompany({
               {participant.characterName ?? "Choosing a character"}
             </p>
             <div className="mt-2 flex flex-wrap gap-4 text-sm">
-              <span
-                className={
-                  participant.connected ? "text-[#b9d48e]" : "text-[#c6b998]"
-                }
-              >
-                {participant.connected ? "● Connected" : "○ Away"}
-              </span>
-              <span className="inline-flex items-center gap-1">
-                {participant.ready ? <Check size={15} /> : <Circle size={12} />}
+              <Status tone={participant.connected ? "success" : "warning"}>
+                {participant.connected ? "Connected" : "Away"}
+              </Status>
+              <Status tone={participant.ready ? "success" : "neutral"}>
                 {participant.ready ? "Ready" : "Not ready"}
-              </span>
+              </Status>
             </div>
           </div>
         ))}

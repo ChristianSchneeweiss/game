@@ -53,7 +53,7 @@ function RunAction({ run, onFight, pending }: Omit<Props, "error">) {
   if (phase === "battle" && run.activeBattleId)
     return (
       <Link
-        className="expedition-button"
+        className="rpg-button rpg-button-primary expedition-button"
         to="/battle/$id"
         params={{ id: run.activeBattleId }}
       >
@@ -63,7 +63,7 @@ function RunAction({ run, onFight, pending }: Omit<Props, "error">) {
   if (phase === "cleared" || phase === "fallen")
     return (
       <Link
-        className="expedition-button"
+        className="rpg-button rpg-button-primary expedition-button"
         to="/dungeons/prepare"
         search={prepSearch(
           run.playerTeam.map((hero) => hero.id),
@@ -75,7 +75,7 @@ function RunAction({ run, onFight, pending }: Omit<Props, "error">) {
     );
   return (
     <button
-      className="expedition-button"
+      className="rpg-button rpg-button-primary expedition-button"
       disabled={pending || phase !== "ready"}
       onClick={onFight}
     >

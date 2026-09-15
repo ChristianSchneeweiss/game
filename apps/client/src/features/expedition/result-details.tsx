@@ -86,14 +86,17 @@ export function ResultNextStep({
 }) {
   if (!run || !saved)
     return (
-      <button className="expedition-button" disabled>
+      <button
+        className="rpg-button rpg-button-primary expedition-button"
+        disabled
+      >
         {pending ? "Saving your expedition…" : "Expedition unavailable"}
       </button>
     );
   if (run.abandonedAt)
     return (
       <Link
-        className="expedition-button"
+        className="rpg-button rpg-button-primary expedition-button"
         to="/dungeons/$id"
         params={{ id: run.id }}
       >
@@ -105,7 +108,7 @@ export function ResultNextStep({
   if (run.cleared || !victory)
     return (
       <Link
-        className="expedition-button"
+        className="rpg-button rpg-button-primary expedition-button"
         to="/dungeons/prepare"
         search={prepSearch(
           run.playerTeam.map((hero) => hero.id),
@@ -117,7 +120,7 @@ export function ResultNextStep({
     );
   return (
     <Link
-      className="expedition-button"
+      className="rpg-button rpg-button-primary expedition-button"
       to="/dungeons/$id"
       params={{ id: run.id }}
     >

@@ -18,10 +18,7 @@ const DialogOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Overlay
     ref={ref}
-    className={cn(
-      "fixed inset-0 z-50 bg-[radial-gradient(circle_at_top,rgba(244,180,86,0.08),transparent_20%),rgba(5,4,3,0.86)] backdrop-blur-[2px] data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0",
-      className,
-    )}
+    className={cn("rpg-dialog-overlay", className)}
     {...props}
   />
 ));
@@ -35,14 +32,11 @@ const DialogContent = React.forwardRef<
     <DialogOverlay />
     <DialogPrimitive.Content
       ref={ref}
-      className={cn(
-        "fixed top-[50%] left-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border-2 border-[#8a7753]/80 bg-[linear-gradient(180deg,rgba(57,48,36,0.98),rgba(31,26,20,1))] p-6 text-[#ebe1cf] shadow-[0_26px_80px_rgba(0,0,0,0.5)] duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] data-[state=open]:zoom-in-95 before:pointer-events-none before:absolute before:inset-[6px] before:rounded-[0.9rem] before:border before:border-[#d5b97c]/14 before:content-[''] sm:rounded-[1.2rem]",
-        className,
-      )}
+      className={cn("rpg-dialog", className)}
       {...props}
     >
       {children}
-      <DialogPrimitive.Close className="absolute top-4 right-4 rounded-full border border-[#8a7753]/30 bg-[#2b241b]/80 p-2 text-[#d5c299] opacity-90 transition-all hover:border-[#b89656]/45 hover:text-[#f4e3bc] focus:ring-2 focus:ring-[#b89656]/40 focus:outline-none disabled:pointer-events-none data-[state=open]:bg-[#352c20]">
+      <DialogPrimitive.Close className="rpg-button rpg-button-ghost rpg-button-icon absolute top-2 right-2">
         <X className="h-4 w-4" />
         <span className="sr-only">Close</span>
       </DialogPrimitive.Close>
@@ -86,7 +80,7 @@ const DialogTitle = React.forwardRef<
   <DialogPrimitive.Title
     ref={ref}
     className={cn(
-      "rpg-heading text-xl leading-none font-semibold uppercase tracking-[0.08em]",
+      "rpg-heading text-xl leading-none font-semibold tracking-[0.08em] uppercase",
       className,
     )}
     {...props}

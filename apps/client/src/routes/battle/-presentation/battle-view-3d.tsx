@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Slider } from "@/components/ui/slider";
 import * as Dialog from "@radix-ui/react-dialog";
 import type { Entity } from "@loot-game/game/entity-types";
 import type { EffectTracking } from "@loot-game/game/bm";
@@ -268,9 +269,7 @@ export default function BattleView3D({
                 return (
                   <div
                     key={entity.id}
-                    className={
-                      selectedIds.has(entity.id) ? "is-selected" : ""
-                    }
+                    className={selectedIds.has(entity.id) ? "is-selected" : ""}
                   >
                     <button
                       className="battle-inspect-button"
@@ -327,9 +326,8 @@ export default function BattleView3D({
                 </button>
                 <label>
                   Event {playback.cursor} / {playback.frames.length - 1}
-                  <input
+                  <Slider
                     aria-label="Replay event"
-                    type="range"
                     min={0}
                     max={playback.frames.length - 1}
                     value={playback.cursor}

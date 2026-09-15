@@ -1,0 +1,67 @@
+/* Obsidian Sanctum: shared materials, type and interaction tokens. */
+@layer base {
+  :root {
+    --rpg-bg-0: #101710;
+    --rpg-bg-1: #151c16;
+    --rpg-panel-stone: #1b231b;
+    --rpg-panel-stone-soft: #242d22;
+    --rpg-panel-parchment: #211f17;
+    --rpg-panel-parchment-soft: #2b281d;
+    --rpg-text-main: #eee8d5;
+    --rpg-text-muted: #c0c2af;
+    --rpg-text-faint: #a6ac98;
+    --rpg-gold: #cdb474;
+    --rpg-focus: #efcf83;
+    --rpg-border-gold: #8f8054;
+    --rpg-border-bronze: #50583f;
+    --rpg-line: #a4a87930;
+    --rpg-selected: #cdb47412;
+    --rpg-paper: #e6d7b5;
+    --rpg-paper-light: #efe3c9;
+    --rpg-ink: #302f22;
+    --rpg-ink-muted: #5f5944;
+    --rpg-ink-gold: #6a5027;
+    --rpg-paper-line: #7a694447;
+    --rpg-danger: #f0aaa0;
+    --rpg-success: #abd5b5;
+    --rpg-warning: #edca88;
+    --rpg-health: #85ad83;
+    --rpg-mana: #7daec1;
+    --rpg-xp: #cdb474;
+    --rpg-blood: #b46f65;
+    --rpg-fire: #f4ac7f;
+    --rpg-water: #8dc9dd;
+    --rpg-earth: #b0cd88;
+    --rpg-lightning: #ecce83;
+    --rpg-dark: #c8aade;
+    --rpg-shadow-panel: inset 0 1px #fff9de05, 0 12px 32px #00000018;
+    --rpg-shadow-inset: inset 0 2px 8px #00000018;
+    --rpg-shadow-deep: 0 20px 60px #0008;
+    --rpg-font-display: "Cinzel", "Iowan Old Style", "Palatino Linotype", serif;
+    --rpg-font-body: "Spectral", Georgia, serif;
+    --rpg-font-numeric: "Spectral", Georgia, serif;
+    --rpg-space-1: 0.25rem;
+    --rpg-space-2: 0.5rem;
+    --rpg-space-3: 0.75rem;
+    --rpg-space-4: 1rem;
+    --rpg-space-6: 1.5rem;
+    --rpg-space-8: 2rem;
+    --rpg-motion: 160ms ease;
+    --rpg-page-gutter: clamp(1rem, 3vw, 2.5rem);
+    --background: 120 18% 8%;
+    --foreground: 46 42% 89%;
+    --card: 120 13% 12%;
+    --popover: 120 13% 12%;
+    --primary: 43 47% 63%;
+    --primary-foreground: 100 20% 10%;
+    --secondary: 106 14% 16%;
+    --muted: 106 14% 16%;
+    --muted-foreground: 83 12% 69%;
+    --accent: 106 14% 20%;
+    --destructive: 5 36% 27%;
+    --border: 76 16% 30%;
+    --input: 76 16% 38%;
+    --ring: 43 47% 63%;
+    --radius: 2px;
+  }
+}

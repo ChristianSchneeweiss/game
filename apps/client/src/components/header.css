@@ -1,172 +1,180 @@
-.game-header {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  flex-shrink: 0;
-  border-bottom: 1px solid #9c835536;
-  background: #171a17f5;
-  box-shadow: 0 3px 16px #0003;
-  transform: translateY(0);
-  transition: transform 180ms ease;
+[data-game-shell],
+[data-game-content] {
+  min-width: 0;
 }
-.game-header[data-hidden="true"] {
-  transform: translateY(calc(-100% - 8px));
-  pointer-events: none;
+.game-sidebar {
+  border-color: var(--rpg-line);
 }
-.game-header[data-hidden="true"]:focus-within {
-  transform: translateY(0);
-  pointer-events: auto;
-}
-.game-header-inner {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  max-width: 1280px;
-  min-height: 60px;
-  margin-inline: auto;
-  padding: 8px 24px;
+.game-sidebar [data-sidebar="header"] {
+  padding: 2rem 1.2rem 0;
 }
 .game-header-brand {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 9px;
+  gap: 1rem;
+  color: var(--rpg-gold);
+  font: 500 0.9rem var(--rpg-font-display);
+  text-align: center;
+  letter-spacing: 0.1em;
+}
+.game-header-brand em {
+  font: italic 0.85em var(--rpg-font-body);
+  text-transform: none;
+}
+.game-header-brand strong {
+  display: block;
+  margin-top: 0.4rem;
+  font-weight: 600;
+  font-size: 1.35rem;
+  letter-spacing: 0.15em;
+}
+.sanctum-crest {
+  width: 54px;
+  height: 68px;
   flex-shrink: 0;
-  color: #e7d3a3;
-  font: 600 14px var(--rpg-font-display);
-  white-space: nowrap;
 }
-.game-header-brand > svg {
-  color: #c3a567;
-}
-.game-header-nav {
-  display: flex;
-  align-items: stretch;
-  gap: 2px;
-  margin-inline: auto;
-  min-width: 0;
-}
-.game-header-link {
+.game-header-divider {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 9px 10px;
-  min-height: 36px;
-  border-radius: 5px;
-  color: #bfb8a7;
-  font-size: 13px;
-  font-weight: 500;
-  white-space: nowrap;
-  transition:
-    color 140ms ease,
-    background-color 140ms ease;
+  gap: 0.7rem;
+  margin-block: 1rem;
+  color: var(--rpg-gold);
 }
-.game-header-link > svg {
-  color: #a9997b;
+.game-header-divider::before,
+.game-header-divider::after {
+  content: "";
+  height: 1px;
+  flex: 1;
+  background: var(--rpg-line);
+}
+[data-sidebar="group-label"] {
+  font-family: var(--rpg-font-display);
+  color: var(--rpg-text-faint);
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+}
+.game-header-link[data-sidebar="menu-button"] {
+  height: auto;
+  min-height: 44px;
+  gap: 0.7rem;
+  padding: 0.8rem 0.75rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  color: var(--rpg-text-muted);
+  font: 0.875rem var(--rpg-font-body);
+}
+.game-header-link svg {
   flex-shrink: 0;
 }
 .game-header-link:hover {
-  color: #f0dfb9;
-  background: #c9ad7210;
+  background: var(--rpg-selected);
+  color: var(--rpg-text-main);
 }
-.game-header-link.is-active {
-  color: #ecd39a;
-  background: #bea06819;
-  box-shadow: inset 0 -2px #c9ab6a;
+.game-header-link.is-active[data-sidebar="menu-button"] {
+  border-color: var(--rpg-border-bronze);
+  box-shadow: inset 2px 0 var(--rpg-gold);
+  color: var(--rpg-gold);
+  background: var(--rpg-selected);
 }
-.game-header-link.is-active > svg {
-  color: #dec185;
+.game-nav-arrow {
+  display: none;
+  margin-left: auto;
+  font-size: 1.3rem;
+}
+.is-active .game-nav-arrow {
+  display: inline;
 }
 .game-header-actions {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-  gap: 8px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+  gap: 0.5rem;
 }
 .game-header-actions .game-header-action {
-  height: 34px;
-  padding: 6px 9px;
-  border-width: 1px;
-  border-radius: 5px;
-  background: transparent;
-  box-shadow: none;
-  font-size: 10px;
-  letter-spacing: 0.05em;
-  transition:
-    color 140ms ease,
-    background-color 140ms ease;
+  width: 100%;
+  min-height: 44px;
+  justify-content: flex-start;
+  font-size: 0.8rem;
+  padding-inline: 0.65rem;
+  white-space: nowrap;
 }
-.game-header-actions .game-header-action::before {
-  display: none;
+.game-header-action-count {
+  flex-shrink: 0;
+  margin-left: auto;
+  min-width: 1.5rem;
+  padding-inline: 0.35rem;
+  border-radius: var(--radius);
+  color: var(--rpg-bg-0);
+  background: var(--rpg-gold);
+  font-variant-numeric: tabular-nums;
 }
 .game-header-account {
   display: flex;
   align-items: center;
-  padding: 2px;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
 }
-.game-header :is(a, button):focus-visible {
-  outline: 2px solid #d4b777;
-  outline-offset: 3px;
+.game-header-motto {
+  margin-top: 0.5rem;
+  padding-block: 1rem;
+  border-top: 1px solid var(--rpg-line);
+  color: var(--rpg-text-faint);
+  font-size: 0.8rem;
+  font-style: italic;
+  text-align: center;
 }
-@media (max-width: 1180px) {
-  .game-header-inner {
-    gap: 14px;
-    padding-inline: 16px;
-  }
-  .game-header-brand-rest {
-    display: none;
-  }
-  .game-header-link {
-    padding-inline: 8px;
-  }
+.game-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 60px;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--rpg-line);
+  color: var(--rpg-text-faint);
+  font: 0.7rem var(--rpg-font-display);
+  letter-spacing: 0.09em;
 }
-@media (max-width: 960px) {
-  .game-header-inner {
-    flex-wrap: wrap;
-    gap: 4px 12px;
-    padding-block: 7px 0;
-  }
-  .game-header-brand-rest {
-    display: inline;
-  }
-  .game-header-actions {
-    margin-left: auto;
-  }
-  .game-header-nav {
-    order: 3;
-    width: 100%;
-    overflow-x: auto;
-    margin: 0;
-    padding-block: 3px 6px;
-    scrollbar-width: thin;
-    scrollbar-color: #796b4a #171a17;
-  }
-  .game-header-link {
-    flex: 1 0 auto;
-    padding: 8px 10px;
-  }
+.game-toolbar-ornament {
+  margin-left: auto;
+  color: var(--rpg-gold);
 }
-@media (max-width: 480px) {
-  .game-header-inner {
-    padding-inline: 12px;
-  }
-  .game-header-brand {
-    font-size: 12px;
-  }
-  .game-header-brand > svg {
-    width: 20px;
-  }
-  .game-header-actions {
-    gap: 5px;
-  }
-  .game-header-link {
-    font-size: 12px;
-  }
+[data-collapsible="icon"] .game-header-brand > span,
+[data-collapsible="icon"] .game-header-divider,
+[data-collapsible="icon"] .game-header-motto {
+  display: none;
 }
-@media (prefers-reduced-motion: reduce) {
-  .game-header,
-  .game-header-link,
-  .game-header-actions .game-header-action {
-    transition: none;
-  }
+[data-collapsible="icon"] .sanctum-crest {
+  width: 28px;
+  height: 36px;
+}
+[data-collapsible="icon"] [data-sidebar="header"] {
+  padding: 1rem 0.5rem;
+}
+[data-collapsible="icon"] .game-header-link[data-sidebar="menu-button"] {
+  width: 44px !important;
+  height: 44px !important;
+  padding: 0.75rem !important;
+}
+[data-collapsible="icon"] .game-header-actions .game-header-action {
+  width: 44px;
+  justify-self: center;
+  justify-content: center;
+  padding: 0.5rem;
+  gap: 0;
+}
+[data-collapsible="icon"] .game-header-action-label,
+[data-collapsible="icon"] .game-header-action-count {
+  display: none;
+}
+[data-collapsible="icon"] .game-header-action svg {
+  width: 1rem;
+  height: 1rem;
+}
+[data-mobile="true"] .game-header-brand {
+  padding-top: 1rem;
+}
+[data-mobile="true"] .game-header-actions {
+  padding: 0.75rem;
 }

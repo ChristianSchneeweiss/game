@@ -84,7 +84,7 @@ function PrepareRun() {
     });
   }
   return (
-    <main className="expedition">
+    <main id="main-content" tabIndex={-1} className="expedition">
       <div className="expedition-shell">
         <Link className="expedition-back" to="/dungeons">
           ← All expeditions
@@ -175,7 +175,7 @@ function PrepareRun() {
               />
               <CreateSharedPreparation dungeonKey={search.key} />
               <button
-                className="expedition-button"
+                className="rpg-button rpg-button-primary expedition-button"
                 disabled={
                   party.length === 0 || enter.isPending || updatingBuild
                 }

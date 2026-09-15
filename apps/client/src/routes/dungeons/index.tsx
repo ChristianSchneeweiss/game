@@ -218,10 +218,10 @@ function RouteComponent() {
           description="Start a new expedition, track active pushes, and keep every unfinished dungeon moving without losing the shape of the run."
           aside={
             <RpgInset variant="parchment" className="p-5">
-              <p className="rpg-title text-[0.62rem] text-[#cfbf97]/75">
+              <p className="rpg-title text-[0.62rem] text-(--rpg-text-faint)">
                 Realm pulse
               </p>
-              <div className="mt-4 grid grid-cols-3 gap-3">
+              <div className="mt-4 divide-y divide-(--rpg-line)">
                 <SummaryPill label="Battle" value={inBattleDungeons.length} />
                 <SummaryPill label="Active" value={activeDungeons.length} />
                 <SummaryPill label="Cleared" value={clearedDungeons.length} />
@@ -263,9 +263,9 @@ function RouteComponent() {
                   type="button"
                   onClick={() => setEntryTab(tab.value)}
                   className={cn(
-                    "rounded-[1.1rem] border px-4 py-3 text-left transition-all duration-200",
+                    "rounded-sm border px-4 py-3 text-left transition-all duration-200",
                     entryTab === tab.value
-                      ? "border-[#b89656]/45 bg-[#3a3023]/95 text-[#f1e8d4] shadow-[inset_0_1px_0_rgba(255,239,201,0.06)]"
+                      ? "border-[#b89656]/45 bg-[#3a3023]/95 text-(--rpg-text-main) shadow-[inset_0_1px_0_rgba(255,239,201,0.06)]"
                       : "border-[#8a7753]/20 bg-[#241d15]/78 text-[#b8aa89] hover:border-[#8a7753]/38 hover:bg-[#2c241b]/92 hover:text-[#e6d6b0]",
                   )}
                 >
@@ -285,12 +285,12 @@ function RouteComponent() {
               <RpgInset variant="parchment" className="p-4">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
-                    <p className="rpg-title text-[0.58rem] text-[#cfbf97]/70">
+                    <p className="rpg-title text-[0.58rem] text-(--rpg-text-faint)">
                       Roster read
                     </p>
                     <p className="mt-1 text-sm text-[#d9ccb0]">
                       Recommendations are tuned around a roster level of{" "}
-                      <span className="font-semibold text-[#f1e8d4]">
+                      <span className="font-semibold text-(--rpg-text-main)">
                         {rosterLevel}
                       </span>
                       .
@@ -450,11 +450,9 @@ function AbandonedExpeditions({
 
 function SummaryPill({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rpg-stat-tile text-center">
-      <p className="text-[0.65rem] font-semibold tracking-[0.18em] text-[#b6ab92] uppercase">
-        {label}
-      </p>
-      <p className="mt-2 text-2xl font-semibold text-[#f1e8d4]">{value}</p>
+    <div className="flex items-baseline justify-between gap-4 py-2">
+      <p className="text-sm text-(--rpg-text-muted)">{label}</p>
+      <p className="text-xl font-semibold text-(--rpg-text-main)">{value}</p>
     </div>
   );
 }
@@ -523,7 +521,7 @@ function DungeonEntryCard({
         <h3 className="rpg-heading mt-5 text-3xl leading-none font-semibold tracking-[0.05em] uppercase">
           {dungeon.title}
         </h3>
-        <p className="mt-3 text-[0.68rem] font-semibold tracking-[0.18em] text-[#cfbf97]/72 uppercase">
+        <p className="mt-3 text-[0.68rem] font-semibold tracking-[0.18em] text-(--rpg-text-faint) uppercase">
           Suggested level {dungeon.recommendedMinLevel}
           {dungeon.recommendedMinLevel !== dungeon.recommendedMaxLevel
             ? `-${dungeon.recommendedMaxLevel}`
@@ -600,7 +598,7 @@ function DungeonCard({
               <MapPin className="h-5 w-5" />
             </div>
             <div>
-              <p className="rpg-title text-[0.58rem] text-[#cfbf97]/70">
+              <p className="rpg-title text-[0.58rem] text-(--rpg-text-faint)">
                 Expedition
               </p>
               <h3 className="rpg-heading mt-2 text-3xl leading-none font-semibold tracking-[0.05em] uppercase">
@@ -646,7 +644,7 @@ function DungeonCard({
               <Clock className="h-3.5 w-3.5" />
               Started
             </div>
-            <p className="mt-2 text-sm font-semibold text-[#f1e8d4]">
+            <p className="mt-2 text-sm font-semibold text-(--rpg-text-main)">
               {dayjs(dungeon.createdAt).fromNow()}
             </p>
           </div>
@@ -655,7 +653,7 @@ function DungeonCard({
               <MapPin className="h-3.5 w-3.5" />
               Round
             </div>
-            <p className="mt-2 text-sm font-semibold text-[#f1e8d4]">
+            <p className="mt-2 text-sm font-semibold text-(--rpg-text-main)">
               {dungeon.round + 1}
             </p>
           </div>
@@ -708,7 +706,7 @@ function ClearedDungeonRow({
         />
         <div className="relative flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="min-w-0">
-            <p className="rpg-title text-[0.58rem] text-[#cfbf97]/70">
+            <p className="rpg-title text-[0.58rem] text-(--rpg-text-faint)">
               Cleared archive
             </p>
             <h3 className="rpg-heading mt-2 text-2xl leading-none font-semibold tracking-[0.05em] uppercase">
@@ -756,7 +754,7 @@ function ClearedDungeonRow({
                     <Clock className="h-3.5 w-3.5" />
                     Cleared entry
                   </div>
-                  <p className="mt-2 text-sm font-semibold text-[#f1e8d4]">
+                  <p className="mt-2 text-sm font-semibold text-(--rpg-text-main)">
                     {dayjs(dungeon.createdAt).format("MMM D, YYYY")}
                   </p>
                 </div>
@@ -765,7 +763,7 @@ function ClearedDungeonRow({
                     <MapPin className="h-3.5 w-3.5" />
                     Waves cleared
                   </div>
-                  <p className="mt-2 text-sm font-semibold text-[#f1e8d4]">
+                  <p className="mt-2 text-sm font-semibold text-(--rpg-text-main)">
                     {dungeon.round}
                   </p>
                 </div>
@@ -774,7 +772,7 @@ function ClearedDungeonRow({
                     <CheckCircle className="h-3.5 w-3.5" />
                     Ownership
                   </div>
-                  <p className="mt-2 text-sm font-semibold text-[#f1e8d4]">
+                  <p className="mt-2 text-sm font-semibold text-(--rpg-text-main)">
                     {dungeon.guest ? "Guest" : "Owned"}
                   </p>
                 </div>

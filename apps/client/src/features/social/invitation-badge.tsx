@@ -4,7 +4,6 @@ import { userStore } from "@/utils/user-store";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { Mail } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 export function InvitationBadge({ className }: { className?: string }) {
   const userId = userStore((state) => state.user?.id);
@@ -21,21 +20,16 @@ export function InvitationBadge({ className }: { className?: string }) {
         invitation.recipient.id === userId && invitation.status === "pending",
     ).length ?? 0;
   return (
-    <Button
-      asChild
-      variant="outline"
-      className={cn("h-10 px-3 text-[0.68rem]", className)}
-    >
+    <Button asChild variant="outline" className={className}>
       <Link
         to="/invitations"
         aria-label={`Dungeon invitations${count ? `, ${count} pending` : ""}`}
+        title={`Dungeon invitations${count ? `, ${count} pending` : ""}`}
       >
         <Mail size={16} />
-        <span className="hidden xl:inline">Inbox</span>
+        <span className="game-header-action-label">Inbox</span>
         {count > 0 ? (
-          <span className="rounded-full bg-[#bb8e3e] px-1.5 text-[#21180d]">
-            {count}
-          </span>
+          <span className="game-header-action-count">{count}</span>
         ) : null}
       </Link>
     </Button>

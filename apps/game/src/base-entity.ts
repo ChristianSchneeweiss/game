@@ -14,6 +14,8 @@ import type { TimelineEvent } from "./timeline-events";
 import type { AttributeModifier, DamageType, Effect, Spell } from "./types";
 import type { WeaponAttackProfile } from "./tactical/types";
 
+export const CHARACTER_HEALTH_REGEN_PER_VITALITY = 0.375;
+
 export class BaseEntity implements Entity {
   id: string;
   name: string;
@@ -212,11 +214,17 @@ export class BaseEntity implements Entity {
         return this.baseSpecialAttributes.armorPenetration;
       case "magicPenetration":
         return this.baseSpecialAttributes.magicPenetration;
-      case "healthRegen":
+      case "healthRegen": {
+        // Battles without a grid retain the original v1 combat rules.
+        const scaling =
+          this.battleManager && !this.battleManager.grid
+            ? 0.5
+            : CHARACTER_HEALTH_REGEN_PER_VITALITY;
         return (
           this.baseSpecialAttributes.healthRegen +
-          (this.isBot ? 2 : this.getAttribute("vitality") / 2)
+          (this.isBot ? 2 : this.getAttribute("vitality") * scaling)
         );
+      }
       case "manaRegen":
         return (
           this.baseSpecialAttributes.manaRegen +

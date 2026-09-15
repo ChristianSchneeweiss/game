@@ -7,6 +7,7 @@ import { redactTelemetry } from "../../server/src/lib/diagnostics";
 import Loader from "./components/loader";
 import { routeTree } from "./routeTree.gen";
 import { TRPCProvider } from "./utils/trpc-provider";
+import { clerkAppearance } from "./styles/clerk-appearance";
 
 Sentry.init({
   dsn: "https://8f3eeafa92a5c43dca0983588439eb9a@o4510053990334464.ingest.de.sentry.io/4510053992169552",
@@ -47,7 +48,10 @@ const rootElement = document.getElementById("app")!;
 if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
-    <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
+    <ClerkProvider
+      publishableKey={PUBLISHABLE_KEY}
+      appearance={clerkAppearance}
+    >
       <TRPCProvider>
         <RouterProvider router={router} />
       </TRPCProvider>

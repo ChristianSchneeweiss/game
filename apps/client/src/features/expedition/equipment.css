@@ -4,14 +4,15 @@
   margin-top: 18px;
 }
 .expedition-build-tabs button {
+  min-height: 44px;
   flex: 1;
   border: 1px solid var(--exp-line);
   padding: 11px;
-  font-size: 11px;
+  font-size: 12px;
 }
 .expedition-build-tabs [aria-pressed="true"] {
-  background: #a0e2b815;
-  border-color: #a0e2b860;
+  background: var(--rpg-selected);
+  border-color: var(--rpg-border-gold);
   color: var(--exp-filled);
 }
 .expedition-equipment {
@@ -45,10 +46,11 @@
   gap: 24px;
   position: absolute;
   inset: auto 0 12px;
-  font-size: 10px;
+  font-size: 12px;
   color: var(--exp-dim);
 }
 .expedition-preview-controls button {
+  min-height: 44px;
   width: 34px;
   height: 30px;
   border: 1px solid var(--exp-line);
@@ -69,7 +71,8 @@
   margin-top: 7px;
 }
 .expedition-preview-caption button {
-  font-size: 11px;
+  min-height: 44px;
+  font-size: 12px;
   color: var(--exp-gold);
   text-decoration: underline;
   margin-top: 9px;
@@ -91,7 +94,7 @@
   border: 1px solid var(--exp-line);
 }
 .expedition-equipment-stats dt {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--exp-dim);
 }
 .expedition-equipment-stats dd {
@@ -116,6 +119,7 @@
   gap: 8px;
 }
 .expedition-equipment-slots button {
+  min-height: 44px;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -129,13 +133,13 @@
 }
 .expedition-equipment-slots strong {
   display: block;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   margin-top: 6px;
 }
 .expedition-remove-gear {
   color: var(--exp-dim);
-  font-size: 11px;
+  font-size: 12px;
   margin: 12px 0;
   padding: 6px 0;
   text-decoration: underline;
@@ -162,13 +166,13 @@
 }
 .expedition-gear-item p {
   color: var(--exp-dim);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.6;
   margin-top: 6px;
 }
 .expedition-gear-item small {
   letter-spacing: 0.07em;
-  font-size: 8px;
+  font-size: 12px;
 }
 .expedition-gear-item[data-equipped="true"] small {
   color: var(--exp-filled);
@@ -181,15 +185,18 @@
   gap: 7px;
 }
 .expedition-gear-actions button {
+  min-height: 44px;
   border: 1px solid var(--exp-line);
   padding: 8px;
-  font-size: 10px;
+  font-size: 12px;
 }
 .expedition-gear-actions button:last-child {
-  border-color: #a0e2b860;
+  min-height: 44px;
+  border-color: var(--rpg-border-gold);
   color: var(--exp-filled);
 }
 .expedition-gear-actions button[aria-pressed="true"] {
+  min-height: 44px;
   color: var(--exp-empty);
   border-color: var(--exp-empty);
 }
@@ -198,6 +205,7 @@
     height: 300px;
   }
   .expedition-equipment-slots button {
+    min-height: 44px;
     flex-direction: column;
     align-items: flex-start;
   }

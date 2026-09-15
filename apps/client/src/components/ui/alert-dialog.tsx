@@ -15,10 +15,7 @@ const AlertDialogOverlay = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Overlay>
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Overlay
-    className={cn(
-      "fixed inset-0 z-50 bg-[radial-gradient(circle_at_top,rgba(244,180,86,0.08),transparent_20%),rgba(5,4,3,0.86)] backdrop-blur-[2px] data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0",
-      className,
-    )}
+    className={cn("rpg-dialog-overlay", className)}
     {...props}
     ref={ref}
   />
@@ -33,10 +30,7 @@ const AlertDialogContent = React.forwardRef<
     <AlertDialogOverlay />
     <AlertDialogPrimitive.Content
       ref={ref}
-      className={cn(
-        "fixed top-[50%] left-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border-2 border-[#8a7753]/80 bg-[linear-gradient(180deg,rgba(57,48,36,0.98),rgba(31,26,20,1))] p-6 text-[#ebe1cf] shadow-[0_26px_80px_rgba(0,0,0,0.5)] duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] data-[state=open]:zoom-in-95 before:pointer-events-none before:absolute before:inset-[6px] before:rounded-[0.9rem] before:border before:border-[#d5b97c]/14 before:content-[''] sm:rounded-[1.2rem]",
-        className,
-      )}
+      className={cn("rpg-dialog", className)}
       {...props}
     />
   </AlertDialogPortal>
@@ -78,7 +72,7 @@ const AlertDialogTitle = React.forwardRef<
   <AlertDialogPrimitive.Title
     ref={ref}
     className={cn(
-      "rpg-heading text-xl font-semibold uppercase tracking-[0.08em]",
+      "rpg-heading text-xl font-semibold tracking-[0.08em] uppercase",
       className,
     )}
     {...props}

@@ -4,6 +4,8 @@ import "./expedition.css";
 import { readable, trailEntries } from "./run-info";
 import { PartySpellSlots } from "./party-spell-slots";
 import { EquipmentIcon } from "./equipment-icon";
+import { RpgMeter } from "@/components/rpg-ui";
+import { Button } from "@/components/ui/button";
 
 export function WaveTrail({
   dungeonKey,
@@ -57,24 +59,31 @@ export function PartyCard({
           <h3>{character.name}</h3>
         </div>
         {onSelect && (
-          <button
-            className="expedition-select"
+          <Button
+            variant="outline"
+            size="sm"
+            className="ml-auto"
             aria-label={`${selected ? "Remove" : "Select"} ${character.name}`}
             aria-pressed={selected}
             onClick={onSelect}
           >
             {selected ? "✓ In party" : "+ Add"}
-          </button>
+          </Button>
         )}
       </div>
       <div className="expedition-resources">
-        <span>
-          ♥ {Math.ceil(character.health)} / {character.maxHealth}{" "}
-          <small>HP</small>
-        </span>
-        <span>
-          ✦ {Math.ceil(character.mana)} / {character.maxMana} <small>MP</small>
-        </span>
+        <RpgMeter
+          label="Health"
+          value={Math.ceil(character.health)}
+          max={character.maxHealth}
+          tone="health"
+        />
+        <RpgMeter
+          label="Mana"
+          value={Math.ceil(character.mana)}
+          max={character.maxMana}
+          tone="mana"
+        />
       </div>
       {onSelect && (
         <div className="expedition-party-gear">

@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { useId, useRef } from "react";
 import type { Entity } from "@loot-game/game/entity-types";
 import type { GridState, Tile } from "@loot-game/game/tactical/types";
@@ -248,14 +249,17 @@ export function SpellGuidanceLegend({
   return (
     <div className="tactical-spell-guidance" aria-label="Spell tile colors">
       <span>
-        <i data-kind="range" aria-hidden="true" />Spell reach
+        <i data-kind="range" aria-hidden="true" />
+        Spell reach
       </span>
       <span>
-        <i data-kind="aim" aria-hidden="true" />Valid aim · select to prepare
+        <i data-kind="aim" aria-hidden="true" />
+        Valid aim · select to prepare
       </span>
       {tactical.spellGuidance.castPositions.length > 0 && (
         <span>
-          <i data-kind="move" aria-hidden="true" />Move into range · select to plan
+          <i data-kind="move" aria-hidden="true" />
+          Move into range · select to plan
         </span>
       )}
     </div>
@@ -279,7 +283,8 @@ export function TacticalActions({ session }: { session: BattleSession }) {
       {tactical.targeting?.aim === "direction" && (
         <div className="tactical-directions" aria-label="Choose direction">
           {(["north", "east", "south", "west"] as const).map((direction) => (
-            <button
+            <Button
+              variant="outline"
               key={direction}
               onClick={() => tactical.selectDirection(direction)}
               disabled={!session.canChoose}
@@ -289,27 +294,33 @@ export function TacticalActions({ session }: { session: BattleSession }) {
               }
             >
               {direction}
-            </button>
+            </Button>
           ))}
         </div>
       )}
       <div className="tactical-action-buttons">
-        <button
+        <Button
+          variant="outline"
           onClick={tactical.startMoving}
           disabled={!session.canChoose}
           aria-pressed={!session.activeSpell}
         >
           Plan move
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="outline"
           onClick={tactical.move}
           disabled={!tactical.canMove || !!session.activeSpell}
         >
           Move{tactical.path.length ? ` · ${tactical.path.length} steps` : ""}
-        </button>
-        <button onClick={tactical.endTurn} disabled={!session.canChoose}>
+        </Button>
+        <Button
+          variant="outline"
+          onClick={tactical.endTurn}
+          disabled={!session.canChoose}
+        >
           End Turn
-        </button>
+        </Button>
       </div>
       <p className="tactical-plan-status" role="status">
         {session.pending

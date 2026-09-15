@@ -2,6 +2,8 @@
 
 These measurements are a reproducible first calibration dataset, **not assigned Might values, tier recommendations, or representative encounter win rates**. They compare concrete decisions and capture timing that static spell descriptions miss. No gameplay source was changed.
 
+These recorded results predate the 15 September 2026 health regeneration adjustment. Character innate regeneration now scales at 37.5% of Vitality (15 health at 40 Vitality), down from 50%; the measurements below retain the earlier rule. Re-running the probes uses the current balance.
+
 Run from the repository root with its pinned Bun 1.4.0:
 
 ```sh

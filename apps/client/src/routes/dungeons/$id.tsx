@@ -51,7 +51,7 @@ function DungeonRun() {
   const copy = runCopy(run);
   const lastBattle = run.battles.filter((battle) => battle.completedAt).at(-1);
   return (
-    <main className="expedition">
+    <main id="main-content" tabIndex={-1} className="expedition">
       <div className="expedition-shell">
         <Link className="expedition-back" to="/dungeons">
           ← All expeditions

@@ -127,7 +127,7 @@ export function LibraryDetail({
   };
   return (
     <aside
-      className="library-detail"
+      className="library-detail rpg-reading-surface"
       aria-label="Entry details"
       aria-live="polite"
     >

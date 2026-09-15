@@ -60,7 +60,7 @@ export function trailEntries(
 export function groupDrops(items: LootEntity[]) {
   const drops = new Map<
     string,
-    { type: string; label: string; count: number }
+    { type: string; label: string; count: number; item: LootEntity }
   >();
   for (const item of items) {
     const type =
@@ -73,6 +73,7 @@ export function groupDrops(items: LootEntity[]) {
     if (previous) previous.count++;
     else
       drops.set(type, {
+        item,
         type,
         label:
           item.type === "SPELL"

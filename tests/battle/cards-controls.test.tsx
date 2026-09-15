@@ -13,6 +13,16 @@ Object.assign(globalThis, {
   document: browser.document,
   navigator: browser.navigator,
   HTMLElement: browser.HTMLElement,
+  getComputedStyle: browser.getComputedStyle.bind(browser),
+  NodeFilter: browser.NodeFilter,
+  Node: browser.Node,
+  Element: browser.Element,
+  Event: browser.Event,
+  CustomEvent: browser.CustomEvent,
+  MutationObserver: browser.MutationObserver,
+  ResizeObserver: browser.ResizeObserver,
+  requestAnimationFrame: browser.requestAnimationFrame.bind(browser),
+  cancelAnimationFrame: browser.cancelAnimationFrame.bind(browser),
   IS_REACT_ACT_ENVIRONMENT: true,
 });
 mock.module("@clerk/clerk-react", () => ({

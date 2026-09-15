@@ -67,7 +67,7 @@ function InvitationsPage() {
           <div className="grid gap-5 md:grid-cols-2">
             {invitations.map((invitation) => (
               <RpgPanel key={invitation.id} contentClassName="space-y-4 p-6">
-                <p className="rpg-title text-xs text-[#cfbf97]">
+                <p className="rpg-title text-xs text-(--rpg-text-faint)">
                   {invitation.sender.username} invites you
                 </p>
                 <h2 className="rpg-heading text-3xl">

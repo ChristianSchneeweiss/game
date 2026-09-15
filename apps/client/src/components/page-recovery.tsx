@@ -10,7 +10,7 @@ import { queryClient } from "@/utils/trpc";
 export function PageError({ reset }: ErrorComponentProps) {
   const router = useRouter();
   return (
-    <main className="expedition">
+    <main id="main-content" tabIndex={-1} className="expedition">
       <section className="expedition-shell" aria-labelledby="page-error-title">
         <p className="expedition-eyebrow">The trail is interrupted</p>
         <h1 id="page-error-title">We couldn't open this page.</h1>
@@ -47,11 +47,14 @@ export function PageError({ reset }: ErrorComponentProps) {
 
 export function PageNotFound() {
   return (
-    <main className="expedition">
+    <main id="main-content" tabIndex={-1} className="expedition">
       <section className="expedition-shell">
         <h1>This path doesn't exist.</h1>
         <p>Return to the expedition catalogue to choose your next journey.</p>
-        <Link className="expedition-button" to="/dungeons">
+        <Link
+          className="rpg-button rpg-button-primary expedition-button"
+          to="/dungeons"
+        >
           All expeditions →
         </Link>
       </section>

@@ -1,0 +1,158 @@
+/* The workbench shows the same primitives in context and in their individual states. */
+.workbench {
+  max-width: 1120px;
+  padding: 35px 40px 135px;
+  margin: 0 auto;
+}
+.workbench-title {
+  text-align: center;
+  padding: 35px 0 24px;
+}
+.workbench-title h1 {
+  margin: 10px 0;
+}
+.workbench-title > p:last-of-type {
+  color: var(--f-muted);
+  font-size: 13px;
+}
+.workbench-title .f-ornament {
+  max-width: 230px;
+  margin: 15px auto 0;
+}
+.workbench > .f-panel {
+  margin-bottom: 22px;
+}
+.workbench-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+  margin-bottom: 22px;
+}
+.workbench .f-panel {
+  padding: 0 25px 23px;
+}
+.workbench .f-panel-heading {
+  padding: 24px 0 20px;
+}
+.workbench .f-panel h2 {
+  font-size: 21px;
+}
+.workbench .f-meter {
+  margin: 0 0 17px;
+}
+.f-palette {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+}
+.f-palette > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.f-palette > div > span {
+  height: 49px;
+  background: var(--swatch);
+  border: 1px solid #85826570;
+  margin-bottom: 5px;
+}
+.f-palette strong {
+  font-size: 11px;
+  font-weight: 400;
+}
+.f-palette code {
+  font-size: 9px;
+  color: var(--f-muted);
+}
+.workbench-buttons {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 12px;
+}
+.component-caption {
+  color: var(--f-muted);
+  font-size: 11px;
+  line-height: 1.8;
+  margin: 15px 0;
+}
+.workbench-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 25px;
+}
+.f-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--f-line);
+  padding: 9px 12px;
+  color: var(--f-muted);
+  background: #00000008;
+}
+.f-search input {
+  width: 175px;
+  padding: 0;
+  background: transparent;
+  color: var(--f-text);
+  border: 0;
+  font-size: 12px;
+}
+.f-search input::placeholder {
+  color: var(--f-muted);
+  opacity: 1;
+}
+.workbench-spells {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  padding: 6px 0;
+}
+.workbench-tiers {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+.workbench-tiers > div {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+}
+.workbench-tiers .f-tier {
+  width: 34px;
+  height: 39px;
+  font-size: 21px;
+}
+.workbench-tiers > div > span:last-child {
+  font-size: 9px;
+  color: var(--f-muted);
+}
+.f-empty {
+  padding: 28px 15px;
+  min-height: 113px;
+  text-align: center;
+  color: var(--f-muted);
+  font-size: 12px;
+  grid-column: 1 / -1;
+}
+.f-empty h3 {
+  color: var(--f-text);
+  font-family: var(--f-heading);
+  margin: 5px 0;
+  font-size: 20px;
+}
+.workbench-status {
+  display: flex;
+  margin-top: 20px;
+}
+.workbench-footer {
+  text-align: center;
+  font-size: 10px;
+  color: var(--f-muted);
+}
+.theme-b .workbench .f-panel {
+  background: #f4ecd64d;
+}

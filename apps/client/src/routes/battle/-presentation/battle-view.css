@@ -1,12 +1,12 @@
 .battle-3d {
-  --ink: #e6e4d8;
-  --muted: #99aaa5;
-  --gold: #d6ba7d;
-  --line: #3b4843;
+  --ink: var(--rpg-text-main);
+  --battle-muted: var(--rpg-text-muted);
+  --gold: var(--rpg-gold);
+  --line: var(--rpg-line);
   color: var(--ink);
-  background: #111916;
+  background: var(--rpg-bg-0);
   padding: 14px 22px 20px;
-  font-family: "Trebuchet MS", sans-serif;
+  font-family: var(--rpg-font-body);
   font-size: 13px;
   line-height: 1.35;
 }
@@ -24,8 +24,9 @@
 .battle-inspect-button strong {
   overflow-wrap: anywhere;
 }
-.battle-3d button,
+.battle-3d button:not(.rpg-button),
 .battle-3d select {
+  min-height: 44px;
   cursor: pointer;
   border: 1px solid var(--line);
   background: #1a2520;
@@ -36,7 +37,7 @@
     background 0.15s,
     border-color 0.15s;
 }
-.battle-3d button:hover:not(:disabled) {
+.battle-3d button:not(.rpg-button):hover:not(:disabled) {
   background: #2a372e;
   border-color: var(--gold);
 }
@@ -54,14 +55,14 @@
 }
 .battle-3d h1,
 .battle-3d h2 {
-  font-family: Georgia, serif;
+  font-family: var(--rpg-font-display);
   font-weight: 400;
 }
 .battle-eyebrow {
-  font-size: 10px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.19em;
-  color: var(--muted);
+  color: var(--battle-muted);
 }
 .battle-stage-heading {
   display: flex;
@@ -83,9 +84,7 @@
   line-height: 1.1;
 }
 .battle-stage-heading h1 span {
-  font:
-    9px "Trebuchet MS",
-    sans-serif;
+  font: 9px var(--rpg-font-body);
   color: var(--gold);
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -128,11 +127,11 @@
   padding: 6px 10px;
 }
 .battle-turn-order button > span {
-  color: var(--muted);
+  color: var(--battle-muted);
 }
 .battle-turn-order button small {
   color: var(--gold);
-  font-size: 9px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -171,7 +170,7 @@
   right: 22px;
   display: flex;
   justify-content: space-between;
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 0.18em;
   color: #9fa99b;
   pointer-events: none;
@@ -210,7 +209,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 9px;
+  font-size: 11px;
   line-height: 12px;
 }
 .battle-actor-health {
@@ -260,7 +259,7 @@
 }
 .battle-model-note {
   margin-top: 16px;
-  font-size: 9px;
+  font-size: 11px;
   color: #91a098;
   letter-spacing: 0.07em;
 }
@@ -281,7 +280,7 @@
   border: 0;
   border-bottom: 1px solid #4c5e52;
   background: transparent;
-  font-size: 10px;
+  font-size: 11px;
 }
 .battle-inspect-button {
   display: grid;
@@ -294,18 +293,18 @@
 .battle-inspect-button > span {
   grid-row: 1 / 3;
   color: var(--gold);
-  font-family: Georgia, serif;
-  font-size: 10px;
+  font-family: var(--rpg-font-display);
+  font-size: 11px;
 }
 .battle-inspect-button strong {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 400;
   line-height: 12px;
 }
 .battle-inspect-button small {
   grid-column: 2;
-  color: var(--muted);
-  font-size: 9px;
+  color: var(--battle-muted);
+  font-size: 11px;
   line-height: 11px;
 }
 .battle-entity-controls button:not(.battle-inspect-button) {
@@ -317,7 +316,7 @@
   flex-direction: column;
   min-height: 0;
   padding: 0;
-  background: #1a231d;
+  background: var(--rpg-panel-stone);
   border-left: 1px solid var(--line);
   max-height: calc(100dvh - 188px);
   overflow: hidden;
@@ -328,7 +327,7 @@
   line-height: 1.08;
 }
 .battle-muted {
-  color: var(--muted);
+  color: var(--battle-muted);
   font-size: 11px;
   line-height: 1.5;
 }
@@ -340,8 +339,8 @@
   border-block: 1px solid var(--line);
 }
 .battle-inspector-resources span {
-  color: var(--muted);
-  font-size: 9px;
+  color: var(--battle-muted);
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   display: block;
@@ -352,7 +351,7 @@
   font-weight: 400;
 }
 .battle-inspector-resources small {
-  color: var(--muted);
+  color: var(--battle-muted);
   font-size: 11px;
 }
 .battle-inspector h3 {
@@ -377,8 +376,8 @@
 }
 .battle-inspector summary span {
   float: right;
-  color: var(--muted);
-  font-size: 10px;
+  color: var(--battle-muted);
+  font-size: 11px;
 }
 .battle-inspector details p,
 .battle-effect p,
@@ -395,7 +394,7 @@
   background: #273127;
 }
 .battle-effect strong {
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.08em;
 }
 .battle-legend {
@@ -405,18 +404,18 @@
   border-top: 1px solid var(--line);
   margin-top: 30px;
   padding-top: 16px;
-  font-size: 9px;
-  color: var(--muted);
+  font-size: 11px;
+  color: var(--battle-muted);
 }
 .battle-inspector-note {
-  color: var(--muted);
-  font-size: 10px;
+  color: var(--battle-muted);
+  font-size: 11px;
   margin-top: 18px;
   line-height: 1.7;
 }
 .battle-command-panel {
   padding: 10px 14px 12px;
-  background: #131e18;
+  background: var(--rpg-bg-1);
   border-top: 1px solid var(--line);
 }
 .battle-command-title {
@@ -435,6 +434,9 @@
   gap: 7px;
 }
 .battle-spell-list button {
+  font-family: var(--rpg-font-body);
+  letter-spacing: 0;
+  font-weight: 400;
   flex: 1;
   text-align: left;
   min-width: 0;
@@ -457,7 +459,7 @@
 .battle-spell-list button small {
   display: block;
   color: #a2b2a6;
-  font-size: 9px;
+  font-size: 11px;
   margin-top: 4px;
   line-height: 12px;
 }
@@ -483,9 +485,6 @@
 .battle-cast-row .battle-cast-button {
   padding: 12px 18px;
   min-width: 116px;
-  background: #d7bd83;
-  color: #1b241d;
-  border-color: #d7bd83;
   font-size: 14px;
   font-weight: bold;
   display: flex;
@@ -510,7 +509,7 @@
   align-items: center;
   gap: 16px;
   flex: 1;
-  color: var(--muted);
+  color: var(--battle-muted);
   font-size: 11px;
 }
 .battle-replay-controls input {
@@ -519,8 +518,8 @@
 }
 .battle-replay-controls p {
   width: 100%;
-  color: var(--muted);
-  font-size: 10px;
+  color: var(--battle-muted);
+  font-size: 11px;
 }
 .battle-graphics-error {
   display: grid;
@@ -568,11 +567,11 @@ body:has([data-game-header]) .battle-3d[data-mode="replay"] .battle-viewport {
     padding: 10px 8px;
   }
   .battle-spell-list button strong {
-    font-size: 10px;
+    font-size: 11px;
   }
   .battle-turn-order button {
     padding: 7px;
-    font-size: 10px;
+    font-size: 11px;
   }
 }
 @media (max-width: 960px) {
@@ -614,7 +613,7 @@ body:has([data-game-header]) .battle-3d[data-mode="replay"] .battle-viewport {
 }
 .battle-current-mana {
   color: #a4d4df;
-  font-size: 10px;
+  font-size: 11px;
 }
 .battle-prepared-name {
   margin-top: 5px;
@@ -626,7 +625,7 @@ body:has([data-game-header]) .battle-3d[data-mode="replay"] .battle-viewport {
   color: #f0dfb8;
 }
 .battle-prepared-name > span {
-  font-size: 10px;
+  font-size: 11px;
   color: #bcc8bd;
   white-space: nowrap;
 }
@@ -635,7 +634,7 @@ body:has([data-game-header]) .battle-3d[data-mode="replay"] .battle-viewport {
   color: #e3d9ba;
 }
 .battle-prepared-targets > span {
-  color: var(--muted);
+  color: var(--battle-muted);
   margin-right: 5px;
 }
 .battle-prepared-copy {
@@ -659,7 +658,7 @@ body:has([data-game-header]) .battle-3d[data-mode="replay"] .battle-viewport {
 }
 .battle-commit-buttons > button:last-child {
   padding: 5px;
-  font-size: 10px;
+  font-size: 11px;
 }
 .battle-prepare-hint {
   padding-top: 12px;
@@ -706,9 +705,9 @@ body:has([data-game-header]) .battle-3d[data-mode="replay"] .battle-viewport {
 }
 .battle-effect-heading span {
   display: block;
-  font-size: 9px;
+  font-size: 11px;
   margin-top: 2px;
-  color: var(--muted);
+  color: var(--battle-muted);
 }
 .battle-effect[data-tone="harmful"] {
   border-color: #da9b8c;
@@ -735,24 +734,24 @@ body:has([data-game-header]) .battle-3d[data-mode="replay"] .battle-viewport {
   color: #eddfbd;
 }
 .battle-history li .battle-history-caster {
-  font-size: 10px;
+  font-size: 11px;
   color: #c1d0c4;
   margin: 3px 0;
 }
 .battle-history li p {
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.6;
   color: #b7c7bc;
   margin-top: 5px;
 }
 .battle-history-round {
-  font-size: 9px;
+  font-size: 11px;
   color: #aab49d;
 }
 .battle-history-empty {
   padding-block: 20px;
   font-size: 12px;
-  color: var(--muted);
+  color: var(--battle-muted);
 }
 .battle-inspector > .battle-history-peek {
   flex: none;
@@ -772,8 +771,8 @@ body:has([data-game-header]) .battle-3d[data-mode="replay"] .battle-viewport {
 }
 .battle-history-peek small {
   display: block;
-  font-size: 10px;
-  color: var(--muted);
+  font-size: 11px;
+  color: var(--battle-muted);
   margin-top: 3px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -835,14 +834,10 @@ body:has([data-game-header]) .battle-3d[data-mode="replay"] .battle-viewport {
   background: #332d20;
   border-radius: 3px;
   padding: 0 2px;
-  font:
-    9px "Trebuchet MS",
-    sans-serif;
+  font: 9px var(--rpg-font-body);
 }
 .battle-condition-overflow {
-  font:
-    10px "Trebuchet MS",
-    sans-serif;
+  font: 10px var(--rpg-font-body);
   color: #e0d2ad;
 }
 .battle-condition-tooltip {
@@ -856,9 +851,7 @@ body:has([data-game-header]) .battle-3d[data-mode="replay"] .battle-viewport {
   color: #ede6cf;
   background: #17221efc;
   box-shadow: 0 8px 28px #0009;
-  font:
-    12px/1.5 "Trebuchet MS",
-    sans-serif;
+  font: 12px/1.5 var(--rpg-font-body);
 }
 .battle-condition-tooltip strong {
   display: block;
@@ -866,7 +859,7 @@ body:has([data-game-header]) .battle-3d[data-mode="replay"] .battle-viewport {
 }
 .battle-condition-tooltip span {
   display: block;
-  font-size: 10px;
+  font-size: 11px;
   color: #d1bd89;
 }
 .battle-condition-tooltip p {

@@ -48,7 +48,7 @@ function SharedPreparation() {
   const error = preparationQuery.error ?? characterQuery.error;
   if (error)
     return (
-      <main className="expedition">
+      <main id="main-content" tabIndex={-1} className="expedition">
         <div className="expedition-shell">
           <section className="expedition-departure" role="alert">
             <h1>Preparation unavailable</h1>
@@ -58,7 +58,10 @@ function SharedPreparation() {
                 ? "You are no longer part of this preparation. Your other expeditions and earned rewards remain available."
                 : "We couldn't synchronize this preparation. Readiness is paused until you reconnect."}
             </p>
-            <Link className="expedition-button" to="/dungeons">
+            <Link
+              className="rpg-button rpg-button-primary expedition-button"
+              to="/dungeons"
+            >
               Return to expeditions →
             </Link>
             <button
@@ -76,7 +79,7 @@ function SharedPreparation() {
     );
   if (!preparation || !characters)
     return (
-      <main className="expedition">
+      <main id="main-content" tabIndex={-1} className="expedition">
         <div className="expedition-shell" role="status">
           Loading shared preparation…
         </div>
@@ -84,7 +87,7 @@ function SharedPreparation() {
     );
   const host = preparation.hostUserId === userId;
   return (
-    <main className="expedition">
+    <main id="main-content" tabIndex={-1} className="expedition">
       <div className="expedition-shell">
         <Link className="expedition-back" to="/dungeons">
           ← All expeditions
@@ -112,7 +115,10 @@ function SharedPreparation() {
               Its invitations are no longer available. Your other expeditions
               are still waiting.
             </p>
-            <Link className="expedition-button" to="/dungeons">
+            <Link
+              className="rpg-button rpg-button-primary expedition-button"
+              to="/dungeons"
+            >
               Return to expeditions →
             </Link>
           </section>
@@ -124,7 +130,7 @@ function SharedPreparation() {
               continue.
             </p>
             <Link
-              className="expedition-button"
+              className="rpg-button rpg-button-primary expedition-button"
               to="/dungeons/$id"
               params={{ id: preparation.dungeonId }}
             >

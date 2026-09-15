@@ -41,7 +41,7 @@ describe("Might calibration lifecycle", () => {
     const result = run("bulwark-cadence");
     expect(result.activationsByActor["enemy-0"]).toBe(2);
     expect(result.blockedTurns.map((turn) => turn.round)).toEqual([0, 3]);
-    expect(result.resourceChanges.caster!.usefulHealthRegen).toBe(20);
+    expect(result.resourceChanges.caster!.usefulHealthRegen).toBe(16);
     expect(run("sword-retaliation").activationsByActor["enemy-0"]).toBe(4);
   });
   test("healing and execution report useful applied HP only", () => {
@@ -72,8 +72,8 @@ describe("Might calibration lifecycle", () => {
     expect(result.triggers).toHaveLength(2);
     expect(result.resourceChanges.caster!.damageTaken).toBe(7);
     expect(result.resourceChanges.caster!.healingTaken).toBe(11);
-    expect(result.resourceChanges.caster!.usefulHealthRegen).toBe(10);
-    expect(result.resourceChanges.caster!.final.health).toBe(514);
+    expect(result.resourceChanges.caster!.usefulHealthRegen).toBe(8);
+    expect(result.resourceChanges.caster!.final.health).toBe(512);
   });
   test("already-executed boundary effects and final HP share one accounting cutoff", () => {
     const result = quietProbe({ id: "boundary", stat: 20, casterHealth: 500, rounds: 1 }, seed,
@@ -88,8 +88,8 @@ describe("Might calibration lifecycle", () => {
       });
     expect(result.triggers.map((trigger) => trigger.round)).toEqual([0, 1]);
     expect(result.healingByActor.caster).toBe(14);
-    expect(result.resourceChanges.caster!.usefulHealthRegen).toBe(10);
-    expect(result.resourceChanges.caster!.final.health).toBe(524);
+    expect(result.resourceChanges.caster!.usefulHealthRegen).toBe(8);
+    expect(result.resourceChanges.caster!.final.health).toBe(522);
     expect(result.activationsByActor.caster).toBe(1);
   });
 });

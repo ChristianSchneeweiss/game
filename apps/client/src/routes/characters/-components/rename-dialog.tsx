@@ -38,6 +38,9 @@ export const RenameDialog = ({ character }: Props) => {
         await queryClient.invalidateQueries(
           trpc.character.getCharacter.queryOptions({ id: character.id }),
         );
+        await queryClient.invalidateQueries(
+          trpc.character.getCharacters.queryOptions(),
+        );
         setIsOpen(false);
         setError(null);
       },
@@ -61,10 +64,14 @@ export const RenameDialog = ({ character }: Props) => {
     }
 
     setError(null);
-    await renameCharacter({
-      characterId: character.id,
-      name: newName.trim(),
-    });
+    try {
+      await renameCharacter({
+        characterId: character.id,
+        name: newName.trim(),
+      });
+    } catch {
+      // The mutation's onError displays the server's validation message.
+    }
   };
 
   const handleOpenChange = (open: boolean) => {
@@ -78,14 +85,16 @@ export const RenameDialog = ({ character }: Props) => {
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <button
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label={`Rename ${character.name}`}
           type="button"
-          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/8 bg-white/5 text-stone-300 transition-all duration-300 hover:border-amber-300/20 hover:bg-white/10 hover:text-white"
         >
           <Edit2Icon className="size-4" />
-        </button>
+        </Button>
       </DialogTrigger>
-      <DialogContent className="overflow-hidden border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.98),rgba(2,6,23,1))] text-stone-100 shadow-[0_24px_80px_rgba(0,0,0,0.45)] sm:max-w-md">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-2xl text-stone-50">
             <Edit3 className="h-5 w-5 text-amber-200" />
@@ -113,10 +122,19 @@ export const RenameDialog = ({ character }: Props) => {
                 if (error) setError(null);
               }}
               placeholder="Enter character name..."
-              className="h-12 rounded-2xl border-white/10 bg-white/5 text-white placeholder:text-stone-500 focus:border-amber-300/20 focus:ring-amber-300/15"
+              aria-invalid={Boolean(error)}
+              aria-describedby={error ? "rename-error" : undefined}
               disabled={isPending}
             />
-            {error && <p className="text-sm text-red-400">{error}</p>}
+            {error && (
+              <p
+                id="rename-error"
+                role="alert"
+                className="text-sm text-(--rpg-danger)"
+              >
+                {error}
+              </p>
+            )}
           </div>
 
           <div className="flex gap-3 pt-2">
@@ -125,7 +143,7 @@ export const RenameDialog = ({ character }: Props) => {
               variant="outline"
               onClick={() => handleOpenChange(false)}
               disabled={isPending}
-              className="h-11 flex-1 rounded-full border-white/10 bg-white/5 text-stone-200 hover:bg-white/10 hover:text-white"
+              className="flex-1"
             >
               Cancel
             </Button>
@@ -136,7 +154,7 @@ export const RenameDialog = ({ character }: Props) => {
                 !newName.trim() ||
                 newName.trim() === character.name
               }
-              className="h-11 flex-1 rounded-full border border-amber-300/20 bg-amber-300 text-slate-950 hover:bg-amber-200 disabled:opacity-50"
+              className="flex-1"
             >
               {isPending ? (
                 <>

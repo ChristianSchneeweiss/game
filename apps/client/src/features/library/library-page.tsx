@@ -114,7 +114,7 @@ export function LibraryPage({
       : [];
 
   return (
-    <main className="rpg-page library-page">
+    <main id="main-content" tabIndex={-1} className="rpg-page library-page">
       <div className="rpg-shell">
         <header className="library-heading">
           <div>
@@ -163,11 +163,14 @@ export function LibraryPage({
             <div className="library-browser-heading">
               <h2>{currentCategory.name}</h2>
               <p>{currentCategory.description}</p>
-              <p>
-                Might values overall power, including special effects, among
-                comparable content under standard conditions. Unrated entries
-                have not been assessed yet.
-              </p>
+              <details className="library-explanation">
+                <summary>Understanding Might</summary>
+                <p>
+                  Might values overall power, including special effects, among
+                  comparable content under standard conditions. Unrated entries
+                  have not been assessed yet.
+                </p>
+              </details>
             </div>
             <LibraryToolbar
               search={search}
@@ -175,18 +178,20 @@ export function LibraryPage({
               entries={categoryEntries}
               onChange={change}
             />
-            <MightRange
-              key={`${search.category}:${rangeReset}`}
-              mightMin={search.mightMin}
-              mightMax={search.mightMax}
-              onChange={(bounds) => change({ ...bounds, entry: "" })}
-            />
-            {search.category === "spells" ? (
-              <LibraryPreview
-                attributes={attributes}
-                onChange={setAttributes}
+            <LibraryAdvancedControls search={search}>
+              <MightRange
+                key={`${search.category}:${rangeReset}`}
+                mightMin={search.mightMin}
+                mightMax={search.mightMax}
+                onChange={(bounds) => change({ ...bounds, entry: "" })}
               />
-            ) : null}
+              {search.category === "spells" ? (
+                <LibraryPreview
+                  attributes={attributes}
+                  onChange={setAttributes}
+                />
+              ) : null}
+            </LibraryAdvancedControls>
             <div className="library-results">
               <span role="status">
                 {filtered.length} of {categoryEntries.length} entries
@@ -244,6 +249,27 @@ export function LibraryPage({
         </div>
       </div>
     </main>
+  );
+}
+
+function LibraryAdvancedControls({
+  search,
+  children,
+}: {
+  search: LibrarySearch;
+  children: React.ReactNode;
+}) {
+  return (
+    <details className="library-advanced">
+      <summary>
+        <SlidersHorizontal size={15} /> Might range
+        {search.category === "spells" ? " & preview attributes" : ""}
+        {(search.mightMin !== undefined || search.mightMax !== undefined) && (
+          <span>Range active</span>
+        )}
+      </summary>
+      {children}
+    </details>
   );
 }
 

@@ -23,9 +23,9 @@ export class DeflectingStanceSpell extends ApplyStatusSpell {
   }
 
   protected textDescription(caster: Entity): string {
-    const reflectionPercentage = this.scaling(caster);
+    const reflectionPercent = Number((this.scaling(caster) * 100).toFixed(2));
 
-    return `Protect one ally, including yourself, for 1 round: reduce incoming damage by 50% and reflect ${reflectionPercentage * 100}% back to the attacker. Does not stack with Thorn Carapace (chooses the stronger effect).`;
+    return `Protect one ally, including yourself, for 1 round: reduce incoming damage by 50% and reflect ${reflectionPercent}% back to the attacker. Does not stack with Thorn Carapace (chooses the stronger effect).`;
   }
 
   /**

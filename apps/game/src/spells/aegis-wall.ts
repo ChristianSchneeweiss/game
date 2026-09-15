@@ -23,9 +23,9 @@ export class AegisWallSpell extends ApplyStatusSpell {
   }
 
   protected textDescription(caster: Entity): string {
-    const totalPercentage = this.scaling(caster);
+    const shieldPercent = Number((this.scaling(caster) * 100).toFixed(2));
 
-    return `"The shield does not guard one – it guards all." Grants all allies a Protective Shield equal to ${totalPercentage * 100}% of your Max HP for 2 rounds. While shields are active, you gain +20 Armor and +20 Magic Resistance.`;
+    return `"The shield does not guard one – it guards all." Grants all allies a Protective Shield equal to ${shieldPercent}% of your Max HP for 2 rounds. While shields are active, you gain +20 Armor and +20 Magic Resistance.`;
   }
 
   /**

@@ -1,0 +1,138 @@
+.sanctum-page-heading {
+  padding: 0.5rem 0 2rem;
+}
+.sanctum-page-heading > .rpg-title {
+  font-size: 0.7rem;
+}
+.sanctum-page-heading h1 {
+  margin-block: 0.7rem;
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  font-weight: 500;
+}
+.sanctum-home-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+.sanctum-welcome {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  min-height: 570px;
+  padding: 2rem;
+  border: 1px solid var(--rpg-border-gold);
+  background:
+    linear-gradient(0deg, #08110afa 4%, #08110a6b 65%, #08110a35),
+    url("/art/sanctuary.png") center/cover,
+    var(--rpg-panel-stone);
+}
+.sanctum-welcome::before {
+  content: "";
+  position: absolute;
+  inset: 7px;
+  border: 1px solid #cdb47440;
+  pointer-events: none;
+}
+.sanctum-welcome-content {
+  position: relative;
+  margin-top: auto;
+  padding-top: 8rem;
+  max-width: 30rem;
+}
+.sanctum-welcome-content > .rpg-title {
+  color: #f4dc9f;
+  font-size: 0.7rem;
+}
+.sanctum-welcome h2 {
+  font-size: clamp(2rem, 3.5vw, 3.5rem);
+  line-height: 1.15;
+  margin: 1rem 0;
+  font-weight: 500;
+}
+.sanctum-welcome-content > p:not(.rpg-title) {
+  max-width: 25rem;
+  color: #eee8d5;
+  line-height: 1.8;
+}
+.sanctum-welcome-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-block: 1.5rem;
+}
+.sanctum-welcome-actions .rpg-button-outline {
+  background: #101710cc;
+}
+.sanctum-welcome-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding-top: 1rem;
+  border-top: 1px solid #cdb47440;
+  color: #d3d6c2;
+  font-size: 0.8rem;
+}
+.sanctum-welcome-footer svg {
+  flex-shrink: 0;
+}
+.sanctum-battle-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border: 1px solid var(--rpg-line);
+  padding: 1rem;
+  color: var(--rpg-gold);
+}
+.sanctum-battle-link:hover {
+  border-color: var(--rpg-gold);
+}
+.sanctum-battle-link small {
+  display: block;
+  color: var(--rpg-text-faint);
+}
+.sanctum-destinations {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+.sanctum-destination {
+  position: relative;
+  display: block;
+  border: 1px solid var(--rpg-line);
+  padding: 1.5rem;
+  background: var(--rpg-panel-stone);
+}
+.sanctum-destination:hover {
+  border-color: var(--rpg-gold);
+}
+.sanctum-destination > svg {
+  color: var(--rpg-gold);
+}
+.sanctum-destination h2 {
+  font-size: 1.2rem;
+  margin: 1rem 0 0.5rem;
+}
+.sanctum-destination p {
+  color: var(--rpg-text-muted);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+.sanctum-destination-arrow {
+  position: absolute;
+  right: 1.5rem;
+  top: 1.5rem;
+  width: 1rem;
+}
+@media (max-width: 850px) {
+  .sanctum-home-layout,
+  .sanctum-destinations {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .sanctum-welcome {
+    min-height: 480px;
+    padding: 1.5rem;
+  }
+}

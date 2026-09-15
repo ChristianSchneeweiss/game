@@ -1,0 +1,169 @@
+.collection-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem 3rem;
+  padding-bottom: 1.75rem;
+  border-bottom: 1px solid var(--rpg-border-bronze);
+}
+.collection-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--rpg-gold);
+  font-size: 0.7rem;
+}
+.collection-header h1 {
+  margin: 0.65rem 0;
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+}
+.collection-header .rpg-copy {
+  max-width: 38rem;
+  line-height: 1.6;
+}
+.collection-header-aside {
+  display: grid;
+  gap: 1rem;
+}
+.collection-totals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+.collection-totals > div {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+.collection-totals dt {
+  color: var(--rpg-text-muted);
+}
+.collection-totals dd {
+  font-size: 1.65rem;
+  color: var(--rpg-gold);
+  font-variant-numeric: tabular-nums;
+}
+.collection-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  gap: 1rem;
+}
+.collection-entry {
+  border: 1px solid var(--rpg-border-bronze);
+  min-width: 0;
+  padding: clamp(1rem, 2vw, 1.6rem);
+  display: flex;
+  flex-direction: column;
+  background:
+    linear-gradient(110deg, #cdb47407, transparent 70%), var(--rpg-panel-stone);
+}
+.collection-entry > header {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+.collection-entry h3 {
+  flex: 1;
+  min-width: 0;
+  font: 500 1.1rem/1.4 var(--rpg-font-display);
+  color: var(--rpg-text-main);
+  overflow-wrap: anywhere;
+}
+.collection-entry > header > :last-child:not(h3) {
+  flex-shrink: 0;
+}
+.collection-description {
+  margin: 1.15rem 0;
+  white-space: pre-line;
+  color: var(--rpg-text-muted);
+  line-height: 1.7;
+}
+.collection-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.75rem;
+  margin-top: auto;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--rpg-line);
+}
+.collection-facts dt {
+  color: var(--rpg-text-faint);
+  font-size: 0.75rem;
+}
+.collection-facts dd {
+  margin-top: 0.2rem;
+  color: var(--rpg-gold);
+  font-variant-numeric: tabular-nums;
+}
+.collection-entry footer {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: var(--rpg-text-muted);
+}
+.collection-entry footer a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--rpg-gold);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  min-height: 44px;
+}
+.collection-loading {
+  padding: 3rem 1rem;
+  border: 1px solid var(--rpg-line);
+  color: var(--rpg-text-muted);
+}
+.reward-entry {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--rpg-line);
+}
+.reward-entry > div {
+  min-width: 0;
+  flex: 1;
+}
+.reward-entry strong {
+  display: block;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--rpg-text-main);
+}
+.reward-entry small {
+  color: var(--rpg-text-faint);
+  font-size: 0.75rem;
+}
+.reward-bundle {
+  border: 1px solid var(--rpg-border-bronze);
+  padding: clamp(1rem, 2vw, 1.6rem);
+  background: var(--rpg-panel-stone);
+}
+.reward-bundle h2 {
+  font: 500 1.15rem var(--rpg-font-display);
+}
+.reward-bundle-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  padding: 0.75rem 0;
+  font-size: 0.85rem;
+  color: var(--rpg-text-muted);
+}
+.rpg-reading-surface {
+  color: var(--rpg-ink);
+  background:
+    linear-gradient(90deg, #6a502730, transparent 16px),
+    repeating-linear-gradient(0deg, #6a502704 0 1px, transparent 1px 4px),
+    linear-gradient(
+      110deg,
+      var(--rpg-paper),
+      var(--rpg-paper-light) 45%,
+      var(--rpg-paper)
+    );
+  box-shadow:
+    inset 0 0 0 6px #6a502709,
+    inset 0 0 0 7px var(--rpg-paper-line);
+}

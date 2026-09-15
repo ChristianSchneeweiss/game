@@ -87,7 +87,8 @@
 }
 
 /* A rejected command replaces routine guidance while its error is displayed. */
-.battle-command-panel[data-compact]:has(.battle-command-error) .tactical-plan-status {
+.battle-command-panel[data-compact]:has(.battle-command-error)
+  .tactical-plan-status {
   display: none;
 }
 
@@ -118,7 +119,7 @@
 
 .battle-command-panel[data-compact] .battle-spell-list button small {
   margin-top: 2px;
-  font-size: 9px;
+  font-size: 11px;
   line-height: 11px;
 }
 
@@ -173,7 +174,9 @@
   line-height: 20px;
 }
 
-.battle-command-panel[data-compact] .battle-spell-details > summary:focus-visible {
+.battle-command-panel[data-compact]
+  .battle-spell-details
+  > summary:focus-visible {
   outline: 2px solid #e6c589;
   outline-offset: -2px;
 }
@@ -198,7 +201,9 @@
   font-size: 12px;
 }
 
-.battle-command-panel[data-compact] .battle-commit-buttons > .battle-cast-button {
+.battle-command-panel[data-compact]
+  .battle-commit-buttons
+  > .battle-cast-button {
   gap: 8px;
   font-size: 13px;
 }
@@ -217,7 +222,7 @@
   outline-offset: -2px;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 1000px) {
   .battle-command-panel[data-compact] {
     gap: 4px;
     padding: 6px;
@@ -253,7 +258,9 @@
     max-height: 62px;
   }
 
-  .battle-command-panel[data-compact] .battle-prepared-heading > .battle-eyebrow {
+  .battle-command-panel[data-compact]
+    .battle-prepared-heading
+    > .battle-eyebrow {
     display: none;
   }
 

@@ -1,0 +1,105 @@
+.armoury-slot,
+.armoury-bonuses dt {
+  text-transform: capitalize;
+}
+.armoury .expedition-equipment-icon,
+.armoury-page .expedition-equipment-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--rpg-border-bronze);
+  background: var(--rpg-bg-0);
+  color: var(--rpg-gold);
+}
+.armoury-status {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 0.25rem;
+  font-size: 0.7rem;
+  color: var(--rpg-text-muted);
+}
+.armoury-status[data-equipped="true"] {
+  color: var(--rpg-gold);
+}
+.armoury-page header > .expedition-equipment-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 1rem;
+  box-shadow: 0 3px 10px #3b2b2430;
+}
+.armoury-page header > .expedition-equipment-icon svg {
+  width: 32px;
+  height: 32px;
+}
+.armoury-facts dd {
+  font-size: 1rem;
+}
+.armoury-bonuses {
+  margin-top: 0.75rem;
+}
+.armoury-bonuses > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid var(--rpg-paper-line);
+}
+.armoury-bonuses dd {
+  color: var(--rpg-ink-gold);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+.armoury-page footer a {
+  display: flex;
+  width: fit-content;
+}
+@media (max-width: 1023px) {
+  .armoury-toolbar {
+    flex-wrap: wrap;
+  }
+  .armoury-toolbar .inventory-search {
+    flex-basis: 100%;
+  }
+  .armoury-toolbar .inventory-sort {
+    flex: 1;
+    min-width: 0;
+    width: auto;
+  }
+  .armoury-status {
+    margin-left: auto;
+  }
+}
+@media (max-width: 479px) {
+  .armoury .inventory-tabs {
+    gap: 0.8rem;
+  }
+  .armoury .inventory-tabs .rpg-tab {
+    gap: 0.35rem;
+    font-size: 0.75rem;
+  }
+  .armoury .inventory-tabs .rpg-tab > svg {
+    display: none;
+  }
+  .armoury .inventory-row {
+    gap: 0.6rem;
+    padding: 0.75rem;
+  }
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  .armoury .inventory-row {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    gap: 0.3rem 0.65rem;
+  }
+  .armoury .inventory-row > .expedition-equipment-icon {
+    grid-row: 1 / span 2;
+  }
+  .armoury-status {
+    grid-column: 2;
+    margin-left: 0;
+  }
+}

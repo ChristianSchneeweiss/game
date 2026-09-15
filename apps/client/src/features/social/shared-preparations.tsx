@@ -21,7 +21,9 @@ export function SharedPreparations() {
   return (
     <section className="space-y-5">
       <div>
-        <p className="rpg-title text-xs text-[#cfbf97]">Camps on the trail</p>
+        <p className="rpg-title text-xs text-(--rpg-text-faint)">
+          Camps on the trail
+        </p>
         <h2 className="rpg-heading mt-2 text-3xl">Shared preparations</h2>
         <p className="rpg-copy mt-3">
           Each camp waits independently. You can play other dungeons with the

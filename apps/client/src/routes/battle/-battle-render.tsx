@@ -8,7 +8,6 @@ import {
   RpgBadge,
   RpgInset,
   RpgMeter,
-  RpgPage,
   RpgPanel,
   RpgSectionHeading,
 } from "@/components/rpg-ui";
@@ -165,11 +164,11 @@ function EntityCard({ entity, view }: { entity: Entity; view: Params }) {
               )}
             </div>
             <div className="min-w-0">
-              <p className="rpg-title text-[0.58rem] text-[#cfbf97]/70">
+              <p className="rpg-title text-[0.58rem] text-(--rpg-text-faint)">
                 {team === "TEAM_A" ? "Ally dossier" : "Enemy dossier"}
               </p>
               <div className="mt-1 flex flex-wrap items-center gap-2">
-                <h3 className="rpg-heading text-2xl leading-none font-semibold tracking-[0.05em]">
+                <h3 className="rpg-heading text-xl leading-snug font-semibold">
                   {entity.name}
                 </h3>
                 {myTurn && isLive && (
@@ -256,7 +255,7 @@ function EntityCard({ entity, view }: { entity: Entity; view: Params }) {
               <HoverCardContent className="w-[min(38rem,calc(100vw-2rem))] p-5">
                 <div className="space-y-4 text-sm">
                   <div>
-                    <p className="rpg-title text-[0.58rem] text-[#cfbf97]/70">
+                    <p className="rpg-title text-[0.58rem] text-(--rpg-text-faint)">
                       Character ledger
                     </p>
                     <h4 className="rpg-heading mt-1 text-lg tracking-[0.08em] uppercase">
@@ -307,7 +306,7 @@ function EntityCard({ entity, view }: { entity: Entity; view: Params }) {
         <RpgInset variant="stone" className="mt-5 p-4">
           <div className="mb-3 flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-[#d8c48e]" />
-            <p className="rpg-title text-[0.62rem] text-[#cfbf97]/80">
+            <p className="rpg-title text-[0.62rem] text-(--rpg-text-faint)">
               Active effects
             </p>
           </div>
@@ -383,35 +382,35 @@ export const BattleRender = (view: Params) => {
       (view.stats.get(participant.id)?.team ?? participant.team) === "TEAM_B",
   );
   return (
-    <RpgPage>
+    <div className="battle-cards">
       <div className="space-y-8">
-        <RpgPanel className="px-6 py-6">
+        <RpgPanel className="p-3 sm:p-6">
           <RpgSectionHeading
             icon={<Shield className="h-5 w-5" />}
             eyebrow="Vanguard entries"
             title="Allies"
           />
-          <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <div className="battle-card-grid">
             {allies.map((entity) => (
               <EntityCard key={entity.id} entity={entity} view={view} />
             ))}
           </div>
         </RpgPanel>
 
-        <RpgPanel className="px-6 py-6">
+        <RpgPanel className="p-3 sm:p-6">
           <RpgSectionHeading
             icon={<SwordsIcon className="h-5 w-5" />}
             eyebrow="Hostile entries"
             title="Enemies"
           />
-          <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <div className="battle-card-grid">
             {enemies.map((entity) => (
               <EntityCard key={entity.id} entity={entity} view={view} />
             ))}
           </div>
         </RpgPanel>
       </div>
-    </RpgPage>
+    </div>
   );
 };
 
@@ -424,7 +423,9 @@ function AttributeColumn({
 }) {
   return (
     <RpgInset variant="stone" className="p-3">
-      <p className="rpg-title text-[0.58rem] text-[#cfbf97]/70">{title}</p>
+      <p className="rpg-title text-[0.58rem] text-(--rpg-text-faint)">
+        {title}
+      </p>
       <div className="mt-3 space-y-2">
         {entries.map(([key, value]) => (
           <div key={key} className="flex items-center justify-between gap-3">

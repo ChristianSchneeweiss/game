@@ -72,7 +72,7 @@ function SharedBattleStatus({
       aria-label="Shared battle company"
     >
       <div>
-        <p className="text-sm text-[#cfbf97]">
+        <p className="text-sm text-(--rpg-text-faint)">
           {shared.participants
             .map(
               (participant) =>

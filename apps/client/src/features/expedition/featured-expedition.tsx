@@ -13,7 +13,9 @@ export function FeaturedExpedition() {
         <strong>Answer the old forest.</strong>
         <span>Prepare your party for the Trial of the Nature.</span>
       </span>
-      <span className="expedition-button">Prepare expedition →</span>
+      <span className="rpg-button rpg-button-primary expedition-button">
+        Prepare expedition →
+      </span>
     </Link>
   );
 }

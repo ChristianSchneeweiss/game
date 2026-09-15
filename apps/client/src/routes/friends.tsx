@@ -269,7 +269,10 @@ function FindFriend() {
         <RpgInset className="space-y-3 p-4">
           <p className="rpg-copy">
             This code belongs to{" "}
-            <strong className="text-[#f1e8d4]">{lookup.data.username}</strong>.
+            <strong className="text-(--rpg-text-main)">
+              {lookup.data.username}
+            </strong>
+            .
           </p>
           <Button
             variant="relic"

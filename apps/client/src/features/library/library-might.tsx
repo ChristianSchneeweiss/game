@@ -1,4 +1,5 @@
 import { useId, useState } from "react";
+import { Input } from "@/components/ui/input";
 import type { LibraryEntry } from "@loot-game/game/library/types";
 import { parseMightBound } from "./library-search";
 
@@ -82,7 +83,7 @@ export function MightRange({
         {(["min", "max"] as const).map((field) => (
           <label key={field}>
             <span>{field === "min" ? "Minimum Might" : "Maximum Might"}</span>
-            <input
+            <Input
               type="text"
               inputMode="numeric"
               value={draft[field]}

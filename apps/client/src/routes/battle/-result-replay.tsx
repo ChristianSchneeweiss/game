@@ -5,6 +5,7 @@ import { useStatsTimeline } from "./-hooks/use-stats-timeline";
 import { PresentationBoundary } from "./-presentation-boundary";
 import RecordedBattle from "./-presentation/recorded-battle";
 import { TacticalBoard } from "./-presentation/tactical-board";
+import { Slider } from "@/components/ui/slider";
 
 type ReplayData = Pick<
   BattleResultData,
@@ -36,7 +37,7 @@ function CardReplay({
   );
   const [step, setStep] = useState(0);
   return (
-    <section className="p-6" aria-label="Battle replay in Cards">
+    <section className="p-3 sm:p-6" aria-label="Battle replay in Cards">
       <div
         className="mb-4 flex justify-end gap-2"
         aria-label="Battle presentation"
@@ -48,14 +49,14 @@ function CardReplay({
           3D battlefield
         </button>
       </div>
-      <label className="mb-6 flex items-center gap-4">
-        Replay step {step} / {statsTimeline.length - 1}
-        <input
-          className="flex-1"
+      <label className="mb-6 flex flex-wrap items-center gap-x-4 gap-y-1">
+        Replay step {step} / {Math.max(0, statsTimeline.length - 1)}
+        <Slider
+          className="min-w-32 flex-1"
           aria-label="Replay step"
-          type="range"
           min={0}
-          max={statsTimeline.length - 1}
+          max={Math.max(0, statsTimeline.length - 1)}
+          disabled={statsTimeline.length < 2}
           value={step}
           onChange={(event) => setStep(Number(event.target.value))}
         />
