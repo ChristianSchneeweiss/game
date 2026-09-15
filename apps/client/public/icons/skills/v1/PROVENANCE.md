@@ -9,3 +9,19 @@ Original PNGs were resized to 256 × 256 and encoded as WebP using `cwebp -resiz
 An active condition uses its originating skill's artwork when the event history identifies it. Generic condition icons cover missing source metadata and future effect sources. Unknown skills and failed image requests fall back to `effect-passive.webp`.
 
 Preview all assets at `/dev/skill-icons.html` on the local client server.
+
+The 2026-09-15 content expansion copies six of these delivered assets byte for
+byte under the new passive names. No new image generation or raster editing was
+performed:
+
+| Passive | Existing artwork |
+| --- | --- |
+| Predator's Focus | Keen Instincts |
+| Fleet Footed | Fleetfoot Gambit |
+| Arcane Barrier | Aegis Wall |
+| Last Bastion | Iron Will |
+| Merciful Light | Single Heal |
+| Executioner | Final Verdict |
+
+The build report records all 65 delivered files, with `reusedFrom` identifying
+each copied source. Each passive retains its own visible and accessible name.

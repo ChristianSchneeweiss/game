@@ -1,17 +1,13 @@
 import { useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import {
-  ChartNoAxesColumnIncreasing,
-  Shield,
-  Sparkles,
-  Swords,
-} from "lucide-react";
+import { ChartNoAxesColumnIncreasing, Shield, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { passiveSkillFactory } from "@loot-game/game/passive-skills/base/passive-skill.factory";
 import Loader from "@/components/loader";
 import { RpgBackLink, RpgEmptyState, RpgPage } from "@/components/rpg-ui";
 import { SkillIcon } from "@/components/skill-icon";
+import { EquipmentLoadout } from "@/features/expedition/equipment-loadout";
 import { Button } from "@/components/ui/button";
 import { Feedback } from "@/components/ui/status";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -50,9 +46,6 @@ function RouteComponent() {
   const spells = useQuery(
     trpc.getMySpells.queryOptions(undefined, { staleTime: 60_000 }),
   );
-  const equipment = useQuery(
-    trpc.getMyEquipment.queryOptions(undefined, { staleTime: 60_000 }),
-  );
   const passives = useQuery(
     trpc.getMyPassiveSkills.queryOptions(undefined, { staleTime: 60_000 }),
   );
@@ -71,11 +64,6 @@ function RouteComponent() {
   };
   const spellEquip = useMutation(
     trpc.character.equipSpell.mutationOptions({ onSuccess: onBuildChanged }),
-  );
-  const equipmentEquip = useMutation(
-    trpc.character.equipEquipment.mutationOptions({
-      onSuccess: onBuildChanged,
-    }),
   );
   const passiveEquip = useMutation(
     trpc.character.equipPassiveSkill.mutationOptions({
@@ -143,8 +131,13 @@ function RouteComponent() {
           Every build tells a story.
         </span>
       </header>
-      <div className="character-detail-layout">
-        <CharacterSummary character={character} />
+      <div
+        className="character-detail-layout"
+        data-equipment={activeTab === "equipment"}
+      >
+        {activeTab !== "equipment" && (
+          <CharacterSummary character={character} />
+        )}
         <Tabs
           className="character-workspace"
           value={activeTab}
@@ -162,124 +155,89 @@ function RouteComponent() {
             ))}
           </TabsList>
           <TabsContent value={activeTab}>
-            <div
-              className="character-build-columns"
-              data-loadout={activeTab !== "stats"}
-            >
-              <CharacterCard
+            {activeTab === "equipment" ? (
+              <EquipmentLoadout
                 key={character.id}
                 character={character}
-                tab={activeTab}
-                onBuildChanged={onBuildChanged}
+                party={[character]}
               />
-              {activeTab === "spells" && (
-                <div className="character-reserves">
-                  <CharacterReserve
-                    title="Available spells"
-                    loading={spells.isLoading}
-                    error={spells.error}
-                    onRetry={() => void spells.refetch()}
-                    pending={spellEquip.isPending}
-                    emptyCopy="No unequipped spells. Find more in dungeon rewards."
-                    items={(spells.data?.all ?? [])
-                      .filter((spell) => spell.equippedBy === null)
-                      .map((spell) => ({
-                        id: spell.id,
-                        title: formatCharacterLabel(spell.type),
-                        meta: `${spell.description.manaCost} mana · ${spell.description.cooldown} cooldown`,
-                        description: spell.description.text,
-                        icon: <SkillIcon type={spell.type} size={40} />,
-                      }))}
-                    onEquip={(id, title) =>
-                      equip(
-                        () =>
-                          spellEquip.mutateAsync({ characterId, spellId: id }),
-                        title,
-                      )
-                    }
-                    link={{ to: "/spells", label: "Open spellbook" }}
-                  />
-                  <CharacterReserve
-                    title="Available passive skills"
-                    loading={passives.isLoading}
-                    error={passives.error}
-                    onRetry={() => void passives.refetch()}
-                    pending={passiveEquip.isPending}
-                    emptyCopy="No unequipped passive skills. Your next rewards may hold something new."
-                    items={(passives.data?.all ?? [])
-                      .filter((passive) => passive.equippedBy === null)
-                      .map((passive) => ({
-                        id: passive.id,
-                        title: formatCharacterLabel(passive.type),
-                        meta: "Passive skill",
-                        description: passiveSkillFactory(
-                          passive.type,
-                          passive.id,
-                          character,
-                        ).getDescription(),
-                        icon: <SkillIcon type={passive.type} size={40} />,
-                      }))}
-                    onEquip={(id, title) =>
-                      equip(
-                        () =>
-                          passiveEquip.mutateAsync({
-                            characterId,
-                            passiveSkillId: id,
-                          }),
-                        title,
-                      )
-                    }
-                    link={{ to: "/loot", label: "Open rewards" }}
-                  />
-                </div>
-              )}
-              {activeTab === "equipment" && (
-                <CharacterReserve
-                  title="Available equipment"
-                  loading={equipment.isLoading}
-                  error={equipment.error}
-                  onRetry={() => void equipment.refetch()}
-                  pending={equipmentEquip.isPending}
-                  emptyCopy="No unequipped gear. Your equipment collection is available in the vault."
-                  items={(equipment.data ?? [])
-                    .filter((item) => item.equippedBy === null)
-                    .map((item) => ({
-                      id: item.id,
-                      title: item.item.name,
-                      meta: `${formatCharacterLabel(item.item.equipmentSlot)} · Tier ${item.item.tier}`,
-                      description: item.item.description,
-                      icon: (
-                        <span className="character-reserve-gear-icon">
-                          {item.item.equipmentSlot === "WEAPON" ? (
-                            <Swords
-                              size={24}
-                              strokeWidth={1.4}
-                              aria-hidden="true"
-                            />
-                          ) : (
-                            <Shield
-                              size={24}
-                              strokeWidth={1.4}
-                              aria-hidden="true"
-                            />
-                          )}
-                        </span>
-                      ),
-                    }))}
-                  onEquip={(id, title) =>
-                    equip(
-                      () =>
-                        equipmentEquip.mutateAsync({
-                          characterId,
-                          equipmentId: id,
-                        }),
-                      title,
-                    )
-                  }
-                  link={{ to: "/items", label: "Open vault" }}
+            ) : (
+              <div
+                className="character-build-columns"
+                data-loadout={activeTab !== "stats"}
+              >
+                <CharacterCard
+                  key={character.id}
+                  character={character}
+                  tab={activeTab}
+                  onBuildChanged={onBuildChanged}
                 />
-              )}
-            </div>
+                {activeTab === "spells" && (
+                  <div className="character-reserves">
+                    <CharacterReserve
+                      title="Available spells"
+                      loading={spells.isLoading}
+                      error={spells.error}
+                      onRetry={() => void spells.refetch()}
+                      pending={spellEquip.isPending}
+                      emptyCopy="No unequipped spells. Find more in dungeon rewards."
+                      items={(spells.data?.all ?? [])
+                        .filter((spell) => spell.equippedBy === null)
+                        .map((spell) => ({
+                          id: spell.id,
+                          title: formatCharacterLabel(spell.type),
+                          meta: `${spell.description.manaCost} mana · ${spell.description.cooldown} cooldown`,
+                          description: spell.description.text,
+                          icon: <SkillIcon type={spell.type} size={40} />,
+                        }))}
+                      onEquip={(id, title) =>
+                        equip(
+                          () =>
+                            spellEquip.mutateAsync({
+                              characterId,
+                              spellId: id,
+                            }),
+                          title,
+                        )
+                      }
+                      link={{ to: "/spells", label: "Open spellbook" }}
+                    />
+                    <CharacterReserve
+                      title="Available passive skills"
+                      loading={passives.isLoading}
+                      error={passives.error}
+                      onRetry={() => void passives.refetch()}
+                      pending={passiveEquip.isPending}
+                      emptyCopy="No unequipped passive skills. Your next rewards may hold something new."
+                      items={(passives.data?.all ?? [])
+                        .filter((passive) => passive.equippedBy === null)
+                        .map((passive) => ({
+                          id: passive.id,
+                          title: formatCharacterLabel(passive.type),
+                          meta: "Passive skill",
+                          description: passiveSkillFactory(
+                            passive.type,
+                            passive.id,
+                            character,
+                          ).getDescription(),
+                          icon: <SkillIcon type={passive.type} size={40} />,
+                        }))}
+                      onEquip={(id, title) =>
+                        equip(
+                          () =>
+                            passiveEquip.mutateAsync({
+                              characterId,
+                              passiveSkillId: id,
+                            }),
+                          title,
+                        )
+                      }
+                      link={{ to: "/loot", label: "Open rewards" }}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
           </TabsContent>
         </Tabs>
       </div>

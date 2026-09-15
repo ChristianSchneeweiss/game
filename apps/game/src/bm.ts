@@ -18,7 +18,11 @@ import type {
   EffectType,
   Spell,
 } from "./types";
-import { SPELL_TARGETING, WEAPON_PROFILES } from "./tactical/catalogue";
+import {
+  SPELL_TARGETING,
+  WEAPON_PROFILES,
+  weaponProfileFor,
+} from "./tactical/catalogue";
 import { queryCast, reachableTiles } from "./tactical/queries";
 import type {
   CastSelection,
@@ -37,9 +41,8 @@ export function prepareTacticalEntity(entity: Entity): void {
   const weapon = entity.equipped.WEAPON?.itemType;
   entity.weaponAttackProfile = WeaponAttackProfileSchema.parse(
     entity.weaponAttackProfile ??
-      (weapon === "iron-sword" || weapon === "oakwarden-staff"
-        ? WEAPON_PROFILES[weapon]
-        : WEAPON_PROFILES[entity.isBot ? "enemy-default" : "unarmed"]),
+      weaponProfileFor(weapon) ??
+      WEAPON_PROFILES[entity.isBot ? "enemy-default" : "unarmed"],
   );
   for (const spell of entity.spells) {
     spell.config.targeting = TargetingSchema.parse(

@@ -26,6 +26,13 @@ const builds = {
   "stoneform-resolve": ["tank"],
   "titans-resurgence": ["physical", "tank"],
   "keen-instincts": ["physical", "caster"],
+  "predators-focus": ["physical", "caster"],
+  // Stationary pressure does not assess the tactical value of movement.
+  "fleet-footed": ["physical"],
+  "arcane-barrier": ["tank", "caster"],
+  "last-bastion": ["physical", "tank"],
+  "merciful-light": ["caster"],
+  executioner: ["physical", "caster"],
 } satisfies Record<PassiveType, MightReferenceBuild[]>;
 
 export function measurePassive(

@@ -21,6 +21,16 @@ export class LurkingFlameWraith extends BaseEnemy {
       loot: {
         items: [
           {
+            type: "ITEM",
+            data: { itemType: "emberguard-mail" },
+            dropRate: 0.25,
+          },
+          {
+            type: "PASSIVE",
+            data: { passiveType: "arcane-barrier" },
+            dropRate: 0.2,
+          },
+          {
             type: "SPELL",
             data: {
               spellType: "cinderbrand",

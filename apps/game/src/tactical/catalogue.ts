@@ -1,4 +1,5 @@
 import type { SpellType } from "../spells/base/spell-types";
+import type { ItemType } from "../items/item-types";
 import type { Footprint, Targeting, WeaponAttackProfile } from "./types";
 
 export const FOOTPRINTS = {
@@ -108,6 +109,27 @@ export const SPELL_TARGETING = {
 } satisfies Record<SpellType, Targeting>;
 
 export const WEAPON_PROFILES = {
+  "sunforged-greatsword": {
+    targeting: tile(1),
+    damageType: "PHYSICAL",
+    baseDamage: { min: 8, max: 22 },
+    scaling: [{ attribute: "strength", multiplier: 0.3 }],
+  },
+  "starfall-staff": {
+    targeting: tile(4),
+    damageType: "MAGICAL",
+    baseDamage: { min: 10, max: 24 },
+    scaling: [{ attribute: "intelligence", multiplier: 0.35 }],
+  },
+  "kingsfall-edge": {
+    targeting: tile(1),
+    damageType: "PHYSICAL",
+    baseDamage: { min: 12, max: 28 },
+    scaling: [
+      { attribute: "strength", multiplier: 0.4 },
+      { attribute: "agility", multiplier: 0.15 },
+    ],
+  },
   "iron-sword": {
     targeting: tile(1),
     damageType: "PHYSICAL",
@@ -118,6 +140,33 @@ export const WEAPON_PROFILES = {
     targeting: tile(3),
     damageType: "MAGICAL",
     baseDamage: { min: 0, max: 15 },
+    scaling: [{ attribute: "intelligence", multiplier: 0.25 }],
+  },
+  "ashen-falchion": {
+    targeting: tile(1),
+    damageType: "PHYSICAL",
+    baseDamage: { min: 3, max: 18 },
+    scaling: [{ attribute: "strength", multiplier: 0.25 }],
+  },
+  "tideglass-staff": {
+    targeting: tile(3),
+    damageType: "MAGICAL",
+    baseDamage: { min: 0, max: 12 },
+    scaling: [{ attribute: "intelligence", multiplier: 0.25 }],
+  },
+  "stormfang-blade": {
+    targeting: tile(1),
+    damageType: "PHYSICAL",
+    baseDamage: { min: 0, max: 12 },
+    scaling: [
+      { attribute: "agility", multiplier: 0.3 },
+      { attribute: "strength", multiplier: 0.1 },
+    ],
+  },
+  "hollow-scepter": {
+    targeting: tile(3),
+    damageType: "MAGICAL",
+    baseDamage: { min: 2, max: 14 },
     scaling: [{ attribute: "intelligence", multiplier: 0.25 }],
   },
   unarmed: {
@@ -132,4 +181,13 @@ export const WEAPON_PROFILES = {
     baseDamage: { min: 0, max: 15 },
     scaling: [],
   },
-} satisfies Record<string, WeaponAttackProfile>;
+} satisfies Partial<Record<ItemType, WeaponAttackProfile>> &
+  Record<"unarmed" | "enemy-default", WeaponAttackProfile>;
+
+export function weaponProfileFor(
+  itemType?: ItemType,
+): WeaponAttackProfile | undefined {
+  return itemType && Object.hasOwn(WEAPON_PROFILES, itemType)
+    ? WEAPON_PROFILES[itemType as keyof typeof WEAPON_PROFILES]
+    : undefined;
+}

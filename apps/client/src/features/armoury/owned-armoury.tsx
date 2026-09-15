@@ -1,6 +1,16 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowUpRight, Check, Search, Shield, Sword } from "lucide-react";
+import { ArrowUpRight, Check, Search, Shield } from "lucide-react";
+import {
+  EQUIPMENT_SLOTS,
+  equipmentSlotLabels,
+} from "@loot-game/game/items/equipment/equipment-slots";
+import type { EquipmentSlot } from "@loot-game/game/items/equipment/equipment";
+import {
+  attributeLabel,
+  equipmentSlotIcons,
+  formatEquipmentModifier,
+} from "@/lib/equipment-details";
 import type { trpcClient } from "@/utils/trpc";
 import { CollectionLoading } from "@/components/collection-ui";
 import { InventoryBrowser } from "@/components/inventory-browser";
@@ -19,9 +29,12 @@ type OwnedEquipment = Awaited<
 type ArmouryEntry = OwnedEquipment & { copy: number; copies: number };
 
 const slots = [
-  { value: "all", label: "All gear", icon: Shield },
-  { value: "WEAPON", label: "Weapons", icon: Sword },
-  { value: "ARMOR", label: "Armor", icon: Shield },
+  { value: "all" as const, label: "All gear", icon: Shield },
+  ...EQUIPMENT_SLOTS.map((value) => ({
+    value,
+    label: equipmentSlotLabels[value],
+    icon: equipmentSlotIcons[value],
+  })),
 ];
 
 export function OwnedArmoury({
@@ -78,7 +91,7 @@ function EquipmentCollection({
 }: {
   entries: ArmouryEntry[];
   loading: boolean;
-  slot: string;
+  slot: EquipmentSlot | "all";
 }) {
   if (loading) return <CollectionLoading />;
   if (!entries.length)
@@ -88,7 +101,7 @@ function EquipmentCollection({
         title={
           slot === "all"
             ? "The vault is empty"
-            : `No ${slot === "WEAPON" ? "weapons" : "armor"} collected`
+            : `No ${equipmentSlotLabels[slot].toLowerCase()} collected`
         }
         copy="Explore dungeons to collect equipment for your characters."
         action={
@@ -106,13 +119,22 @@ function EquipmentCollection({
 function EquipmentInventory({ entries }: { entries: ArmouryEntry[] }) {
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("all");
+  const [tier, setTier] = useState("all");
   const [sort, setSort] = useState("name");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const terms = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
   const filtered = entries.filter((entry) => {
+    if (tier !== "all" && entry.item.tier !== tier) return false;
     if (status === "available" && entry.equippedBy !== null) return false;
     if (status === "equipped" && entry.equippedBy === null) return false;
-    const text = `${entry.item.name} ${entry.item.description}`.toLowerCase();
+    const bonuses = entry.item.modifiers
+      .map(
+        (modifier) =>
+          `${attributeLabel(modifier.attribute)} ${formatEquipmentModifier(modifier)}`,
+      )
+      .join(" ");
+    const text =
+      `${entry.item.name} ${entry.item.description} ${bonuses}`.toLowerCase();
     return terms.every((term) => text.includes(term));
   });
   filtered.sort((a, b) => compareEquipment(a, b, sort));
@@ -132,6 +154,20 @@ function EquipmentInventory({ entries }: { entries: ArmouryEntry[] }) {
             value={query}
             onChange={(event) => setQuery(event.target.value)}
           />
+        </label>
+        <label className="inventory-sort">
+          <span className="sr-only">Equipment tier</span>
+          <Select
+            value={tier}
+            onChange={(event) => setTier(event.target.value)}
+          >
+            <option value="all">All tiers</option>
+            {["E", "D", "C", "B", "A", "S"].map((value) => (
+              <option key={value} value={value}>
+                Tier {value}
+              </option>
+            ))}
+          </Select>
         </label>
         <label className="inventory-sort">
           <span className="sr-only">Equipment status</span>
@@ -173,13 +209,14 @@ function EquipmentInventory({ entries }: { entries: ArmouryEntry[] }) {
         <RpgEmptyState
           icon={<Search />}
           title="No matching items"
-          copy="Try another name, bonus or equipment status."
+          copy="Try another name, bonus, tier or equipment status."
           action={
             <Button
               variant="outline"
               onClick={() => {
                 setQuery("");
                 setStatus("all");
+                setTier("all");
               }}
             >
               Clear filters
@@ -217,7 +254,9 @@ function EquipmentResults({
         id: entry.id,
         title: entry.item.name,
         label: `Inspect ${entry.item.name}, copy ${entry.copy}, ${entry.equippedBy === null ? "available" : "equipped"}`,
-        icon: <EquipmentIcon type={entry.type} />,
+        icon: (
+          <EquipmentIcon type={entry.type} slot={entry.item.equipmentSlot} />
+        ),
         metadata: (
           <>
             <span className="armoury-slot">
@@ -260,7 +299,7 @@ function EquipmentPage({ entry }: { entry: ArmouryEntry }) {
         <span className="inventory-page-eyebrow">
           Equipment · Tier {entry.item.tier}
         </span>
-        <EquipmentIcon type={entry.type} />
+        <EquipmentIcon type={entry.type} slot={entry.item.equipmentSlot} />
         <h2>{entry.item.name}</h2>
         <p>
           {entry.copies > 1
@@ -287,17 +326,8 @@ function EquipmentPage({ entry }: { entry: ArmouryEntry }) {
           <dl className="armoury-bonuses">
             {entry.item.modifiers.map((modifier) => (
               <div key={modifier.id}>
-                <dt>
-                  {modifier.attribute.replace(/([A-Z])/g, " $1").toLowerCase()}
-                </dt>
-                <dd>
-                  {modifier.operation === "MULTIPLY"
-                    ? "×"
-                    : modifier.value >= 0
-                      ? "+"
-                      : ""}
-                  {Number(modifier.value.toFixed(2))}
-                </dd>
+                <dt>{attributeLabel(modifier.attribute)}</dt>
+                <dd>{formatEquipmentModifier(modifier)}</dd>
               </div>
             ))}
           </dl>

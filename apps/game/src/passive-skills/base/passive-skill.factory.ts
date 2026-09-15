@@ -9,6 +9,12 @@ import { StoneformResolvePassive } from "../stoneform-resolve.passive";
 import { ThornCarapacePassive } from "../thorn-carapace.passive";
 import { TitansResurgencePassive } from "../titans-resurgence.passive";
 import { VitalWellspringPassive } from "../vital-wellspring.passive";
+import { PredatorsFocusPassive } from "../predators-focus.passive";
+import { FleetFootedPassive } from "../fleet-footed.passive";
+import { ArcaneBarrierPassive } from "../arcane-barrier.passive";
+import { LastBastionPassive } from "../last-bastion.passive";
+import { MercifulLightPassive } from "../merciful-light.passive";
+import { ExecutionerPassive } from "../executioner.passive";
 import type { PassiveType } from "./passive-types";
 
 export const passiveSkillFactory = (
@@ -37,6 +43,18 @@ export const passiveSkillFactory = (
       return new TitansResurgencePassive({ holder: entity, id });
     case "keen-instincts":
       return new KeenInstinctsPassive({ holder: entity, id });
+    case "predators-focus":
+      return new PredatorsFocusPassive({ holder: entity, id });
+    case "fleet-footed":
+      return new FleetFootedPassive({ holder: entity, id });
+    case "arcane-barrier":
+      return new ArcaneBarrierPassive({ holder: entity, id });
+    case "last-bastion":
+      return new LastBastionPassive({ holder: entity, id });
+    case "merciful-light":
+      return new MercifulLightPassive({ holder: entity, id });
+    case "executioner":
+      return new ExecutionerPassive({ holder: entity, id });
     default:
       throw new Error(`Unknown passive type: ${passiveType}`);
   }

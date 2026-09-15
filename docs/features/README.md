@@ -35,6 +35,8 @@ assignments.
 | Document | Scope |
 | --- | --- |
 | [Equipment](equipment-milestone.md) | Gear ownership, attributes, appearance and frozen builds. |
+| [Equipment and passive expansion](content-expansion.md) | Eight items, six passives, dungeon sources and build combinations. |
+| [Equipment tiers](equipment-tiers.md) | E–S coverage in all nine slots, 49 more items, shared loadout controls and future tier distribution. |
 | [Dungeon runs](dungeon-run-milestone.md) | Preparation, full-run progression, results and restart. |
 | [Branching dungeon routes](branching-dungeon-milestone.md) | Persisted routes, room decisions, balance and compatibility. |
 | [Forest encounters](forest-encounter-milestone.md) | Forest arena, actors and effects. |

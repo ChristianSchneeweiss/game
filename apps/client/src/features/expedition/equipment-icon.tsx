@@ -1,20 +1,27 @@
 import { Shield, Sparkles, Sword, Shirt } from "lucide-react";
+import { armorVisualFor, weaponVisualFor } from "@/lib/equipment-visuals";
+import type { EquipmentSlot } from "@loot-game/game/items/equipment/equipment";
+import { equipmentSlotIcons } from "@/lib/equipment-details";
 
 export function EquipmentIcon({
   type,
   slot,
 }: {
   type?: string;
-  slot?: "WEAPON" | "ARMOR";
+  slot?: EquipmentSlot;
 }) {
+  const weapon = weaponVisualFor(type);
+  const armor = armorVisualFor(type);
   const Icon =
-    type === "iron-sword" || (!type && slot === "WEAPON")
-      ? Sword
-      : type === "oakwarden-staff"
-        ? Sparkles
-        : type === "iron-cuirass"
+    weapon?.kind === "staff"
+      ? Sparkles
+      : weapon?.kind === "sword" || (!type && slot === "WEAPON")
+        ? Sword
+        : armor?.kind === "plate"
           ? Shield
-          : Shirt;
+          : slot && slot !== "ARMOR"
+            ? equipmentSlotIcons[slot]
+            : Shirt;
   return (
     <span className="expedition-equipment-icon" aria-hidden="true">
       <Icon size={24} />

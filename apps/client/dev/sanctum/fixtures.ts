@@ -1,6 +1,7 @@
 import { Character } from "@loot-game/game/base-entity";
 import { createSpellFromType } from "@loot-game/game/spells/base/spell-from-type";
 import { itemFactory } from "@loot-game/game/items/equipment/item-factory";
+import { ItemTypeSchema } from "@loot-game/game/items/item-types";
 import { passiveSkillFactory } from "@loot-game/game/passive-skills/base/passive-skill.factory";
 import { trialOfTheNature } from "@loot-game/game/dungeons/trial-of-the-nature";
 import { createEnemyFromType } from "../../../server/src/game-usecases/enemy-factory";
@@ -44,18 +45,20 @@ export const heroes = [
 ];
 export const config = trialOfTheNature();
 export const equipment = (
-  scenario === "collection"
-    ? [
-        "iron-sword",
-        "iron-cuirass",
-        "oakwarden-staff",
-        "iron-sword",
-        "int-armor",
-        "iron-cuirass",
-        "oakwarden-staff",
-        "iron-sword",
-      ]
-    : ["iron-sword", "iron-cuirass", "oakwarden-staff"]
+  scenario === "equipment"
+    ? ItemTypeSchema.options
+    : scenario === "collection"
+      ? [
+          "iron-sword",
+          "iron-cuirass",
+          "oakwarden-staff",
+          "iron-sword",
+          "int-armor",
+          "iron-cuirass",
+          "oakwarden-staff",
+          "iron-sword",
+        ]
+      : ["iron-sword", "iron-cuirass", "oakwarden-staff"]
 ).map((type, index) => ({
   id: `item-${index}`,
   type,
@@ -341,6 +344,9 @@ export function mutateFixture(path: string, input: unknown): unknown {
       return;
     case "character.equipEquipment": {
       const item = equipment.find((item) => item.id === args.equipmentId)!;
+      const previousId = hero.equipped[item.item.equipmentSlot]?.id;
+      const previous = equipment.find((entry) => entry.id === previousId);
+      if (previous) previous.equippedBy = null;
       item.equippedBy = hero.id;
       hero.equipped[item.item.equipmentSlot] = itemFactory(
         item.item.itemType,

@@ -1,5 +1,6 @@
 import { nanoid } from "nanoid";
 import { BaseEnemy } from "./base/base.enemy";
+import { defaultSpellDropRate } from "../utils/loot";
 
 export class SkyboltWyvern extends BaseEnemy {
   constructor(id?: string) {
@@ -20,6 +21,19 @@ export class SkyboltWyvern extends BaseEnemy {
       xp: 20,
       loot: {
         gold: 20,
+        items: [
+          ...defaultSpellDropRate(["festering-blow"]),
+          {
+            type: "ITEM",
+            data: { itemType: "stormrunner-leathers" },
+            dropRate: 0.25,
+          },
+          {
+            type: "PASSIVE",
+            data: { passiveType: "predators-focus" },
+            dropRate: 0.2,
+          },
+        ],
       },
       spells: ["festering-blow", "basic-attack"],
     });

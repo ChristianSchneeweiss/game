@@ -16,7 +16,20 @@
   color: var(--exp-filled);
 }
 .expedition-equipment {
+  --exp-paper: var(--rpg-text-main);
+  --exp-dim: var(--rpg-text-muted);
+  --exp-gold: var(--rpg-gold);
+  --exp-line: var(--rpg-line);
+  --exp-filled: var(--rpg-success);
+  --exp-empty: var(--rpg-warning);
   padding-top: 24px;
+}
+.character-detail-layout[data-equipment="true"] {
+  grid-template-columns: minmax(0, 1fr);
+}
+.character-page .expedition-equipment {
+  max-width: 960px;
+  margin-inline: auto;
 }
 .expedition-gear-preview {
   border: 1px solid #7d9d7950;
@@ -115,7 +128,7 @@
 }
 .expedition-equipment-slots {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
 }
 .expedition-equipment-slots button {
@@ -136,6 +149,39 @@
   font-size: 12px;
   font-weight: 500;
   margin-top: 6px;
+  overflow-wrap: anywhere;
+}
+.expedition-equipment-slots button > span {
+  min-width: 0;
+}
+.expedition-equipment-icon {
+  flex-shrink: 0;
+}
+.expedition-gear-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.expedition-gear-heading select {
+  width: auto;
+}
+.expedition-gear-bonuses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 12px;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--exp-filled);
+}
+.expedition-gear-item [data-tier="A"],
+.expedition-gear-item [data-tier="S"] {
+  color: var(--exp-gold);
+}
+@media (min-width: 900px) {
+  .expedition-equipment-stats dl {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 .expedition-remove-gear {
   color: var(--exp-dim);
@@ -201,6 +247,9 @@
   border-color: var(--exp-empty);
 }
 @media (max-width: 560px) {
+  .expedition-equipment-slots {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .expedition-gear-canvas {
     height: 300px;
   }

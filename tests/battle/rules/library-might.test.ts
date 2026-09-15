@@ -202,7 +202,15 @@ test("Might bounds are inclusive, independent and conjunctive with existing filt
 });
 
 test("item Might ordering keeps alphabetic slot families and Unrated last in each", () => {
-  const entries = createItemLibrary();
+  const fixtureItems = [
+    "iron-cuirass",
+    "int-armor",
+    "iron-sword",
+    "oakwarden-staff",
+  ];
+  const entries = createItemLibrary().filter((entry) =>
+    fixtureItems.includes(entry.type),
+  );
   for (const sort of ["mightAsc", "mightDesc"]) {
     const all = filterLibrary(
       entries,

@@ -9,6 +9,7 @@ import type {
 } from "../../entity-types";
 import type { Equipment } from "../../items/equipment/equipment";
 import { itemFactory } from "../../items/equipment/item-factory";
+import { equipmentDropsForEnemy } from "../../items/equipment/equipment-drops";
 import type { ItemType } from "../../items/item-types";
 import { passiveSkillFactory } from "../../passive-skills/base/passive-skill.factory";
 import type { PassiveType } from "../../passive-skills/base/passive-types";
@@ -62,10 +63,13 @@ export class BaseEnemy extends BaseEntity {
     this.xp = xp;
     this.loot = {
       gold: loot.gold,
-      items: loot.items ?? [
-        ...defaultSpellDropRate(spells.filter((s) => s !== "basic-attack")),
-        // ...defaultPassiveDropRate(passiveSkills ?? []),
-        // ...defaultEquipmentDropRate(equipment ?? []),
+      items: [
+        ...(loot.items ?? [
+          ...defaultSpellDropRate(spells.filter((s) => s !== "basic-attack")),
+          // ...defaultPassiveDropRate(passiveSkills ?? []),
+          // ...defaultEquipmentDropRate(equipment ?? []),
+        ]),
+        ...equipmentDropsForEnemy(type),
       ],
     };
     const equipments: Equipment[] =

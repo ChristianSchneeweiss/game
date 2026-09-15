@@ -12,6 +12,12 @@ export const PassiveTypeSchema = z.union([
   z.literal("stoneform-resolve"),
   z.literal("titans-resurgence"),
   z.literal("keen-instincts"),
+  z.literal("predators-focus"),
+  z.literal("fleet-footed"),
+  z.literal("arcane-barrier"),
+  z.literal("last-bastion"),
+  z.literal("merciful-light"),
+  z.literal("executioner"),
 ]);
 
 export type PassiveType = z.infer<typeof PassiveTypeSchema>;

@@ -1,7 +1,14 @@
 import type { MightAssessment } from "./might";
 import { MIGHT_REFERENCE } from "./reference-profile";
 
-const developedBuilds = `Reference v${MIGHT_REFERENCE.version}: ${MIGHT_REFERENCE.attributeBudget} base attribute points (level-41 budget). Physical STR80/INT20/VIT70/AGI30; caster STR20/INT80/VIT70/AGI30; tank STR50/INT20/VIT100/AGI30. HP = base VIT × 10 (700–1000), mana = base INT × 5 (100–400). Catalogue gear plus explicit design-only allowance of ${MIGHT_REFERENCE.armor} armor, ${MIGHT_REFERENCE.magicResistance} magic resistance and ${MIGHT_REFERENCE.critChance * 100}% crit; these allowances are not currently supplied by shipped gear. Four suitable spells plus Basic Attack, ${MIGHT_REFERENCE.rounds.join("/")}-round horizons, fresh and depleted resources. Compare content in a suitable build, not an average across incompatible builds.`;
+const developedBuilds = `Reference v${MIGHT_REFERENCE.version}: ${MIGHT_REFERENCE.attributeBudget} base attribute points (level-41 budget). Physical STR80/INT20/VIT70/AGI30; caster STR20/INT80/VIT70/AGI30; tank STR50/INT20/VIT100/AGI30. HP = base VIT × 10 (700–1000), mana = base INT × 5 (100–400). Reference-profile gear plus explicit design-only allowance of ${MIGHT_REFERENCE.armor} armor, ${MIGHT_REFERENCE.magicResistance} magic resistance and ${MIGHT_REFERENCE.critChance * 100}% crit; these synthetic additions are independent of the expanded item catalogue. Four suitable spells plus Basic Attack, ${MIGHT_REFERENCE.rounds.join("/")}-round horizons, fresh and depleted resources. Compare content in a suitable build, not an average across incompatible builds.`;
+
+function accessoryReference(slot: string, anchor: string) {
+  return {
+    anchor: `${slot}-v2`,
+    conditions: `${developedBuilds} ${slot}: ${anchor} is the 100 Might anchor for this slot only. Hold all other slots fixed. Compare marginal useful damage, repeated-hit prevention, spent mana, recovery while wounded and attacks enabled by movement over 6–12 rounds. Equipment vitality changes regeneration, not maximum HP. Armor and MR affect different hits. These are provisional author estimates; combined nine-slot builds have not been calibrated with paired encounter probes.`,
+  };
+}
 
 /** Versioned design references, not a universal combat-power formula. */
 const references = {
@@ -21,6 +28,13 @@ const references = {
     anchor: "armor-v2",
     conditions: `${developedBuilds} Armor: Iron Cuirass (+12 armor) remains the 100 anchor. Hold weapon, base stats and the design-only defensive allowance fixed while swapping the armor slot; compare useful repeated-hit prevention with Intelligence scaling and mana that is actually spent, including depleted-resource fights.`,
   },
+  ring: accessoryReference("rings", "Copper Band (+3 strength)"),
+  amulet: accessoryReference("amulets", "Apprentice Pendant (+3 intelligence)"),
+  boots: accessoryReference("boots", "Trailworn Boots (+3 agility)"),
+  gloves: accessoryReference("gloves", "Brawler's Wraps (+3 strength)"),
+  helmet: accessoryReference("helmets", "Iron Cap (+3 armor)"),
+  cloak: accessoryReference("cloaks", "Traveler's Cloak (+3 magic resistance)"),
+  belt: accessoryReference("belts", "Rope Girdle (+3 vitality)"),
   enemies: {
     anchor: "enemies-v2",
     conditions: `${developedBuilds} Enemies: Skeleton Grunt remains the 100 unit anchor; it is not the reference character. Test actual unscaled enemy kits against the developed physical/caster party (caster AGI29), individually and in groups of three. Empty 7x7 board, clustered/spread starts, 16 seeds each, tactical movement and shared heuristic AI, 18-round cap. Current enemies may be outgrown by this party; zero damage is not zero intrinsic power. Judge relative durability, control and group support as well as observed pressure; probe means do not calculate scores. See enemy-probes-v2.json.`,

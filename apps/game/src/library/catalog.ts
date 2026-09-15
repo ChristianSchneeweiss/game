@@ -3,12 +3,13 @@ import { BM } from "../bm";
 import { EnemyTypeSchema } from "../enemies/base/enemy-types";
 import { createEnemyFromType } from "../enemies/enemy-factory";
 import { itemFactory } from "../items/equipment/item-factory";
+import { formatEquipmentModifier } from "../items/equipment/format-modifier";
 import { ItemTypeSchema } from "../items/item-types";
 import { passiveSkillFactory } from "../passive-skills/base/passive-skill.factory";
 import { PassiveTypeSchema } from "../passive-skills/base/passive-types";
 import { createSpellFromType } from "../spells/base/spell-from-type";
 import { SpellTypeSchema } from "../spells/base/spell-types";
-import { WEAPON_PROFILES } from "../tactical/catalogue";
+import { weaponProfileFor } from "../tactical/catalogue";
 import type { WeaponAttackProfile } from "../tactical/types";
 import { mightAssessments } from "../might/assessments";
 import { assessMight } from "../might/might";
@@ -128,10 +129,7 @@ export function createItemLibrary(): LibraryEntry[] {
   );
   return ItemTypeSchema.options.map((type) => {
     const item = itemFactory(type, `library:${type}`, holder);
-    const profile =
-      type === "iron-sword" || type === "oakwarden-staff"
-        ? WEAPON_PROFILES[type]
-        : undefined;
+    const profile = weaponProfileFor(type);
     return {
       category: "items",
       type,
@@ -148,10 +146,7 @@ export function createItemLibrary(): LibraryEntry[] {
         },
         ...item.modifiers.map((modifier) => ({
           label: libraryName(modifier.attribute.replace(/([A-Z])/g, " $1")),
-          value:
-            modifier.operation === "ADD"
-              ? `${modifier.value >= 0 ? "+" : ""}${modifier.value}`
-              : `×${modifier.value}`,
+          value: formatEquipmentModifier(modifier),
         })),
         ...(profile ? weaponStats(profile) : []),
       ],

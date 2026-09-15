@@ -2,6 +2,17 @@
 .armoury-bonuses dt {
   text-transform: capitalize;
 }
+.armoury .inventory-tabs {
+  flex-wrap: wrap;
+  height: auto;
+  gap: 0.25rem 1rem;
+}
+.armoury-toolbar {
+  flex-wrap: wrap;
+}
+.armoury-toolbar .inventory-search {
+  flex: 1 1 240px;
+}
 .armoury .expedition-equipment-icon,
 .armoury-page .expedition-equipment-icon {
   display: inline-flex;

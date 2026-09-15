@@ -7,7 +7,7 @@
   ],
   "format": "WebP",
   "quality": 86,
-  "totalBytes": 753338,
+  "totalBytes": 828430,
   "assets": [
     {
       "key": "aegis-wall",
@@ -22,6 +22,14 @@
       "sourceSha256": "190994bea16a6b0bb2c9e157b8b1bb675f2cb875953038d7299b70a730f41b74",
       "bytes": 14530,
       "sha256": "3c7412be4e5eb9e56b0ab6088eee51d281a6ff2c0d46969ad08c4a7d1b961ab1"
+    },
+    {
+      "key": "arcane-barrier",
+      "sourceImage": "exec-20f61930-d968-4e02-9957-534314982a59.png",
+      "sourceSha256": "c182900ac6f52c2b712eee5c85d8454908b23c16a24a0eef6db1a5eb343a2b07",
+      "bytes": 15118,
+      "sha256": "e18b3bfb1506610410e76c02544ef8a732c85b27cd29104af5079ac772982393",
+      "reusedFrom": "aegis-wall"
     },
     {
       "key": "arcane-channeling",
@@ -199,6 +207,14 @@
       "sha256": "1a9ab6d64d202deefeb9af15c0dabed2894c1acf76b76e340b4b6b7ebce4e4ea"
     },
     {
+      "key": "executioner",
+      "sourceImage": "exec-3497195a-d6ee-4ea6-b609-43c4e7e29f82.png",
+      "sourceSha256": "e2fa4eb0da372f2b533bae25723419fdd4ef073cea3f5e3e2de8f560a60f954b",
+      "bytes": 11978,
+      "sha256": "7b4698ff757c49cae9d8384ce4db506a9b5901efc178e35ddbae54e5feafec32",
+      "reusedFrom": "final-verdict"
+    },
+    {
       "key": "festering-blow",
       "sourceImage": "exec-2b8e24b6-7fa3-44b8-b011-f3e4d5788fa2.png",
       "sourceSha256": "5d08aaf38fe39343730e5232545b815f7eefcf3a5e15d4f93a2949085dcca2a9",
@@ -218,6 +234,14 @@
       "sourceSha256": "3ec35d3f095fa359cccec79a161e2591d4d1406f29b28f420abcef97033134ca",
       "bytes": 11748,
       "sha256": "77b45ee6d62a348008b3ab36468b0a6b7d29a8d9be7950c3d7f81c088b03c0d3"
+    },
+    {
+      "key": "fleet-footed",
+      "sourceImage": "exec-4554acaf-3f9d-48be-913e-0e5cdb1f868e.png",
+      "sourceSha256": "3b471cf0c0fa566bb7ba03622222b2ea441c22d231b6f1fcbd7844c957e8d030",
+      "bytes": 10424,
+      "sha256": "48e80feba00382f4aee25e68bf56f9b231f8b66565d47d2b79457af8ebc5fbb8",
+      "reusedFrom": "fleetfoot-gambit"
     },
     {
       "key": "fleetfoot-gambit",
@@ -241,11 +265,27 @@
       "sha256": "48aff0066d8d533e0fe667ce43835015836c782e92293f4c57cee8177decc272"
     },
     {
+      "key": "last-bastion",
+      "sourceImage": "exec-b7d9c0b6-77d6-4be6-8e25-651f3ed2d57d.png",
+      "sourceSha256": "a2f42a571a95f8de3b6c110083eabe3fdc406b446f891240b58b9dffc6474d6c",
+      "bytes": 13216,
+      "sha256": "113a6a96888a696fce60fd98256a7efca8dc00a2fbe6e76659fa3dd96f8b91a7",
+      "reusedFrom": "iron-will"
+    },
+    {
       "key": "lightning-surge",
       "sourceImage": "exec-57a4a492-5521-4ecf-a0c8-c0a9a78a62a9.png",
       "sourceSha256": "70589011fcb04c373a81f88e549606cfcd22b15317b66c56c2238a1d0b4015b7",
       "bytes": 13600,
       "sha256": "807c645410daecabc1735b1e95b2940077677a781a3fa8a6c13c71e0fcf38db9"
+    },
+    {
+      "key": "merciful-light",
+      "sourceImage": "exec-3c746444-d56e-4f45-ae35-d41dedf7fcf5.png",
+      "sourceSha256": "824444eca7ca2f4679beca301bcb2c18eecbee380c600ea9ecd33ad11bcfd389",
+      "bytes": 11132,
+      "sha256": "c5422326969d4b41f8a06c4e0f495071c82b378569121c99de40591ff8714390",
+      "reusedFrom": "single-heal"
     },
     {
       "key": "mystic-flow",
@@ -274,6 +314,14 @@
       "sourceSha256": "b0623f36fbe205b8264e6438ae29a928d67f90f3a0c62b7be093a27f4f235b27",
       "bytes": 8302,
       "sha256": "9153067ee2bab57daeeb2446016b5246cdb6f9127abaff761cbe0e7f4e79e745"
+    },
+    {
+      "key": "predators-focus",
+      "sourceImage": "exec-c6ac2ab4-7aa8-49aa-81ab-cfe0de60ec7e.png",
+      "sourceSha256": "87a42d7e7172b0f0921cf9b017c5d1794e3dd29a7effeaf561a76544bab1e88e",
+      "bytes": 13224,
+      "sha256": "48aff0066d8d533e0fe667ce43835015836c782e92293f4c57cee8177decc272",
+      "reusedFrom": "keen-instincts"
     },
     {
       "key": "rootgrasp",

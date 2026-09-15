@@ -1,5 +1,6 @@
 import { nanoid } from "nanoid";
 import { BaseEnemy } from "./base/base.enemy";
+import { defaultSpellDropRate } from "../utils/loot";
 
 export class EmberboundRevenant extends BaseEnemy {
   constructor(id?: string) {
@@ -20,6 +21,15 @@ export class EmberboundRevenant extends BaseEnemy {
       xp: 100, // Higher XP for mini-boss
       loot: {
         gold: 100, // Higher gold for mini-boss
+        items: [
+          ...defaultSpellDropRate(["charred-chains", "soulflare"]),
+          { type: "ITEM", data: { itemType: "ashen-falchion" }, dropRate: 1 },
+          {
+            type: "PASSIVE",
+            data: { passiveType: "executioner" },
+            dropRate: 0.25,
+          },
+        ],
       },
       spells: ["charred-chains", "soulflare", "basic-attack"],
       passiveSkills: ["soulleech"],

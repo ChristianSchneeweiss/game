@@ -42,12 +42,15 @@ The shared domain calculates each promotion as `round(100 * 5 ** (step / 5))`,
 for steps 1–5. The 100-Might E reference defines the unit; E starts at zero.
 The client consumes the derived grade without its own threshold table.
 
-All 75 current production definitions have **Estimated** values in the
+All 138 current production definitions have **Estimated** values in the
 [developed-build v2 assessment](../might/assessments.md), with per-definition
 rationales and versioned family references. The reference targets mid-to-end-game
 builds with a level-41 attribute budget, 700–1,000 HP and 6–12-round encounters.
 Its additional armor, resistance and crit are explicit design assumptions, not
-changes to live characters. Future missing assessments display
+changes to live characters. The [equipment and passive expansion](content-expansion.md)
+and [all-slot tier pass](equipment-tiers.md) use provisional mechanic-based
+estimates, with additional slot anchors for accessories; the original probe
+artifacts do not cover them. Future missing assessments display
 **Might — · Unrated**. A real zero assessment displays **E · Might 0**.
 Estimated assessments are provisional and visibly marked; both Estimated and
 Assessed values participate in numeric sorting. The Library exposes only the

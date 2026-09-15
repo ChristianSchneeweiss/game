@@ -7,6 +7,7 @@ import {
   type LibrarySearch,
 } from "../../../apps/client/src/features/library/library-search";
 import { installLibraryAssessments } from "../support/library-fixtures";
+import { ItemTypeSchema } from "../../../apps/game/src/items/item-types";
 
 const browser = new Window({ url: "http://localhost/library" });
 Object.assign(globalThis, {
@@ -178,7 +179,19 @@ test("Might ordering labels item families and combines ranges with slot restrict
     [...container.querySelectorAll(".library-list caption")].map(
       (node) => node.textContent,
     ),
-  ).toEqual(["Armor · Might comparison", "Weapon · Might comparison"]);
+  ).toEqual(
+    [
+      "Amulet",
+      "Armor",
+      "Belt",
+      "Boots",
+      "Cloak",
+      "Gloves",
+      "Helmet",
+      "Ring",
+      "Weapon",
+    ].map((slot) => `${slot} · Might comparison`),
+  );
   const tables = [...container.querySelectorAll(".library-list table")];
   expect(
     tables.every((table) =>
@@ -194,8 +207,8 @@ test("Might ordering labels item families and combines ranges with slot restrict
   expect(rows()).toHaveLength(1);
   expect(detail().textContent).toContain("Comparison family: Weapon");
   await click("Clear filters");
-  expect(rows()).toHaveLength(4);
-  expect(container.querySelectorAll(".library-family-heading")).toHaveLength(2);
+  expect(rows()).toHaveLength(ItemTypeSchema.options.length);
+  expect(container.querySelectorAll(".library-family-heading")).toHaveLength(9);
 });
 
 test("preview changes ordinary damage while keeping list/detail ratings and tier membership stable", async () => {

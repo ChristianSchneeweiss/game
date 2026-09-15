@@ -2,6 +2,8 @@ import { lazy, Suspense, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import type { Character } from "@loot-game/game/base-entity";
 import { equipmentBuildPreview } from "@loot-game/game/items/equipment/build-preview";
+import { EQUIPMENT_SLOTS } from "@loot-game/game/items/equipment/equipment-slots";
+import type { EquipmentSlot } from "@loot-game/game/items/equipment/equipment";
 import { trpc } from "@/utils/trpc";
 import { EquipmentIcon } from "./equipment-icon";
 import { EquipmentCollection } from "./equipment-collection";
@@ -11,7 +13,6 @@ import { refreshBuilds } from "./refresh-builds";
 import "./equipment.css";
 
 const EquipmentPreviewScene = lazy(() => import("./equipment-preview-scene"));
-const slots = ["WEAPON", "ARMOR"] as const;
 
 export function EquipmentLoadout({
   character,
@@ -21,7 +22,7 @@ export function EquipmentLoadout({
   party: Character[];
 }) {
   const collection = useQuery(trpc.getMyEquipment.queryOptions());
-  const [slot, setSlot] = useState<(typeof slots)[number]>("WEAPON");
+  const [slot, setSlot] = useState<EquipmentSlot>("WEAPON");
   const [previewId, setPreviewId] = useState<string>();
   const onSaved = async () => {
     await refreshBuilds();
@@ -57,6 +58,10 @@ export function EquipmentLoadout({
         <div>
           <small>Equipment</small>
           <h3>{character.name}'s gear</h3>
+          <p className="expedition-muted">
+            {Object.values(character.equipped).filter(Boolean).length} /{" "}
+            {EQUIPMENT_SLOTS.length} slots filled
+          </p>
         </div>
       </div>
       <div className="expedition-gear-preview" data-previewing={previewing}>
@@ -76,8 +81,8 @@ export function EquipmentLoadout({
             {previewing ? "Preview · not equipped yet" : "Currently equipped"}
           </small>
           <strong>
-            {preview.equipped.WEAPON?.name ?? "Unarmed"} ·{" "}
-            {preview.equipped.ARMOR?.name ?? "Travel clothes"}
+            {preview.equipped[slot]?.name ??
+              `No ${slot.toLowerCase()} equipped`}
           </strong>
           {previewing && (
             <button onClick={() => setPreviewId(undefined)}>
@@ -88,9 +93,10 @@ export function EquipmentLoadout({
       </div>
       <EquipmentStats character={character} preview={preview} />
       <div className="expedition-equipment-slots" aria-label="Equipment slots">
-        {slots.map((value) => (
+        {EQUIPMENT_SLOTS.map((value) => (
           <button
             key={value}
+            aria-label={`Select ${value.toLowerCase()} slot`}
             aria-pressed={slot === value}
             onClick={() => {
               setSlot(value);
@@ -118,6 +124,7 @@ export function EquipmentLoadout({
         </button>
       )}
       <EquipmentCollection
+        key={slot}
         items={items}
         slot={slot}
         characterId={character.id}

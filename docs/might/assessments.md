@@ -1,14 +1,21 @@
 # Might assessments: developed-build reference v2
 
-All 75 current definitions have an **Estimated** Might assessment under a
+All 138 current definitions have an **Estimated** Might assessment under a
 mid-to-end-game reference. Values are authored judgments informed by mechanics
 and controlled probes. Neither the probes nor the Library automatically calculate
 Might from damage. The Library derives tiers from the authored integer.
 
-This revision changes assessment inputs and ratings. It does not alter live
+The original v2 revision changed assessment inputs and ratings, without altering live
 character attributes, equipment, spell effects, enemy stats, rewards or loot.
 Ordinary Library damage previews remain independently adjustable and default to
 attributes 20; their numbers are not the inputs to the published Might rating.
+
+The [15 September content expansion](../features/content-expansion.md) adds eight
+items and six passives under the same family references. Their individual
+rationales identify them as mechanic-based estimates awaiting paired probes;
+the stored v2 probe artifacts cover the original 75 definitions. The subsequent
+[equipment tier pass](../features/equipment-tiers.md) adds 49 more items and
+separate reference anchors for the seven accessory slots, also awaiting probes.
 
 The canonical inputs are in [reference-profile.ts](../../apps/game/src/might/reference-profile.ts),
 shared by the assessment tools. Every record links to a v2 family section below
@@ -41,8 +48,8 @@ does not retroactively increase the persisted maximum mana pool.
 All builds also receive an explicit **reference-only endgame allowance** of
 18 armor, 12 magic resistance and 10% crit chance. The cuirass brings physical
 and tank armor to 30; caster armor remains 18. These allowances stand in for
-intended developed equipment power that the small current item catalogue does
-not supply. They are synthetic assessment inputs, not new gear, earned stats
+intended developed equipment power independently of the expanded item catalogue.
+They are synthetic assessment inputs, not new gear, earned stats
 or changes to live characters. No other passive is bundled into these builds.
 
 Each build has Basic Attack plus four real equipped spells:
@@ -180,6 +187,43 @@ and the design-only defensive allowance fixed while swapping the armor slot.
 Evaluate repeated physical prevention against Int Armor's marginal scaling and
 extra mana actually spent. Int Armor retains 80 pending paired slot trials.
 Armor and weapon values are separate units, not directly interchangeable.
+
+## Rings v2
+
+Copper Band (+3 Strength) is the 100-Might ring anchor.
+
+## Amulets v2
+
+Apprentice Pendant (+3 Intelligence) is the 100-Might amulet anchor.
+
+## Boots v2
+
+Trailworn Boots (+3 Agility) is the 100-Might boots anchor. Additional movement
+must enable useful attacks or avoidance to contribute; it has no stationary value.
+
+## Gloves v2
+
+Brawler's Wraps (+3 Strength) is the 100-Might gloves anchor.
+
+## Helmets v2
+
+Iron Cap (+3 Armor) is the 100-Might helmet anchor.
+
+## Cloaks v2
+
+Traveler's Cloak (+3 Magic Resistance) is the 100-Might cloak anchor.
+
+## Belts v2
+
+Rope Girdle (+3 Vitality) is the 100-Might belt anchor.
+
+All seven accessory families use the developed v2 builds above, holding the
+other eight equipment slots fixed. Their units are separate, not additive into
+a character score. Compare marginal useful damage, repeated mitigation, spent
+mana and recovery while wounded over 6–12 rounds. Armor and magic resistance
+protect against different hits. Equipment Vitality changes regeneration, not
+maximum health. These new values are provisional author estimates; paired
+encounter probes have not calibrated the complete nine-slot builds.
 
 ## Enemies v2
 

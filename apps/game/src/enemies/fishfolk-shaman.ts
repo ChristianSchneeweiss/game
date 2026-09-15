@@ -1,5 +1,6 @@
 import { nanoid } from "nanoid";
 import { BaseEnemy } from "./base/base.enemy";
+import { defaultSpellDropRate } from "../utils/loot";
 
 export class FishfolkShaman extends BaseEnemy {
   constructor(id?: string) {
@@ -20,6 +21,14 @@ export class FishfolkShaman extends BaseEnemy {
       xp: 30,
       loot: {
         gold: 30,
+        items: [
+          ...defaultSpellDropRate(["ocean-blessing", "aqua-wave"]),
+          {
+            type: "ITEM",
+            data: { itemType: "tidewoven-robes" },
+            dropRate: 0.25,
+          },
+        ],
       },
       spells: ["ocean-blessing", "aqua-wave", "basic-attack"],
     });

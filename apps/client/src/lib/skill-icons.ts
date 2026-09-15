@@ -52,6 +52,12 @@ export const skillNames = {
   "stoneform-resolve": "Stoneform Resolve",
   "titans-resurgence": "Titan’s Resurgence",
   "keen-instincts": "Keen Instincts",
+  "predators-focus": "Predator’s Focus",
+  "fleet-footed": "Fleet Footed",
+  "arcane-barrier": "Arcane Barrier",
+  "last-bastion": "Last Bastion",
+  "merciful-light": "Merciful Light",
+  executioner: "Executioner",
 } satisfies Record<SpellType | PassiveType, string>;
 
 export const conditionIconNames = {
@@ -77,6 +83,7 @@ export type SkillIconType =
 export function skillName(type: string) {
   return iconNames[type] ?? "Unknown skill";
 }
+
 export function skillIconUrl(type?: string) {
   const key = type && Object.hasOwn(iconNames, type) ? type : "effect-passive";
   return `/icons/skills/v1/${key}.webp`;

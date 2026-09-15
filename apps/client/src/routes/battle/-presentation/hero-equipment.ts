@@ -4,19 +4,28 @@ import {
   IcosahedronGeometry,
   Mesh,
   MeshStandardMaterial,
+  TorusGeometry,
   type BufferGeometry,
   type Material,
   type Object3D,
 } from "three";
+import {
+  accessoryVisualFor,
+  armorVisuals,
+  weaponVisuals,
+} from "../../../lib/equipment-visuals";
+import { EQUIPMENT_SLOTS } from "@loot-game/game/items/equipment/equipment-slots";
+import type { EquipmentSlot } from "@loot-game/game/items/equipment/equipment";
 
 export type HeroEquipmentIdentity = {
-  equipped?: { WEAPON?: { itemType: string }; ARMOR?: { itemType: string } };
+  equipped?: Partial<Record<EquipmentSlot, { itemType: string }>>;
 };
 export type HeroAppearance = {
   kind: "hero";
   accent: "amber" | "teal";
-  weapon: "iron-sword" | "oakwarden-staff" | null;
-  armor: "iron-cuirass" | "int-armor" | null;
+  weapon: keyof typeof weaponVisuals | null;
+  armor: keyof typeof armorVisuals | null;
+  accessories?: Partial<Record<EquipmentSlot, string>>;
 };
 const appearances = new Map<string, HeroAppearance>();
 
@@ -30,10 +39,20 @@ export function heroAppearanceFor(
     kind: "hero",
     accent,
     weapon:
-      weapon === "iron-sword" || weapon === "oakwarden-staff" ? weapon : null,
-    armor: armor === "iron-cuirass" || armor === "int-armor" ? armor : null,
+      weapon && Object.hasOwn(weaponVisuals, weapon)
+        ? (weapon as keyof typeof weaponVisuals)
+        : null,
+    armor:
+      armor && Object.hasOwn(armorVisuals, armor)
+        ? (armor as keyof typeof armorVisuals)
+        : null,
   };
-  const key = `${look.accent}:${look.weapon}:${look.armor}`;
+  const accessories = EQUIPMENT_SLOTS.flatMap((slot) => {
+    const type = entity.equipped?.[slot]?.itemType;
+    return accessoryVisualFor(type)?.slot === slot ? [[slot, type]] : [];
+  });
+  if (accessories.length) look.accessories = Object.fromEntries(accessories);
+  const key = `${look.accent}:${look.weapon}:${look.armor}:${JSON.stringify(look.accessories)}`;
   const existing = appearances.get(key);
   if (existing) return existing;
   appearances.set(key, look);
@@ -50,13 +69,13 @@ export function dressHeroEquipment(root: Object3D, look: HeroAppearance) {
     material: Mesh["material"];
     visible: boolean;
   }[] = [];
+  const weapon = look.weapon ? weaponVisuals[look.weapon] : undefined;
+  const armor = look.armor ? armorVisuals[look.armor] : undefined;
+  const plate = armor?.kind === "plate";
   const cloth = look.accent === "amber" ? "#bc8745" : "#32938d";
-  const armorColor =
-    look.armor === "iron-cuirass"
-      ? "#9ab1c7"
-      : look.armor === "int-armor"
-        ? "#7660a6"
-        : "#8a6950";
+  const armorColor = armor?.color ?? "#8a6950";
+  const accessoryColor = (slot: EquipmentSlot) =>
+    accessoryVisualFor(look.accessories?.[slot])?.color;
   root.traverse((node) => {
     if (!(node instanceof Mesh)) return;
     originals.push({
@@ -64,9 +83,10 @@ export function dressHeroEquipment(root: Object3D, look: HeroAppearance) {
       material: node.material,
       visible: node.visible,
     });
-    if (node.name === "1H_Sword") node.visible = look.weapon === "iron-sword";
-    if (node.name === "Badge_Shield" || node.name === "Knight_Helmet")
-      node.visible = look.armor === "iron-cuirass";
+    if (node.name === "1H_Sword") node.visible = weapon?.kind === "sword";
+    if (node.name === "Badge_Shield") node.visible = plate;
+    if (node.name === "Knight_Helmet")
+      node.visible = plate || Boolean(accessoryColor("HELMET"));
     const isArmor = [
       "Knight_Body",
       "Knight_ArmLeft",
@@ -76,13 +96,30 @@ export function dressHeroEquipment(root: Object3D, look: HeroAppearance) {
       "Knight_Helmet",
     ].includes(node.name);
     const isCloth = node.name === "Knight_Cape" || node.name === "Badge_Shield";
-    if (!isArmor && !isCloth) return;
+    const tintSword =
+      node.name === "1H_Sword" &&
+      weapon?.kind === "sword" &&
+      look.weapon !== "iron-sword";
+    const accessoryTint =
+      node.name === "Knight_Helmet"
+        ? accessoryColor("HELMET")
+        : node.name.startsWith("Knight_Arm")
+          ? accessoryColor("GLOVES")
+          : node.name.startsWith("Knight_Leg")
+            ? accessoryColor("BOOTS")
+            : node.name === "Knight_Cape"
+              ? accessoryColor("CLOAK")
+              : undefined;
+    if (!isArmor && !isCloth && !tintSword) return;
     const tint = (original: Material) => {
       const own = original.clone();
       if (own instanceof MeshStandardMaterial) {
-        own.color.set(isCloth ? cloth : armorColor);
-        own.metalness = isArmor && look.armor === "iron-cuirass" ? 0.65 : 0;
-        own.roughness = isArmor && look.armor === "iron-cuirass" ? 0.36 : 0.9;
+        own.color.set(
+          accessoryTint ??
+            (tintSword ? weapon!.color : isCloth ? cloth : armorColor),
+        );
+        own.metalness = tintSword || (isArmor && plate) ? 0.65 : 0;
+        own.roughness = tintSword || (isArmor && plate) ? 0.36 : 0.9;
       }
       materials.add(own);
       return own;
@@ -114,19 +151,22 @@ export function dressHeroEquipment(root: Object3D, look: HeroAppearance) {
     parent.add(mesh);
     return mesh;
   };
-  if (look.weapon === "oakwarden-staff") {
+  if (weapon?.kind === "staff") {
     const socket = root.getObjectByName("handslotr");
     const sword = root.getObjectByName("1H_Sword");
     if (socket && sword) {
       const staff = new Group();
-      staff.name = "Equipped_Oakwarden_Staff";
+      staff.name =
+        look.weapon === "oakwarden-staff"
+          ? "Equipped_Oakwarden_Staff"
+          : `Equipped_${look.weapon}`;
       staff.position.copy(sword.position);
       staff.quaternion.copy(sword.quaternion);
       // This rig's grip uses local +X as up in Idle; our staff is built on +Y.
       staff.rotateZ(-Math.PI / 2);
-      const wood = material("#74502c");
+      const wood = material(weapon.color);
       const gold = material("#cda86a");
-      const seed = material("#8bdd9e", true);
+      const seed = material(weapon.gem, true);
       add(staff, new CylinderGeometry(0.024, 0.018, 2.05, 7), wood, 0.425);
       for (const y of [-0.1, 0.04, 1.35])
         add(staff, new CylinderGeometry(0.032, 0.032, 0.045, 8), gold, y);
@@ -145,15 +185,18 @@ export function dressHeroEquipment(root: Object3D, look: HeroAppearance) {
       additions.push(staff);
     }
   }
-  if (look.armor === "int-armor") {
+  if (armor?.kind === "robes") {
     const hips = root.getObjectByName("hips");
     if (hips) {
       const robe = new Group();
-      robe.name = "Equipped_Arcanist_Robes";
+      robe.name =
+        look.armor === "int-armor"
+          ? "Equipped_Arcanist_Robes"
+          : `Equipped_${look.armor}`;
       add(
         robe,
         new CylinderGeometry(0.22, 0.34, 0.45, 8),
-        material("#594376"),
+        material(armor.skirt),
         -0.09,
       );
       add(
@@ -165,6 +208,34 @@ export function dressHeroEquipment(root: Object3D, look: HeroAppearance) {
       hips.add(robe);
       additions.push(robe);
     }
+  }
+  for (const slot of ["BELT", "AMULET", "RING"] as const) {
+    const type = look.accessories?.[slot];
+    const color = accessoryColor(slot);
+    const socket = root.getObjectByName(slot === "RING" ? "handslotr" : "hips");
+    if (!type || !color || !socket) continue;
+    const accessory = new Group();
+    accessory.name = `Equipped_${type}`;
+    if (slot === "BELT") {
+      add(
+        accessory,
+        new CylinderGeometry(0.235, 0.235, 0.06, 8),
+        material(color),
+        0.13,
+      );
+    } else if (slot === "AMULET") {
+      const pendant = add(
+        accessory,
+        new IcosahedronGeometry(0.045, 0),
+        material(color, true),
+        0.4,
+      );
+      pendant.position.z = 0.22;
+    } else {
+      add(accessory, new TorusGeometry(0.035, 0.009, 4, 8), material(color), 0);
+    }
+    socket.add(accessory);
+    additions.push(accessory);
   }
   return () => {
     for (const { mesh, material, visible } of originals) {

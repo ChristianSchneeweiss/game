@@ -9,7 +9,7 @@ from Might; comparisons are made within a family such as spells or weapons.
 
 | Document | Purpose |
 | --- | --- |
-| [Might assessments v2](assessments.md) | Current Estimated values for all 75 definitions, developed-build assumptions and per-family evidence. |
+| [Might assessments v2](assessments.md) | Current Estimated values for all 138 definitions, developed-build assumptions and per-family evidence. |
 | [Game library](../features/library.md) | How Might, tiers, assessment status, sorting and filters appear to players. |
 | [Might specification](spec.md) | Accepted model and Library requirements from issue #4. |
 

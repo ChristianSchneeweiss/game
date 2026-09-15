@@ -1,5 +1,6 @@
 import { nanoid } from "nanoid";
 import { BaseEnemy } from "./base/base.enemy";
+import { defaultSpellDropRate } from "../utils/loot";
 
 export class BarkhideShaman extends BaseEnemy {
   constructor(id?: string) {
@@ -20,6 +21,14 @@ export class BarkhideShaman extends BaseEnemy {
       xp: 25,
       loot: {
         gold: 20,
+        items: [
+          ...defaultSpellDropRate(["stone-bark", "splinter-shot"]),
+          {
+            type: "PASSIVE",
+            data: { passiveType: "merciful-light" },
+            dropRate: 0.25,
+          },
+        ],
       },
       spells: ["stone-bark", "splinter-shot", "basic-attack"],
     });

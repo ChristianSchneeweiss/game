@@ -1,5 +1,6 @@
 import { nanoid } from "nanoid";
 import { BaseEnemy } from "./base/base.enemy";
+import { defaultSpellDropRate } from "../utils/loot";
 
 export class FishfolkScout extends BaseEnemy {
   constructor(id?: string) {
@@ -20,6 +21,14 @@ export class FishfolkScout extends BaseEnemy {
       xp: 25,
       loot: {
         gold: 25,
+        items: [
+          ...defaultSpellDropRate(["rupture", "crude-strike"]),
+          {
+            type: "PASSIVE",
+            data: { passiveType: "fleet-footed" },
+            dropRate: 0.2,
+          },
+        ],
       },
       spells: ["rupture", "crude-strike", "basic-attack"],
     });

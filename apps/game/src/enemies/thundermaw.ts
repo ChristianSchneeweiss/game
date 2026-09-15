@@ -1,5 +1,6 @@
 import { nanoid } from "nanoid";
 import { BaseEnemy } from "./base/base.enemy";
+import { defaultSpellDropRate } from "../utils/loot";
 
 export class Thundermaw extends BaseEnemy {
   constructor(id?: string) {
@@ -20,6 +21,14 @@ export class Thundermaw extends BaseEnemy {
       xp: 100,
       loot: {
         gold: 50,
+        items: [
+          ...defaultSpellDropRate([
+            "volt-lash",
+            "lightning-surge",
+            "festering-blow",
+          ]),
+          { type: "ITEM", data: { itemType: "stormfang-blade" }, dropRate: 1 },
+        ],
       },
       spells: [
         "volt-lash",

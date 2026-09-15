@@ -1,4 +1,12 @@
 import type { trpcClient } from "@/utils/trpc";
+import { useState } from "react";
+import type { EquipmentSlot } from "@loot-game/game/items/equipment/equipment";
+import { equipmentSlotLabels } from "@loot-game/game/items/equipment/equipment-slots";
+import {
+  attributeLabel,
+  formatEquipmentModifier,
+} from "@/lib/equipment-details";
+import { Select } from "@/components/ui/select";
 import { EquipmentIcon } from "./equipment-icon";
 
 type OwnedEquipment = Awaited<
@@ -18,7 +26,7 @@ export function EquipmentCollection({
   onEquip,
 }: {
   items: OwnedEquipment[];
-  slot: "WEAPON" | "ARMOR";
+  slot: EquipmentSlot;
   characterId: string;
   currentId?: string;
   previewId?: string;
@@ -28,21 +36,41 @@ export function EquipmentCollection({
   onPreview: (id: string) => void;
   onEquip: (id: string) => void;
 }) {
+  const [tier, setTier] = useState("all");
+  const filtered = items
+    .filter((entry) => tier === "all" || entry.item.tier === tier)
+    .sort(
+      (a, b) =>
+        "EDCBAS".indexOf(a.item.tier) - "EDCBAS".indexOf(b.item.tier) ||
+        a.item.name.localeCompare(b.item.name),
+    );
   return (
     <div className="expedition-gear-collection">
-      <small>
-        {slot === "WEAPON" ? "Weapons" : "Armor"} in your collection
-      </small>
+      <div className="expedition-gear-heading">
+        <small>{equipmentSlotLabels[slot]} in your collection</small>
+        <Select
+          aria-label="Filter loadout by tier"
+          value={tier}
+          onChange={(event) => setTier(event.target.value)}
+        >
+          <option value="all">All tiers</option>
+          {["E", "D", "C", "B", "A", "S"].map((value) => (
+            <option key={value} value={value}>
+              Tier {value}
+            </option>
+          ))}
+        </Select>
+      </div>
       {pending ? (
         <p role="status">Opening your equipment collection…</p>
-      ) : items.length === 0 ? (
+      ) : filtered.length === 0 ? (
         <p className="expedition-muted">
-          {slot === "WEAPON"
-            ? "The Oakwarden drops a staff, and moss-covered golems can drop an Iron Sword."
-            : "The Elder Treant in the forest's third wave drops an Iron Cuirass. Goblins can drop intelligence armor."}
+          {items.length
+            ? "No items at this tier. Choose another tier to see your gear."
+            : `No ${equipmentSlotLabels[slot].toLowerCase()} collected yet. Explore dungeons and check the Library for drop sources.`}
         </p>
       ) : (
-        items.map((entry) => (
+        filtered.map((entry) => (
           <EquipmentCollectionItem
             key={entry.id}
             entry={entry}
@@ -87,17 +115,26 @@ function EquipmentCollectionItem({
       data-equipped={worn}
       data-preview={previewing}
     >
-      <EquipmentIcon type={entry.type} />
+      <EquipmentIcon type={entry.type} slot={entry.item.equipmentSlot} />
       <div>
-        <small>
+        <small data-tier={entry.item.tier}>
+          Tier {entry.item.tier} ·{" "}
           {worn
             ? "✓ Equipped"
             : elsewhere
               ? "Equipped on another character"
-              : `Tier ${entry.item.tier} · In collection`}
+              : "In collection"}
         </small>
         <strong>{entry.item.name}</strong>
         <p>{entry.item.description}</p>
+        <ul className="expedition-gear-bonuses" aria-label="Attribute bonuses">
+          {entry.item.modifiers.map((modifier) => (
+            <li key={modifier.id}>
+              {formatEquipmentModifier(modifier)}{" "}
+              {attributeLabel(modifier.attribute)}
+            </li>
+          ))}
+        </ul>
       </div>
       <div className="expedition-gear-actions">
         <button
