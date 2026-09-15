@@ -177,6 +177,7 @@
 }
 .battle-actor-label {
   position: absolute;
+  visibility: hidden;
   top: 0;
   left: 0;
   box-sizing: border-box;
@@ -430,7 +431,8 @@
   font-size: 11px;
 }
 .battle-spell-list {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
   gap: 7px;
 }
 .battle-spell-list button {
@@ -445,9 +447,11 @@
   gap: 8px;
   min-height: 64px;
   padding: 7px 8px;
+  justify-content: flex-start;
 }
 .battle-spell-text {
   display: block;
+  flex: 1;
   min-width: 0;
 }
 .battle-spell-list button strong {
@@ -662,6 +666,23 @@ body:has([data-game-header]) .battle-3d[data-mode="replay"] .battle-viewport {
 }
 .battle-prepare-hint {
   padding-top: 12px;
+}
+
+@media (max-width: 600px) {
+  .battle-command-panel:not([data-compact]) .battle-command-title,
+  .battle-command-panel:not([data-compact]) .battle-prepared-heading,
+  .battle-command-panel:not([data-compact]) .battle-prepared-name {
+    flex-wrap: wrap;
+    gap: 4px 12px;
+  }
+  .battle-command-panel:not([data-compact]) .battle-cast-row {
+    flex-direction: column;
+  }
+  .battle-command-panel:not([data-compact]) .battle-commit-buttons {
+    flex: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 /* The inspector and history share the sidebar without adding battlefield height. */

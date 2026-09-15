@@ -97,7 +97,7 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   grid-auto-rows: 48px;
   align-content: start;
-  flex: 1 1 156px;
+  flex: 0 1 auto;
   gap: 5px;
   min-height: 48px;
   max-height: 156px;
@@ -126,17 +126,16 @@
 .battle-command-panel[data-compact] .battle-cast-row {
   display: flex;
   flex-direction: column;
-  flex: none;
+  flex: 1;
   gap: 6px;
   min-height: 0;
-  margin-top: auto;
+  margin-top: 0;
   padding-top: 8px;
 }
 
 .battle-command-panel[data-compact] .battle-prepared-action {
-  flex: none;
-  min-height: 62px;
-  max-height: 70px;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   scrollbar-width: thin;
 }
@@ -146,18 +145,40 @@
 }
 
 .battle-command-panel[data-compact] .battle-prepared-name {
-  margin-top: 2px;
+  margin-top: 10px;
 }
 
 .battle-command-panel[data-compact] .battle-prepared-name strong {
-  font-size: 15px;
-  line-height: 18px;
+  font-size: 20px;
+  line-height: 24px;
 }
 
 .battle-command-panel[data-compact] .battle-prepared-targets {
-  margin: 2px 0;
-  font-size: 11px;
-  line-height: 15px;
+  margin: 8px 0;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.battle-command-panel[data-compact] .battle-spell-reading {
+  margin-top: 12px;
+}
+
+.battle-command-panel[data-compact] .battle-spell-cost {
+  color: var(--gold);
+  margin: 0 0 8px;
+  font-size: 12px;
+}
+
+.battle-command-panel[data-compact]
+  .battle-spell-reading
+  .battle-prepared-copy {
+  font-size: 13px;
+  line-height: 1.65;
+  white-space: pre-line;
+}
+
+.battle-command-panel[data-compact] .battle-spell-details {
+  display: none;
 }
 
 .battle-command-panel[data-compact] .battle-prepare-hint {
@@ -224,8 +245,10 @@
 
 @media (max-width: 1000px) {
   .battle-command-panel[data-compact] {
-    gap: 4px;
-    padding: 6px;
+    height: auto;
+    overflow: visible;
+    gap: 8px;
+    padding: 10px;
   }
 
   .battle-command-panel[data-compact] .tactical-plan-status {
@@ -235,27 +258,42 @@
   }
 
   .battle-command-panel[data-compact] .battle-spell-list {
-    grid-template-columns: none;
-    grid-auto-flow: column;
-    grid-auto-columns: 148px;
-    grid-template-rows: 48px;
-    flex: 0 0 50px;
-    max-height: 50px;
-    overflow-x: auto;
-    overflow-y: hidden;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+    grid-auto-rows: minmax(64px, auto);
+    flex: none;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .battle-command-panel[data-compact] .battle-spell-list button strong {
+    font-size: 12px;
+    line-height: 16px;
   }
 
   .battle-command-panel[data-compact] .battle-cast-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 136px;
-    align-items: start;
-    gap: 6px;
-    padding-top: 5px;
+    flex: none;
+    margin-top: 0;
+    gap: 8px;
+    padding-top: 8px;
   }
 
   .battle-command-panel[data-compact] .battle-prepared-action {
-    min-height: 54px;
-    max-height: 62px;
+    flex: none;
+    min-height: 0;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .battle-command-panel[data-compact] .battle-spell-reading {
+    display: none;
+  }
+
+  .battle-command-panel[data-compact] .battle-spell-details {
+    display: block;
+  }
+
+  .battle-command-panel[data-compact] .battle-prepared-name {
+    margin-top: 2px;
   }
 
   .battle-command-panel[data-compact]
@@ -270,6 +308,7 @@
   }
 
   .battle-command-panel[data-compact] .battle-prepared-targets {
+    margin: 2px 0;
     font-size: 10px;
     line-height: 14px;
   }

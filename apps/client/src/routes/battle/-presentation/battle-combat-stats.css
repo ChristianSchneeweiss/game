@@ -1,0 +1,57 @@
+.battle-combat-stats > .battle-muted {
+  margin-bottom: 10px;
+}
+.battle-combat-stat-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin: 10px 0;
+}
+.battle-combat-stat-list > div {
+  min-width: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  background: #152019;
+}
+.battle-combat-stat-list dt {
+  color: var(--battle-muted);
+  font-size: 11px;
+}
+.battle-combat-stat-list dd {
+  color: var(--ink);
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+  margin: 3px 0 0;
+}
+.battle-defense-help,
+.battle-basic-attack small {
+  color: var(--battle-muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+.battle-basic-attack {
+  margin: 14px 0;
+  padding: 12px;
+  border-left: 2px solid var(--gold);
+  background: #273127;
+}
+.battle-basic-attack h4 {
+  font-size: 15px;
+  color: var(--ink);
+}
+.battle-basic-attack > span {
+  display: block;
+  color: var(--gold);
+  font-size: 11px;
+  margin-top: 3px;
+}
+.battle-basic-attack p {
+  margin: 8px 0;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.battle-inspector .battle-combat-more > summary {
+  display: list-item;
+  min-height: 44px;
+  padding: 12px 0;
+}

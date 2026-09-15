@@ -1,5 +1,6 @@
 import SuperJSON from "superjson";
 import { BM, type EffectTracking } from "@loot-game/game/bm";
+import { readCombatAttributes } from "@loot-game/game/combat-attributes";
 import type { Entity } from "@loot-game/game/entity-types";
 import type { TimelineEventFull } from "@loot-game/game/timeline-events";
 import { createEnemyFromType } from "../../../server/src/game-usecases/enemy-factory";
@@ -18,6 +19,7 @@ import { buildTimeline } from "@/routes/battle/-presentation/timeline";
 import recording from "../../../../tests/battle/recordings/forest-showcase.json";
 import { commands, makeCharacter, scenario } from "./fixtures";
 import { ownerId } from "./auth";
+import { createSpellFromType } from "@loot-game/game/spells/base/spell-from-type";
 
 registerRecipes();
 const recorded = SuperJSON.parse<{
@@ -53,10 +55,31 @@ export const recordedResult = {
 // Exercise production connection hooks and combat rules without an account or server.
 // Only Vite's explicit development mode loads this boundary.
 const hero = makeCharacter("hero", "Mira", "fixture-owner");
+if (scenario === "battle-mobile") {
+  hero.name = "Deshaun27";
+  hero.spells = (
+    [
+      "arcane-channeling",
+      "bladestorm-rhythm",
+      "final-verdict",
+      "natures-embrace",
+      "basic-attack",
+    ] as const
+  ).map((type) => createSpellFromType(`hero-${type}`, type));
+}
 hero.baseAttributes.agility = 100;
 const partner = makeCharacter("partner", "Rowan's guardian", "fixture-guest");
-const enemy = createEnemyFromType("goblin", "enemy");
-const bm = new BM([hero, partner, enemy], "sanctum-preview", {
+if (scenario === "battle-mobile") partner.name = "Araceli_Schroeder7";
+const enemy = createEnemyFromType(
+  scenario === "battle-mobile" ? "moss-covered-golem" : "goblin",
+  "enemy",
+);
+const extraEnemies =
+  scenario === "battle-mobile"
+    ? [createEnemyFromType("moss-covered-golem", "enemy-2")]
+    : [];
+const participants = [hero, partner, enemy, ...extraEnemies];
+const bm = new BM(participants, "sanctum-preview", {
   rulesVersion: 2,
   battlefield: {
     width: 7,
@@ -71,6 +94,7 @@ const bm = new BM([hero, partner, enemy], "sanctum-preview", {
     hero: { x: 2, y: 5 },
     partner: { x: 4, y: 5 },
     enemy: { x: 2, y: 2 },
+    ...(scenario === "battle-mobile" && { "enemy-2": { x: 4, y: 2 } }),
   },
 });
 bm.start();
@@ -95,7 +119,7 @@ class PreviewSocket extends EventTarget {
       else if (!url.endsWith("/chat")) {
         this.emit({
           type: "entities",
-          data: { entities: [hero, partner, enemy] },
+          data: { entities: participants },
         });
         this.snapshot();
       }
@@ -152,9 +176,7 @@ class PreviewSocket extends EventTarget {
         type: "characterAttributes",
         data: {
           entityId: entity.id,
-          baseAttributes: entity.baseAttributes,
-          specialAttributes: entity.baseSpecialAttributes,
-          affinities: entity.baseAffinities,
+          ...readCombatAttributes(entity),
         },
       });
     } else if (message.type === "getSpellDescription") {

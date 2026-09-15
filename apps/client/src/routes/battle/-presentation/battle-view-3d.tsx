@@ -78,10 +78,6 @@ export default function BattleView3D({
   const inspect = (id: string) => {
     setInspectedId(id);
     if (session) setInspectorOpen(true);
-    session?.getCharacterAttributes(id);
-    participants
-      .find((p) => p.id === id)
-      ?.spells.forEach((s) => session?.getSpellDescription(s.config.id));
   };
   const target = (id: string) => {
     if (session?.tactical && session.activeSpell) {

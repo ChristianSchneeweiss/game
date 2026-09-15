@@ -6,6 +6,7 @@ import type { Stats } from "./timeline";
 import { groupConditions, type ConditionDetail } from "./battle-effects";
 import { visibleHistory, type ActionHistoryEntry } from "./action-history";
 import { SkillIcon } from "../../../components/skill-icon";
+import { BattleCombatStats } from "./battle-combat-stats";
 
 export function BattleInspector({
   entity,
@@ -128,6 +129,9 @@ export function BattleInspector({
                     </div>
                   )}
                 </div>
+                {session && (
+                  <BattleCombatStats entity={entity} session={session} />
+                )}
                 <h3>
                   Conditions <span>{active.length}</span>
                 </h3>

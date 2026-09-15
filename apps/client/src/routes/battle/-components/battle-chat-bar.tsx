@@ -67,7 +67,9 @@ export const BattleChatBar = ({
           size="icon"
           aria-label={isOpen ? "Close battle chat" : "Open battle chat"}
           className={`battle-chat-launcher h-14 w-14 rounded-full border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.96),rgba(2,6,23,0.98))] text-white shadow-[0_18px_50px_rgba(0,0,0,0.45)] backdrop-blur-sm transition-all duration-200 hover:scale-105 hover:bg-white/10 ${
-            isOpen ? "border-blue-300/18 bg-blue-400/14 hover:bg-blue-400/18" : ""
+            isOpen
+              ? "border-blue-300/18 bg-blue-400/14 hover:bg-blue-400/18"
+              : ""
           }`}
         >
           <MessageCircle
@@ -83,6 +85,7 @@ export const BattleChatBar = ({
       </div>
 
       <div
+        data-battle-chat-panel
         className={`absolute right-0 bottom-16 transition-all duration-300 ease-in-out ${
           isOpen
             ? "pointer-events-auto translate-y-0 opacity-100"
@@ -92,7 +95,7 @@ export const BattleChatBar = ({
         <div className="h-96 w-80 overflow-hidden rounded-4xl border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.98),rgba(2,6,23,1))] shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-sm">
           <div className="flex items-center justify-between border-b border-white/8 p-4">
             <div className="flex items-center gap-2">
-              <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-white">
+              <h3 className="text-sm font-semibold tracking-[0.18em] text-white uppercase">
                 Battle Chat
               </h3>
               <div

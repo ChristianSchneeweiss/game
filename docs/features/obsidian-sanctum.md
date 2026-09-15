@@ -45,6 +45,7 @@ Run `bun run dev:sanctum`, then open:
 - `http://127.0.0.1:3015/dev/sanctum.html?state=long#/characters/hero` — long names.
 - `http://127.0.0.1:3015/dev/sanctum.html?state=collection#/spells` — 14 unique spells, 20 owned spell copies and seven copies of a passive skill.
 - `http://127.0.0.1:3015/dev/sanctum.html?state=collection#/items` — eight equipment copies, including three equipped copies across two characters.
+- `http://127.0.0.1:3015/dev/sanctum.html?state=battle-mobile#/battle/live` — five spells, long party names, and two Moss-Covered Golems for responsive battle checks.
 
 Fixture account options: `owner`, `guest`, `signed-out`. State options: `populated`, `empty`, `loading`, `error`, `mutation-error`, `long`, `collection`, `reconnecting`, `closed`, `completed`, `abandoned`.
 Query options precede the hash; real route search parameters follow it (`#/library?q=fire`). Browser back/forward still uses the real router.
@@ -90,6 +91,8 @@ git diff --check
 ```
 
 The browser script uses an available `playwright` module and Chromium. Set `PLAYWRIGHT_MODULE` to its module path and `CHROMIUM_PATH` to an existing browser executable when using a bundled runtime; it does not install another browser framework in the app. `SANCTUM_URL` and `SANCTUM_OUTPUT` override the preview URL and artifact directory (default `/tmp/sanctum-browser`). `SANCTUM_FLOWS_ONLY=1` and `SANCTUM_STATES_ONLY=1` support focused reruns.
+
+`node scripts/check-battle-mobile.mjs` uses the same browser overrides and checks both battle modes from 320px phones through desktop, including short landscape viewports. It checks spell readability, canvas height, label overlap, inspection/chat, movement, selection preservation across view changes, and casting after WebGL context loss. Screenshots go to `/tmp/battle-mobile` (`BATTLE_OUTPUT` overrides it). Mobile live battles scroll vertically to preserve board and control sizes; desktop retains its fixed workspace.
 
 Historical evidence from the initial migration:
 

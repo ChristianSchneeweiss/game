@@ -6,11 +6,7 @@ import {
   validateGridSetup,
   type GridSetup,
 } from "@loot-game/game/tactical/types";
-import type {
-  Affinities,
-  EntityAttributes,
-  SpecialAttributes,
-} from "@loot-game/game/entity-types";
+import { readCombatAttributes } from "@loot-game/game/combat-attributes";
 import { DurableObject } from "cloudflare:workers";
 import { drizzle as postgresDrizzle } from "drizzle-orm/postgres-js";
 import { eq } from "drizzle-orm";
@@ -525,40 +521,11 @@ export class BattleWebsocket extends DurableObject {
     if (!character) {
       throw new Error("Character not found");
     }
-    const baseAttributes = {
-      strength: character.getAttribute("strength"),
-      intelligence: character.getAttribute("intelligence"),
-      vitality: character.getAttribute("vitality"),
-      agility: character.getAttribute("agility"),
-      movement: character.getAttribute("movement"),
-    } satisfies EntityAttributes;
-    const specialAttributes = {
-      lifesteal: character.getAttribute("lifesteal"),
-      omnivamp: character.getAttribute("omnivamp"),
-      armor: character.getAttribute("armor"),
-      magicResistance: character.getAttribute("magicResistance"),
-      armorPenetration: character.getAttribute("armorPenetration"),
-      magicPenetration: character.getAttribute("magicPenetration"),
-      healthRegen: character.getAttribute("healthRegen"),
-      manaRegen: character.getAttribute("manaRegen"),
-      blessed: character.getAttribute("blessed"),
-      critChance: character.getAttribute("critChance"),
-      critDamage: character.getAttribute("critDamage"),
-    } satisfies SpecialAttributes;
-    const affinities = {
-      fire: character.getAttribute("fire"),
-      lightning: character.getAttribute("lightning"),
-      earth: character.getAttribute("earth"),
-      water: character.getAttribute("water"),
-      dark: character.getAttribute("dark"),
-    } satisfies Affinities;
     ws.send(
       SuperJSON.stringify({
         type: "characterAttributes",
         data: {
-          baseAttributes,
-          specialAttributes,
-          affinities,
+          ...readCombatAttributes(character),
           entityId: characterId,
         },
       } satisfies ResponseMessage),

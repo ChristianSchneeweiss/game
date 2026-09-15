@@ -23,7 +23,11 @@ import type { ConditionDetail } from "./battle-effects";
 import type { GridState } from "@loot-game/game/tactical/types";
 import type { BattleSession } from "../-hooks/use-battle";
 import { TacticalArena } from "./tactical-arena";
-import { gridCameraZoom, tileToWorld } from "./tactical-presentation";
+import {
+  gridCameraZoom,
+  TILE_SIZE,
+  tileToWorld,
+} from "./tactical-presentation";
 
 type Props = {
   grid?: GridState;
@@ -151,7 +155,7 @@ function CameraAndMetrics({
   }, [gl, onFailure]);
   useEffect(() => {
     if ("zoom" in camera) {
-      camera.zoom = grid
+      const zoom = grid
         ? gridCameraZoom(
             grid.battlefield.width,
             grid.battlefield.height,
@@ -159,19 +163,28 @@ function CameraAndMetrics({
             size.height,
           )
         : Math.min(size.width / 24, size.height / 9.3);
+      camera.zoom = zoom;
       camera.position.set(grid ? 0 : 1.4, grid ? 19 : 9.5, grid ? 18 : 15);
       camera.lookAt(grid ? 0 : 1.4, grid ? 0 : 1.65, 0);
       camera.updateProjectionMatrix();
+      // Keep overhead labels within one projected tile as the viewport changes.
+      for (const label of labels.values()) {
+        label.style.maxWidth = grid
+          ? `${Math.max(24, zoom * TILE_SIZE - 4)}px`
+          : "";
+      }
     }
-  }, [camera, size, grid?.battlefield.width, grid?.battlefield.height]);
+  }, [camera, size, labels, grid?.battlefield.width, grid?.battlefield.height]);
   useFrame((_, delta) => {
     for (const [id, position] of positions) {
       point
         .set(position[0], labelHeights.get(id) ?? 2.6, position[2])
         .project(camera);
       const label = labels.get(id);
-      if (label)
+      if (label) {
         label.style.transform = `translate(${((point.x + 1) * size.width) / 2}px, ${((-point.y + 1) * size.height) / 2}px) translate(-50%, -100%)`;
+        label.style.visibility = "visible";
+      }
     }
     const values = times.current;
     values.push(delta * 1000);

@@ -187,9 +187,32 @@ body:has(.battle-live-workspace) [data-game-content],
   }
 }
 @media (max-width: 1000px) {
+  /* Small screens scroll the battle instead of shrinking its canvas and controls. */
+  body:has(.battle-live-workspace) [data-game-shell] {
+    height: auto;
+    min-height: 100dvh;
+  }
   [data-live-battle]:has(.battle-live-workspace) [data-battle-chat] {
+    position: static;
+    align-self: flex-end;
+    margin: 8px 14px 14px;
+  }
+  [data-live-battle]:has(.battle-live-workspace) [data-battle-chat-panel] {
+    position: fixed;
     right: 14px;
-    bottom: 294px;
+    bottom: 70px;
+  }
+  [data-live-battle]:has(.battle-live-workspace)
+    [data-battle-chat-panel]
+    > div {
+    display: flex;
+    flex-direction: column;
+    width: min(320px, calc(100vw - 28px));
+    max-height: calc(100dvh - 84px);
+  }
+  [data-live-battle]:has(.battle-live-workspace) .battle-chat-launcher {
+    width: 44px;
+    height: 44px;
   }
   .battle-live-workspace {
     padding: 6px;
@@ -211,8 +234,20 @@ body:has(.battle-live-workspace) [data-game-content],
     padding: 6px 8px;
   }
   .battle-live-workspace .battle-composition {
+    flex: none;
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: minmax(150px, 1fr) 280px;
+    grid-template-rows: auto auto;
+  }
+  .battle-live-workspace .battle-viewport {
+    flex: none;
+    height: clamp(280px, 85vw, 440px);
+  }
+  .battle-live-workspace .battle-spell-legend-slot {
+    flex: none;
+    height: auto;
+  }
+  .battle-live-workspace .battle-spell-legend-slot:empty {
+    display: none;
   }
   .battle-live-workspace .battle-scene-caption {
     top: 8px;
@@ -228,7 +263,22 @@ body:has(.battle-live-workspace) [data-game-content],
     padding: 2px 5px;
   }
   .battle-live-workspace .battle-entity-controls > div {
-    flex-basis: 104px;
+    flex: 0 0 190px;
+    max-width: none;
+  }
+  .battle-live-workspace .battle-inspect-button {
+    flex: 1;
+    min-width: 0;
+  }
+  .battle-live-workspace
+    .battle-entity-controls
+    button:not(.battle-inspect-button) {
+    width: 60px;
+  }
+  .battle-live-workspace .tactical-accessible-controls > summary {
+    min-height: 44px;
+    padding: 14px 0;
+    font-size: 12px;
   }
   .battle-live-workspace .battle-spell-legend-slot > .tactical-spell-guidance {
     font-size: 11px;

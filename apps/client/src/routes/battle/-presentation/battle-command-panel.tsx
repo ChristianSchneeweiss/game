@@ -25,6 +25,7 @@ export function BattleCommandPanel({
   );
   const description =
     selected && session.spellDescription.get(selected.config.id);
+  const spellText = description?.text ?? "Loading spell details…";
   const mana = actor ? (stats.get(actor.id)?.mana ?? actor.mana) : 0;
   return (
     <div className="battle-command-panel" data-compact={compact || undefined}>
@@ -108,18 +109,30 @@ export function BattleCommandPanel({
                     : "Requesting legal targets…")}
               </p>
               {compact ? (
-                <details
-                  className="battle-spell-details"
-                  key={selected.config.id}
-                >
-                  <summary>
-                    Spell details · {selected.config.manaCost} mana ·{" "}
-                    {selected.config.cooldown}-turn cooldown
-                  </summary>
-                  <div className="battle-prepared-copy">
-                    {description?.text ?? "Loading spell details…"}
+                <>
+                  <div
+                    className="battle-spell-reading"
+                    role="region"
+                    aria-label="Prepared spell description"
+                    tabIndex={0}
+                  >
+                    <p className="battle-spell-cost">
+                      {selected.config.manaCost} mana ·{" "}
+                      {selected.config.cooldown}-turn cooldown
+                    </p>
+                    <div className="battle-prepared-copy">{spellText}</div>
                   </div>
-                </details>
+                  <details
+                    className="battle-spell-details"
+                    key={selected.config.id}
+                  >
+                    <summary>
+                      Spell details · {selected.config.manaCost} mana ·{" "}
+                      {selected.config.cooldown}-turn cooldown
+                    </summary>
+                    <div className="battle-prepared-copy">{spellText}</div>
+                  </details>
+                </>
               ) : (
                 <div
                   className="battle-prepared-copy"
@@ -127,7 +140,7 @@ export function BattleCommandPanel({
                   aria-label="Prepared spell description"
                   tabIndex={0}
                 >
-                  {description?.text ?? "Loading spell details…"}
+                  {spellText}
                 </div>
               )}
             </>
