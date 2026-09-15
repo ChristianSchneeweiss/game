@@ -3,199 +3,199 @@ import type { MightAssessment } from "./might";
 import { estimateMight } from "./references";
 
 export const spellAssessments = {
-  "basic-attack": estimateMight(
+  "bladestorm-rhythm": estimateMight(
     "spells",
-    120,
-    "Developed physical/caster weapons average 31.9/35.2 damage against zero defense and about 5.7/15.2 against the defended reference, including 10% crit. Free and repeatable; staff reaches 3 tiles. Rated equipped, unlike the Library's unarmed preview.",
-  ),
-  fireball: estimateMight(
-    "spells",
-    65,
-    "At caster INT98, about 21.8 expected damage undefended and 6.4 against 20 MR, including reference crit. Range 3, 10 mana, cooldown 2; weak scaling and broad roll variance keep it modest despite higher stats.",
-  ),
-  "single-heal": estimateMight(
-    "spells",
-    55,
-    "Caster INT98 gives 12.4 mean healing at range 3 for 10 mana and cooldown 2. Small relative to developed health pools and 35+ natural recovery, though immediate rescue can matter. Count only useful missing HP.",
-  ),
-  "crude-strike": estimateMight(
-    "spells",
-    25,
-    "Still only 8 raw mean melee damage with no attribute scaling, free and repeatable. Reference armor can absorb it entirely; a 10% -1 Agility proc is a small initiative effect, not action denial.",
-  ),
-  "festering-blow": estimateMight(
-    "spells",
-    230,
-    "Tank VIT100 gives 42.9 expected physical damage undefended or 12.9 against 30 armor per front-arc target. About 1.5 useful targets, zero mana, cooldown 2, plus conditional 25% vulnerability for follow-up damage. Nearby occupied tiles are not guaranteed targets.",
-  ),
-  "cinder-wisp": estimateMight(
-    "spells",
-    105,
-    "Caster INT98 gives about 31.5/11.5 expected damage against zero/20 MR. Range 3, 10 mana and cooldown 1; the mixed-defense comparison is close to the 20-useful-damage unit.",
-  ),
-  "vital-strike": estimateMight(
-    "spells",
-    190,
-    "Physical STR86 gives about 42.7/12.7 expected damage against zero/30 armor, with healing equal to half actual damage. Free, cooldown 2, melee access. Wounded developed builds can use the sustain, but defenses, overhealing and overkill limit it.",
-  ),
-  "splinter-shot": estimateMight(
-    "spells",
-    35,
-    "Unscaled 8 raw mean physical damage at range 4, free with cooldown 1. High armor blocks the attack; its 20% chance of a brief 10% armor reduction has greater follow-up potential against armored enemies, but remains unreliable and timing-dependent.",
-  ),
-  cinderbrand: estimateMight(
-    "spells",
-    165,
-    "Caster INT98 gives about 44.4/24.4 expected damage against zero/20 MR. The 30% burn proc remains two small 5-damage ticks, vulnerable to defenses and target death. Costs 15 mana and cooldown 2; higher Intelligence improves the main hit rather than the fixed burn.",
-  ),
-  "precise-thrust": estimateMight(
-    "spells",
-    55,
-    "At AGI30, about 14.9 expected undefended damage per target along a two-tile line, but 30 armor absorbs it. About 1.5 useful targets, 5 mana and cooldown 1; alignment and weak late-game penetration constrain the package.",
-  ),
-  soulflare: estimateMight(
-    "spells",
-    520,
-    "Caster INT98 gives about 94.9/74.9 expected damage against zero/20 MR, with half actual damage returned as healing. Strong ranged burst and sustain on a wounded 700-HP caster; discount 40 mana, cooldown 4, overhealing and overkill.",
-  ),
-  "charred-chains": estimateMight(
-    "spells",
-    370,
-    "Caster INT98 gives about 62.4/42.4 expected magical damage per cross target at range 3. About 1.5 useful targets and a 25% vulnerability proc for timely follow-up, reduced for 25 mana, cooldown 3 and formation dependence.",
-  ),
-  "crushing-blow": estimateMight(
-    "spells",
-    135,
-    "Physical STR86 gives about 29.9/2.4 expected damage against zero/30 armor. The 30% one-turn stun becomes more valuable against developed opponents even when damage is weak. Free with cooldown 2; requires a reachable surviving enemy.",
-  ),
-  "stone-bark": estimateMight(
-    "spells",
-    40,
-    "A tank's 30 armor becomes 37.5 for two target end steps, costing an action, 10 mana and cooldown 3. Multiple physical hits can use the extra 7.5 armor, but self-cast consumes the first tick immediately. Still ineffective with zero armor or purely magical incoming damage.",
-  ),
-  rootgrasp: estimateMight(
-    "spells",
-    410,
-    "Caster INT98 gives about 55.2/35.2 expected magical damage per cross target, plus a 40% one-turn stun chance. Price roughly 1.5 useful targets and denied high-level actions together; 15 mana, cooldown 4 and formation constraints reduce the total.",
-  ),
-  "verdant-smite": estimateMight(
-    "spells",
-    360,
-    "Caster INT98 gives about 88.9/68.9 expected magical damage at range 3. The 50% armor-reduction proc helps subsequent physical attacks, not this magical hit or magic resistance. Costs 25 mana and cooldown 3.",
-  ),
-  "natures-embrace": estimateMight(
-    "spells",
-    500,
-    "Caster INT98 heals 78.8 mean HP per ally globally for 35 mana and cooldown 4. Assume about 1.5 wounded recipients in a two-character party; developed health pools and enemy pressure make more healing usable, but healthy recipients and natural regeneration still constrain value.",
-  ),
-  "lightning-surge": estimateMight(
-    "spells",
-    720,
-    "Caster INT98 gives about 85/65 expected magical damage per enemy against zero/20 MR, globally, plus a 25% stun chance. Reference about two useful targets and stronger denied enemy actions; reduce for 50 mana, cooldown 3 and overlapping control.",
-  ),
-  "stunning-strike": estimateMight(
-    "spells",
-    245,
-    "Physical STR86 gives about 54.3/24.3 expected damage against zero/30 armor, plus a 30% one-turn stun chance. Free with cooldown 2; evaluate meaningful surviving-target action denial alongside melee burst.",
-  ),
-  "staggering-jab": estimateMight(
-    "spells",
-    50,
-    "Only 5 raw mean melee damage, often completely blocked by armor, but a 20% chance to stun a surviving enemy. Its value comes mainly from occasional denial of stronger actions. Free with cooldown 1; described paralysis is implemented as a stun.",
-  ),
-  "battle-roar": estimateMight(
-    "spells",
-    100,
-    "60% chance to deny one enemy activation at range 2, without damage. Stronger reference enemy actions raise the control value; it still trades away the caster's action and costs 15 mana with cooldown 3. A failed proc contributes nothing.",
-  ),
-  "torrent-spiral": estimateMight(
-    "spells",
-    315,
-    "Physical STR86 gives about 61.6/31.6 expected damage per adjacent enemy against zero/30 armor, plus a 25% vulnerability proc. About 1.5 useful surrounding targets; 35 mana, cooldown 4 and close positioning limit value.",
-  ),
-  "tidepiercer-thrust": estimateMight(
-    "spells",
-    460,
-    "Physical STR86 gives about 81.5/53.8 expected damage per line target against zero/30 armor, including the chance to ignore 25% defense. About 1.5 aligned targets, 25 mana and cooldown 3; penetration now has a meaningful armored case.",
-  ),
-  "ocean-blessing": estimateMight(
-    "spells",
-    150,
-    "Caster INT98 heals about 35.2 mean HP to one ally at range 3. Costs 20 mana and cooldown 3; useful immediate rescue, with missing-health and natural-regeneration limits on a 700–1000-HP recipient.",
-  ),
-  "aqua-wave": estimateMight(
-    "spells",
-    50,
-    "Unscaled 12 raw mean magical damage across a front arc; about 13.2 expected undefended or 0.4 against 20 MR including crit. Its 20% -2 Agility proc affects initiative only. About 1.5 useful targets, 10 mana and cooldown 1.",
-  ),
-  "tidal-pulse": estimateMight(
-    "spells",
-    310,
-    "Caster INT98 gives about 57.4/37.4 expected magical damage per cross target at range 3. About 1.5 useful targets for 30 mana and cooldown 3; the small Agility debuff is not a stun or movement reduction.",
-  ),
-  "stream-of-life": estimateMight(
-    "spells",
-    225,
-    "Caster INT98 heals 54.2 mean HP to itself for 25 mana and cooldown 4. Larger healing can absorb some developed enemy pressure, but self-only targeting and the attack action forgone reduce flexibility.",
-  ),
-  rupture: estimateMight(
-    "spells",
-    35,
-    "Unscaled 10 raw mean physical melee damage and a 20% chance of two 4-damage bleed ticks, free with cooldown 1. Late-game armor can erase both the attack and small bleed ticks; delayed ticks also require target survival.",
-  ),
-  "storm-pulse": estimateMight(
-    "spells",
-    350,
-    "Caster INT98 gives about 54.7/24.7 expected physical damage per target against zero/30 armor, including its bonus proc. Up to three distinct random global enemies; assume two useful targets, 25 mana and cooldown 3. It scales with INT but is resisted by armor.",
+    600,
+    "Increase 320 → 600: the previous rating used AGI30 instead of a compatible agility build. The level-31, 160-point AGI60 build reaches AGI88 with real E–B equipment and 20% crit, producing 205.44/145.44 preview damage across two immediate strikes. Actual sequence pairs confirm strong added output. Price below the 877-point direct-damage comparison after melee, overkill, 15 mana and cooldown 4. Two immediate strikes consume one activation and have no charging discount. This is a build-selection correction, not a general catalogue rescale.",
   ),
   "volt-lash": estimateMight(
     "spells",
-    1250,
-    "At caster INT98 each of four hits has 68.8 raw mean magical damage; the total averages about 302.7/222.7 against zero/20 MR with reference crit. Repeated random hits also have 30% stun chances. Discount overlapping stuns, overkill, 35 mana and cooldown 4; high developed-INT burst remains exceptional.",
+    1150,
+    "Reduce 1250 → 1150: four INT82 hits total about 265.22/185.22 versus the former 302.7/222.7. Every hit can stun and can choose a fresh living target; discount overlapping denial and overkill. Real sequences verify all four hits and control; 35 mana and cooldown 4. The modest 8% correction preserves its leading burst rating.",
+  ),
+  "arcane-channeling": estimateMight(
+    "spells",
+    720,
+    "Reduce 780 → 720: INT82 releases 155.8 raw damage per surviving original target, preview 174.50/154.50 after crit/defense. Two useful targets average 329 damage across the cast plus one blocked activation, about 164.5 per committed action. Immediate-payoff pairs verify the lost action; target-loss and caster-death cases reduce or cancel the release. Apply the remaining modest discount for delay, risk, 40 mana and cooldown 6 once. Charging is a restriction, never a unique-effect premium.",
   ),
   "final-verdict": estimateMight(
     "spells",
-    410,
-    "Physical STR86 gives about 98.8/68.8 expected melee damage against zero/30 armor for 10 mana and cooldown 2. The <=10%-HP finisher substitutes max health before defenses; credit only useful remaining HP beyond the ordinary strike, not its uncapped coefficient.",
+    380,
+    "Reduce 410 → 380: STR66 gives about 82.66/52.66 ordinary damage versus 98.8/68.8. The ≤10%-HP branch substitutes maximum health before defense, so retain a conditional finisher premium only for useful extra remaining HP. Melee, 10 mana, cooldown 2; do not value uncapped overkill.",
+  ),
+  "precise-thrust": estimateMight(
+    "spells",
+    85,
+    "Increase 55 → 85: review on the compatible, equal-budget AGI88 build instead of AGI30. Preview rises from about 14.9/0 to 30.12/4.04 per covered enemy. Two-tile alignment, flat armor, 5 mana and cooldown 1 keep the correction well below a direct proportional rescale.",
+  ),
+  "tidepiercer-thrust": estimateMight(
+    "spells",
+    430,
+    "Reduce 460 → 430: STR66 gives 69.55/41.80 per line target versus about 81.5/53.8 previously. Keep the distinct three-tile reach and 30% chance to ignore 25% defense; favorable line trials support retaining most of the rating. About 1.5 useful targets, 25 mana, cooldown 3.",
   ),
   "aegis-wall": estimateMight(
     "spells",
     600,
-    "Tank VIT100 shields each ally for 45% of that target's max HP: 315–450 on reference recipients. Two-end-step expiry prevents valuing the entire nominal shield on every ally; judge incoming damage actually absorbed. Costs 35 mana and cooldown 6. The implementation still grants no advertised Armor/Magic Resistance bonus.",
+    "Retain 600: VIT86 grants each recipient a shield of 41.5% of that recipient’s maximum HP (228.25–332 here), expiring after two recipient end steps. Pressure sequences confirm protection. Value only absorption before expiry, for 35 mana and cooldown 6. The advertised +20 Armor/MR remains unimplemented and earns nothing.",
+  ),
+  "aqua-wave": estimateMight(
+    "spells",
+    50,
+    "Retain 50: unscaled 10–14 magical damage per front-arc target, about 13.44/0.48 with current crit. Its 20% AGI−2 proc is initiative only. About 1.5 useful targets, 10 mana, cooldown 1; no control premium for movement or lost actions.",
+  ),
+  "basic-attack": estimateMight(
+    "spells",
+    120,
+    "Retain the equipped, free, repeatable action rating. The sword now previews 26.88/2.82 damage and the caster staff 31.36/11.36 against the two defense cases. Staff reach remains useful; an unarmed preview is a different context.",
+  ),
+  "battle-roar": estimateMight(
+    "spells",
+    100,
+    "Retain 100: a 60% chance to deny one enemy activation at range 2, with no damage. Effect-disabled sequences expose the denial; 15 mana, cooldown 3 and the caster action traded away prevent a larger premium.",
   ),
   "bulwark-bash": estimateMight(
     "spells",
     500,
-    "Tank VIT100 gives about 79.8/49.8 expected physical damage against zero/30 armor plus a guaranteed one-turn stun. Free, cooldown 2, melee. Stronger denied actions add substantial value; do not also count their prevented damage as a separate full bonus.",
+    "Retain 500: VIT86 previews 71.79/41.79 physical damage plus a guaranteed one-turn stun, free with cooldown 2. Effect-disabled pairs remove exactly one enemy action when the target survives. Reliable denial supports its premium over stronger plain strikes.",
   ),
-  earthshatter: estimateMight(
+  "charred-chains": estimateMight(
     "spells",
-    1100,
-    "Tank VIT100 gives about 87.5/57.5 expected physical damage per global enemy, free with cooldown 4. One 50% cast-level roll attempts stuns; two applied stuns grant +20 Armor/MR for the battle. About two useful enemies and a longer horizon make the combined damage, control and persistent protection very strong; the defense bonus fails in single-enemy fights.",
+    370,
+    "Retain 370: INT82 previews 56.34/36.34 per cross target. A 25% chance of 10% vulnerability improves timely follow-ups; it is not a 25% magnitude debuff. About 1.5 useful targets, 25 mana, cooldown 3 and formation constraints remain appropriate.",
+  ),
+  "cinder-wisp": estimateMight(
+    "spells",
+    105,
+    "Retain 105: INT82 previews 28.45/8.45 magical damage at range 3, 10 mana and cooldown 1. Close to the fixed useful-damage reference across defense cases; no extra effect to price.",
+  ),
+  cinderbrand: estimateMight(
+    "spells",
+    165,
+    "Retain 165: INT82 previews 39.87/19.87 damage, with a 30% chance of two 5-damage burn ticks. The effect-disabled comparison confirms small conditional added damage. Costs 15 mana and cooldown 2; defenses and target death can erase the burn.",
+  ),
+  "crude-strike": estimateMight(
+    "spells",
+    25,
+    "Retain 25: unscaled 6–10 melee damage, zero mana and cooldown. A 10% chance to reduce AGI by one changes initiative only; the effect has no measured benefit in this initiative-separated sequence and earns no denial premium.",
+  ),
+  "crushing-blow": estimateMight(
+    "spells",
+    135,
+    "Retain 135: STR66 previews 25.98/1.97 damage. The 30% stun proc is the distinguishing benefit, confirmed by fewer enemy actions in effect-disabled pairs. Zero mana, cooldown 2, melee access; count denied actions once.",
   ),
   "deflecting-stance": estimateMight(
     "spells",
     160,
-    "Tank VIT100 reflects 75% of incoming damage through the attacker's defenses, subtracting actual reflection from the incoming hit. Stronger attacks make a well-timed ally cast useful, but one target end step makes self-cast expire immediately. Costs 25 mana and cooldown 4; there is no independent 50% reduction.",
+    "Retain 160: VIT86 reflects 71.5% through attacker defenses and subtracts actual reflected damage from the incoming hit. Ally-targeted pressure confirms conditional benefit; self-cast expires at its own end step. 25 mana, cooldown 4; no independent 50% reduction or promised non-stacking rule is credited.",
   ),
-  "bladestorm-rhythm": estimateMight(
+  earthshatter: estimateMight(
     "spells",
-    320,
-    "At reference AGI30, two immediate physical strikes average 90 raw total, about 99/39 with crit against zero/30 armor. Its Agility scaling is separate from the physical build's main Strength. Costs 15 mana and cooldown 4; defense applies to each hit, with no charge delay.",
+    1100,
+    "Retain 1100: VIT86 previews 79.63/49.63 per global enemy, free with cooldown 4. A single 50% cast roll attempts stuns; two applied stuns unlock persistent +20 Armor/MR. The paired sequence verifies conditional protection. Long-fight protection and denial matter more than the small reference-stat reduction; no defense premium against one enemy.",
   ),
-  "iron-will": estimateMight(
+  "festering-blow": estimateMight(
     "spells",
-    350,
-    "Adds +20 Armor/MR for two target end steps; if the ally is below 30% HP it also restores 70–100 HP on reference builds. Price useful repeated-hit prevention and conditional rescue together, reduced for 20 mana, cooldown 6 and expiry. Cleanses DEBUFF only, not DOT/STUN/CURSE; the reference remains below the 120-VIT longer-duration threshold.",
+    230,
+    "Retain 230: VIT86 previews 38.98/8.98 damage per front-arc target, free with cooldown 2. Its 25% proc increases damage taken by 10%, not 25%; timely follow-ups add a small measured benefit. Use about 1.5 useful targets and avoid valuing every occupied tile.",
   ),
-  "arcane-channeling": estimateMight(
+  fireball: estimateMight(
     "spells",
-    780,
-    "Caster INT98 releases 186.2 raw magical damage per surviving original enemy, about 204.8/184.8 with crit against zero/20 MR. Two useful targets give about 389.6 mixed-defense damage across the cast and one further blocked activation: roughly 194.8 per committed action before other discounts. Apply delay, caster/target loss, 40 mana and cooldown 6 to reach this estimate. Charging remains a major discount even though high INT greatly increases the discharge.",
+    65,
+    "Retain 65: INT82 gives about 20.38/5.79 preview damage, range 3, 10 mana and cooldown 2. The sequence loses damage against a staff attack; it earns no unique-effect premium.",
   ),
   "fleetfoot-gambit": estimateMight(
     "spells",
     260,
-    "Trades the caster's present action for an ally's extra activation next round, costing 50 mana with cooldown 8. Developed recipients can use stronger available abilities and receive another upkeep (35–50 natural HP recovery when injured, plus mana). Value transfer, timing and useful upkeep; self-cast does not create a free net attack and healthy recipients waste recovery.",
+    "Retain 260: spends a casting action, 50 mana and cooldown 8 to grant a partner one extra activation next round. The corrected partner sequence verifies the extra action and upkeep; extra recovery is 23 HP for this wounded physical build, not the old 35–50 assumption. Stronger available partner skills can exploit the timing; self-cast does not create a net free attack.",
+  ),
+  "iron-will": estimateMight(
+    "spells",
+    350,
+    "Retain 350: +20 Armor/MR for two recipient end steps, cleanse of DEBUFF only, and 10%-max-HP healing strictly below 30% at resolution. These builds remain below VIT120. Ally-pressure sequences verify prevention; 20 mana, cooldown 6, timing and conditional rescue constrain value.",
+  ),
+  "lightning-surge": estimateMight(
+    "spells",
+    720,
+    "Retain 720: INT82 previews 75.82/55.82 per enemy globally, with a 25% stun chance. The control comparison confirms denial. Two useful enemies, 50 mana and cooldown 3; flexible global delivery and control support retaining the existing estimate.",
+  ),
+  "natures-embrace": estimateMight(
+    "spells",
+    500,
+    "Retain 500: INT82 gives 69.2 mean healing per wounded ally before rounding, globally, for 35 mana and cooldown 4. The two-hero sequence confirms useful party recovery; price about 1.5 wounded recipients and discount healthy allies and automatic recovery.",
+  ),
+  "ocean-blessing": estimateMight(
+    "spells",
+    150,
+    "Retain 150: actual INT82 healing range is 31.4–36.4, mean 33.9 before rounding. The description incorrectly calculates its upper endpoint with roll 5; assessment uses the implementation. Range 3, 20 mana, cooldown 3, missing-health limits.",
+  ),
+  rootgrasp: estimateMight(
+    "spells",
+    410,
+    "Retain 410: INT82 previews 49.06/29.06 per cross target and a 40% stun chance. Effect-disabled sequences confirm useful denial beyond damage. About 1.5 useful targets, 15 mana and cooldown 4; prevention is not added again to a full denial credit.",
+  ),
+  rupture: estimateMight(
+    "spells",
+    35,
+    "Retain 35: unscaled 8–12 melee damage and a 20% chance of two 4-damage bleed ticks, zero mana, cooldown 1. Effect-disabled pairs confirm a small unarmored contribution; armor, overkill and target death suppress delayed ticks.",
+  ),
+  "single-heal": estimateMight(
+    "spells",
+    55,
+    "Retain 55: INT82 heals 9.1–14.1 before rounding for 10 mana, cooldown 2, range 3. Immediate rescue has some flexibility, but this is small beside 550–800 HP and ordinary upkeep. Count only useful healing.",
+  ),
+  soulflare: estimateMight(
+    "spells",
+    520,
+    "Retain 520: INT82 previews 85.90/65.90 ranged damage, with half actual damage returned as healing. The injured sequence activates that recovery. Its combined burst and rescue remain distinctive despite 40 mana, cooldown 4, overhealing and overkill.",
+  ),
+  "splinter-shot": estimateMight(
+    "spells",
+    35,
+    "Retain 35: unscaled 6–10 physical damage, range 4, free, cooldown 1. A 20% chance of 10% armor reduction has a brief follow-up window; armored direct hits are blocked. Current scripted timing does not establish a larger debuff premium.",
+  ),
+  "staggering-jab": estimateMight(
+    "spells",
+    50,
+    "Retain 50: only 4–6 unscaled melee damage, but a 20% stun chance, free with cooldown 1. Armor may erase the hit while a surviving enemy still loses an action. The proc is not guaranteed and its described paralysis is implemented as stun.",
+  ),
+  "stone-bark": estimateMight(
+    "spells",
+    40,
+    "Retain 40: 28 armor becomes 35 for two target end steps. Self-cast consumes the first duration tick. The sequence shows some physical prevention but gives up an attack and 10 mana, cooldown 3; zero armor and magical-only pressure receive no benefit.",
+  ),
+  "storm-pulse": estimateMight(
+    "spells",
+    350,
+    "Retain 350: INT82 previews 48.50/18.50 physical damage per candidate while selecting up to three distinct global targets. Its bonus proc is already included. Two useful targets, 25 mana, cooldown 3; armor, not MR, defends this INT-scaling spell.",
+  ),
+  "stream-of-life": estimateMight(
+    "spells",
+    225,
+    "Retain 225: INT82 heals 44.8–50.8, mean 47.8 before rounding, to self. Injured sequences activate recovery; 25 mana, cooldown 4 and the attack forgone constrain this less flexible rescue option.",
+  ),
+  "stunning-strike": estimateMight(
+    "spells",
+    245,
+    "Retain 245: STR66 previews 46.37/16.37 physical damage, with a 30% stun chance. Free, cooldown 2 and melee access. The effect-disabled sequence supports a real action-denial premium beyond its damage.",
+  ),
+  "tidal-pulse": estimateMight(
+    "spells",
+    310,
+    "Retain 310: INT82 previews 51.30/31.30 per cross target, about 1.5 useful targets, 30 mana and cooldown 3. The 25% AGI−2 proc has no measured action denial in separated initiative cases; retain only a small timing-dependent initiative contribution.",
+  ),
+  "torrent-spiral": estimateMight(
+    "spells",
+    315,
+    "Retain 315: STR66 previews 51.52/21.52 physical damage per adjacent enemy and a 25% chance of 25% vulnerability. About 1.5 useful targets in the surrounding ring; 35 mana, cooldown 4 and close positioning constrain the useful combination.",
+  ),
+  "verdant-smite": estimateMight(
+    "spells",
+    360,
+    "Retain 360: INT82 previews 79.74/59.74 magical damage, plus a 50% chance of 15% armor reduction. The debuff helps subsequent physical hits, not this spell or MR. Range 3, 25 mana and cooldown 3; party composition controls the support value.",
+  ),
+  "vital-strike": estimateMight(
+    "spells",
+    190,
+    "Retain 190: STR66 previews 36.74/6.82 damage and heals half actual damage. Zero mana, cooldown 2, melee access and reliable wounded-caster sustain distinguish it from plain attacks; capped damage and missing HP constrain recovery.",
   ),
 } satisfies Record<SpellType, MightAssessment>;

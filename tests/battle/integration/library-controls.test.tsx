@@ -92,7 +92,7 @@ function detail() {
   return container.querySelector('[aria-label="Entry details"]')!;
 }
 
-test("list and details agree for Assessed, Estimated, zero and Unrated, with readable families", async () => {
+test("list and details agree for Assessed, Estimated, zero and Unrated", async () => {
   await mount({ entry: "fireball" });
   expect(detail().querySelector(".library-might")?.textContent).toBe(
     "C · Might 190",
@@ -103,20 +103,22 @@ test("list and details agree for Assessed, Estimated, zero and Unrated, with rea
       ?.querySelector(".library-might")?.textContent,
   ).toBe("C · Might 190");
   expect(detail().textContent).not.toContain("Legacy tier");
-  expect(detail().textContent).toContain("Comparison family: Spells");
+  expect(detail().textContent).not.toContain("Comparison family:");
   await click("Basic Attack");
   expect(detail().querySelector(".library-might")?.textContent).toBe(
     "E · Might 0",
   );
   await select("Sort entries", "mightDesc");
   const estimated = rows().find((row) =>
-    row.textContent?.includes("Estimated"),
+    row.textContent?.includes("Single Heal"),
   )!;
+  expect(estimated.textContent).not.toContain("Estimated");
   await act(async () => estimated.querySelector("button")!.click());
   expect(detail().querySelector(".library-might")?.textContent).toBe(
-    "D · Might 189Estimated",
+    "D · Might 189",
   );
-  expect(detail().textContent).toContain("provisional assessment");
+  expect(detail().textContent).not.toContain("Estimated");
+  expect(detail().textContent).not.toContain("provisional assessment");
   await select("Filter by tier", "unrated");
   expect(detail().querySelector(".library-might")?.textContent).toBe(
     "Might —Unrated",
@@ -205,7 +207,7 @@ test("Might ordering labels item families and combines ranges with slot restrict
   expect(rows()).toHaveLength(2);
   await select("Filter by type", "weapon");
   expect(rows()).toHaveLength(1);
-  expect(detail().textContent).toContain("Comparison family: Weapon");
+  expect(detail().textContent).not.toContain("Comparison family:");
   await click("Clear filters");
   expect(rows()).toHaveLength(ItemTypeSchema.options.length);
   expect(container.querySelectorAll(".library-family-heading")).toHaveLength(9);

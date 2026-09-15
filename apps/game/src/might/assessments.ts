@@ -10,7 +10,7 @@ import {
 } from "./equipment-and-passive-assessments";
 import { spellAssessments } from "./spell-assessments";
 
-/** One provisional assessment per current definition, using developed-build v2 references.
+/** One provisional assessment per current definition, using late-mid-game v3 references.
  * See docs/might/assessments.md. Future missing assessments remain Unrated;
  * old runtime tiers never supply missing values.
  */

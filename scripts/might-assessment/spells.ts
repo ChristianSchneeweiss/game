@@ -32,13 +32,13 @@ const rows = (
     500,
     { strength: 80, intelligence: 80, vitality: 100, agility: 19, movement: 3 },
   );
-  new BM([caster, target, partner], "might-spells-v2", {
+  new BM([caster, target, partner], "might-spells-v3", {
     rulesVersion: 2,
     battlefield: {
       width: 5,
       height: 5,
       blocked: [],
-      layoutVersion: "might-spells-v2",
+      layoutVersion: "might-spells-v3",
     },
     positions: {
       hero: { x: 2, y: 2 },
@@ -65,7 +65,12 @@ const rows = (
   });
 });
 await Bun.write(
-  "docs/might/assessments/spell-previews-v2.json",
-  JSON.stringify({ version: 2, reference: MIGHT_REFERENCE, rows }),
+  "docs/might/assessments/spell-previews-v3.json",
+  JSON.stringify({
+    version: 3,
+    bun: Bun.version,
+    reference: MIGHT_REFERENCE,
+    rows,
+  }),
 );
 for (const row of rows) console.log(JSON.stringify(row));

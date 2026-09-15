@@ -19,10 +19,6 @@ export function MightBadge({ entry }: { entry: LibraryEntry }) {
       </span>
       {entry.assessmentStatus === "unrated" ? (
         <small title="This content has not been assessed yet.">Unrated</small>
-      ) : entry.assessmentStatus === "estimated" ? (
-        <small title="A provisional assessment under standard conditions.">
-          Estimated
-        </small>
       ) : null}
     </span>
   );

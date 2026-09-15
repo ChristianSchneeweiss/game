@@ -9,7 +9,7 @@ import {
   referenceHero,
 } from "../../../scripts/might-assessment/reference";
 
-test("developed comparison builds have equal progression budgets and derived resource pools", () => {
+test("late-mid-game comparison builds have equal progression budgets and derived resource pools", () => {
   for (const build of Object.keys(
     MIGHT_REFERENCE.profiles,
   ) as MightReferenceBuild[]) {

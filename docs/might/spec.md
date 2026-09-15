@@ -3,8 +3,7 @@
 Published as [issue #4: Add Might assessments and derived tiers to the Library](https://github.com/ChristianSchneeweiss/game/issues/4).
 
 The model and Library controls are implemented; see the [Library guide](../features/library.md).
-The subsequent [v2 assessment](assessments.md) assigns Estimated values to all
-75 definitions. The requirements below preserve the original issue scope,
+The current [v3 assessment](assessments.md) reviews all 138 definitions as Estimated. The requirements below preserve the original issue scope,
 which allowed completion before real content assessments were published.
 
 ## Problem Statement

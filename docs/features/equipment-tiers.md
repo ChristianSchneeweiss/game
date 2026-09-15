@@ -51,9 +51,11 @@ The fitting room and battles use existing models with tier-colored accessories,
 weapon/armor variants, and small ring, pendant and belt fittings. Their materials
 and added geometry belong to the cloned character and are disposed on change.
 
-Might values are **Estimated**, using a separate anchor for each slot. They are
-author estimates, not results from balance simulations. Full nine-slot builds
-and the relative strength of upper tiers still need encounter calibration.
+Might values are **Estimated**, using a separate anchor for each slot. The
+[v3 review](../might/assessments.md) retains all 61 equipment values and adds
+individual rationales, paired slot trials and movement comparisons on real
+nine-slot reference builds. Those controlled results inform author estimates;
+upper-tier strengths and varied encounter layouts still need calibration.
 
 ## Verification
 

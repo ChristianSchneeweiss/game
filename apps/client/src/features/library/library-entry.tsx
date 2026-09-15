@@ -9,12 +9,10 @@ import type { Targeting } from "@loot-game/game/tactical/types";
 import { ArrowUpRight, Skull } from "lucide-react";
 import { targetingLabel } from "./library-format";
 import { MightBadge } from "./library-might";
-import { mightFamilyLabel } from "@loot-game/game/might/might";
 
 const assessmentDescriptions = {
-  unrated: " No Might assessment yet; this does not mean zero power.",
-  estimated: " Estimated: a provisional assessment under standard conditions.",
-  assessed: " Assessed under standard conditions.",
+  unrated: "No Might assessment yet; this does not mean zero power.",
+  assessed: "Assessed under standard conditions.",
 };
 
 export function LibraryIcon({
@@ -148,10 +146,11 @@ export function LibraryDetail({
           <MightBadge entry={entry} />
         </div>
       </div>
-      <p className="library-note">
-        Comparison family: <strong>{mightFamilyLabel(entry.family)}</strong>.
-        {assessmentDescriptions[entry.assessmentStatus]}
-      </p>
+      {entry.assessmentStatus !== "estimated" ? (
+        <p className="library-note">
+          {assessmentDescriptions[entry.assessmentStatus]}
+        </p>
+      ) : null}
       <p className="library-description">{entry.description}</p>
       <section className="library-detail-section">
         <h3>

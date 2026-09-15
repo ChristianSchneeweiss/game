@@ -4,38 +4,58 @@ import type { SpellType } from "../spells/base/spell-types";
 
 /** Assessment inputs only. These do not grant stats or equipment to live characters. */
 export const MIGHT_REFERENCE = {
-  version: 2,
-  attributeBudget: 200,
+  version: 3,
+  level: 31,
+  attributeBudget: 160,
   rounds: [6, 12],
-  // Explicit endgame gear allowance, in addition to the equipped catalogue items.
-  armor: 18,
-  magicResistance: 12,
-  critChance: 0.1,
+  // Real E–B gear supplies all reference defenses and critical chance.
+  armor: 0,
+  magicResistance: 0,
+  critChance: 0,
+  accessories: [
+    "duelist-signet",
+    "thornwood-charm",
+    "scouts-treads",
+    "stormgrip-gloves",
+    "sentinel-greathelm",
+    "travelers-cloak",
+    "rootbound-cinch",
+  ] satisfies ItemType[],
   profiles: {
     physical: {
-      attributes: { strength: 80, intelligence: 20, vitality: 70, agility: 30 },
+      attributes: { strength: 60, intelligence: 20, vitality: 55, agility: 25 },
       equipment: ["iron-sword", "iron-cuirass"],
       spells: [
-        "bladestorm-rhythm",
+        "stunning-strike",
         "tidepiercer-thrust",
         "vital-strike",
         "rupture",
       ],
     },
     caster: {
-      attributes: { strength: 20, intelligence: 80, vitality: 70, agility: 30 },
+      attributes: { strength: 20, intelligence: 60, vitality: 55, agility: 25 },
       equipment: ["oakwarden-staff", "int-armor"],
       spells: ["soulflare", "charred-chains", "lightning-surge", "cinderbrand"],
     },
     tank: {
       attributes: {
-        strength: 50,
+        strength: 35,
         intelligence: 20,
-        vitality: 100,
-        agility: 30,
+        vitality: 80,
+        agility: 25,
       },
       equipment: ["iron-sword", "iron-cuirass"],
-      spells: ["bulwark-bash", "festering-blow", "vital-strike", "iron-will"],
+      spells: [
+        "stunning-strike",
+        "festering-blow",
+        "vital-strike",
+        "stone-bark",
+      ],
+    },
+    agility: {
+      attributes: { strength: 25, intelligence: 20, vitality: 55, agility: 60 },
+      equipment: ["stormfang-blade", "iron-cuirass"],
+      spells: ["stunning-strike", "precise-thrust", "vital-strike", "rupture"],
     },
   } satisfies Record<
     string,

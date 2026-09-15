@@ -1,3 +1,4 @@
+import { tieredEquipmentRationales } from "./tiered-equipment-rationales";
 import {
   TIERED_EQUIPMENT,
   tieredEquipmentTypes,
@@ -22,18 +23,12 @@ const references = {
 export const tieredEquipmentAssessments = Object.fromEntries(
   tieredEquipmentTypes.map((type) => {
     const item = TIERED_EQUIPMENT[type];
-    const bonuses = item.bonuses
-      .map(
-        ({ attribute, value }) =>
-          `${attribute} ${value >= 0 ? "+" : ""}${value}`,
-      )
-      .join(", ");
     return [
       type,
       estimateMight(
         references[item.equipmentSlot],
         item.might,
-        `Author estimate relative to the slot's reference anchor: ${item.description} Additive bonuses: ${bonuses}. Value the whole item in a suitable build, including its attack profile if a weapon. Do not add unlike stats as a score or credit unused recovery. Not yet measured in paired encounter probes.`,
+        tieredEquipmentRationales[type],
       ),
     ];
   }),

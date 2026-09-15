@@ -1,0 +1,3 @@
+interface:
+  display_name: "Update Might"
+  short_description: "Review Might deltas before applying approved changes"

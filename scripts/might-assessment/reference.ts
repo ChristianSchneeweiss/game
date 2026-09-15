@@ -28,7 +28,7 @@ export function referenceHero(
   hero.baseSpecialAttributes.armor = MIGHT_REFERENCE.armor;
   hero.baseSpecialAttributes.magicResistance = MIGHT_REFERENCE.magicResistance;
   hero.baseSpecialAttributes.critChance = MIGHT_REFERENCE.critChance;
-  for (const type of profile.equipment) {
+  for (const type of [...profile.equipment, ...MIGHT_REFERENCE.accessories]) {
     const item = itemFactory(type, `${id}:${type}`, hero);
     hero.equipped[item.equipmentSlot] = item;
   }

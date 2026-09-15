@@ -1,7 +1,7 @@
 # Might and tiers in Shards of Affinity
 
 This research preceded the [Might specification](spec.md) and the implemented
-[Library controls](../features/library.md). Use the [v2 assessments](assessments.md)
+[Library controls](../features/library.md). Use the [v3 assessments](assessments.md)
 for current reference conditions and Estimated values. Proposals and future-tense
 discussion below describe the original research.
 

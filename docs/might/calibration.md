@@ -1,8 +1,8 @@
 # Might calibration
 
 This records the promotion thresholds and initial calibration. For the current
-developed-build reference conditions and published estimates, use the
-[v2 assessments](assessments.md).
+late-mid-game reference conditions and published estimates, use the
+[v3 assessments](assessments.md).
 
 Might is the numerical valuation. Tier is the interval containing that number.
 An ability gains a tier when its assessed Might reaches the next promotion

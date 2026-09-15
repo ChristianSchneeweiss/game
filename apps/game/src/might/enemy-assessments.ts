@@ -3,114 +3,114 @@ import type { MightAssessment } from "./might";
 import { estimateMight } from "./references";
 
 export const enemyAssessments = {
-  goblin: estimateMight(
-    "enemies",
-    45,
-    "20 HP and low offense, despite its armor/Blessed/equipment. Both solo and three-goblin groups died before completing the opening round and caused no damage to the developed party. Retain a small nonzero intrinsic valuation below the 45-HP Skeleton Grunt anchor.",
-  ),
-  "skeleton-grunt": estimateMight(
-    "enemies",
-    100,
-    "Enemy unit anchor remains 100 for its 45 HP and free Crude Strike. The developed party defeats it and groups of three in the opening round without taking damage. The anchor fixes units; it does not claim this is an appropriate endgame opponent.",
-  ),
-  "rotting-corpse": estimateMight(
-    "enemies",
-    150,
-    "80 HP and a front-arc attack offer more durability and potential coverage than the anchor. Groups lasted 0.66 rounds on average but dealt no damage through the developed party's defenses; reduce the earlier pressure/survival premium.",
-  ),
-  "wisp-of-regret": estimateMight(
-    "enemies",
-    95,
-    "40 HP with ranged Cinder Wisp and a small mana pool. Reach offsets some lower durability than the anchor, but solo and grouped probes ended in the opening round with no party damage. Its unscaled enemy INT14 is not replaced by the caster reference's INT98.",
-  ),
-  "ghoul-knight-ivern": estimateMight(
-    "enemies",
-    260,
-    "150 HP with Vital Strike and Festering Blow. Developed defenses prevented measurable damage and lifesteal in these probes; groups lasted 0.94 rounds on average. Value remaining durability and coverage, with a much smaller sustain premium than v1.",
-  ),
-  "emberbound-revenant": estimateMight(
-    "enemies",
-    460,
-    "150 HP, INT30, Charred Chains and Soulflare with Soulleech. Solo probes averaged 13.5 party damage; groups averaged 39.84 damage and 9.69 spell/effect healing. Magical pressure still matters, but it no longer threatens party survival under v2.",
-  ),
   "ashen-skeleton": estimateMight(
     "enemies",
     110,
-    "50 HP, Crude Strike and range-4 Splinter Shot justify a small premium over Skeleton Grunt. Both solo and three-enemy probes ended in the opening round with no party damage; range and armor-reduction potential are modest intrinsic advantages, not observed late-game pressure.",
-  ),
-  "lurking-flame-wraith": estimateMight(
-    "enemies",
-    140,
-    "60 HP with Cinderbrand, burn and ranged attacks. Groups averaged one round and 4.59 party damage. Fixed burn ticks and low enemy INT14 scale poorly against the developed reference's defenses; do not borrow the high-level spell rating.",
-  ),
-  "crypt-crawler": estimateMight(
-    "enemies",
-    90,
-    "40 HP, AGI15 and line/arc attacks. Both solo and grouped probes ended in the opening round without damage; its initiative no longer beats the developed party. Some formation coverage remains, but low durability keeps it below the anchor.",
-  ),
-  "moss-covered-golem": estimateMight(
-    "enemies",
-    185,
-    "90 HP and Crushing Blow's stun chance. Three-enemy groups lasted 0.91 rounds with no party damage; the estimate retains durability and potential action denial, not imaginary late-game armor or guaranteed control.",
+    'Retain 110: 50 HP, range-four Splinter Shot and a brief armor proc support a small premium above the anchor. Own HP 50, mana 15, attributes {"intelligence":3,"vitality":10,"agility":9,"strength":12}; equipped combat gear: none. Current solo/trio mean party damage 0/0, trio mean rounds 0.41 and spell/effect healing 0. Zero-pressure outcomes cannot distinguish early enemies; intrinsic kit differences support the retained estimate.',
   ),
   "barkhide-shaman": estimateMight(
     "enemies",
     120,
-    "60 HP, ranged Splinter Shot and Stone Bark. Its own zero armor still makes the percentage buff ineffective. Groups lasted one round without damaging the party; the nominal support kit adds little demonstrated value.",
-  ),
-  "hollowed-oakwarden": estimateMight(
-    "enemies",
-    850,
-    "260 HP with healing, Blessed Fortune and Titan's Resurgence. Solo probes averaged 309.44 damage absorbed including recovery; trios lasted 5.13 rounds with 391.41 spell/effect healing and 116.5 party damage. Group sustain remains exceptional within the current enemy family, but all probes ended in defeat with no hero deaths.",
-  ),
-  "elder-treant": estimateMight(
-    "enemies",
-    400,
-    "180 HP, Rootgrasp/Crushing Blow and Stoneform. Solo/group probes lasted 1.31/2.13 rounds, far too short to earn the former long-fight armor premium; party damage averaged 10.44/19.81. Control and durability remain useful relative to lesser enemies.",
-  ),
-  thundermaw: estimateMight(
-    "enemies",
-    1000,
-    "300 HP, INT40, Volt Lash, Lightning Surge and Thorn Carapace. Solo probes dealt 119.94 party damage; groups of three dealt 456.88 over 4.19 rounds, the strongest measured offensive pressure in this catalogue. All lost without a hero death; 1000 is a relative enemy-family estimate, not evidence of an endgame boss challenge.",
-  ),
-  "thunder-drake": estimateMight(
-    "enemies",
-    280,
-    "150 HP, Stunning Strike and Festering Blow. Groups averaged 1.22 rounds and 5.22 party damage. Preserve a control/durability premium over simpler enemies while reducing the v1 offensive estimate under developed defenses.",
-  ),
-  "sky-serpent": estimateMight(
-    "enemies",
-    300,
-    "180 HP, Storm Pulse, Battle Roar and mana regeneration. Groups lasted 1.81 rounds but inflicted no health damage in this probe matrix. Global physical pressure is absorbed by armor; potential control and durability account for its remaining value.",
-  ),
-  "storm-hatchling": estimateMight(
-    "enemies",
-    75,
-    "40 HP and a weak Staggering Jab with a stun chance. AGI18 is below the new party's initiative, and solo/group probes ended in the opening round without damage. The control opportunity remains unreliable and requires surviving to act.",
-  ),
-  "skybolt-wyvern": estimateMight(
-    "enemies",
-    75,
-    "35 HP and Festering Blow, with little useful scaling. Solo and grouped probes ended in the opening round without party damage; low durability constrains potential area coverage. Its unused mana provides no additional threat.",
+    'Retain 120: 60 HP with Splinter Shot and Stone Bark; zero own armor leaves its self-only percentage buff inactive. New loot does not activate it. Own HP 60, mana 70, attributes {"intelligence":14,"vitality":10,"agility":8,"strength":6}; equipped combat gear: none. Current solo/trio mean party damage 0/0, trio mean rounds 0 and spell/effect healing 0. Zero-pressure outcomes cannot distinguish early enemies; intrinsic kit differences support the retained estimate.',
   ),
   "commander-kelvaris": estimateMight(
     "enemies",
     650,
-    "220 HP, STR38, AGI30 and strong line/area attacks. Solo/group probes averaged 37.03/132.28 party damage; groups lasted 2.59 rounds. Still a leading current threat, but no longer a party killer. Its own zero crit remains unchanged, so Keen Instincts adds nothing to this enemy despite the reference heroes' crit allowance.",
+    'Retain 650: Own STR38, line/ring attacks and 220 HP remain a leading threat. Keen Instincts is inactive at zero own crit; new crit gear is loot only. Own HP 220, mana 130, attributes {"strength":38,"vitality":22,"agility":30,"intelligence":26}; equipped combat gear: none. Current solo/trio mean party damage 48.94/163, trio mean rounds 3.72 and spell/effect healing 8.59. Zero-pressure outcomes cannot distinguish early enemies; intrinsic kit differences support the retained estimate.',
   ),
-  "fishfolk-shaman": estimateMight(
+  "crypt-crawler": estimateMight(
     "enemies",
-    145,
-    "60 HP, Ocean Blessing and Aqua Wave. Groups generated 29.16 spell healing but lasted only one round and dealt no party damage. Credit observed group recovery, constrained by limited health, damage and action opportunities.",
+    90,
+    'Retain 90: 40 HP, AGI15 and line/front-arc coverage remain fragile despite intrinsic initiative versus early foes. Own HP 40, mana 40, attributes {"strength":9,"vitality":8,"agility":15,"intelligence":6}; equipped combat gear: none. Current solo/trio mean party damage 0/0, trio mean rounds 0 and spell/effect healing 0. Zero-pressure outcomes cannot distinguish early enemies; intrinsic kit differences support the retained estimate.',
+  ),
+  "elder-treant": estimateMight(
+    "enemies",
+    400,
+    'Retain 400: Rootgrasp control, 180 HP and gradual Stoneform stacks retain useful durability without crediting full stacks in short encounters. Own HP 180, mana 80, attributes {"intelligence":16,"vitality":18,"agility":6,"strength":16}; equipped combat gear: none. Current solo/trio mean party damage 14.88/34.28, trio mean rounds 3.25 and spell/effect healing 0. Zero-pressure outcomes cannot distinguish early enemies; intrinsic kit differences support the retained estimate.',
+  ),
+  "emberbound-revenant": estimateMight(
+    "enemies",
+    460,
+    'Retain 460: INT30 Soulflare and Charred Chains plus Soulleech produce real magical damage and healing; its new equipment/passive drops are not combat bonuses. Own HP 150, mana 150, attributes {"intelligence":30,"vitality":14,"agility":12,"strength":25}; equipped combat gear: none. Current solo/trio mean party damage 36.13/134, trio mean rounds 1.94 and spell/effect healing 36.56. Zero-pressure outcomes cannot distinguish early enemies; intrinsic kit differences support the retained estimate.',
   ),
   "fishfolk-scout": estimateMight(
     "enemies",
     120,
-    "55 HP, Rupture and Crude Strike. A modest durability/bleed premium over Skeleton Grunt, but both solo and group probes ended in the opening round without damage. The small physical hits and bleed ticks are poor against developed armor.",
+    'Retain 120: 55 HP and Rupture offer a small durability/bleed premium over Skeleton Grunt; neither Fleet Footed nor dropped boots are equipped. Own HP 55, mana 30, attributes {"intelligence":6,"vitality":8,"agility":12,"strength":10}; equipped combat gear: none. Current solo/trio mean party damage 0/0, trio mean rounds 1 and spell/effect healing 0. Zero-pressure outcomes cannot distinguish early enemies; intrinsic kit differences support the retained estimate.',
+  ),
+  "fishfolk-shaman": estimateMight(
+    "enemies",
+    145,
+    'Retain 145: Ocean Blessing gives conditional group recovery on a fragile 60-HP body. Its new drops are not worn gear or active passives. Own HP 60, mana 70, attributes {"intelligence":14,"vitality":10,"agility":8,"strength":5}; equipped combat gear: none. Current solo/trio mean party damage 0/0, trio mean rounds 0 and spell/effect healing 0. Zero-pressure outcomes cannot distinguish early enemies; intrinsic kit differences support the retained estimate.',
+  ),
+  "ghoul-knight-ivern": estimateMight(
+    "enemies",
+    260,
+    'Retain 260: 150 HP with Vital Strike and Festering Blow give durability and conditional recovery; Gravewarden Plate is loot, not worn armor. Own HP 150, mana 20, attributes {"intelligence":4,"vitality":15,"agility":10,"strength":16}; equipped combat gear: none. Current solo/trio mean party damage 0/0.94, trio mean rounds 1.53 and spell/effect healing 0.59. Zero-pressure outcomes cannot distinguish early enemies; intrinsic kit differences support the retained estimate.',
+  ),
+  goblin: estimateMight(
+    "enemies",
+    45,
+    'Retain 45: Low HP and weak offense remain below the anchor despite its own Armor Up, Blessed and equipped Int Armor. Own HP 20, mana 0, attributes {"intelligence":1,"vitality":1,"agility":1,"strength":2}; equipped combat gear: int-armor. Current solo/trio mean party damage 0/0, trio mean rounds 0 and spell/effect healing 0. Zero-pressure outcomes cannot distinguish early enemies; intrinsic kit differences support the retained estimate.',
+  ),
+  "hollowed-oakwarden": estimateMight(
+    "enemies",
+    850,
+    'Retain 850: Group Nature’s Embrace, Blessed Fortune and Titan’s Resurgence retain exceptional sustain. The dropped staff is not equipped. Own HP 260, mana 200, attributes {"intelligence":40,"vitality":26,"agility":10,"strength":18}; equipped combat gear: none. Current solo/trio mean party damage 33.88/178.16, trio mean rounds 7.34 and spell/effect healing 469.63. Zero-pressure outcomes cannot distinguish early enemies; intrinsic kit differences support the retained estimate.',
+  ),
+  "lurking-flame-wraith": estimateMight(
+    "enemies",
+    140,
+    'Retain 140: 60 HP, ranged Cinderbrand and conditional burn remain stronger than simple fragile attackers; fixed burn ticks are strongly defense-limited. Own HP 60, mana 70, attributes {"intelligence":14,"vitality":6,"agility":11,"strength":4}; equipped combat gear: none. Current solo/trio mean party damage 0/0, trio mean rounds 0 and spell/effect healing 0. Zero-pressure outcomes cannot distinguish early enemies; intrinsic kit differences support the retained estimate.',
+  ),
+  "moss-covered-golem": estimateMight(
+    "enemies",
+    185,
+    'Retain 185: 90 HP and Crushing Blow’s stun chance justify a durability/control premium; no invented armor is included. Own HP 90, mana 25, attributes {"intelligence":5,"vitality":14,"agility":6,"strength":12}; equipped combat gear: none. Current solo/trio mean party damage 0/0, trio mean rounds 0.97 and spell/effect healing 0. Zero-pressure outcomes cannot distinguish early enemies; intrinsic kit differences support the retained estimate.',
+  ),
+  "rotting-corpse": estimateMight(
+    "enemies",
+    150,
+    'Retain 150: 80 HP and front-arc damage justify its durability/coverage premium; developed armor blocks much of its offense. Own HP 80, mana 0, attributes {"intelligence":2,"vitality":8,"agility":6,"strength":14}; equipped combat gear: none. Current solo/trio mean party damage 0/0, trio mean rounds 0.84 and spell/effect healing 0. Zero-pressure outcomes cannot distinguish early enemies; intrinsic kit differences support the retained estimate.',
+  ),
+  "skeleton-grunt": estimateMight(
+    "enemies",
+    100,
+    'Retain 100: Keep the fixed enemy unit anchor; its 45 HP and free Crude Strike define the unit, not a late-game challenge. Own HP 45, mana 0, attributes {"intelligence":2,"vitality":10,"agility":8,"strength":12}; equipped combat gear: none. Current solo/trio mean party damage 0/0, trio mean rounds 0 and spell/effect healing 0. Zero-pressure outcomes cannot distinguish early enemies; intrinsic kit differences support the retained estimate.',
+  ),
+  "sky-serpent": estimateMight(
+    "enemies",
+    300,
+    'Retain 300: 180 HP, global physical Storm Pulse, Battle Roar and Mystic Flow retain intrinsic durability/control despite armor suppressing health damage. Own HP 180, mana 70, attributes {"strength":24,"vitality":18,"agility":18,"intelligence":14}; equipped combat gear: none. Current solo/trio mean party damage 0/2.19, trio mean rounds 2.97 and spell/effect healing 0. Zero-pressure outcomes cannot distinguish early enemies; intrinsic kit differences support the retained estimate.',
+  ),
+  "skybolt-wyvern": estimateMight(
+    "enemies",
+    75,
+    'Retain 75: 35 HP and weak Festering scaling limit its area threat; Predator’s Focus and equipment are drops, not active crit sources. Own HP 35, mana 50, attributes {"intelligence":8,"vitality":6,"agility":14,"strength":8}; equipped combat gear: none. Current solo/trio mean party damage 0/0, trio mean rounds 0 and spell/effect healing 0. Zero-pressure outcomes cannot distinguish early enemies; intrinsic kit differences support the retained estimate.',
+  ),
+  "storm-hatchling": estimateMight(
+    "enemies",
+    75,
+    'Retain 75: 40 HP and AGI18 with unreliable Staggering Jab stun remain a fragile, conditional control threat. Own HP 40, mana 40, attributes {"intelligence":8,"vitality":8,"agility":18,"strength":8}; equipped combat gear: none. Current solo/trio mean party damage 0/0, trio mean rounds 0 and spell/effect healing 0. Zero-pressure outcomes cannot distinguish early enemies; intrinsic kit differences support the retained estimate.',
+  ),
+  "thunder-drake": estimateMight(
+    "enemies",
+    280,
+    'Retain 280: 150 HP, Stunning Strike and Festering Blow retain a control/coverage premium over simpler enemies. Own HP 150, mana 50, attributes {"intelligence":10,"vitality":15,"agility":12,"strength":20}; equipped combat gear: none. Current solo/trio mean party damage 6/6.63, trio mean rounds 2.06 and spell/effect healing 0. Zero-pressure outcomes cannot distinguish early enemies; intrinsic kit differences support the retained estimate.',
+  ),
+  thundermaw: estimateMight(
+    "enemies",
+    1000,
+    'Retain 1000: Own INT40, four-hit Volt Lash, Lightning Surge and Thorn Carapace retain the strongest measured group offensive pressure; the dropped Stormfang Blade supplies no crit. Own HP 300, mana 200, attributes {"intelligence":40,"vitality":30,"agility":14,"strength":28}; equipped combat gear: none. Current solo/trio mean party damage 165.06/664.59, trio mean rounds 5.97 and spell/effect healing 0. Zero-pressure outcomes cannot distinguish early enemies; intrinsic kit differences support the retained estimate.',
   ),
   "water-elemental": estimateMight(
     "enemies",
     300,
-    "130 HP, INT30, Tidal Pulse, self-healing and Vital Wellspring. Solo probes ended before dealing damage; groups averaged 5.75 party damage and 21.63 spell/effect healing over 0.91 rounds. Sustain potential remains, but the developed party cuts its useful lifetime substantially.",
+    'Retain 300: INT30 Tidal Pulse, Stream of Life and Vital Wellspring retain magical pressure and sustain. Base-enemy regeneration is two per activation, so its passive is not valued as character VIT-based recovery. Own HP 130, mana 150, attributes {"intelligence":30,"vitality":13,"agility":9,"strength":6}; equipped combat gear: none. Current solo/trio mean party damage 0/29.34, trio mean rounds 1.5 and spell/effect healing 28.78. Zero-pressure outcomes cannot distinguish early enemies; intrinsic kit differences support the retained estimate.',
+  ),
+  "wisp-of-regret": estimateMight(
+    "enemies",
+    95,
+    'Retain 95: Ranged Cinder Wisp offsets some of the low 40 HP; evaluate its own INT14, never character-reference spell output. Own HP 40, mana 40, attributes {"intelligence":14,"vitality":6,"agility":12,"strength":3}; equipped combat gear: none. Current solo/trio mean party damage 0/0, trio mean rounds 0 and spell/effect healing 0. Zero-pressure outcomes cannot distinguish early enemies; intrinsic kit differences support the retained estimate.',
   ),
 } satisfies Record<EnemyType, MightAssessment>;

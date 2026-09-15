@@ -58,7 +58,7 @@ export function measurePassive(
           strength: 80,
           intelligence: 80,
           vitality: 100,
-          agility: 40 - index,
+          agility: 100 - index,
           movement: 0,
         },
       );
@@ -93,7 +93,7 @@ export function measurePassive(
       width: 5,
       height: 5,
       blocked: [],
-      layoutVersion: "might-passives-v2",
+      layoutVersion: "might-passives-v3",
     },
     positions: {
       hero: { x: 2, y: 2 },
@@ -185,11 +185,13 @@ if (import.meta.main) {
     }),
   );
   await Bun.write(
-    "docs/might/assessments/passive-probes-v2.json",
+    "docs/might/assessments/passive-probes-v3.json",
     JSON.stringify({
-      version: 2,
+      version: 3,
       bun: Bun.version,
       reference: MIGHT_REFERENCE,
+      seedFamily:
+        "v2 seed strings intentionally retained for baseline/input comparisons",
       seeds,
       conditions:
         "Matched with/without-passive stationary pressure: two 1500-HP threats each strike for 65 raw physical/magical damage before the hero, 0 or 30 armor/20 MR, 6/12 rounds, full or 55%-HP/10%-mana starts. Hero uses actual four-spell kit plus Basic Attack, real upkeep and shared heuristic AI. Same initial seed, not identical RNG draws after paths diverge. Endpoint changes are evidence, not an automatic Might score.",

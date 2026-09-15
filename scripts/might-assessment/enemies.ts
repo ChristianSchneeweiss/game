@@ -13,7 +13,7 @@ import {
   referenceImpacts,
 } from "./reference";
 
-/** Current enemy kits against the developed party, individually and in groups. */
+/** Current enemy kits against the late-mid-game party, individually and in groups. */
 export function measureEnemy(
   type: EnemyType,
   spread: boolean,
@@ -24,7 +24,9 @@ export function measureEnemy(
     referenceHero("physical", "hero-0"),
     referenceHero("caster", "hero-1"),
   ];
+  // Preserve the 160-point budget while making physical/caster initiative stable.
   heroes[1]!.baseAttributes.agility--;
+  heroes[1]!.baseAttributes.strength++;
   const enemies = Array.from({ length: count }, (_, index) =>
     createEnemyFromType(type, `enemy-${index}`),
   );
@@ -34,7 +36,7 @@ export function measureEnemy(
       width: 7,
       height: 7,
       blocked: [],
-      layoutVersion: "might-enemies-v2",
+      layoutVersion: "might-enemies-v3",
     },
     positions: {
       "hero-0": { x: 2, y: 3 },
@@ -100,14 +102,17 @@ if (import.meta.main) {
     ),
   );
   await Bun.write(
-    "docs/might/assessments/enemy-probes-v2.json",
+    "docs/might/assessments/enemy-probes-v3.json",
     JSON.stringify({
-      version: 2,
+      version: 3,
       bun: Bun.version,
       reference: MIGHT_REFERENCE,
+      partyAttributeOverrides: { caster: { strength: 21, agility: 24 } },
+      seedFamily:
+        "v2 seed strings intentionally retained for baseline/input comparisons",
       seeds,
       conditions:
-        "Level-41-budget physical/caster party with four spells each plus Basic Attack, endgame stat allowance and catalogue gear; actual unchanged enemy kits, singly and in groups of three. Clustered/spread 7x7 starts, real movement and shared heuristic AI, max 18 rounds. Values are encounter evidence, not player win-rate predictions or automatic scores.",
+        "Level-31-budget physical/caster party with four spells each plus Basic Attack and real E–B catalogue gear; zero synthetic stat allowances. Actual unscaled enemy kits, singly and in groups of three. Clustered/spread 7x7 starts, real movement and shared heuristic AI, max 18 rounds. Values are encounter evidence, not player win-rate predictions or automatic scores.",
       rows,
     }),
   );

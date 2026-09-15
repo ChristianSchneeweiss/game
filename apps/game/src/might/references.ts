@@ -1,43 +1,92 @@
 import type { MightAssessment } from "./might";
-import { MIGHT_REFERENCE } from "./reference-profile";
 
-const developedBuilds = `Reference v${MIGHT_REFERENCE.version}: ${MIGHT_REFERENCE.attributeBudget} base attribute points (level-41 budget). Physical STR80/INT20/VIT70/AGI30; caster STR20/INT80/VIT70/AGI30; tank STR50/INT20/VIT100/AGI30. HP = base VIT × 10 (700–1000), mana = base INT × 5 (100–400). Reference-profile gear plus explicit design-only allowance of ${MIGHT_REFERENCE.armor} armor, ${MIGHT_REFERENCE.magicResistance} magic resistance and ${MIGHT_REFERENCE.critChance * 100}% crit; these synthetic additions are independent of the expanded item catalogue. Four suitable spells plus Basic Attack, ${MIGHT_REFERENCE.rounds.join("/")}-round horizons, fresh and depleted resources. Compare content in a suitable build, not an average across incompatible builds.`;
-
-function accessoryReference(slot: string, anchor: string) {
-  return {
-    anchor: `${slot}-v2`,
-    conditions: `${developedBuilds} ${slot}: ${anchor} is the 100 Might anchor for this slot only. Hold all other slots fixed. Compare marginal useful damage, repeated-hit prevention, spent mana, recovery while wounded and attacks enabled by movement over 6–12 rounds. Equipment vitality changes regeneration, not maximum HP. Armor and MR affect different hits. These are provisional author estimates; combined nine-slot builds have not been calibrated with paired encounter probes.`,
-  };
-}
-
-/** Versioned design references, not a universal combat-power formula. */
+/** Authored v3 conditions; see the executable reference-profile.ts and probes. */
+const lateMidGameBuilds =
+  "Reference v3: late-mid-game design benchmark, level 31 and 160 base points (40 starting + 30 × 4). Physical STR60/INT20/VIT55/AGI25; caster STR20/INT60/VIT55/AGI25; tank STR35/INT20/VIT80/AGI25; agility STR25/INT20/VIT55/AGI60. Real E–B gear from reference-profile.ts fills all nine slots; no synthetic armor, MR or crit. Effective physical STR66/INT24/VIT61/AGI45; caster STR20/INT82/VIT61/AGI45; tank STR41/INT24/VIT86/AGI45; agility STR25/INT24/VIT61/AGI88. Base HP 550/550/800/550 and mana 100/300/100/100 remain unchanged by gear. Armor 28/16/28/28, MR9; crit12% except agility20%, crit damage 2×. Four compatible spells plus Basic Attack; 6/12 rounds, full and 55%-HP/10%-mana starts. Actual tactical health regeneration is 0.375 × effective VIT before rounding. Equal attribute progression and gear-access ceiling, not a sum of item Might.";
 const references = {
   spells: {
-    anchor: "spells-v2",
-    conditions: `${developedBuilds} Spells: retain 100 Might per reference action delivering 20 useful single-target damage at range 1–3, 10 mana, configured cooldown 1; the HP unit is fixed rather than scaling the old hypothetical reference spell. Check opponents at 0 and 30 armor/20 MR, 1–3 enemies and 1–2 allies; about 1.5 useful local targets and 2 global. Value useful healing, prevention and denied actions alongside damage. Discount mana, cooldown, positioning, actual charge commitments, delay and target loss. Direct-damage estimates include reference crit; they are not whole-spell scores.`,
+    anchor: "spells-v3",
+    conditions:
+      lateMidGameBuilds +
+      " " +
+      "100 Might remains an immediate single-target action delivering 20 useful damage at range 1–3 for 10 mana and configured cooldown 1. Compare compatible builds against 0 or 30 armor/20 MR, about 1.5 local or 2 global useful targets, 1–2 allies. Judge useful healing, control, prevention, timing and mana together. Charge costs the cast plus one blocked activation; count each delay/lost action once. Previews and scripted sequences are evidence, not whole-spell scores.",
   },
   passives: {
-    anchor: "passives-v2",
-    conditions: `${developedBuilds} Passives: retain 100 Might per approximately 20 useful HP of marginal encounter contribution without an action. Matched with/without-passive pressure probes use 16 seeds, 6/12 rounds, full or 55%-HP/10%-mana starts, and two 1500-HP threats each striking for 65 physical/magical raw damage with 0 or 30 armor/20 MR. Compare health, damage, resource use and survival; no automatic sum or score, and no double-counting healing already reflected in remaining health. See passive-probes-v2.json.`,
+    anchor: "passives-v3",
+    conditions:
+      lateMidGameBuilds +
+      " " +
+      "100 Might remains approximately 20 useful HP of marginal encounter contribution without casting. Canonical matched probes use two 1500-HP threats, 65 raw physical/magical pressure before the hero, 16 fixed seeds, 6/12 rounds, both resource and defense cases. Supplemental 45-raw, low-health, finishing, healing and movement cases are identified separately. Do not add healing twice through remaining HP, or value unspent mana. All estimates remain provisional.",
   },
   weapons: {
-    anchor: "weapons-v2",
-    conditions: `${developedBuilds} Weapons: Iron Sword remains the 100 anchor. Compare equal-budget physical/caster builds with their main attribute 80 and identical other equipment (Iron Cuirass), holding reference defensive allowances fixed. Include attack profile, reach, spell scaling and regeneration against 0 and 30 armor/20 MR. The weapon unit is separate from armor.`,
+    anchor: "weapons-v3",
+    conditions:
+      lateMidGameBuilds +
+      " " +
+      "Iron Sword remains the 100-Might weapon anchor; Oakwarden remains the established 150-Might caster peer. Use compatible equal-160-point builds, Iron Cuirass and the same accessories for every weapon comparison. Within a pair, swap only weapon. Include range, weapon-specific scaling and spent recovery; report caster-peer comparisons separately from physical anchor comparisons.",
   },
   armor: {
-    anchor: "armor-v2",
-    conditions: `${developedBuilds} Armor: Iron Cuirass (+12 armor) remains the 100 anchor. Hold weapon, base stats and the design-only defensive allowance fixed while swapping the armor slot; compare useful repeated-hit prevention with Intelligence scaling and mana that is actually spent, including depleted-resource fights.`,
+    anchor: "armor-v3",
+    conditions:
+      lateMidGameBuilds +
+      " " +
+      "Iron Cuirass (+12 armor) remains the 100-Might armor anchor. Swap armor only on compatible equal-budget builds, preserving weapon and accessories. Include repeated mitigation, scaling, spent mana and movement penalties. Armor and MR protect different hits.",
   },
-  ring: accessoryReference("rings", "Copper Band (+3 strength)"),
-  amulet: accessoryReference("amulets", "Apprentice Pendant (+3 intelligence)"),
-  boots: accessoryReference("boots", "Trailworn Boots (+3 agility)"),
-  gloves: accessoryReference("gloves", "Brawler's Wraps (+3 strength)"),
-  helmet: accessoryReference("helmets", "Iron Cap (+3 armor)"),
-  cloak: accessoryReference("cloaks", "Traveler's Cloak (+3 magic resistance)"),
-  belt: accessoryReference("belts", "Rope Girdle (+3 vitality)"),
+  ring: {
+    anchor: "rings-v3",
+    conditions:
+      lateMidGameBuilds +
+      " " +
+      "Copper Band (+3 STR) remains the 100-Might anchor for this slot. Hold the other eight slots fixed. Include only compatible scaling, prevention, useful recovery, spent mana and attacks actually enabled by movement. VIT/INT gear does not increase maximum HP/mana. Paired slot and movement-only probes are provisional evidence; there is no summed character Might.",
+  },
+  amulet: {
+    anchor: "amulets-v3",
+    conditions:
+      lateMidGameBuilds +
+      " " +
+      "Apprentice Pendant (+3 INT) remains the 100-Might anchor for this slot. Hold the other eight slots fixed. Include only compatible scaling, prevention, useful recovery, spent mana and attacks actually enabled by movement. VIT/INT gear does not increase maximum HP/mana. Paired slot and movement-only probes are provisional evidence; there is no summed character Might.",
+  },
+  boots: {
+    anchor: "boots-v3",
+    conditions:
+      lateMidGameBuilds +
+      " " +
+      "Trailworn Boots (+3 AGI) remains the 100-Might anchor for this slot. Hold the other eight slots fixed. Include only compatible scaling, prevention, useful recovery, spent mana and attacks actually enabled by movement. VIT/INT gear does not increase maximum HP/mana. Paired slot and movement-only probes are provisional evidence; there is no summed character Might.",
+  },
+  gloves: {
+    anchor: "gloves-v3",
+    conditions:
+      lateMidGameBuilds +
+      " " +
+      "Brawler’s Wraps (+3 STR) remains the 100-Might anchor for this slot. Hold the other eight slots fixed. Include only compatible scaling, prevention, useful recovery, spent mana and attacks actually enabled by movement. VIT/INT gear does not increase maximum HP/mana. Paired slot and movement-only probes are provisional evidence; there is no summed character Might.",
+  },
+  helmet: {
+    anchor: "helmets-v3",
+    conditions:
+      lateMidGameBuilds +
+      " " +
+      "Iron Cap (+3 armor) remains the 100-Might anchor for this slot. Hold the other eight slots fixed. Include only compatible scaling, prevention, useful recovery, spent mana and attacks actually enabled by movement. VIT/INT gear does not increase maximum HP/mana. Paired slot and movement-only probes are provisional evidence; there is no summed character Might.",
+  },
+  cloak: {
+    anchor: "cloaks-v3",
+    conditions:
+      lateMidGameBuilds +
+      " " +
+      "Traveler’s Cloak (+3 MR) remains the 100-Might anchor for this slot. Hold the other eight slots fixed. Include only compatible scaling, prevention, useful recovery, spent mana and attacks actually enabled by movement. VIT/INT gear does not increase maximum HP/mana. Paired slot and movement-only probes are provisional evidence; there is no summed character Might.",
+  },
+  belt: {
+    anchor: "belts-v3",
+    conditions:
+      lateMidGameBuilds +
+      " " +
+      "Rope Girdle (+3 VIT) remains the 100-Might anchor for this slot. Hold the other eight slots fixed. Include only compatible scaling, prevention, useful recovery, spent mana and attacks actually enabled by movement. VIT/INT gear does not increase maximum HP/mana. Paired slot and movement-only probes are provisional evidence; there is no summed character Might.",
+  },
   enemies: {
-    anchor: "enemies-v2",
-    conditions: `${developedBuilds} Enemies: Skeleton Grunt remains the 100 unit anchor; it is not the reference character. Test actual unscaled enemy kits against the developed physical/caster party (caster AGI29), individually and in groups of three. Empty 7x7 board, clustered/spread starts, 16 seeds each, tactical movement and shared heuristic AI, 18-round cap. Current enemies may be outgrown by this party; zero damage is not zero intrinsic power. Judge relative durability, control and group support as well as observed pressure; probe means do not calculate scores. See enemy-probes-v2.json.`,
+    anchor: "enemies-v3",
+    conditions:
+      lateMidGameBuilds +
+      " " +
+      "Skeleton Grunt remains the 100-Might enemy anchor. Test actual unscaled kits against the level-31 physical/caster party (caster base STR21/AGI24 to fix order while preserving 160 points), singly and as trios, clustered/spread 7×7 layouts, 16 fixed seeds, movement and shared AI, 18-round cap. Loot is separate from equipped combat gear. All current canonical runs are party wins; zero pressure from early enemies is a measurement floor, not zero Might. Preserve intrinsic durability, control and support distinctions.",
   },
 } as const;
 

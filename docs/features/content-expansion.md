@@ -59,11 +59,12 @@ combat starts.
 
 ## Might and verification
 
-Each addition has an **Estimated** Might value using the existing v2 family
-references. New values are mechanic-based author estimates, explicitly marked
-as not yet measured in paired encounter or tactical probes. The original stored
-probe results do not include this batch. Movement needs tactical evaluation;
-stationary pressure alone cannot establish its value.
+Each addition has an **Estimated** Might value under the
+[late-mid-game v3 references](../might/assessments.md). The current refresh
+includes paired equipment and passive evidence, actual healing/threshold cases,
+and movement comparisons. These support provisional judgments; stationary
+pressure alone does not establish movement value, and full encounter calibration
+remains incomplete. The older v2 artifacts do not cover this batch.
 
 Coverage in `tests/battle/rules/content-expansion.test.ts` checks threshold
 boundaries, combined passives, real weapon casts, movement budgets, and equipment
