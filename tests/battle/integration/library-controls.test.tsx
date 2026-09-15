@@ -101,7 +101,7 @@ test("list and details agree for Assessed, Estimated, zero and Unrated, with rea
       .find((row) => row.textContent?.includes("Fireball"))
       ?.querySelector(".library-might")?.textContent,
   ).toBe("C · Might 190");
-  expect(detail().textContent).toContain("Legacy tier A");
+  expect(detail().textContent).not.toContain("Legacy tier");
   expect(detail().textContent).toContain("Comparison family: Spells");
   await click("Basic Attack");
   expect(detail().querySelector(".library-might")?.textContent).toBe(
@@ -172,7 +172,8 @@ test("range edits apply valid values, preserve focus and retain the last valid r
 });
 
 test("Might ordering labels item families and combines ranges with slot restrictions", async () => {
-  await mount({ category: "items", group: "bogus", sort: "mightDesc" });
+  await mount({ category: "items", group: "bogus" });
+  expect(applied.sort).toBe("mightDesc");
   expect(
     [...container.querySelectorAll(".library-list caption")].map(
       (node) => node.textContent,
@@ -236,7 +237,7 @@ test("category and related-entry navigation reset ordering, bounds and group res
   await act(async () => (enemyButton as HTMLButtonElement).click());
   expect(applied).toMatchObject({
     category: "enemies",
-    sort: "name",
+    sort: "mightDesc",
     mightMin: undefined,
     mightMax: undefined,
     group: "all",
@@ -257,7 +258,7 @@ test("category and related-entry navigation reset ordering, bounds and group res
   expect(applied).toMatchObject({
     category: "spells",
     entry: "splinter-shot",
-    sort: "tier",
+    sort: "mightDesc",
     tier: "all",
     group: "all",
     mightMin: undefined,

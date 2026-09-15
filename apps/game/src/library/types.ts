@@ -1,6 +1,5 @@
 import type { EntityAttributes } from "../entity-types";
 import type { Targeting } from "../tactical/types";
-import type { Tier } from "../types";
 import type { MightFamily, MightRating } from "../might/might";
 
 export type LibraryCategory = "spells" | "items" | "passives" | "enemies";
@@ -10,7 +9,6 @@ export type LibraryEntry = LibraryReference &
   MightRating & {
     name: string;
     description: string;
-    legacyTier?: Tier;
     family: MightFamily;
     group: string;
     stats: LibraryStat[];

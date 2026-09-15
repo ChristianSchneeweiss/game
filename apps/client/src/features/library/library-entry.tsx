@@ -152,9 +152,6 @@ export function LibraryDetail({
         Comparison family: <strong>{mightFamilyLabel(entry.family)}</strong>.
         {assessmentDescriptions[entry.assessmentStatus]}
       </p>
-      {entry.legacyTier ? (
-        <p className="library-note">Legacy tier {entry.legacyTier}</p>
-      ) : null}
       <p className="library-description">{entry.description}</p>
       <section className="library-detail-section">
         <h3>

@@ -69,6 +69,20 @@ attribute scaling are determined by the equipped weapon, with an unarmed fallbac
 The weapon's definition of how Basic Attack targets and damages its recipients.
 It includes the attributes that contribute to the attack's damage.
 
+**Might**:
+The valuation of a spell, item, or other game element's overall power under
+defined reference conditions, including its numerical strength and special abilities.
+_Avoid_: Strength, currency, or damage when referring to this valuation.
+
+**Might budget**:
+The power allowance a game element can distribute among its stats, effects,
+and other advantages, evaluated together with its costs and restrictions.
+
+**Tier**:
+A grade from E through S determined by the Might range a game element falls into;
+crossing an exponentially spaced promotion threshold raises its tier.
+_Avoid_: Rarity or complexity as synonyms for tier.
+
 **Movement**:
 The entity's stat determining its allowance of tile steps, including modifiers
 from equipment, passive skills, and effects. It is distinct from Agility.

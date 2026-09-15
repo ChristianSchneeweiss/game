@@ -45,9 +45,6 @@ test("authored metadata projects through all four catalogues with a family even 
         (entry) => entry.category === category && entry.type === type,
       ),
     ).toMatchObject({ might, tier, family, assessmentStatus });
-  expect(entries.find((entry) => entry.type === "fireball")?.legacyTier).toBe(
-    "A",
-  );
   expect(
     new Set(entries.map((entry) => `${entry.category}:${entry.type}`)).size,
   ).toBe(entries.length);
@@ -82,7 +79,6 @@ test("changing assessment promotes and demotes the projected tier and tier-filte
     expect(spells.find((entry) => entry.type === "fireball")).toMatchObject({
       might,
       tier,
-      legacyTier: "A",
     });
     expect(
       filterLibrary(spells, parseLibrarySearch({ tier, q: "fireball" })),
@@ -307,13 +303,14 @@ test("URL validation discards malformed and reversed ranges and keeps supported 
       "mightAsc",
     );
     expect(parseLibrarySearch({ category })).toMatchObject({
+      sort: "mightDesc",
       mightMin: undefined,
       mightMax: undefined,
     });
   }
   expect(
     parseLibrarySearch({ category: "items", group: "enemies", sort: "mana" }),
-  ).toMatchObject({ group: "all", sort: "tier" });
+  ).toMatchObject({ group: "all", sort: "mightDesc" });
   expect(
     parseLibrarySearch({ category: "enemies", tier: "B", sort: "tier" }).tier,
   ).toBe("B");

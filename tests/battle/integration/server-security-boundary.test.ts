@@ -178,6 +178,33 @@ test("anonymous, foreign-origin, non-upgrade and unknown-chat requests cannot cr
   expect(probeCloses).toBe(probeOpens);
 });
 
+test("local development origins remain isolated from hosted battle and chat rooms", async () => {
+  const f = requestFixture();
+  for (const [requestOrigin, browserOrigin] of [
+    ["https://game.example", "http://localhost:3001"],
+    ["http://localhost:3000", "https://outsider.example"],
+  ] as const) {
+    for (const path of ["/api/battle/audit-battle", "/api/battle/audit-battle/chat"]) {
+      const response = await worker.fetch!(
+        new Request(`${requestOrigin}${path}`, {
+          headers: {
+            Upgrade: "websocket",
+            Origin: browserOrigin,
+            "x-test-user": "audit-owner",
+          },
+        }),
+        f.env,
+        {} as ExecutionContext,
+      );
+      expect(response.status).toBe(403);
+      const body: unknown = await response.json();
+      expect(body).toEqual({ error: "Origin not allowed" });
+    }
+  }
+  expect(f.setups).toEqual([]);
+  expect(probeOpens).toBe(0);
+});
+
 test("battle and chat handshakes close database clients when reads or activity writes fail", async () => {
   const f = requestFixture();
   activeDatabase = {

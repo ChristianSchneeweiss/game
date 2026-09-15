@@ -75,7 +75,7 @@ export function parseLibrarySearch(
   const sort =
     librarySorts.find(
       (value) => value === search.sort && sorts.includes(value),
-    ) ?? (category === "enemies" ? "name" : "tier");
+    ) ?? "mightDesc";
   let mightMin = parseMightBound(search.mightMin);
   let mightMax = parseMightBound(search.mightMax);
   if (mightMin !== undefined && mightMax !== undefined && mightMin > mightMax) {

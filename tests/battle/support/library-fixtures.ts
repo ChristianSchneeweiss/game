@@ -18,6 +18,12 @@ export function fixtureAssessment(
 
 export function installLibraryAssessments() {
   const original = structuredClone(mightAssessments);
+  Object.assign(mightAssessments, {
+    spells: {},
+    items: {},
+    passives: {},
+    enemies: {},
+  });
   mightAssessments.spells.fireball = fixtureAssessment(190);
   mightAssessments.spells["basic-attack"] = fixtureAssessment(0);
   mightAssessments.spells["single-heal"] = fixtureAssessment(189, "estimated");

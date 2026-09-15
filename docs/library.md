@@ -7,9 +7,9 @@ name, tier, Might in either direction, mana, cooldown, estimated damage, or enem
 health as applicable. Inclusive minimum/maximum Might bounds combine with the
 other filters. Numeric bounds exclude Unrated entries.
 Selected entries and filters are encoded in the URL.
-Spells, items, and passives default to tier order S → A → B → C → D → E,
-with names alphabetized within each tier and Unrated last. Enemies default to
-name order and also support tier filtering and sorting.
+Every category defaults to Might, highest first, with names alphabetized for
+equal values and Unrated last. Equipment is grouped by comparison family and
+ordered by Might within each slot. Explicit sort choices in URLs are preserved.
 
 Details include targeting footprints, item attack profiles, enemy base stats,
 combat kits, and drop chances. Links connect enemies to their abilities and loot,
@@ -42,12 +42,18 @@ The shared domain calculates each promotion as `round(100 * 5 ** (step / 5))`,
 for steps 1–5. The 100-Might E reference defines the unit; E starts at zero.
 The client consumes the derived grade without its own threshold table.
 
-All current production definitions remain **Might — · Unrated** pending a
-separate calibration pass. A real zero assessment displays **E · Might 0**.
+All 75 current production definitions have **Estimated** values in the
+[developed-build v2 assessment](might-assessments.md), with per-definition
+rationales and versioned family references. The reference targets mid-to-end-game
+builds with a level-41 attribute budget, 700–1,000 HP and 6–12-round encounters.
+Its additional armor, resistance and crit are explicit design assumptions, not
+changes to live characters. Future missing assessments display
+**Might — · Unrated**. A real zero assessment displays **E · Might 0**.
 Estimated assessments are provisional and visibly marked; both Estimated and
-Assessed values participate in numeric sorting. Old authored grades appear only
-as **Legacy tier A**, for example, in details. Combat, persistence, equipment
-eligibility, rewards and drop chances still use their existing behavior.
+Assessed values participate in numeric sorting. The Library exposes only the
+tier derived from Might; old authored grades are omitted from its catalogue and
+details. Combat, persistence, equipment eligibility, rewards and drop chances
+still use their existing behavior.
 
 Comparison families are spells, passive skills, enemies, and each equipment
 slot. Families are present even for Unrated definitions. When Might ordering
@@ -55,8 +61,9 @@ shows several item slots, the Library labels separate families alphabetically
 and sorts inside each, placing Unrated last in either direction. This does not
 establish a common scale between spells, armor, weapons, passives and enemies.
 
-Author assessments once in `apps/game/src/might/assessments.ts`, keyed by
-category and registered content type. Each assessment contains:
+Author assessments once in the family files under `apps/game/src/might/`,
+collected by `assessments.ts` and keyed by category and registered content type.
+Each assessment contains:
 
 - `might`: a nonnegative safe integer, never a rounded or inferred legacy grade.
 - `status`: `estimated` or `assessed`.

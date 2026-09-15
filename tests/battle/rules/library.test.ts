@@ -10,6 +10,8 @@ import { EnemyTypeSchema } from "../../../apps/game/src/enemies/base/enemy-types
 import { ItemTypeSchema } from "../../../apps/game/src/items/item-types";
 import { PassiveTypeSchema } from "../../../apps/game/src/passive-skills/base/passive-types";
 import { SpellTypeSchema } from "../../../apps/game/src/spells/base/spell-types";
+import { mightAssessments } from "../../../apps/game/src/might/assessments";
+import { isMight, tierFromMight } from "../../../apps/game/src/might/might";
 import {
   filterLibrary,
   parseLibrarySearch,
@@ -38,12 +40,11 @@ test("library includes every authored type and every combat-kit and drop referen
   );
   expect(keys.size).toBe(entries.length);
   for (const entry of entries) {
-    expect(entry).toMatchObject({
-      might: null,
-      tier: null,
-      assessmentStatus: "unrated",
-      referenceId: null,
-    });
+    expect(isMight(entry.might)).toBe(true);
+    expect(entry.tier).toBe(tierFromMight(entry.might!));
+    expect(entry.assessmentStatus).toBe("estimated");
+    expect(entry.referenceId).toStartWith("docs/might-assessments.md#");
+    expect(entry.referenceId).toEndWith("-v2");
     expect(entry.family.length).toBeGreaterThan(0);
     expect(entry.name.length).toBeGreaterThan(0);
     expect(entry.description.length).toBeGreaterThan(0);
@@ -55,6 +56,19 @@ test("library includes every authored type and every combat-kit and drop referen
       expect(drop.chance).toBeLessThanOrEqual(1);
     }
   }
+  for (const assessments of Object.values(mightAssessments)) {
+    for (const assessment of Object.values(assessments)) {
+      expect(assessment.conditions.length).toBeGreaterThan(0);
+      expect(assessment.rationale.length).toBeGreaterThan(0);
+    }
+  }
+  expect(
+    passives.find((entry) => entry.type === "keen-instincts"),
+  ).toMatchObject({
+    might: 330,
+    tier: "B",
+    assessmentStatus: "estimated",
+  });
 });
 
 test("spell preview uses current tactical targeting, unarmed damage, and deterministic attribute scaling", () => {
@@ -84,6 +98,9 @@ test("spell preview uses current tactical targeting, unarmed damage, and determi
   ).not.toBe(baseline.find((entry) => entry.type === "fireball")?.description);
   expect(DEFAULT_LIBRARY_ATTRIBUTES).toEqual(before);
   expect(createSpellLibrary()).toEqual(baseline);
+  expect(
+    stronger.map(({ type, might, tier }) => ({ type, might, tier })),
+  ).toEqual(baseline.map(({ type, might, tier }) => ({ type, might, tier })));
   expect(() => JSON.stringify(baseline)).not.toThrow();
 });
 
@@ -122,13 +139,13 @@ test("search combines case-insensitive terms, tier and recipients; numeric sort 
       entries,
       parseLibrarySearch({
         q: " FIREBALL ",
-        tier: "unrated",
+        tier: "E",
         group: "enemies",
       }),
     ).map((entry) => entry.type),
   ).toEqual(["fireball"]);
   expect(
-    filterLibrary(entries, parseLibrarySearch({ q: "fireball", tier: "E" })),
+    filterLibrary(entries, parseLibrarySearch({ q: "fireball", tier: "S" })),
   ).toHaveLength(0);
   expect(
     filterLibrary(entries, parseLibrarySearch({ q: "no-such-spell" })),
@@ -153,11 +170,15 @@ test("search combines case-insensitive terms, tier and recipients; numeric sort 
   const enemySearch = parseLibrarySearch({
     category: "enemies",
     sort: "health",
-    tier: "unrated",
   });
-  expect(enemySearch.tier).toBe("unrated");
   const enemies = createEnemyLibrary();
   expect(filterLibrary(enemies, enemySearch)[0]?.health).toBe(
     Math.max(...enemies.map((entry) => entry.health!)),
   );
+  expect(
+    filterLibrary(
+      enemies,
+      parseLibrarySearch({ category: "enemies", tier: "unrated" }),
+    ),
+  ).toHaveLength(0);
 });

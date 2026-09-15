@@ -1,0 +1,538 @@
+{
+  "version": 1,
+  "assessments": {
+    "spells": {
+      "basic-attack": {
+        "might": 70,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "Repeatable, free weapon attack: about 14 damage with the reference sword or staff; staff also reaches 3 tiles. This definition is valued equipped, unlike the Library's unarmed 6-damage preview. Unarmed use is substantially weaker."
+      },
+      "fireball": {
+        "might": 55,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "12 mean immediate damage at range 3 for 10 mana and cooldown 2. Below the 20-damage reference with a longer repeat interval; broad roll variance adds no guaranteed value."
+      },
+      "single-heal": {
+        "might": 40,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "8.5 mean healing at range 3 for 10 mana and cooldown 2. Count only missing HP beyond natural regeneration; saving a threatened ally adds timing value, but full-health casts contribute nothing."
+      },
+      "crude-strike": {
+        "might": 45,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "8 mean physical melee damage, no mana or cooldown, with a 10% chance of -1 Agility for one turn. The small initiative change is not a stun or movement reduction; no attribute scaling."
+      },
+      "festering-blow": {
+        "might": 120,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "15 mean physical damage per enemy in a front arc, free with cooldown 2. About 1.5 useful targets plus a 25% chance of brief 10% vulnerability; follow-up damage is conditional on targets surviving and allies acting in time."
+      },
+      "cinder-wisp": {
+        "might": 65,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "13 mean ranged magical damage for 10 mana and cooldown 1. Matches the reference's action, mana and repeat interval, with a smaller payoff."
+      },
+      "vital-strike": {
+        "might": 125,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "19 mean melee damage and healing equal to half actual damage, free with cooldown 2. Missing health and enemy defenses limit the healing; do not value raw overkill as sustain."
+      },
+      "splinter-shot": {
+        "might": 50,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "8 mean physical damage at range 4, free with cooldown 1. Reach and a 20% chance of a one-turn 10% armor reduction help, but the debuff needs an armored survivor and a timely physical follow-up."
+      },
+      "cinderbrand": {
+        "might": 90,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "17 mean ranged magical damage plus a 30% chance of two 5-damage burn ticks, for 15 mana and cooldown 2. Discount delayed ticks that cannot finish before the target dies; the burn is not guaranteed upfront damage."
+      },
+      "precise-thrust": {
+        "might": 85,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "11.5 mean physical damage along a two-tile line for 5 mana and cooldown 1. Modest multi-target upside requires alignment; price about 1.5 useful targets rather than an automatic double hit."
+      },
+      "soulflare": {
+        "might": 210,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "39.5 mean ranged magical damage with half actual damage returned as healing. Useful burst and sustain together, reduced for 40 mana, cooldown 4, defenses, overhealing and overkill."
+      },
+      "charred-chains": {
+        "might": 175,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "25.5 mean magical damage in a cross at range 3 with a 25% chance of 10% vulnerability for two turns. Value about 1.5 useful targets and conditional follow-up, reduced for 25 mana and cooldown 3."
+      },
+      "crushing-blow": {
+        "might": 85,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "14 mean melee damage with a 30% one-turn stun chance, free with cooldown 2. Add expected denied actions only for surviving targets; melee access and failed procs constrain control."
+      },
+      "stone-bark": {
+        "might": 10,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "Multiplies existing armor by 1.25 for two target end steps, costing 10 mana with cooldown 3 and a cast action. At 12 armor this adds only 3 armor briefly; at zero armor it adds nothing. Self-cast consumes its first duration tick immediately."
+      },
+      "rootgrasp": {
+        "might": 180,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "19 mean magical damage in a cross at range 3, with a 40% one-turn stun chance. Damage plus denied actions across about 1.5 useful targets, reduced for 15 mana, cooldown 4 and formation dependence."
+      },
+      "verdant-smite": {
+        "might": 150,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "34 mean ranged magical damage for 25 mana and cooldown 3. Its 50% armor-reduction proc helps later physical attacks; it does not reduce magic resistance or amplify this magical hit."
+      },
+      "natures-embrace": {
+        "might": 230,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "32 mean healing to each ally globally for 35 mana and cooldown 4. Strong rescue when multiple allies are injured; value roughly 1.5 useful recipients after missing-HP and regeneration limits, not every ally's full raw heal."
+      },
+      "lightning-surge": {
+        "might": 245,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "30.5 mean magical damage per enemy globally and a 25% one-turn stun chance. About two useful targets, discounted for 50 mana and cooldown 3. The described paralysis is implemented as StunEffect."
+      },
+      "stunning-strike": {
+        "might": 130,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "23 mean physical melee damage with a 30% one-turn stun chance, free with cooldown 2. Damage and probabilistic action denial together exceed the reference, but require close access and a surviving target."
+      },
+      "staggering-jab": {
+        "might": 35,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "5 mean melee damage with a 20% one-turn stun chance, free with cooldown 1. Low immediate payoff and unreliable control; the described paralysis is a stun, not a separate additional effect."
+      },
+      "battle-roar": {
+        "might": 45,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "A 60% chance to deny one enemy action at range 2, with no damage. Costs a caster action, 15 mana and cooldown 3. Value denial of a live threatening enemy rather than treating a chance-based stun as guaranteed damage."
+      },
+      "torrent-spiral": {
+        "might": 145,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "23 mean physical damage to adjacent enemies with a 25% vulnerability proc. Roughly 1.5 useful targets, close positioning risk, 35 mana and cooldown 4; eight surrounding tiles do not imply eight hits."
+      },
+      "tidepiercer-thrust": {
+        "might": 210,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "34.5 mean physical damage along a three-tile line, with a 30% chance to ignore 25% defense. About 1.5 useful aligned targets, reduced for 25 mana and cooldown 3; penetration has no benefit against zero armor."
+      },
+      "ocean-blessing": {
+        "might": 85,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "About 19.6 mean healing to one ally at range 3 for 20 mana and cooldown 3. Near the reference's useful HP swing when needed, but greater cost and overhealing risk reduce value."
+      },
+      "aqua-wave": {
+        "might": 80,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "12 mean magical damage across a front arc for 10 mana and cooldown 1. About 1.5 useful targets; the 20% -2 Agility proc changes initiative briefly, not movement or the number of actions."
+      },
+      "tidal-pulse": {
+        "might": 130,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "21 mean magical damage in a cross at range 3 for 30 mana and cooldown 3. About 1.5 useful targets plus a small 25% -2 Agility proc; do not price the initiative debuff as a stun."
+      },
+      "stream-of-life": {
+        "might": 90,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "23 mean self-healing for 25 mana and cooldown 4. Requires missing health and an action that could otherwise attack; self-only targeting removes ally rescue flexibility."
+      },
+      "rupture": {
+        "might": 65,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "10 mean physical melee damage and a 20% chance of two 4-damage bleed ticks, free with cooldown 1. Tick completion depends on survival, so the bleed receives less credit than immediate damage."
+      },
+      "storm-pulse": {
+        "might": 175,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "About 18.5 expected physical damage including its bonus proc to up to three distinct random enemies globally. Reference two useful targets, 25 mana and cooldown 3; random selection limits focus against larger groups."
+      },
+      "volt-lash": {
+        "might": 435,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "Four global random hits of about 22 damage each, each with a 30% stun chance, for 35 mana and cooldown 4. Large immediate payoff and control; repeated hits encounter defense individually, and repeated stuns/overkill do not count as four distinct denied actions."
+      },
+      "final-verdict": {
+        "might": 190,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "37 mean melee damage for 10 mana and cooldown 2, with a special strike against targets at or below 10% HP. The finisher still passes through defenses and is capped by remaining useful HP; never value the substituted max-HP coefficient as uncapped damage."
+      },
+      "aegis-wall": {
+        "might": 190,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "At 20 Vitality, shields each ally for 25% of that ally's max HP for two end steps. Value consumed shields across about two exposed allies, reduced for 35 mana, cooldown 6 and expiry. The implementation adds no Armor/Magic Resistance despite the spell description."
+      },
+      "bulwark-bash": {
+        "might": 200,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "24.5 mean physical melee damage plus a guaranteed one-turn stun, free with cooldown 2. Reliable denial of a surviving enemy's action and incoming pressure is substantial; do not also add a separate full prevention bonus for the same denied action."
+      },
+      "earthshatter": {
+        "might": 510,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "31.5 mean physical damage per enemy globally, free with cooldown 4. One 50% cast-level roll attempts stuns on all targets; two applied stuns also grant +20 Armor and Magic Resistance for the battle. Price that combined multi-enemy damage/control/sustain package; the defense bonus is absent against a lone enemy."
+      },
+      "deflecting-stance": {
+        "might": 45,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "At 20 Vitality reflects 55% of incoming damage through the attacker's defenses, subtracting actual reflected damage from the incoming hit. Costs 25 mana and cooldown 4. One target end-step duration makes self-cast expire before the next enemy action; an ally who already acted can benefit. No independent flat 50% reduction is implemented."
+      },
+      "bladestorm-rhythm": {
+        "might": 300,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "Two immediate physical melee strikes totaling about 76 raw damage for 15 mana and cooldown 4. Large focused burst, reduced for close access, overkill and defense applied separately to each strike; this spell has no charge delay."
+      },
+      "iron-will": {
+        "might": 150,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "One ally gains +20 Armor and Magic Resistance for two target end steps, for 20 mana and cooldown 6; below 30% HP it also heals 10% max HP. Credit useful incoming mitigation and conditional rescue. Cleansing removes DEBUFF effects only, not DOT, STUN or CURSE; self-cast immediately consumes a duration tick."
+      },
+      "arcane-channeling": {
+        "might": 140,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "32 raw magical damage per original surviving enemy at effective INT 20, globally. ChargeEffect(2) consumes the casting turn and one further blocked activation: judge its roughly 64 two-target payoff across two committed actions, then discount delay, caster death, lost targets, 40 mana and cooldown 6. Roughly half the value of an otherwise comparable immediate release; a larger discharge can fit the same Might budget. Uses live INT at release and scales sharply at higher INT."
+      },
+      "fleetfoot-gambit": {
+        "might": 65,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#spells-v1",
+        "conditions": "Spells v1: effective attributes 20, 100 HP/mana, 0 crit; 3- and 7-round encounters, 1–3 enemies and 1–2 allies, defenses 0 or 12. Reference 100: immediate 20 average single-target damage, range 1–3, 10 mana, configured cooldown 1. Compare useful damage, healing, prevention and denied actions; account for mana, cooldown, positioning, charge actions, delayed payoff and target loss. Local areas assume about 1.5 useful targets, global effects 2; never assume every tile is occupied.",
+        "rationale": "Grants an extra action next round to one ally at range 3, for 50 mana and cooldown 8. Self-cast trades away the present action; the gain is timing and upkeep, not an entirely free attack. Transferring an action to a stronger ally has more value, but recipients, survival and mana constrain the package."
+      }
+    },
+    "items": {
+      "iron-sword": {
+        "might": 100,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#weapons-v1",
+        "conditions": "Weapons v1: base attributes 20, 100 HP/mana, no other gear/passives, 3- and 7-round encounters with defenses 0 or 12 and movement on an open board. Iron Sword is the 100 reference: +6 Strength and its physical melee attack profile. Compare the complete equipped package including range, spell scaling and regeneration. Weapon values are not comparable with armor values.",
+        "rationale": "Weapon family reference. +6 Strength and a range-1 physical profile averaging 14 damage at base Strength 20. Includes the weapon's stat contribution to physical spells; not just the +6 modifier in isolation."
+      },
+      "oakwarden-staff": {
+        "might": 150,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#weapons-v1",
+        "conditions": "Weapons v1: base attributes 20, 100 HP/mana, no other gear/passives, 3- and 7-round encounters with defenses 0 or 12 and movement on an open board. Iron Sword is the 100 reference: +6 Strength and its physical melee attack profile. Compare the complete equipped package including range, spell scaling and regeneration. Weapon values are not comparable with armor values.",
+        "rationale": "+8 Intelligence with a range-3 magical attack averaging 14.5 damage at base INT 20, plus spell scaling and 1.6 mana regeneration. Reach improves access relative to the reference sword; magic resistance and non-caster builds reduce the advantage."
+      },
+      "iron-cuirass": {
+        "might": 100,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#armor-v1",
+        "conditions": "Armor v1: base attributes 20, 100 HP/mana, sword/staff, no other armor/passives; 3- and 7-round encounters with mixed physical/magical threats and opportunities to cast. Iron Cuirass (+12 armor) is the 100 reference. Compare useful mitigation with Intelligence scaling and mana regeneration across the encounter, including damage-type and build dependence.",
+        "rationale": "Armor family reference. +12 flat armor prevents physical damage on repeated hits without an action or mana cost. It offers no magic resistance; value depends on the encounter's damage mix."
+      },
+      "int-armor": {
+        "might": 80,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#armor-v1",
+        "conditions": "Armor v1: base attributes 20, 100 HP/mana, sword/staff, no other armor/passives; 3- and 7-round encounters with mixed physical/magical threats and opportunities to cast. Iron Cuirass (+12 armor) is the 100 reference. Compare useful mitigation with Intelligence scaling and mana regeneration across the encounter, including damage-type and build dependence.",
+        "rationale": "+10 Intelligence increases magical scaling and adds 2 mana regeneration, but supplies no armor. Useful on a caster who spends the extra mana; less consistent than the reference cuirass across mixed builds and short encounters."
+      }
+    },
+    "passives": {
+      "armor-up": {
+        "might": 40,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#passives-v1",
+        "conditions": "Passives v1: base attributes 20, 100 HP, sword/staff, 12 armor, 0 magic resistance and 0 crit; 3- and 7-round encounters with mixed incoming damage. Reference 100: about 20 additional useful HP of encounter contribution over 7 rounds, without spending an action. Evaluate the change from removing this passive, including wasted healing, eligible damage types, activation conditions and survival. No credit for hypothetical unavailable crit gear.",
+        "rationale": "20% more existing armor means +2.4 on the 12-armor reference. Only physical incoming hits benefit and short fights offer fewer such hits. Exactly zero mitigation on a zero-armor build; do not treat it as +20 flat armor."
+      },
+      "thorn-carapace": {
+        "might": 100,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#passives-v1",
+        "conditions": "Passives v1: base attributes 20, 100 HP, sword/staff, 12 armor, 0 magic resistance and 0 crit; 3- and 7-round encounters with mixed incoming damage. Reference 100: about 20 additional useful HP of encounter contribution over 7 rounds, without spending an action. Evaluate the change from removing this passive, including wasted healing, eligible damage types, activation conditions and survival. No credit for hypothetical unavailable crit gear.",
+        "rationale": "Reflects 20% of received damage through the attacker's defenses, with no reduction to the original incoming hit. Values useful retaliation over several attacks; no recursive reflection and no credit for overkill."
+      },
+      "blessed-fortune": {
+        "might": 115,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#passives-v1",
+        "conditions": "Passives v1: base attributes 20, 100 HP, sword/staff, 12 armor, 0 magic resistance and 0 crit; 3- and 7-round encounters with mixed incoming damage. Reference 100: about 20 additional useful HP of encounter contribution over 7 rounds, without spending an action. Evaluate the change from removing this passive, including wasted healing, eligible damage types, activation conditions and survival. No credit for hypothetical unavailable crit gear.",
+        "rationale": "+5 Blessed raises the capped d20 result used for damage/heal interpolation. On a 0–15 weapon roll this adds roughly 3.3 raw damage per attack before defense across a long encounter. It does not increase independent effect-proc or critical-hit chances."
+      },
+      "bloodfang": {
+        "might": 55,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#passives-v1",
+        "conditions": "Passives v1: base attributes 20, 100 HP, sword/staff, 12 armor, 0 magic resistance and 0 crit; 3- and 7-round encounters with mixed incoming damage. Reference 100: about 20 additional useful HP of encounter contribution over 7 rounds, without spending an action. Evaluate the change from removing this passive, including wasted healing, eligible damage types, activation conditions and survival. No credit for hypothetical unavailable crit gear.",
+        "rationale": "Adds 10% lifesteal to actual physical damage only. Seven reference physical attacks can recover roughly 10 HP before overhealing; multi-target physical abilities improve it. No benefit to a purely magical damage build."
+      },
+      "soulleech": {
+        "might": 30,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#passives-v1",
+        "conditions": "Passives v1: base attributes 20, 100 HP, sword/staff, 12 armor, 0 magic resistance and 0 crit; 3- and 7-round encounters with mixed incoming damage. Reference 100: about 20 additional useful HP of encounter contribution over 7 rounds, without spending an action. Evaluate the change from removing this passive, including wasted healing, eligible damage types, activation conditions and survival. No credit for hypothetical unavailable crit gear.",
+        "rationale": "Adds 5% omnivamp, but the current damage calculator applies it only in the nonphysical branch. Values conditional healing from magical attacks/spells, limited by missing HP and actual damage. It is not 5% healing from all damage types in this implementation."
+      },
+      "mystic-flow": {
+        "might": 30,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#passives-v1",
+        "conditions": "Passives v1: base attributes 20, 100 HP, sword/staff, 12 armor, 0 magic resistance and 0 crit; 3- and 7-round encounters with mixed incoming damage. Reference 100: about 20 additional useful HP of encounter contribution over 7 rounds, without spending an action. Evaluate the change from removing this passive, including wasted healing, eligible damage types, activation conditions and survival. No credit for hypothetical unavailable crit gear.",
+        "rationale": "25% more mana regeneration: at effective INT 20, 4 becomes 5 per turn. About 7 additional mana over seven turns, only useful if spent on a better available action; it does not itself grant attacks or damage."
+      },
+      "vital-wellspring": {
+        "might": 100,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#passives-v1",
+        "conditions": "Passives v1: base attributes 20, 100 HP, sword/staff, 12 armor, 0 magic resistance and 0 crit; 3- and 7-round encounters with mixed incoming damage. Reference 100: about 20 additional useful HP of encounter contribution over 7 rounds, without spending an action. Evaluate the change from removing this passive, including wasted healing, eligible damage types, activation conditions and survival. No credit for hypothetical unavailable crit gear.",
+        "rationale": "25% more health regeneration: the reference hero's 10 becomes 12.5, rounded to 13 during recovery. About 21 extra HP over seven injured turns, less when healthy or in short fights. Bot regeneration differs and is valued in each enemy kit instead."
+      },
+      "stoneform-resolve": {
+        "might": 170,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#passives-v1",
+        "conditions": "Passives v1: base attributes 20, 100 HP, sword/staff, 12 armor, 0 magic resistance and 0 crit; 3- and 7-round encounters with mixed incoming damage. Reference 100: about 20 additional useful HP of encounter contribution over 7 rounds, without spending an action. Evaluate the change from removing this passive, including wasted healing, eligible damage types, activation conditions and survival. No credit for hypothetical unavailable crit gear.",
+        "rationale": "Gains +1 Armor and Magic Resistance per completed combat round, capped at 15 and reset each battle. Accumulating prevention against both damage types is strong over seven rounds; do not grant all 15 stacks upfront or count protection after death."
+      },
+      "titans-resurgence": {
+        "might": 120,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#passives-v1",
+        "conditions": "Passives v1: base attributes 20, 100 HP, sword/staff, 12 armor, 0 magic resistance and 0 crit; 3- and 7-round encounters with mixed incoming damage. Reference 100: about 20 additional useful HP of encounter contribution over 7 rounds, without spending an action. Evaluate the change from removing this passive, including wasted healing, eligible damage types, activation conditions and survival. No credit for hypothetical unavailable crit gear.",
+        "rationale": "Once per battle, a living owner at or below 30% HP starts four turns of 7.5%-max-HP healing. At 100 max HP the nominal total is 30, discounted for never crossing the threshold, death before activation/completion, and overhealing. Larger enemy HP pools amplify it."
+      },
+      "keen-instincts": {
+        "might": 0,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#passives-v1",
+        "conditions": "Passives v1: base attributes 20, 100 HP, sword/staff, 12 armor, 0 magic resistance and 0 crit; 3- and 7-round encounters with mixed incoming damage. Reference 100: about 20 additional useful HP of encounter contribution over 7 rounds, without spending an action. Evaluate the change from removing this passive, including wasted healing, eligible damage types, activation conditions and survival. No credit for hypothetical unavailable crit gear.",
+        "rationale": "Multiplies existing critical chance by 1.25 and adds 0.5 critical damage. The reference has zero critical chance and current catalogue equipment supplies none, so neither modifier changes outcomes. This is a rated conditional zero, not missing metadata; reassess when positive-crit builds are supported."
+      }
+    },
+    "enemies": {
+      "goblin": {
+        "might": 60,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#enemies-v1",
+        "conditions": "Enemies v1: Skeleton Grunt is the 100 reference. Compare the full authored kit against two 100-HP/100-mana heroes, base attributes 20 (second agility 19), sword/staff, no armor/passives, Basic Attack only. Real tactical movement and heuristic AI for both sides; empty 7x7 board, clustered/spread starts, 16 matched seeds each, 15-round limit. Weigh pressure, durability, control and sustain together. Unfinished runs are censored, not victories; see enemy-probes.json. Values are estimates, not win-rate ratios.",
+        "rationale": "20 HP, low offensive attributes and Basic Attack. Equipment, Blessed and Armor Up improve the kit but do not overcome low durability: probes averaged 3.25 damage to the party versus the reference's 8.19."
+      },
+      "skeleton-grunt": {
+        "might": 100,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#enemies-v1",
+        "conditions": "Enemies v1: Skeleton Grunt is the 100 reference. Compare the full authored kit against two 100-HP/100-mana heroes, base attributes 20 (second agility 19), sword/staff, no armor/passives, Basic Attack only. Real tactical movement and heuristic AI for both sides; empty 7x7 board, clustered/spread starts, 16 matched seeds each, 15-round limit. Weigh pressure, durability, control and sustain together. Unfinished runs are censored, not victories; see enemy-probes.json. Values are estimates, not win-rate ratios.",
+        "rationale": "Enemy family reference: 45 HP and a free Crude Strike. Probes averaged 1.06 rounds and 8.19 party damage. This fixes the comparison unit, not a target win rate."
+      },
+      "rotting-corpse": {
+        "might": 170,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#enemies-v1",
+        "conditions": "Enemies v1: Skeleton Grunt is the 100 reference. Compare the full authored kit against two 100-HP/100-mana heroes, base attributes 20 (second agility 19), sword/staff, no armor/passives, Basic Attack only. Real tactical movement and heuristic AI for both sides; empty 7x7 board, clustered/spread starts, 16 matched seeds each, 15-round limit. Weigh pressure, durability, control and sustain together. Unfinished runs are censored, not victories; see enemy-probes.json. Values are estimates, not win-rate ratios.",
+        "rationale": "80 HP with Festering Blow and Basic Attack. More durability and local area pressure than the reference; 2.25 rounds and 20.50 party damage in probes, without kills."
+      },
+      "wisp-of-regret": {
+        "might": 110,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#enemies-v1",
+        "conditions": "Enemies v1: Skeleton Grunt is the 100 reference. Compare the full authored kit against two 100-HP/100-mana heroes, base attributes 20 (second agility 19), sword/staff, no armor/passives, Basic Attack only. Real tactical movement and heuristic AI for both sides; empty 7x7 board, clustered/spread starts, 16 matched seeds each, 15-round limit. Weigh pressure, durability, control and sustain together. Unfinished runs are censored, not victories; see enemy-probes.json. Values are estimates, not win-rate ratios.",
+        "rationale": "40 HP, 40 mana and INT 14 support ranged Cinder Wisp. Less health than the reference but more reach and magical pressure: 11.44 party damage in probes."
+      },
+      "ghoul-knight-ivern": {
+        "might": 350,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#enemies-v1",
+        "conditions": "Enemies v1: Skeleton Grunt is the 100 reference. Compare the full authored kit against two 100-HP/100-mana heroes, base attributes 20 (second agility 19), sword/staff, no armor/passives, Basic Attack only. Real tactical movement and heuristic AI for both sides; empty 7x7 board, clustered/spread starts, 16 matched seeds each, 15-round limit. Weigh pressure, durability, control and sustain together. Unfinished runs are censored, not victories; see enemy-probes.json. Values are estimates, not win-rate ratios.",
+        "rationale": "150 HP, Vital Strike sustain and Festering Blow pressure. Probes lasted 5.56 rounds, inflicted 73.81 damage and generated 18.38 spell/effect healing; full kit durability matters beyond base HP."
+      },
+      "emberbound-revenant": {
+        "might": 550,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#enemies-v1",
+        "conditions": "Enemies v1: Skeleton Grunt is the 100 reference. Compare the full authored kit against two 100-HP/100-mana heroes, base attributes 20 (second agility 19), sword/staff, no armor/passives, Basic Attack only. Real tactical movement and heuristic AI for both sides; empty 7x7 board, clustered/spread starts, 16 matched seeds each, 15-round limit. Weigh pressure, durability, control and sustain together. Unfinished runs are censored, not victories; see enemy-probes.json. Values are estimates, not win-rate ratios.",
+        "rationale": "150 HP/mana, INT 30, ranged area damage and Soulflare sustain with Soulleech. Probes averaged 199.84 party damage and 37.50 spell/effect healing over 6.47 rounds; occasional hero deaths despite no party wipes."
+      },
+      "ashen-skeleton": {
+        "might": 110,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#enemies-v1",
+        "conditions": "Enemies v1: Skeleton Grunt is the 100 reference. Compare the full authored kit against two 100-HP/100-mana heroes, base attributes 20 (second agility 19), sword/staff, no armor/passives, Basic Attack only. Real tactical movement and heuristic AI for both sides; empty 7x7 board, clustered/spread starts, 16 matched seeds each, 15-round limit. Weigh pressure, durability, control and sustain together. Unfinished runs are censored, not victories; see enemy-probes.json. Values are estimates, not win-rate ratios.",
+        "rationale": "50 HP and a free range-4 Splinter Shot alongside Crude Strike. Slightly more durability and reach than Skeleton Grunt; probes produced the same 8.19 party damage, so the extra kit receives only a modest premium."
+      },
+      "lurking-flame-wraith": {
+        "might": 150,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#enemies-v1",
+        "conditions": "Enemies v1: Skeleton Grunt is the 100 reference. Compare the full authored kit against two 100-HP/100-mana heroes, base attributes 20 (second agility 19), sword/staff, no armor/passives, Basic Attack only. Real tactical movement and heuristic AI for both sides; empty 7x7 board, clustered/spread starts, 16 matched seeds each, 15-round limit. Weigh pressure, durability, control and sustain together. Unfinished runs are censored, not victories; see enemy-probes.json. Values are estimates, not win-rate ratios.",
+        "rationale": "60 HP, 70 mana and ranged Cinderbrand with burn pressure. Probes averaged 19.88 party damage in 1.44 rounds; the short survival window limits delayed burn and repeat casts."
+      },
+      "crypt-crawler": {
+        "might": 100,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#enemies-v1",
+        "conditions": "Enemies v1: Skeleton Grunt is the 100 reference. Compare the full authored kit against two 100-HP/100-mana heroes, base attributes 20 (second agility 19), sword/staff, no armor/passives, Basic Attack only. Real tactical movement and heuristic AI for both sides; empty 7x7 board, clustered/spread starts, 16 matched seeds each, 15-round limit. Weigh pressure, durability, control and sustain together. Unfinished runs are censored, not victories; see enemy-probes.json. Values are estimates, not win-rate ratios.",
+        "rationale": "40 HP, AGI 15 and line/arc physical attacks. Initiative and multi-target opportunities offset lower health; probes averaged 10.56 party damage in less than one round."
+      },
+      "moss-covered-golem": {
+        "might": 210,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#enemies-v1",
+        "conditions": "Enemies v1: Skeleton Grunt is the 100 reference. Compare the full authored kit against two 100-HP/100-mana heroes, base attributes 20 (second agility 19), sword/staff, no armor/passives, Basic Attack only. Real tactical movement and heuristic AI for both sides; empty 7x7 board, clustered/spread starts, 16 matched seeds each, 15-round limit. Weigh pressure, durability, control and sustain together. Unfinished runs are censored, not victories; see enemy-probes.json. Values are estimates, not win-rate ratios.",
+        "rationale": "90 HP and Crushing Blow provide durability plus a stun chance. Probes lasted 2.75 rounds with 26.88 party damage; no assumptions of armor or immunities beyond its authored kit."
+      },
+      "barkhide-shaman": {
+        "might": 130,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#enemies-v1",
+        "conditions": "Enemies v1: Skeleton Grunt is the 100 reference. Compare the full authored kit against two 100-HP/100-mana heroes, base attributes 20 (second agility 19), sword/staff, no armor/passives, Basic Attack only. Real tactical movement and heuristic AI for both sides; empty 7x7 board, clustered/spread starts, 16 matched seeds each, 15-round limit. Weigh pressure, durability, control and sustain together. Unfinished runs are censored, not victories; see enemy-probes.json. Values are estimates, not win-rate ratios.",
+        "rationale": "60 HP and 70 mana, Splinter Shot and Stone Bark. Its zero base armor makes percentage-only Stone Bark ineffective here; probes averaged 10.69 party damage. The nominal defensive spell does not justify a large support premium."
+      },
+      "hollowed-oakwarden": {
+        "might": 900,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#enemies-v1",
+        "conditions": "Enemies v1: Skeleton Grunt is the 100 reference. Compare the full authored kit against two 100-HP/100-mana heroes, base attributes 20 (second agility 19), sword/staff, no armor/passives, Basic Attack only. Real tactical movement and heuristic AI for both sides; empty 7x7 board, clustered/spread starts, 16 matched seeds each, 15-round limit. Weigh pressure, durability, control and sustain together. Unfinished runs are censored, not victories; see enemy-probes.json. Values are estimates, not win-rate ratios.",
+        "rationale": "260 HP, INT 40, Nature's Embrace, Blessed Fortune and max-HP-scaled Titan's Resurgence make an unusually durable healer. Probes averaged 208.13 spell/effect healing; 30/32 reached the 15-round cap. Censored survival is evidence of sustain, not 30 wins; coordinated burst may change this substantially."
+      },
+      "elder-treant": {
+        "might": 650,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#enemies-v1",
+        "conditions": "Enemies v1: Skeleton Grunt is the 100 reference. Compare the full authored kit against two 100-HP/100-mana heroes, base attributes 20 (second agility 19), sword/staff, no armor/passives, Basic Attack only. Real tactical movement and heuristic AI for both sides; empty 7x7 board, clustered/spread starts, 16 matched seeds each, 15-round limit. Weigh pressure, durability, control and sustain together. Unfinished runs are censored, not victories; see enemy-probes.json. Values are estimates, not win-rate ratios.",
+        "rationale": "180 HP, area root control, Crushing Blow and accumulating Stoneform defenses. Probes averaged 185 party damage and 18/32 hit the round cap without a hero death. Values long-fight resistance, not an invented victory for unfinished runs."
+      },
+      "thundermaw": {
+        "might": 1200,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#enemies-v1",
+        "conditions": "Enemies v1: Skeleton Grunt is the 100 reference. Compare the full authored kit against two 100-HP/100-mana heroes, base attributes 20 (second agility 19), sword/staff, no armor/passives, Basic Attack only. Real tactical movement and heuristic AI for both sides; empty 7x7 board, clustered/spread starts, 16 matched seeds each, 15-round limit. Weigh pressure, durability, control and sustain together. Unfinished runs are censored, not victories; see enemy-probes.json. Values are estimates, not win-rate ratios.",
+        "rationale": "300 HP, 200 mana, INT 40, Volt Lash, Lightning Surge and Thorn Carapace. Burst and repeated stuns defeated both heroes in all 32 probes, averaging 3.38 rounds; substantially above the reference even without scaling its raw HP into a formula."
+      },
+      "thunder-drake": {
+        "might": 370,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#enemies-v1",
+        "conditions": "Enemies v1: Skeleton Grunt is the 100 reference. Compare the full authored kit against two 100-HP/100-mana heroes, base attributes 20 (second agility 19), sword/staff, no armor/passives, Basic Attack only. Real tactical movement and heuristic AI for both sides; empty 7x7 board, clustered/spread starts, 16 matched seeds each, 15-round limit. Weigh pressure, durability, control and sustain together. Unfinished runs are censored, not victories; see enemy-probes.json. Values are estimates, not win-rate ratios.",
+        "rationale": "150 HP, STR 20 and Stunning Strike/Festering Blow combine physical burst, control and area pressure. Probes averaged 85.81 party damage over 5.25 rounds; no healing passive or guaranteed stun is assumed."
+      },
+      "sky-serpent": {
+        "might": 420,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#enemies-v1",
+        "conditions": "Enemies v1: Skeleton Grunt is the 100 reference. Compare the full authored kit against two 100-HP/100-mana heroes, base attributes 20 (second agility 19), sword/staff, no armor/passives, Basic Attack only. Real tactical movement and heuristic AI for both sides; empty 7x7 board, clustered/spread starts, 16 matched seeds each, 15-round limit. Weigh pressure, durability, control and sustain together. Unfinished runs are censored, not victories; see enemy-probes.json. Values are estimates, not win-rate ratios.",
+        "rationale": "180 HP, STR 24, AGI 18, global Storm Pulse and Battle Roar with mana regeneration. Probes averaged 98.69 party damage over 5.88 rounds; its full mobility/pressure kit exceeds the simpler drake despite unreliable control."
+      },
+      "storm-hatchling": {
+        "might": 75,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#enemies-v1",
+        "conditions": "Enemies v1: Skeleton Grunt is the 100 reference. Compare the full authored kit against two 100-HP/100-mana heroes, base attributes 20 (second agility 19), sword/staff, no armor/passives, Basic Attack only. Real tactical movement and heuristic AI for both sides; empty 7x7 board, clustered/spread starts, 16 matched seeds each, 15-round limit. Weigh pressure, durability, control and sustain together. Unfinished runs are censored, not victories; see enemy-probes.json. Values are estimates, not win-rate ratios.",
+        "rationale": "40 HP, AGI 18 and Staggering Jab's low damage/probabilistic stun. Early initiative helps, but probes averaged only 4.81 party damage; high legacy grade does not establish power."
+      },
+      "skybolt-wyvern": {
+        "might": 80,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#enemies-v1",
+        "conditions": "Enemies v1: Skeleton Grunt is the 100 reference. Compare the full authored kit against two 100-HP/100-mana heroes, base attributes 20 (second agility 19), sword/staff, no armor/passives, Basic Attack only. Real tactical movement and heuristic AI for both sides; empty 7x7 board, clustered/spread starts, 16 matched seeds each, 15-round limit. Weigh pressure, durability, control and sustain together. Unfinished runs are censored, not victories; see enemy-probes.json. Values are estimates, not win-rate ratios.",
+        "rationale": "35 HP, AGI 14 and Festering Blow. Some area pressure but very short survival: probes averaged 0.69 rounds and 7.50 party damage. Unused mana is not offensive value."
+      },
+      "commander-kelvaris": {
+        "might": 1000,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#enemies-v1",
+        "conditions": "Enemies v1: Skeleton Grunt is the 100 reference. Compare the full authored kit against two 100-HP/100-mana heroes, base attributes 20 (second agility 19), sword/staff, no armor/passives, Basic Attack only. Real tactical movement and heuristic AI for both sides; empty 7x7 board, clustered/spread starts, 16 matched seeds each, 15-round limit. Weigh pressure, durability, control and sustain together. Unfinished runs are censored, not victories; see enemy-probes.json. Values are estimates, not win-rate ratios.",
+        "rationale": "220 HP, STR 38, AGI 30, strong area/line damage and Vital Strike sustain. All 32 probes defeated both heroes, averaging 314.69 party damage over 6.72 rounds. Keen Instincts adds nothing at its zero base crit chance; the rating comes from the actual damage, timing and sustain kit."
+      },
+      "fishfolk-shaman": {
+        "might": 160,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#enemies-v1",
+        "conditions": "Enemies v1: Skeleton Grunt is the 100 reference. Compare the full authored kit against two 100-HP/100-mana heroes, base attributes 20 (second agility 19), sword/staff, no armor/passives, Basic Attack only. Real tactical movement and heuristic AI for both sides; empty 7x7 board, clustered/spread starts, 16 matched seeds each, 15-round limit. Weigh pressure, durability, control and sustain together. Unfinished runs are censored, not victories; see enemy-probes.json. Values are estimates, not win-rate ratios.",
+        "rationale": "60 HP, 70 mana, Ocean Blessing and Aqua Wave. Probes averaged 20.13 spell healing, extending survival to 2.19 rounds, with 12.69 party damage. Ally-support potential needs separate group encounters before Assessed status."
+      },
+      "fishfolk-scout": {
+        "might": 125,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#enemies-v1",
+        "conditions": "Enemies v1: Skeleton Grunt is the 100 reference. Compare the full authored kit against two 100-HP/100-mana heroes, base attributes 20 (second agility 19), sword/staff, no armor/passives, Basic Attack only. Real tactical movement and heuristic AI for both sides; empty 7x7 board, clustered/spread starts, 16 matched seeds each, 15-round limit. Weigh pressure, durability, control and sustain together. Unfinished runs are censored, not victories; see enemy-probes.json. Values are estimates, not win-rate ratios.",
+        "rationale": "55 HP, AGI 12 and free Rupture/Crude Strike. More health and bleed opportunity than Skeleton Grunt; probes averaged 11.31 party damage over 1.13 rounds."
+      },
+      "water-elemental": {
+        "might": 450,
+        "status": "estimated",
+        "referenceId": "docs/might-assessments.md#enemies-v1",
+        "conditions": "Enemies v1: Skeleton Grunt is the 100 reference. Compare the full authored kit against two 100-HP/100-mana heroes, base attributes 20 (second agility 19), sword/staff, no armor/passives, Basic Attack only. Real tactical movement and heuristic AI for both sides; empty 7x7 board, clustered/spread starts, 16 matched seeds each, 15-round limit. Weigh pressure, durability, control and sustain together. Unfinished runs are censored, not victories; see enemy-probes.json. Values are estimates, not win-rate ratios.",
+        "rationale": "130 HP, 150 mana, INT 30, ranged Tidal Pulse, self-healing and Vital Wellspring. Probes averaged 113.69 party damage and 28.81 spell/effect healing over 5.38 rounds; bot regeneration is included in combat but not counted as a second healing impact."
+      }
+    }
+  }
+}
