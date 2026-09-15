@@ -1,5 +1,5 @@
 import z from "zod";
-import { ItemTypeSchema } from "../items/item-types";
+import { EquipmentTypeSchema } from "../items/equipment-types";
 import { routeActionSchema, type DungeonRoute } from "./route";
 
 const resourceSchema = z.object({
@@ -40,7 +40,7 @@ const routeV1Schema = z.object({
       offerId: z.string().min(1),
       action: routeActionSchema,
       outcome: z.enum(["passed", "elite", "restored", "treasure", "trap"]),
-      rewards: z.array(ItemTypeSchema),
+      rewards: z.array(EquipmentTypeSchema),
       resources: z.array(resourceSchema),
       eliteRewardChance: z.number().min(0).max(1).optional(),
     }),

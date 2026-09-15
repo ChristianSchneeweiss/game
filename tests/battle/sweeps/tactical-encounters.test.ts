@@ -3,7 +3,7 @@ import SuperJSON from "superjson";
 import { Character } from "../../../apps/game/src/base-entity";
 import { BM } from "../../../apps/game/src/bm";
 import { DungeonKeySchema } from "../../../apps/game/src/dungeons/dungeon-keys";
-import { itemFactory } from "../../../apps/game/src/items/equipment/item-factory";
+import { equipmentFactory } from "../../../apps/game/src/items/equipment/equipment-factory";
 import { createSpellFromType } from "../../../apps/game/src/spells/base/spell-from-type";
 import type { SpellType } from "../../../apps/game/src/spells/base/spell-types";
 import { planEnemyTurn } from "../../../apps/game/src/tactical/ai";
@@ -80,7 +80,7 @@ for (const { value: key } of DungeonKeySchema.options) {
             createSpellFromType(`${hero.id}-${type}`, type),
           );
           const type = kit === 0 ? "iron-sword" : "oakwarden-staff";
-          hero.equipped.WEAPON = itemFactory(type, `${hero.id}-weapon`, hero);
+          hero.equipped.WEAPON = equipmentFactory(type, `${hero.id}-weapon`, hero);
           return hero;
         });
         const enemies = types.map((type, index) =>

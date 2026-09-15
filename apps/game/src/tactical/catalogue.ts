@@ -1,5 +1,5 @@
 import type { SpellType } from "../spells/base/spell-types";
-import type { ItemType } from "../items/item-types";
+import type { EquipmentType } from "../items/equipment-types";
 import type { Footprint, Targeting, WeaponAttackProfile } from "./types";
 
 export const FOOTPRINTS = {
@@ -181,11 +181,11 @@ export const WEAPON_PROFILES = {
     baseDamage: { min: 0, max: 15 },
     scaling: [],
   },
-} satisfies Partial<Record<ItemType, WeaponAttackProfile>> &
+} satisfies Partial<Record<EquipmentType, WeaponAttackProfile>> &
   Record<"unarmed" | "enemy-default", WeaponAttackProfile>;
 
 export function weaponProfileFor(
-  itemType?: ItemType,
+  itemType?: EquipmentType,
 ): WeaponAttackProfile | undefined {
   return itemType && Object.hasOwn(WEAPON_PROFILES, itemType)
     ? WEAPON_PROFILES[itemType as keyof typeof WEAPON_PROFILES]

@@ -2,6 +2,7 @@ import z from "zod";
 import type { BattleManager } from "./battle-types";
 import type { AllAttributeKeys, Entity } from "./entity-types";
 import { ItemTypeSchema } from "./items/item-types";
+import { ItemQuantitySchema } from "./items/quantity";
 import type {
   InteractionHooks,
   RoundLifecycleHooks,
@@ -111,7 +112,7 @@ export interface Loot {
 
 const SpellLootEntitySchema = z.object({
   type: z.literal("SPELL"),
-  dropRate: z.number(),
+  dropRate: z.number().finite().min(0).max(1),
   data: z.object({
     spellType: SpellTypeSchema,
   }),
@@ -119,15 +120,16 @@ const SpellLootEntitySchema = z.object({
 
 const ItemLootEntitySchema = z.object({
   type: z.literal("ITEM"),
-  dropRate: z.number(),
+  dropRate: z.number().finite().min(0).max(1),
   data: z.object({
     itemType: ItemTypeSchema,
+    quantity: ItemQuantitySchema.optional(),
   }),
 });
 
 const PassiveLootEntitySchema = z.object({
   type: z.literal("PASSIVE"),
-  dropRate: z.number(),
+  dropRate: z.number().finite().min(0).max(1),
   data: z.object({
     passiveType: PassiveTypeSchema,
   }),

@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import { BaseEnemy } from "./base/base.enemy";
-import { defaultEquipmentDropRate } from "../utils/loot";
+import { defaultItemDropRate } from "../utils/loot";
 
 export class MossCoveredGolem extends BaseEnemy {
   constructor(id?: string) {
@@ -21,7 +21,7 @@ export class MossCoveredGolem extends BaseEnemy {
       xp: 30,
       loot: {
         gold: 25,
-        items: defaultEquipmentDropRate(["iron-sword"]),
+        items: defaultItemDropRate(["iron-sword"]),
       },
       spells: ["crushing-blow", "crude-strike", "basic-attack"],
     });

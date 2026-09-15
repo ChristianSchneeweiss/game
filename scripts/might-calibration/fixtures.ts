@@ -1,7 +1,7 @@
 import { BaseEntity } from "../../apps/game/src/base-entity";
 import { BM } from "../../apps/game/src/bm";
-import { itemFactory } from "../../apps/game/src/items/equipment/item-factory";
-import type { ItemType } from "../../apps/game/src/items/item-types";
+import { equipmentFactory } from "../../apps/game/src/items/equipment/equipment-factory";
+import type { EquipmentType } from "../../apps/game/src/items/equipment-types";
 import { createSpellFromType } from "../../apps/game/src/spells/base/spell-from-type";
 import type { SpellType } from "../../apps/game/src/spells/base/spell-types";
 
@@ -33,8 +33,8 @@ function actor(id: string, stat: number, agility: number, enemy = false) {
   return entity;
 }
 
-function equip(entity: BaseEntity, item: ItemType) {
-  const equipment = itemFactory(item, `${entity.id}:${item}`, entity);
+function equip(entity: BaseEntity, item: EquipmentType) {
+  const equipment = equipmentFactory(item, `${entity.id}:${item}`, entity);
   entity.equipped[equipment.equipmentSlot] = equipment;
 }
 

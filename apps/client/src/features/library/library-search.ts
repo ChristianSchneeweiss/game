@@ -2,7 +2,8 @@ import type {
   LibraryCategory,
   LibraryEntry,
 } from "@loot-game/game/library/types";
-import { isMight, mightFamilyLabel } from "@loot-game/game/might/might";
+import { isMight } from "@loot-game/game/might/might";
+import { libraryFamilyLabel } from "@loot-game/game/library/types";
 
 export const libraryCategories = [
   "spells",
@@ -36,6 +37,8 @@ export type LibrarySearch = {
 const groups: Record<LibraryCategory, readonly string[]> = {
   spells: ["enemies", "allies", "everyone"],
   items: [
+    "consumable",
+    "material",
     "weapon",
     "armor",
     "ring",
@@ -108,7 +111,7 @@ export function filterLibrary(entries: LibraryEntry[], search: LibrarySearch) {
         entry.category === search.category &&
         (search.tier === "all" ||
           (search.tier === "unrated"
-            ? entry.might === null
+            ? entry.assessmentStatus === "unrated"
             : entry.tier === search.tier)) &&
         (group === "all" || entry.group === group) &&
         (search.mightMin === undefined ||
@@ -122,8 +125,8 @@ export function filterLibrary(entries: LibraryEntry[], search: LibrarySearch) {
       const byName = () =>
         a.name.localeCompare(b.name) || a.type.localeCompare(b.type);
       if (search.sort === "mightAsc" || search.sort === "mightDesc") {
-        const family = mightFamilyLabel(a.family).localeCompare(
-          mightFamilyLabel(b.family),
+        const family = libraryFamilyLabel(a.family).localeCompare(
+          libraryFamilyLabel(b.family),
         );
         if (family) return family;
         if (a.might === null) return b.might === null ? byName() : 1;

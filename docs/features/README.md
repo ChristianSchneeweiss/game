@@ -13,6 +13,16 @@ remaining release qualification.
 - [Might and balance](../might/README.md): the valuation model, current
   assessments and supporting research.
 
+## Item system
+
+The [foundation spec](items/spec.md), published as
+[issue #6](https://github.com/ChristianSchneeweiss/game/issues/6), covers the shared
+catalog, inventory stacks, assigned material/consumable tiers without required
+Might, and extensions to existing per-enemy drops. The
+[design notes](items/design.md) retain the later equipped-consumable direction;
+effects, action costs, and exact loadout rules remain open. The
+[maintainability assessment](items/research.md) records the supporting research.
+
 ## Friends and shared runs
 
 Read the [implementation](friends/implementation.md) for player controls,

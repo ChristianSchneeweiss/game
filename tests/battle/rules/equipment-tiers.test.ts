@@ -1,8 +1,8 @@
 import { expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { BM } from "../../../apps/game/src/bm";
-import { ItemTypeSchema } from "../../../apps/game/src/items/item-types";
-import { itemFactory } from "../../../apps/game/src/items/equipment/item-factory";
+import { EquipmentTypeSchema } from "../../../apps/game/src/items/equipment-types";
+import { equipmentFactory } from "../../../apps/game/src/items/equipment/equipment-factory";
 import { equipmentBuildPreview } from "../../../apps/game/src/items/equipment/build-preview";
 import { EQUIPMENT_SLOTS } from "../../../apps/game/src/items/equipment/equipment-slots";
 import {
@@ -24,7 +24,7 @@ test("all nine slots span E–S, with obtainable sources and one consistent tier
     "utf8",
   );
   expect(tieredEquipmentTypes).toHaveLength(49);
-  expect(ItemTypeSchema.options).toHaveLength(61);
+  expect(EquipmentTypeSchema.options).toHaveLength(61);
   for (const slot of EQUIPMENT_SLOTS) {
     const entries = items.filter((entry) => entry.group === slot.toLowerCase());
     expect([...new Set(entries.map((item) => item.tier))].sort()).toEqual([
@@ -39,7 +39,7 @@ test("all nine slots span E–S, with obtainable sources and one consistent tier
   }
   for (const type of tieredEquipmentTypes) {
     const entry = items.find((item) => item.type === type)!;
-    const item = itemFactory(type, `test-${type}`, contentHero());
+    const item = equipmentFactory(type, `test-${type}`, contentHero());
     expect(entry.tier).toBe(item.tier);
     expect(item.modifiers.length).toBeGreaterThan(0);
     expect(entry.assessmentStatus).toBe("estimated");
@@ -73,7 +73,7 @@ test("nine equipped pieces stack with passives, and ring replacement previews le
   expect(hero.getAttribute("lifesteal")).toBeCloseTo(0.08);
   expect(hero.getAttribute("healthRegen")).toBeCloseTo(33.75);
   const before = equipmentBuildPreview(hero);
-  const ring = itemFactory("copper-band", "replacement", hero);
+  const ring = equipmentFactory("copper-band", "replacement", hero);
   const preview = equipmentBuildPreview(hero, { ...hero.equipped, RING: ring });
   expect(preview.getAttribute("strength")).toBe(
     before.getAttribute("strength") - 9,

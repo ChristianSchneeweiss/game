@@ -13,6 +13,8 @@ import { LootManager } from "../apps/server/src/game-usecases/loot-manager";
 import { SyncFactory } from "../apps/server/src/game-usecases/sync-factory";
 import { registerRecipes } from "../apps/server/src/lib/superjson-recipes";
 import { connection, verifyConnection } from "./database-target";
+import { grantItems, spendItems, readInventory } from "../apps/server/src/game-usecases/inventory";
+import { installItemFixtures } from "../tests/battle/support/item-fixtures";
 
 registerRecipes();
 const owner = "proof-owner";
@@ -20,6 +22,9 @@ const hero = "proof-hero";
 const dungeon = "proof-dungeon";
 
 export async function proveConcurrency(target: URL, database: string) {
+  const fixtures = installItemFixtures();
+  const material = fixtures.material.type;
+  const supply = fixtures.consumable.type;
   const control = connection(target, database, "loot-proof-control");
   const peers = [0, 1].map((index) => connection(target, database, `loot-proof-peer-${index}`));
   const db = drizzle(control);
@@ -42,7 +47,7 @@ export async function proveConcurrency(target: URL, database: string) {
 
     async function contend(
       scenario: string,
-      lock: "dungeon_data" | "loot" | "character",
+      lock: "dungeon_data" | "loot" | "character" | "user",
       id: string,
       operations: ((client: (typeof clients)[number]) => Promise<unknown>)[],
     ) {
@@ -159,8 +164,140 @@ export async function proveConcurrency(target: URL, database: string) {
     assert.equal((await db.select().from(schema.TB_character))[0]!.xp, 2 * new Goblin("proof").xp);
     assert.equal((await db.select().from(schema.TB_loot)).length, 2);
     assert((await db.select().from(schema.TB_dungeonData)).every((run) => run.round === 1 && !run.activeBattle));
+    await seed();
+    const creates = await contend(
+      "simultaneous first stack creation",
+      "user",
+      owner,
+      [2, 3].map(
+        (quantity) => (client) =>
+          client.transaction((tx) =>
+            grantItems(owner, [{ type: material, quantity }], tx),
+          ),
+      ),
+    );
+    assert(creates.every((result) => result.status === "fulfilled"));
+    assert.equal((await readInventory(owner, db))[0]!.quantity, 5);
+    assert.equal((await db.select().from(schema.TB_itemStack)).length, 1);
+    const additions = await contend(
+      "additive stack grants",
+      "user",
+      owner,
+      [4, 5].map(
+        (quantity) => (client) =>
+          client.transaction((tx) =>
+            grantItems(owner, [{ type: material, quantity }], tx),
+          ),
+      ),
+    );
+    assert(additions.every((result) => result.status === "fulfilled"));
+    assert.equal((await readInventory(owner, db))[0]!.quantity, 14);
+
+    await db.transaction((tx) =>
+      grantItems(owner, [{ type: supply, quantity: 1 }], tx),
+    );
+    const spending = await contend(
+      "spending the final stack item",
+      "user",
+      owner,
+      [0, 1].map(
+        () => (client) =>
+          client.transaction((tx) =>
+            spendItems(owner, [{ type: supply, quantity: 1 }], tx),
+          ),
+      ),
+    );
+    assert.equal(
+      spending.filter((result) => result.status === "fulfilled").length,
+      1,
+    );
+    const rejected = spending.find(
+      (result) => result.status === "rejected",
+    ) as PromiseRejectedResult;
+    assert.match(rejected.reason.message, /Insufficient stock/);
+    assert(
+      !(await readInventory(owner, db)).some((item) => item.type === supply),
+    );
+
+    await seed();
+    const mixedRewards = [
+      {
+        type: "ITEM" as const,
+        dropRate: 1,
+        data: { itemType: material, quantity: 3 },
+      },
+      {
+        type: "ITEM" as const,
+        dropRate: 1,
+        data: { itemType: supply, quantity: 2 },
+      },
+      {
+        type: "ITEM" as const,
+        dropRate: 1,
+        data: { itemType: "iron-sword" as const, quantity: 2 },
+      },
+    ];
+    await db
+      .insert(schema.TB_loot)
+      .values({
+        id: "mixed-claim",
+        battleId: "mixed-claim",
+        userId: owner,
+        gold: 0,
+        items: mixedRewards,
+      });
+    const mixedClaims = await contend(
+      "duplicate mixed inventory claims",
+      "loot",
+      "mixed-claim",
+      [0, 1].map(
+        () => (client) => new LootManager(owner, client).claim("mixed-claim"),
+      ),
+    );
+    assert.equal(
+      mixedClaims.filter((result) => result.status === "fulfilled").length,
+      1,
+    );
+    assert.equal(
+      (await readInventory(owner, db)).find((item) => item.type === material)!
+        .quantity,
+      3,
+    );
+    assert.equal((await db.select().from(schema.TB_equipmentStats)).length, 2);
+    assert.equal((await db.select().from(schema.TB_loot)).length, 0);
+
+    await db
+      .insert(schema.TB_loot)
+      .values(
+        ["other-claim-a", "other-claim-b"].map((id) => ({
+          id,
+          battleId: id,
+          userId: owner,
+          gold: 0,
+          items: mixedRewards,
+        })),
+      );
+    const unrelated = await contend(
+      "unrelated mixed rewards accumulate",
+      "user",
+      owner,
+      ["other-claim-a", "other-claim-b"].map(
+        (id) => (client) => new LootManager(owner, client).claim(id),
+      ),
+    );
+    assert(unrelated.every((result) => result.status === "fulfilled"));
+    const inventory = await readInventory(owner, db);
+    assert.equal(inventory.find((item) => item.type === material)!.quantity, 9);
+    assert.equal(inventory.find((item) => item.type === supply)!.quantity, 6);
+    assert.equal(
+      inventory.filter((item) => item.kind === "equipment").length,
+      6,
+    );
+    assert.equal((await db.select().from(schema.TB_itemStack)).length, 2);
+    assert.equal((await db.select().from(schema.TB_loot)).length, 0);
     return { backendPids: identities.map((identity) => identity.pid), collation: identities[0]!.collation, observations };
   } finally {
+    fixtures.restore();
     await Promise.all([...peers, control].map((sql) => sql.end({ timeout: 5 })));
   }
 }

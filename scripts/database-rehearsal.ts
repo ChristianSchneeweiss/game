@@ -44,7 +44,9 @@ async function legacyFixture(sql: ReturnType<typeof postgres>) {
     VALUES ('legacy-attempt', 'legacy-run', 'legacy-battle', 0)`;
   await savedResult(sql);
   await sql`INSERT INTO loot (id, battle_id, user_id, items, gold)
-    VALUES ('legacy-loot', 'legacy-battle', 'legacy-owner', '[]', 12)`;
+    VALUES ('legacy-loot', 'legacy-battle', 'legacy-owner', '[{"type":"ITEM","dropRate":0.2,"data":{"itemType":"iron-sword"}}]', 12)`;
+  await sql`INSERT INTO equipment_stats (id, user_id, type, equipped_by)
+    VALUES ('legacy-gear', 'legacy-owner', 'iron-sword', 'legacy-hero')`;
 }
 
 async function savedResult(sql: ReturnType<typeof postgres>) {
@@ -135,6 +137,18 @@ try {
   await applyMigration(upgrade.sql, "../manual/20260911_dungeon_routes.sql");
   await applyMigration(upgrade.sql, "../manual/20260914_shared_preparation.sql");
   await applyMigration(upgrade.sql, "../manual/20260914_social.sql");
+  const beforeItemsShape = await schemaShape(upgrade.sql);
+  const beforeItemsRows = await rows(upgrade.sql);
+  const itemMigration = "../manual/20260915_item_stacks.sql";
+  const itemSql = readFileSync(join(migrationDirectory, itemMigration), "utf8");
+  await assert.rejects(
+    upgrade.sql.unsafe(itemSql.replace(/COMMIT;\s*$/, "SELECT 1 / 0; COMMIT;")),
+  );
+  await upgrade.sql`ROLLBACK`;
+  assert.deepEqual(await schemaShape(upgrade.sql), beforeItemsShape);
+  assert.deepEqual(await rows(upgrade.sql), beforeItemsRows);
+  assert.equal(await applyMigration(upgrade.sql, itemMigration), true);
+  assert.equal(await applyMigration(upgrade.sql, itemMigration), false);
   assert.deepEqual(await schemaShape(upgrade.sql), currentShape);
   const [legacyRun] = await upgrade.sql`SELECT active_battle_id, route, character_data FROM dungeon_data WHERE id = 'legacy-run'`;
   assert.equal(legacyRun!.active_battle_id, null);
@@ -143,6 +157,29 @@ try {
   const [legacyAttempt] = await upgrade.sql`SELECT completed_at FROM dungeon_battle WHERE battle_id = 'legacy-battle'`;
   assert(legacyAttempt!.completed_at);
   assert.deepEqual((await rows(upgrade.sql)).battle_result, legacyRows.battle_result);
+  assert.deepEqual(
+    (await rows(upgrade.sql)).equipment_stats,
+    legacyRows.equipment_stats,
+  );
+  assert.deepEqual((await rows(upgrade.sql)).loot, legacyRows.loot);
+  await upgrade.sql`INSERT INTO item_stack (user_id, type, quantity) VALUES ('legacy-owner', 'test-material', 7)`;
+  await assert.rejects(
+    upgrade.sql`INSERT INTO item_stack (user_id, type, quantity) VALUES ('legacy-owner', 'test-material', 1)`,
+  );
+  await assert.rejects(
+    upgrade.sql`INSERT INTO item_stack (user_id, type, quantity) VALUES ('missing-owner', 'test-supply', 1)`,
+  );
+  await assert.rejects(upgrade.sql`UPDATE item_stack SET quantity = 0`);
+  await assert.rejects(upgrade.sql`UPDATE item_stack SET quantity = -1`);
+  await assert.rejects(
+    upgrade.sql`UPDATE item_stack SET quantity = 2147483648`,
+  );
+  assert.equal(
+    (await upgrade.sql`SELECT quantity FROM item_stack`)[0]!.quantity,
+    7,
+  );
+  evidence.itemMigration =
+    "Interrupted stack migration rolls back; upgrade preserves equipment IDs, assignments and legacy loot; owner/type uniqueness, owner FK, positive integer range and repeat application verified";
   await assert.rejects(upgrade.sql`INSERT INTO dungeon_battle (id, dungeon_id, battle_id, round) VALUES ('duplicate', 'legacy-run', 'legacy-battle', 0)`);
   await assert.rejects(upgrade.sql`INSERT INTO loot (id, battle_id, user_id, items, gold) VALUES ('duplicate', 'legacy-battle', 'legacy-owner', '[]', 0)`);
   const savedRoute = rollDungeonRoute(2, seedrandom("migration-restore-proof"));

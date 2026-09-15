@@ -1,5 +1,5 @@
 import type { EntityAttributes } from "../entity-types";
-import type { ItemType } from "../items/item-types";
+import type { EquipmentType } from "../items/equipment-types";
 import type { SpellType } from "../spells/base/spell-types";
 
 /** Assessment inputs only. These do not grant stats or equipment to live characters. */
@@ -20,7 +20,7 @@ export const MIGHT_REFERENCE = {
     "sentinel-greathelm",
     "travelers-cloak",
     "rootbound-cinch",
-  ] satisfies ItemType[],
+  ] satisfies EquipmentType[],
   profiles: {
     physical: {
       attributes: { strength: 60, intelligence: 20, vitality: 55, agility: 25 },
@@ -61,7 +61,7 @@ export const MIGHT_REFERENCE = {
     string,
     {
       attributes: EntityAttributes;
-      equipment: ItemType[];
+      equipment: EquipmentType[];
       spells: SpellType[];
     }
   >,

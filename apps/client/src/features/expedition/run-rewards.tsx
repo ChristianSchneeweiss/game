@@ -32,6 +32,9 @@ export function RunRewards({
             queryKey: trpc.getMyEquipment.queryKey(),
           }),
           queryClient.invalidateQueries({
+            queryKey: trpc.getMyInventory.queryKey(),
+          }),
+          queryClient.invalidateQueries({
             queryKey: trpc.getMyPassiveSkills.queryKey(),
           }),
         ]);

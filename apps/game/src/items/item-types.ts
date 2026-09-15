@@ -1,20 +1,15 @@
-import z from "zod";
-import { tieredEquipmentTypes } from "./equipment/tiered-equipment";
+import { z } from "zod";
+import { getItemDefinition, type ItemType } from "./catalog";
+export type { ItemType, StackableItemType } from "./catalog";
 
-export const ItemTypeSchema = z.enum([
-  "int-armor",
-  "iron-sword",
-  "iron-cuirass",
-  "oakwarden-staff",
-  "ashen-falchion",
-  "tideglass-staff",
-  "stormfang-blade",
-  "hollow-scepter",
-  "emberguard-mail",
-  "tidewoven-robes",
-  "stormrunner-leathers",
-  "gravewarden-plate",
-  ...tieredEquipmentTypes,
-]);
-
-export type ItemType = z.infer<typeof ItemTypeSchema>;
+export const ItemTypeSchema = z.string().transform((type, ctx): ItemType => {
+  try {
+    return getItemDefinition(type).type;
+  } catch (error) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: error instanceof Error ? error.message : "Invalid item type",
+    });
+    return z.NEVER;
+  }
+});

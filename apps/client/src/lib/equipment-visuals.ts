@@ -1,4 +1,4 @@
-import type { ItemType } from "@loot-game/game/items/item-types";
+import type { EquipmentType } from "@loot-game/game/items/equipment-types";
 import {
   TIERED_EQUIPMENT,
   type TieredEquipmentType,
@@ -33,7 +33,7 @@ export const weaponVisuals = {
   "hollow-scepter": { kind: "staff", color: "#453b59", gem: "#c89af5" },
 } satisfies Partial<
   Record<
-    ItemType,
+    EquipmentType,
     {
       kind: "sword" | "staff";
       color: string;
@@ -59,7 +59,7 @@ export const armorVisuals = {
   "gravewarden-plate": { kind: "plate", color: "#696378", skirt: "#696378" },
 } satisfies Partial<
   Record<
-    ItemType,
+    EquipmentType,
     {
       kind: "plate" | "robes" | "leather";
       color: string;

@@ -3,7 +3,7 @@ import { Character } from "../../../apps/game/src/base-entity";
 import { BM } from "../../../apps/game/src/bm";
 import { StunEffect } from "../../../apps/game/src/effect/stun.effect";
 import { MindControlEffect } from "../../../apps/game/src/effect/mind-control.effect";
-import { itemFactory } from "../../../apps/game/src/items/equipment/item-factory";
+import { equipmentFactory } from "../../../apps/game/src/items/equipment/equipment-factory";
 import { createSpellFromType } from "../../../apps/game/src/spells/base/spell-from-type";
 import { SpellTypeSchema, type SpellType } from "../../../apps/game/src/spells/base/spell-types";
 import { legalSelections, queryCast, reachableTiles } from "../../../apps/game/src/tactical/queries";
@@ -261,7 +261,7 @@ describe("weapon profiles", () => {
   test("staff uses magical ranged damage and Sword and unarmed remain melee", () => {
     for (const item of ["oakwarden-staff", "iron-sword", null] as const) {
       const hero = actor("hero", "TEAM_A"), enemy = actor("enemy", "TEAM_B");
-      if (item) hero.equipped.WEAPON = itemFactory(item, "weapon", hero);
+      if (item) hero.equipped.WEAPON = equipmentFactory(item, "weapon", hero);
       enemy.baseSpecialAttributes.armor = 1000;
       const bm = battle([hero, enemy], { hero: { x: 1, y: 1 }, enemy: { x: 4, y: 1 } });
       const events = bm.safeCastSpatial(hero.id, "hero-basic-attack", { aim: "tile", tile: { x: 4, y: 1 } });

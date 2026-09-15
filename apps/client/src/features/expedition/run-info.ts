@@ -3,6 +3,8 @@ import type { DungeonKey } from "@loot-game/game/dungeons/dungeon-keys";
 import { trialOfTheNature } from "@loot-game/game/dungeons/trial-of-the-nature";
 import { dungeonRunPhase } from "@loot-game/game/dungeons/run-state";
 import type { LootEntity } from "@loot-game/game/types";
+import { getItemDefinition } from "@loot-game/game/items/catalog";
+import { itemQuantity } from "@loot-game/game/items/quantity";
 
 export type DungeonRunData = Awaited<
   ReturnType<typeof trpcClient.dungeon.getRun.query>
@@ -69,19 +71,21 @@ export function groupDrops(items: LootEntity[]) {
         : item.type === "ITEM"
           ? item.data.itemType
           : item.data.passiveType;
-    const previous = drops.get(type);
-    if (previous) previous.count++;
+    const key = `${item.type}:${type}`;
+    const quantity = item.type === "ITEM" ? itemQuantity(item.data) : 1;
+    const previous = drops.get(key);
+    if (previous) previous.count += quantity;
     else
-      drops.set(type, {
+      drops.set(key, {
         item,
-        type,
+        type: key,
         label:
           item.type === "SPELL"
             ? "Spell discovered"
             : item.type === "ITEM"
-              ? "Equipment"
+              ? getItemDefinition(item.data.itemType).kind
               : "Passive skill",
-        count: 1,
+        count: quantity,
       });
   }
   return Array.from(drops.values());

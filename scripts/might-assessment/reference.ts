@@ -1,6 +1,6 @@
 import { BaseEntity } from "../../apps/game/src/base-entity";
 import { BM } from "../../apps/game/src/bm";
-import { itemFactory } from "../../apps/game/src/items/equipment/item-factory";
+import { equipmentFactory } from "../../apps/game/src/items/equipment/equipment-factory";
 import {
   MIGHT_REFERENCE,
   type MightReferenceBuild,
@@ -29,7 +29,7 @@ export function referenceHero(
   hero.baseSpecialAttributes.magicResistance = MIGHT_REFERENCE.magicResistance;
   hero.baseSpecialAttributes.critChance = MIGHT_REFERENCE.critChance;
   for (const type of [...profile.equipment, ...MIGHT_REFERENCE.accessories]) {
-    const item = itemFactory(type, `${id}:${type}`, hero);
+    const item = equipmentFactory(type, `${id}:${type}`, hero);
     hero.equipped[item.equipmentSlot] = item;
   }
   hero.spells = ["basic-attack" as const, ...profile.spells].map((type) =>

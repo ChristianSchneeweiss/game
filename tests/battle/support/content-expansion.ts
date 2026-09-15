@@ -1,7 +1,7 @@
 import { Character } from "../../../apps/game/src/base-entity";
 import { BM } from "../../../apps/game/src/bm";
-import { itemFactory } from "../../../apps/game/src/items/equipment/item-factory";
-import type { ItemType } from "../../../apps/game/src/items/item-types";
+import { equipmentFactory } from "../../../apps/game/src/items/equipment/equipment-factory";
+import type { EquipmentType } from "../../../apps/game/src/items/equipment-types";
 import { passiveSkillFactory } from "../../../apps/game/src/passive-skills/base/passive-skill.factory";
 import type { PassiveType } from "../../../apps/game/src/passive-skills/base/passive-types";
 import { createSpellFromType } from "../../../apps/game/src/spells/base/spell-from-type";
@@ -15,7 +15,7 @@ export const newItems = [
   "tidewoven-robes",
   "stormrunner-leathers",
   "gravewarden-plate",
-] as const satisfies readonly ItemType[];
+] as const satisfies readonly EquipmentType[];
 export const newPassives = [
   "predators-focus",
   "fleet-footed",
@@ -27,7 +27,7 @@ export const newPassives = [
 
 export function contentHero(
   passives: PassiveType[] = [],
-  items: ItemType[] = [],
+  items: EquipmentType[] = [],
 ) {
   const hero = new Character(
     "hero",
@@ -46,7 +46,7 @@ export function contentHero(
     passiveSkillFactory(type, `hero-${type}`, hero),
   );
   for (const type of items) {
-    const item = itemFactory(type, `hero-${type}`, hero);
+    const item = equipmentFactory(type, `hero-${type}`, hero);
     hero.equipped[item.equipmentSlot] = item;
   }
   return hero;
@@ -54,7 +54,7 @@ export function contentHero(
 
 export function contentBattle(
   passives: PassiveType[] = [],
-  items: ItemType[] = [],
+  items: EquipmentType[] = [],
 ) {
   const hero = contentHero(passives, items);
   const enemy = new Character(

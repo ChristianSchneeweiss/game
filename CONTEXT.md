@@ -69,6 +69,26 @@ attribute scaling are determined by the equipped weapon, with an unarmed fallbac
 The weapon's definition of how Basic Attack targets and damages its recipients.
 It includes the attributes that contribute to the attack's damage.
 
+**Item**:
+A collectible belonging to one of three kinds: equipment, consumable, or material.
+
+**Equipment**:
+An item worn or wielded by a character as part of their build.
+_Avoid_: Using "equipment" for every item that must be equipped before use.
+
+**Consumable**:
+An item spent to produce an effect in its allowed use contexts. Battle use
+requires equipping it; outside-battle use is directly from inventory. Its tier
+does not require a Might assessment.
+
+**Material**:
+An item with an assigned tier, held for other purposes, with no direct Use or
+Equip action of its own. Materials do not require Might.
+_Avoid_: Treating an unknown item as a material.
+
+**Consumable loadout**:
+The consumables a character has equipped for use in battle, separate from their gear.
+
 **Might**:
 The valuation of a spell, item, or other game element's overall power under
 defined reference conditions, including its numerical strength and special abilities.
@@ -79,9 +99,14 @@ The power allowance a game element can distribute among its stats, effects,
 and other advantages, evaluated together with its costs and restrictions.
 
 **Tier**:
-A grade from E through S determined by the Might range a game element falls into;
-crossing an exponentially spaced promotion threshold raises its tier.
+A grade from E through S, derived from Might for equipment and other content
+covered by the power valuation model, and assigned directly for materials and
+consumables. Tier does not fix an item's drop rate.
 _Avoid_: Rarity or complexity as synonyms for tier.
+
+**Drop rate**:
+The chance that an entry in an enemy's loot produces its reward. The same item
+may have different drop rates on different enemies.
 
 **Movement**:
 The entity's stat determining its allowance of tile steps, including modifiers

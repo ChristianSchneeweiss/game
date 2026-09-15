@@ -8,9 +8,9 @@ import type {
   Team,
 } from "../../entity-types";
 import type { Equipment } from "../../items/equipment/equipment";
-import { itemFactory } from "../../items/equipment/item-factory";
+import { equipmentFactory } from "../../items/equipment/equipment-factory";
 import { equipmentDropsForEnemy } from "../../items/equipment/equipment-drops";
-import type { ItemType } from "../../items/item-types";
+import type { EquipmentType } from "../../items/equipment-types";
 import { passiveSkillFactory } from "../../passive-skills/base/passive-skill.factory";
 import type { PassiveType } from "../../passive-skills/base/passive-types";
 import { createSpellFromType } from "../../spells/base/spell-from-type";
@@ -34,7 +34,7 @@ type EnemyParams = {
   loot: { gold: number; items?: LootEntity[] };
   spells: SpellType[];
   passiveSkills?: PassiveType[];
-  equipment?: ItemType[];
+  equipment?: EquipmentType[];
 };
 
 export class BaseEnemy extends BaseEntity {
@@ -67,14 +67,14 @@ export class BaseEnemy extends BaseEntity {
         ...(loot.items ?? [
           ...defaultSpellDropRate(spells.filter((s) => s !== "basic-attack")),
           // ...defaultPassiveDropRate(passiveSkills ?? []),
-          // ...defaultEquipmentDropRate(equipment ?? []),
+          // ...defaultItemDropRate(equipment ?? []),
         ]),
         ...equipmentDropsForEnemy(type),
       ],
     };
     const equipments: Equipment[] =
       equipment?.map((equipment) =>
-        itemFactory(equipment, `${this.id}-${equipment}`, this),
+        equipmentFactory(equipment, `${this.id}-${equipment}`, this),
       ) ?? [];
     this.equipped = equipments.reduce((acc, equipment) => {
       acc[equipment.equipmentSlot] = equipment;

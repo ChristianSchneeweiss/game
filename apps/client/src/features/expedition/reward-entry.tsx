@@ -1,57 +1,67 @@
 import type { LootEntity } from "@loot-game/game/types";
-import {
-  createItemLibrary,
-  createPassiveLibrary,
-} from "@loot-game/game/library/catalog";
+import { createPassiveLibrary } from "@loot-game/game/library/catalog";
 import { createSpellFromType } from "@loot-game/game/spells/base/spell-from-type";
 import { SkillIcon } from "@/components/skill-icon";
-import { EquipmentIcon } from "./equipment-icon";
+import { ItemIcon } from "@/components/item-icon";
+import { getItemDefinition } from "@loot-game/game/items/catalog";
+import { itemQuantity } from "@loot-game/game/items/quantity";
 import "@/styles/collections.css";
 
-const items = new Map(
-  createItemLibrary().map((entry) => [entry.type, entry.name]),
-);
 const passives = new Map(
   createPassiveLibrary().map((entry) => [entry.type, entry.name]),
 );
 
+function rewardPresentation(item: LootEntity) {
+  if (item.type === "ITEM") {
+    const definition = getItemDefinition(item.data.itemType);
+    return {
+      type: definition.type,
+      name: definition.name,
+      label: `${definition.kind.charAt(0).toUpperCase()}${definition.kind.slice(1)} · Tier ${definition.tier}`,
+      quantity: itemQuantity(item.data),
+    };
+  }
+  if (item.type === "SPELL")
+    return {
+      type: item.data.spellType,
+      name: createSpellFromType(
+        `reward:${item.data.spellType}`,
+        item.data.spellType,
+      ).config.name,
+      label: "Spell",
+      quantity: 1,
+    };
+  return {
+    type: item.data.passiveType,
+    name: passives.get(item.data.passiveType),
+    label: "Passive skill",
+    quantity: 1,
+  };
+}
+
 export function RewardEntry({
   item,
-  count = 1,
+  count,
 }: {
   item: LootEntity;
   count?: number;
 }) {
-  const type =
-    item.type === "SPELL"
-      ? item.data.spellType
-      : item.type === "ITEM"
-        ? item.data.itemType
-        : item.data.passiveType;
-  const name =
-    item.type === "SPELL"
-      ? createSpellFromType(`reward:${type}`, item.data.spellType).config.name
-      : item.type === "ITEM"
-        ? items.get(type)
-        : passives.get(type);
+  const { type, name, label, quantity: itemCount } = rewardPresentation(item);
+  const quantity = count ?? itemCount;
   return (
     <div className="reward-entry">
       {item.type === "ITEM" ? (
-        <EquipmentIcon type={type} />
+        <ItemIcon type={type} />
       ) : (
         <SkillIcon type={type} size={44} />
       )}
       <div>
-        <small>
-          {
-            { SPELL: "Spell", ITEM: "Equipment", PASSIVE: "Passive skill" }[
-              item.type
-            ]
-          }
-        </small>
+        <small>{label}</small>
         <strong>{name ?? type}</strong>
       </div>
-      {count > 1 && <span className="rpg-badge">×{count}</span>}
+      {(item.type === "ITEM" || quantity > 1) && (
+        <span className="rpg-badge">×{quantity}</span>
+      )}
     </div>
   );
 }

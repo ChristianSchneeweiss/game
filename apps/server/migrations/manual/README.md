@@ -55,3 +55,12 @@ results and resources. These migrations have only been applied to disposable
 test databases during issue #2 implementation. See
 [implementation notes](../../../../docs/features/friends/implementation.md) for the new
 Worker binding and remaining browser verification.
+
+## Item stacks
+
+`20260915_item_stacks.sql` adds account-owned consumable and material quantities.
+Apply it before the item inventory application changes. The upgrade command
+includes it, and the generated fresh schema contains the same table. Equipment
+rows, IDs and equipped-character assignments are preserved. A failed migration
+rolls back the table and constraints together; checksum history makes retries safe.
+Only disposable databases are used for implementation verification.

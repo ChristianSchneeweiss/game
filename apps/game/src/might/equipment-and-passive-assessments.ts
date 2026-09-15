@@ -1,4 +1,4 @@
-import type { ItemType } from "../items/item-types";
+import type { EquipmentType } from "../items/equipment-types";
 import type { PassiveType } from "../passive-skills/base/passive-types";
 import type { MightAssessment } from "./might";
 import { estimateMight } from "./references";
@@ -66,7 +66,7 @@ export const itemAssessments = {
     180,
     "Retain 180: +10 INT and +3 flat mana recovery, range 3, slightly weaker 0–12 base attack than Oakwarden. Extra mana is credited only when spent; the paired caster rotation supports the small sustain premium. Fresh 128 paired slot trials on caster builds: mean damage change 46.5, remaining-HP change 0.25, deaths 92 → 92. Each comparison holds the other eight slots fixed; endpoints are evidence, not an automatic sum or calibrated score.",
   ),
-} satisfies Record<ItemType, MightAssessment>;
+} satisfies Record<EquipmentType, MightAssessment>;
 
 export const passiveAssessments = {
   "vital-wellspring": estimateMight(

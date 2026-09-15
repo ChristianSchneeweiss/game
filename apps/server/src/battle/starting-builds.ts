@@ -1,7 +1,7 @@
 import { Character } from "@loot-game/game/base-entity";
 import { prepareTacticalEntity } from "@loot-game/game/bm";
 import { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
-import { itemFactory } from "@loot-game/game/items/equipment/item-factory";
+import { equipmentFactory } from "@loot-game/game/items/equipment/equipment-factory";
 import { passiveSkillFactory } from "@loot-game/game/passive-skills/base/passive-skill.factory";
 import { createSpellFromType } from "@loot-game/game/spells/base/spell-from-type";
 import cloneDeep from "lodash/cloneDeep";
@@ -103,7 +103,7 @@ export function restoreStartingBuilds(builds: StartingBuilds) {
     );
     entity.equipped = {};
     for (const { id, type, modifiers } of build.equipment) {
-      const item = itemFactory(type, id, entity);
+      const item = equipmentFactory(type, id, entity);
       item.modifiers = modifiers;
       entity.equipped[item.equipmentSlot] = item;
     }

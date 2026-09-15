@@ -1,10 +1,10 @@
 import { BaseEntity } from "../../apps/game/src/base-entity";
 import { BM } from "../../apps/game/src/bm";
-import { itemFactory } from "../../apps/game/src/items/equipment/item-factory";
+import { equipmentFactory } from "../../apps/game/src/items/equipment/equipment-factory";
 import {
-  ItemTypeSchema,
-  type ItemType,
-} from "../../apps/game/src/items/item-types";
+  EquipmentTypeSchema,
+  type EquipmentType,
+} from "../../apps/game/src/items/equipment-types";
 import { TotalDamageModule } from "../../apps/game/src/modules/damage.module";
 import { DamageSpell } from "../../apps/game/src/spells/base/damage.spell";
 import { createSpellFromType } from "../../apps/game/src/spells/base/spell-from-type";
@@ -28,7 +28,7 @@ export type PressureCase = {
   armored: boolean;
   approach: boolean;
   seed: string;
-  item?: ItemType;
+  item?: EquipmentType;
   passive?: PassiveType;
   basicOnly?: boolean;
   enemyFraction?: number;
@@ -41,9 +41,9 @@ export type PressureCase = {
 export function measurePressure(c: PressureCase) {
   const hero = referenceHero(c.build, "hero", c.passive);
   if (c.item) {
-    const item = itemFactory(c.item, `hero:${c.item}`, hero);
+    const item = equipmentFactory(c.item, `hero:${c.item}`, hero);
     if (item.equipmentSlot === "WEAPON")
-      hero.equipped.ARMOR = itemFactory(
+      hero.equipped.ARMOR = equipmentFactory(
         "iron-cuirass",
         "hero:comparison-cuirass",
         hero,
@@ -212,8 +212,8 @@ export function summarizePairs(
 if (import.meta.main) {
   const seeds = Array.from({ length: 8 }, (_, i) => `might-slot-v3-${i}`);
   const rows = quiet(() =>
-    ItemTypeSchema.options.map((type) => {
-      const item = itemFactory(type, type, referenceHero("physical"));
+    EquipmentTypeSchema.options.map((type) => {
+      const item = equipmentFactory(type, type, referenceHero("physical"));
       const attributes = new Set(item.modifiers.map((x) => x.attribute));
       const builds: MightReferenceBuild[] = [];
       if (
@@ -257,7 +257,7 @@ if (import.meta.main) {
                     approach,
                     seed,
                   };
-                  const anchor: ItemType =
+                  const anchor: EquipmentType =
                     item.equipmentSlot === "WEAPON" && build === "caster"
                       ? "oakwarden-staff"
                       : anchors[item.equipmentSlot];

@@ -1,5 +1,5 @@
 import type { Tier } from "../types";
-import type { ItemType } from "./item-types";
+import type { EquipmentType } from "./equipment-types";
 import type { Item } from "./types";
 
 export abstract class BaseItem implements Item {
@@ -7,14 +7,14 @@ export abstract class BaseItem implements Item {
   name: string;
   description: string;
   tier: Tier;
-  itemType: ItemType;
+  itemType: EquipmentType;
 
   constructor(
     id: string,
     name: string,
     description: string,
     tier: Tier,
-    itemType: ItemType,
+    itemType: EquipmentType,
   ) {
     this.id = id;
     this.name = name;

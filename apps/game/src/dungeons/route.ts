@@ -1,6 +1,6 @@
 import z from "zod";
 import type { BaseEnemy } from "../enemies/base/base.enemy";
-import type { ItemType } from "../items/item-types";
+import type { EquipmentType } from "../items/equipment-types";
 import type { LootEntity } from "../types";
 import type { RouteOffer } from "./route-catalog";
 
@@ -25,7 +25,7 @@ export type RouteDecision = {
   offerId: string;
   action: RouteAction;
   outcome: "passed" | "elite" | "restored" | "treasure" | "trap";
-  rewards: ItemType[];
+  rewards: EquipmentType[];
   resources: RouteResourceChange[];
   /** Freeze the promised elite bonus odds when choosing; older choices guaranteed the bonus. */
   eliteRewardChance?: number;
@@ -55,10 +55,10 @@ export const routeRecovery = (
 
 export function routeRewards(wave: number) {
   return {
-    safeReward: (wave % 2 === 0 ? "int-armor" : "iron-sword") as ItemType,
+    safeReward: (wave % 2 === 0 ? "int-armor" : "iron-sword") as EquipmentType,
     rareReward: (wave % 2 === 0
       ? "oakwarden-staff"
-      : "iron-cuirass") as ItemType,
+      : "iron-cuirass") as EquipmentType,
   };
 }
 
@@ -77,7 +77,7 @@ export function routeNeedsChoice(
 
 export const routeRewardKey = (dungeonId: string, wave: number) =>
   `route:${dungeonId}:${wave}`;
-export const routeEquipmentDrop = (itemType: ItemType): LootEntity => ({
+export const routeEquipmentDrop = (itemType: EquipmentType): LootEntity => ({
   type: "ITEM",
   data: { itemType },
   dropRate: 1,

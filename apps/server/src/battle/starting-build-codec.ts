@@ -1,5 +1,5 @@
 import { EnemyTypeSchema } from "@loot-game/game/enemies/base/enemy-types";
-import { ItemTypeSchema } from "@loot-game/game/items/item-types";
+import { EquipmentTypeSchema } from "@loot-game/game/items/equipment-types";
 import { PassiveTypeSchema } from "@loot-game/game/passive-skills/base/passive-types";
 import { SpellTypeSchema } from "@loot-game/game/spells/base/spell-types";
 import { LootEntitySchema } from "@loot-game/game/types";
@@ -95,7 +95,7 @@ const buildSchema = z
     equipment: z.array(
       z.object({
         id: z.string(),
-        type: ItemTypeSchema,
+        type: EquipmentTypeSchema,
         modifiers: z.array(
           z.object({
             id: z.string(),

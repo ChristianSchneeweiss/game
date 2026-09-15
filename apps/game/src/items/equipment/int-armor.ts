@@ -1,25 +1,20 @@
 import { nanoid } from "nanoid";
 import type { Entity } from "../../entity-types";
 import { Equipment } from "./equipment";
+import { EQUIPMENT_DEFINITIONS } from "./equipment-catalog";
 
 export class IntArmor extends Equipment {
-  constructor({ holder, id }: { id: string; holder: Entity }) {
+  constructor({ holder, id }: { id: string; holder: Pick<Entity, "id"> }) {
     super({
+      ...EQUIPMENT_DEFINITIONS["int-armor"],
       itemType: "int-armor",
       holderId: holder.id,
-      tier: "E",
       id,
-      equipmentSlot: "ARMOR",
-      name: "Int Armor",
-      description: "Increases intelligence by 10.",
-      modifiers: [
-        {
-          id: nanoid(),
-          attribute: "intelligence",
-          value: 10,
-          operation: "ADD",
-        },
-      ],
+      modifiers: EQUIPMENT_DEFINITIONS["int-armor"].bonuses.map((bonus) => ({
+        ...bonus,
+        id: nanoid(),
+        operation: "ADD",
+      })),
     });
   }
 }

@@ -11,6 +11,7 @@ export async function refreshBuilds() {
     }),
     queryClient.invalidateQueries({ queryKey: trpc.getMySpells.queryKey() }),
     queryClient.invalidateQueries({ queryKey: trpc.getMyEquipment.queryKey() }),
+    queryClient.invalidateQueries({ queryKey: trpc.getMyInventory.queryKey() }),
     queryClient.invalidateQueries({ queryKey: trpc.dungeon.getRun.queryKey() }),
   ]);
 }

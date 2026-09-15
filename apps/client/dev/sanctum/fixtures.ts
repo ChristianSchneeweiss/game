@@ -1,16 +1,28 @@
 import { Character } from "@loot-game/game/base-entity";
 import { createSpellFromType } from "@loot-game/game/spells/base/spell-from-type";
-import { itemFactory } from "@loot-game/game/items/equipment/item-factory";
-import { ItemTypeSchema } from "@loot-game/game/items/item-types";
+import { equipmentFactory } from "@loot-game/game/items/equipment/equipment-factory";
+import { EquipmentTypeSchema } from "@loot-game/game/items/equipment-types";
 import { passiveSkillFactory } from "@loot-game/game/passive-skills/base/passive-skill.factory";
 import { trialOfTheNature } from "@loot-game/game/dungeons/trial-of-the-nature";
 import { createEnemyFromType } from "../../../server/src/game-usecases/enemy-factory";
 import type { SpellType } from "@loot-game/game/spells/base/spell-types";
 import { ownerId } from "./auth";
+import { getItemDefinition } from "@loot-game/game/items/catalog";
+import { itemQuantity } from "@loot-game/game/items/quantity";
+import { installItemFixtures } from "../../../../tests/battle/support/item-fixtures";
 
 export const scenario =
   new URLSearchParams(location.search).get("state") ?? "populated";
 export const empty = scenario === "empty";
+const itemFixtures = scenario === "items" ? installItemFixtures() : undefined;
+const itemStacks = new Map<string, number>(
+  itemFixtures
+    ? [
+        [itemFixtures.material.type, 7],
+        [itemFixtures.consumable.type, 2],
+      ]
+    : [],
+);
 export const commands: { path: string; input: unknown }[] = [];
 export function makeCharacter(id: string, name: string, userId = ownerId) {
   const hero = new Character(
@@ -28,7 +40,11 @@ export function makeCharacter(id: string, name: string, userId = ownerId) {
   hero.spells = (
     ["basic-attack", "fireball", "single-heal"] as SpellType[]
   ).map((type) => createSpellFromType(`${id}-${type}`, type));
-  hero.equipped.WEAPON = itemFactory("oakwarden-staff", `${id}-staff`, hero);
+  hero.equipped.WEAPON = equipmentFactory(
+    "oakwarden-staff",
+    `${id}-staff`,
+    hero,
+  );
   hero.passiveSkills = [
     passiveSkillFactory("armor-up", `${id}-armor-up`, hero),
   ];
@@ -46,7 +62,7 @@ export const heroes = [
 export const config = trialOfTheNature();
 export const equipment = (
   scenario === "equipment"
-    ? ItemTypeSchema.options
+    ? EquipmentTypeSchema.options
     : scenario === "collection"
       ? [
           "iron-sword",
@@ -64,8 +80,8 @@ export const equipment = (
   type,
   equippedBy: null as string | null,
   userId: ownerId,
-  item: itemFactory(
-    type as Parameters<typeof itemFactory>[0],
+  item: equipmentFactory(
+    type as Parameters<typeof equipmentFactory>[0],
     `item-${index}`,
     heroes[0],
   ),
@@ -146,6 +162,18 @@ export const loot = empty
           { type: "SPELL", data: { spellType: "fireball" } },
           { type: "ITEM", data: { itemType: "iron-sword" } },
           { type: "ITEM", data: { itemType: "int-armor" } },
+          ...(itemFixtures
+            ? [
+                {
+                  type: "ITEM",
+                  data: { itemType: itemFixtures.material.type, quantity: 4 },
+                },
+                {
+                  type: "ITEM",
+                  data: { itemType: itemFixtures.consumable.type, quantity: 3 },
+                },
+              ]
+            : []),
           { type: "PASSIVE", data: { passiveType: "armor-up" } },
         ],
       },
@@ -283,6 +311,32 @@ export function queryFixture(path: string, input: unknown): unknown {
     }
     case "getMyEquipment":
       return empty ? [] : equipment;
+    case "getMyInventory":
+      return empty
+        ? []
+        : [
+            ...equipment.map((entry) => ({
+              kind: "equipment",
+              id: entry.id,
+              type: entry.type,
+              quantity: 1,
+              equippedBy: entry.equippedBy,
+              equippedCharacterName:
+                heroes.find((hero) => hero.id === entry.equippedBy)?.name ??
+                null,
+              item: getItemDefinition(entry.type),
+            })),
+            ...[...itemStacks].map(([type, quantity]) => {
+              const item = getItemDefinition(type);
+              return {
+                kind: item.kind,
+                id: `stack:${type}`,
+                type,
+                quantity,
+                item,
+              };
+            }),
+          ];
     case "social.getFriends":
       return friends;
     case "social.getInvitations":
@@ -348,7 +402,7 @@ export function mutateFixture(path: string, input: unknown): unknown {
       const previous = equipment.find((entry) => entry.id === previousId);
       if (previous) previous.equippedBy = null;
       item.equippedBy = hero.id;
-      hero.equipped[item.item.equipmentSlot] = itemFactory(
+      hero.equipped[item.item.equipmentSlot] = equipmentFactory(
         item.item.itemType,
         item.id,
         hero,
@@ -380,7 +434,30 @@ export function mutateFixture(path: string, input: unknown): unknown {
       return;
     case "claimLoot": {
       const entry = loot.find((entry) => entry.id === input);
-      if (entry) entry.claimed = true;
+      if (entry && !entry.claimed) {
+        for (const reward of entry.items) {
+          if (reward.type !== "ITEM" || !("itemType" in reward.data)) continue;
+          const item = getItemDefinition(reward.data.itemType!);
+          const quantity = itemQuantity(reward.data);
+          if (item.kind === "equipment") {
+            for (let index = 0; index < quantity; index++) {
+              const id = `claimed-${equipment.length}`;
+              equipment.push({
+                id,
+                type: item.type,
+                equippedBy: null,
+                userId: ownerId,
+                item: equipmentFactory(item.type, id, heroes[0]!),
+              });
+            }
+          } else
+            itemStacks.set(
+              item.type,
+              (itemStacks.get(item.type) ?? 0) + quantity,
+            );
+        }
+        entry.claimed = true;
+      }
       return;
     }
     case "social.respondRequest": {

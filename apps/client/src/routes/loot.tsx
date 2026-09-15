@@ -29,6 +29,7 @@ function RouteComponent() {
         await Promise.all([
           queryClient.invalidateQueries(trpc.getMyLoot.queryOptions()),
           queryClient.invalidateQueries(trpc.getMyEquipment.queryOptions()),
+          queryClient.invalidateQueries(trpc.getMyInventory.queryOptions()),
           queryClient.invalidateQueries(trpc.getMySpells.queryOptions()),
           queryClient.invalidateQueries(trpc.getMyPassiveSkills.queryOptions()),
           queryClient.invalidateQueries({
@@ -52,7 +53,12 @@ function RouteComponent() {
               value: isLoading
                 ? "—"
                 : (loot?.reduce(
-                    (total, entry) => total + entry.items.length,
+                    (total, entry) =>
+                      total +
+                      groupDrops(entry.items).reduce(
+                        (sum, drop) => sum + drop.count,
+                        0,
+                      ),
                     0,
                   ) ?? 0),
             },

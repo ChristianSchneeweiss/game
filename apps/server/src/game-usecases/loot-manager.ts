@@ -1,16 +1,23 @@
-import type { ItemType } from "@loot-game/game/items/item-types";
+import { itemQuantity } from "@loot-game/game/items/quantity";
 import type { PassiveType } from "@loot-game/game/passive-skills/base/passive-types";
 import type { SpellType } from "@loot-game/game/spells/base/spell-types";
-import type { Loot, LootEntity } from "@loot-game/game/types";
+import {
+  LootEntitySchema,
+  type Loot,
+  type LootEntity,
+} from "@loot-game/game/types";
 import { and, eq } from "drizzle-orm";
 import type seedrandom from "seedrandom";
-import {
-  TB_equipmentStats,
-  TB_loot,
-  TB_passivSkillStats,
-  type Database,
-} from "../db/schema";
+import { TB_loot, TB_passivSkillStats, type Database } from "../db/schema";
 import { createSpell } from "./spell-factory";
+import { grantItems } from "./inventory";
+
+function validateRewards(items: LootEntity[]) {
+  // Validate the full batch before any roll or mutation. Preserve legacy shapes
+  // and entry order so existing random consumption and recordings stay stable.
+  LootEntitySchema.array().parse(items);
+  for (const item of items) if (item.type === "ITEM") itemQuantity(item.data);
+}
 
 export class LootManager {
   constructor(
@@ -19,6 +26,7 @@ export class LootManager {
   ) {}
 
   async drop(rng: seedrandom.PRNG, loot: Loot) {
+    validateRewards(loot.items);
     const droppedLoot: LootEntity[] = [];
     for (const item of loot.items) {
       if (rng() < item.dropRate) {
@@ -41,12 +49,19 @@ export class LootManager {
         throw new Error("Loot not found");
       }
 
+      validateRewards(loot.items);
+      await grantItems(
+        this.userId,
+        loot.items.flatMap((item) =>
+          item.type === "ITEM"
+            ? [{ type: item.data.itemType, quantity: itemQuantity(item.data) }]
+            : [],
+        ),
+        tx,
+      );
       for (const item of loot.items) {
         if (item.type === "SPELL") {
           await this.claimSpell(this.userId, item.data.spellType, tx);
-        }
-        if (item.type === "ITEM") {
-          await this.claimItem(this.userId, item.data.itemType, tx);
         }
         if (item.type === "PASSIVE") {
           await this.claimPassive(this.userId, item.data.passiveType, tx);
@@ -61,13 +76,6 @@ export class LootManager {
     await createSpell(userId, type, tx);
   }
 
-  private async claimItem(userId: string, type: ItemType, tx: Database) {
-    await tx.insert(TB_equipmentStats).values({
-      userId,
-      type,
-    });
-  }
-
   private async claimPassive(userId: string, type: PassiveType, tx: Database) {
     await tx.insert(TB_passivSkillStats).values({
       userId,
@@ -80,6 +88,7 @@ export class LootManager {
       .select()
       .from(TB_loot)
       .where(eq(TB_loot.userId, this.userId));
+    for (const reward of loot) validateRewards(reward.items);
     return loot;
   }
 }

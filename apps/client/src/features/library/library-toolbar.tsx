@@ -59,7 +59,7 @@ export function LibraryToolbar({
           {groups.length > 1 ? (
             <label>
               <span>
-                {search.category === "spells" ? "Recipients" : "Slot"}
+                {search.category === "spells" ? "Recipients" : "Kind / slot"}
               </span>
               <Select
                 aria-label="Filter by type"

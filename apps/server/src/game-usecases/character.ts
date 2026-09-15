@@ -1,5 +1,5 @@
 import type { EntityAttributes } from "@loot-game/game/entity-types";
-import { itemFactory } from "@loot-game/game/items/equipment/item-factory";
+import { equipmentFactory } from "@loot-game/game/items/equipment/equipment-factory";
 import {
   statPointsReceived,
   xpNeededForLevelUp,
@@ -193,7 +193,7 @@ export const equipEquipment = async (
     if (equipment.equippedBy === characterId) return;
     if (equipment.equippedBy)
       throw new Error("Unequip this item from its current character first");
-    const equipmentItem = itemFactory(equipment.type, equipmentId, character);
+    const equipmentItem = equipmentFactory(equipment.type, equipmentId, character);
 
     const currentItemAtSlot = character.equipped[equipmentItem.equipmentSlot];
     if (currentItemAtSlot) {

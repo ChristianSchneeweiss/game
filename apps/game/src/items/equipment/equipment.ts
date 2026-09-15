@@ -11,7 +11,7 @@ import type {
 import type { TimelineEvent } from "../../timeline-events";
 import type { AttributeModifier, Effect, Tier } from "../../types";
 import { BaseItem } from "../base.item";
-import type { ItemType } from "../item-types";
+import type { EquipmentType } from "../equipment-types";
 
 export type EquipmentSlot = keyof Equipped;
 
@@ -22,7 +22,7 @@ export interface EquipmentParams {
   equipmentSlot: EquipmentSlot;
   modifiers?: AttributeModifier[];
   holderId: string;
-  itemType: ItemType;
+  itemType: EquipmentType;
   tier: Tier;
 }
 

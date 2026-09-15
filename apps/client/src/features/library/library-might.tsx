@@ -4,6 +4,17 @@ import type { LibraryEntry } from "@loot-game/game/library/types";
 import { parseMightBound } from "./library-search";
 
 export function MightBadge({ entry }: { entry: LibraryEntry }) {
+  if (entry.assessmentStatus === "not-applicable")
+    return (
+      <span className="library-might">
+        <span>
+          Tier{" "}
+          <span className="library-tier" data-tier={entry.tier}>
+            {entry.tier}
+          </span>
+        </span>
+      </span>
+    );
   return (
     <span className="library-might">
       <span>

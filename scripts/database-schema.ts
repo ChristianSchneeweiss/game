@@ -17,6 +17,7 @@ export const migrationFiles = [
   "../manual/20260911_dungeon_routes.sql",
   "../manual/20260914_shared_preparation.sql",
   "../manual/20260914_social.sql",
+  "../manual/20260915_item_stacks.sql",
 ] as const;
 
 async function ddl(exports: Record<string, unknown>) {

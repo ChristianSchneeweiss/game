@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid";
-import { itemFactory } from "../items/equipment/item-factory";
+import { getItemDefinition } from "../items/catalog";
 import type { ItemType } from "../items/item-types";
 import { passiveSkillFactory } from "../passive-skills/base/passive-skill.factory";
 import type { PassiveType } from "../passive-skills/base/passive-types";
@@ -52,16 +52,13 @@ export const defaultPassiveDropRate = (
   });
 };
 
-export const defaultEquipmentDropRate = (
-  equipments: ItemType[],
-): LootEntity[] => {
-  const fake = new FakeEntity();
-  return equipments.map((equipment) => {
-    const e = itemFactory(equipment, nanoid(), fake);
+export const defaultItemDropRate = (items: ItemType[]): LootEntity[] => {
+  return items.map((itemType) => {
+    const definition = getItemDefinition(itemType);
     return {
       type: "ITEM",
-      data: { itemType: equipment },
-      dropRate: defaultDropRate(e.tier),
+      data: { itemType },
+      dropRate: defaultDropRate(definition.tier),
     };
   });
 };

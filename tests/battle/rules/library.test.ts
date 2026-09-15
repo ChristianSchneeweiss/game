@@ -7,7 +7,7 @@ import {
 } from "../../../apps/game/src/library/catalog";
 import { DEFAULT_LIBRARY_ATTRIBUTES } from "../../../apps/game/src/library/types";
 import { EnemyTypeSchema } from "../../../apps/game/src/enemies/base/enemy-types";
-import { ItemTypeSchema } from "../../../apps/game/src/items/item-types";
+import { getItemDefinitions } from "../../../apps/game/src/items/catalog";
 import { PassiveTypeSchema } from "../../../apps/game/src/passive-skills/base/passive-types";
 import { SpellTypeSchema } from "../../../apps/game/src/spells/base/spell-types";
 import { mightAssessments } from "../../../apps/game/src/might/assessments";
@@ -26,7 +26,9 @@ test("library includes every authored type and every combat-kit and drop referen
     SpellTypeSchema.options.map((option) => option.value).sort(),
   );
   expect(items.map((entry) => entry.type).sort()).toEqual(
-    [...ItemTypeSchema.options].sort(),
+    getItemDefinitions()
+      .map((item) => item.type)
+      .sort(),
   );
   expect(passives.map((entry) => entry.type).sort()).toEqual(
     PassiveTypeSchema.options.map((option) => option.value).sort(),
@@ -124,7 +126,7 @@ test("equipment and enemies expose authored modifiers, kits, and exact drop chan
     value: "100%",
   });
   expect(skeleton.drops).toEqual([
-    { category: "spells", type: "splinter-shot", chance: 1 },
+    { id: "ashen-skeleton:drop:0", category: "spells", type: "splinter-shot", chance: 1 },
   ]);
   expect(
     createPassiveLibrary().find((entry) => entry.type === "stoneform-resolve")

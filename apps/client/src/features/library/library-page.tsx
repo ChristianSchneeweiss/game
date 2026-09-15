@@ -23,7 +23,7 @@ import { LibraryDetail, LibraryIcon } from "./library-entry";
 import { targetingLabel } from "./library-format";
 import { MightBadge, MightRange } from "./library-might";
 import { LibraryToolbar } from "./library-toolbar";
-import { mightFamilyLabel } from "@loot-game/game/might/might";
+import { libraryFamilyLabel } from "@loot-game/game/library/types";
 import {
   filterLibrary,
   libraryCategories,
@@ -32,11 +32,6 @@ import {
 } from "./library-search";
 import "./library.css";
 
-const staticEntries = [
-  ...createItemLibrary(),
-  ...createPassiveLibrary(),
-  ...createEnemyLibrary(),
-];
 const categories = {
   spells: {
     name: "Spells",
@@ -47,7 +42,7 @@ const categories = {
     name: "Items",
     icon: Sword,
     description:
-      "Every piece of equipment, its modifiers, and its attack profile.",
+      "Equipment, consumables, and materials: tiers, properties, and sources.",
   },
   passives: {
     name: "Passive skills",
@@ -68,12 +63,20 @@ export function LibraryPage({
   search: LibrarySearch;
   onSearchChange: (search: LibrarySearch) => void;
 }) {
+  const [staticEntries] = useState(() => [
+    ...createItemLibrary(),
+    ...createPassiveLibrary(),
+    ...createEnemyLibrary(),
+  ]);
   const [attributes, setAttributes] = useState<LibraryAttributes>(
     DEFAULT_LIBRARY_ATTRIBUTES,
   );
   const [rangeReset, setRangeReset] = useState(0);
   const spells = useMemo(() => createSpellLibrary(attributes), [attributes]);
-  const entries = useMemo(() => [...spells, ...staticEntries], [spells]);
+  const entries = useMemo(
+    () => [...spells, ...staticEntries],
+    [spells, staticEntries],
+  );
   const categoryEntries = entries.filter(
     (entry) => entry.category === search.category,
   );
@@ -211,7 +214,7 @@ export function LibraryPage({
                     familyGroups.map((family) => (
                       <LibraryTable
                         key={family}
-                        familyLabel={mightFamilyLabel(family)}
+                        familyLabel={libraryFamilyLabel(family)}
                         entries={filtered.filter(
                           (entry) => entry.family === family,
                         )}
@@ -342,17 +345,22 @@ function LibraryTable({
   familyLabel?: string;
 }) {
   const category = entries[0].category;
-  const headings =
-    category === "spells"
-      ? ["Might", "Mana", "CD", "Est. dmg", "Range"]
-      : category === "enemies"
-        ? ["Might", "HP", "Mana", "XP"]
-        : ["Might", category === "items" ? "Slot" : "Effect"];
+  const tierOnly = entries.every(
+    (entry) => entry.assessmentStatus === "not-applicable",
+  );
+  const headings = {
+    spells: ["Might", "Mana", "CD", "Est. dmg", "Range"],
+    enemies: ["Might", "HP", "Mana", "XP"],
+    items: tierOnly ? ["Tier", "Kind"] : ["Tier / Might", "Kind / slot"],
+    passives: ["Might", "Effect"],
+  }[category];
   return (
     <table className="library-table">
       <caption className={familyLabel ? "library-family-heading" : "sr-only"}>
         {familyLabel
-          ? `${familyLabel} · Might comparison`
+          ? tierOnly
+            ? familyLabel
+            : `${familyLabel} · Might comparison`
           : `${categories[category].name} catalogue`}
       </caption>
       <thead>

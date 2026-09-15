@@ -1,14 +1,15 @@
 import type { Entity } from "../../entity-types";
-import type { ItemType } from "../item-types";
+import { EquipmentTypeSchema, type EquipmentType } from "../equipment-types";
 import { IntArmor } from "./int-armor";
 import { Equipment } from "./equipment";
 import { EQUIPMENT_DEFINITIONS } from "./equipment-catalog";
 
-export const itemFactory = (
-  itemType: ItemType,
+export const equipmentFactory = (
+  itemType: EquipmentType,
   id: string,
-  holder: Entity,
+  holder: Pick<Entity, "id">,
 ): Equipment => {
+  EquipmentTypeSchema.parse(itemType);
   if (itemType === "int-armor") return new IntArmor({ holder, id });
   const definition = EQUIPMENT_DEFINITIONS[itemType];
   if (!definition) throw new Error(`Unsupported item type: ${itemType}`);

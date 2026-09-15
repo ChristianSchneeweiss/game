@@ -1,5 +1,5 @@
 import type { EnemyType } from "../enemies/base/enemy-types";
-import type { ItemType } from "../items/item-types";
+import type { EquipmentType } from "../items/equipment-types";
 import type { PassiveType } from "../passive-skills/base/passive-types";
 import type { SpellType } from "../spells/base/spell-types";
 import type { MightAssessment } from "./might";
@@ -16,7 +16,7 @@ import { spellAssessments } from "./spell-assessments";
  */
 export const mightAssessments: {
   spells: Partial<Record<SpellType, MightAssessment>>;
-  items: Partial<Record<ItemType, MightAssessment>>;
+  items: Partial<Record<EquipmentType, MightAssessment>>;
   passives: Partial<Record<PassiveType, MightAssessment>>;
   enemies: Partial<Record<EnemyType, MightAssessment>>;
 } = {

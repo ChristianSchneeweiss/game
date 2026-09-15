@@ -7,7 +7,7 @@ import {
   type LibrarySearch,
 } from "../../../apps/client/src/features/library/library-search";
 import { installLibraryAssessments } from "../support/library-fixtures";
-import { ItemTypeSchema } from "../../../apps/game/src/items/item-types";
+import { getItemDefinitions } from "../../../apps/game/src/items/catalog";
 
 const browser = new Window({ url: "http://localhost/library" });
 Object.assign(globalThis, {
@@ -209,7 +209,7 @@ test("Might ordering labels item families and combines ranges with slot restrict
   expect(rows()).toHaveLength(1);
   expect(detail().textContent).not.toContain("Comparison family:");
   await click("Clear filters");
-  expect(rows()).toHaveLength(ItemTypeSchema.options.length);
+  expect(rows()).toHaveLength(getItemDefinitions().length);
   expect(container.querySelectorAll(".library-family-heading")).toHaveLength(9);
 });
 

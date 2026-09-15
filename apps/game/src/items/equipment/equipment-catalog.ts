@@ -1,9 +1,9 @@
 import type { AttributeModifier } from "../../types";
-import type { ItemType } from "../item-types";
+import type { EquipmentType } from "../equipment-types";
 import type { EquipmentParams } from "./equipment";
 import { TIERED_EQUIPMENT } from "./tiered-equipment";
 
-type EquipmentDefinition = Pick<
+export type EquipmentDefinition = Pick<
   EquipmentParams,
   "name" | "description" | "equipmentSlot" | "tier"
 > & {
@@ -12,6 +12,13 @@ type EquipmentDefinition = Pick<
 
 export const EQUIPMENT_DEFINITIONS = {
   ...TIERED_EQUIPMENT,
+  "int-armor": {
+    name: "Int Armor",
+    description: "Increases intelligence by 10.",
+    equipmentSlot: "ARMOR",
+    tier: "E",
+    bonuses: [{ attribute: "intelligence", value: 10 }],
+  },
   "iron-sword": {
     name: "Iron Sword",
     description: "A dependable steel blade. Increases strength by 6.",
@@ -123,4 +130,4 @@ export const EQUIPMENT_DEFINITIONS = {
       { attribute: "movement", value: -1 },
     ],
   },
-} satisfies Record<Exclude<ItemType, "int-armor">, EquipmentDefinition>;
+} satisfies Record<EquipmentType, EquipmentDefinition>;

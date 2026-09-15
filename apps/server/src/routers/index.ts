@@ -1,5 +1,4 @@
 import { faker } from "@faker-js/faker";
-import { itemFactory } from "@loot-game/game/items/equipment/item-factory";
 import type { PassiveType } from "@loot-game/game/passive-skills/base/passive-types";
 import { createSpellFromType } from "@loot-game/game/spells/base/spell-from-type";
 import { type SpellType } from "@loot-game/game/spells/base/spell-types";
@@ -8,15 +7,18 @@ import { desc, eq, gt } from "drizzle-orm";
 import { z } from "zod";
 import {
   TB_activeBattle,
-  TB_equipmentStats,
   TB_passivSkillStats,
   TB_spellStats,
   TB_user,
 } from "../db/schema";
-import { BattleResultNotFoundError, bmStorage } from "../game-usecases/bm-storage";
+import {
+  BattleResultNotFoundError,
+  bmStorage,
+} from "../game-usecases/bm-storage";
 import { createCharacter } from "../game-usecases/character";
 import { EntityFactory } from "../game-usecases/entity-factory";
 import { LootManager } from "../game-usecases/loot-manager";
+import { readEquipment, readInventory } from "../game-usecases/inventory";
 import { createSpell } from "../game-usecases/spell-factory";
 import { protectedProcedure, publicProcedure, router } from "../lib/trpc";
 import { characterRouter } from "./character-router";
@@ -193,32 +195,12 @@ export const appRouter = router({
     return { grouped, all: passiveSkills };
   }),
 
-  getMyEquipment: protectedProcedure.query(async ({ ctx }) => {
-    const { session, db } = ctx;
-    const equipment = await db
-      .select()
-      .from(TB_equipmentStats)
-      .where(eq(TB_equipmentStats.userId, session.id));
-
-    const characters = await EntityFactory.createCharactersFromUser(
-      session.id,
-      db,
-    );
-
-    const equip = equipment.map((equip) => {
-      const character =
-        characters.find((character) => character.id === equip.equippedBy) ??
-        characters[0];
-
-      const items = itemFactory(equip.type, equip.id, character);
-      return {
-        ...equip,
-        item: items,
-      };
-    });
-
-    return equip;
-  }),
+  getMyInventory: protectedProcedure.query(({ ctx }) =>
+    readInventory(ctx.session.id, ctx.db),
+  ),
+  getMyEquipment: protectedProcedure.query(({ ctx }) =>
+    readEquipment(ctx.session.id, ctx.db),
+  ),
 });
 
 export type AppRouter = typeof appRouter;

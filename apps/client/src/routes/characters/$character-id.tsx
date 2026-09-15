@@ -59,6 +59,7 @@ function RouteComponent() {
       ),
       queryClient.invalidateQueries(trpc.getMySpells.queryOptions()),
       queryClient.invalidateQueries(trpc.getMyEquipment.queryOptions()),
+      queryClient.invalidateQueries(trpc.getMyInventory.queryOptions()),
       queryClient.invalidateQueries(trpc.getMyPassiveSkills.queryOptions()),
     ]);
   };

@@ -1,5 +1,5 @@
 import { SkillIcon } from "@/components/skill-icon";
-import { EquipmentIcon } from "@/features/expedition/equipment-icon";
+import { ItemIcon } from "@/components/item-icon";
 import { libraryName } from "@loot-game/game/library/catalog";
 import type {
   LibraryEntry,
@@ -28,7 +28,7 @@ export function LibraryIcon({
   return (
     <span className="library-symbol" style={{ width: size, height: size }}>
       {entry.category === "items" ? (
-        <EquipmentIcon type={entry.type} />
+        <ItemIcon type={entry.type} />
       ) : (
         <Skull size={size * 0.5} />
       )}
@@ -103,15 +103,24 @@ export function LibraryDetail({
       .filter(
         (drop) => drop.category === entry.category && drop.type === entry.type,
       )
-      .map((drop) => ({ entry: item, chance: drop.chance })),
+      .map((drop) => ({
+        id: drop.id,
+        entry: item,
+        chance: drop.chance,
+        quantity: drop.quantity,
+      })),
   );
-  const referenceButton = (reference: LibraryReference, suffix?: string) => {
+  const referenceButton = (
+    reference: LibraryReference,
+    suffix?: string,
+    key = `${reference.category}:${reference.type}`,
+  ) => {
     const related = byKey.get(`${reference.category}:${reference.type}`);
     return (
       <button
         type="button"
         className="library-reference"
-        key={`${reference.category}:${reference.type}`}
+        key={key}
         onClick={() => onInspect(reference)}
       >
         <LibraryIcon entry={reference} size={28} />
@@ -146,7 +155,8 @@ export function LibraryDetail({
           <MightBadge entry={entry} />
         </div>
       </div>
-      {entry.assessmentStatus !== "estimated" ? (
+      {entry.assessmentStatus === "assessed" ||
+      entry.assessmentStatus === "unrated" ? (
         <p className="library-note">
           {assessmentDescriptions[entry.assessmentStatus]}
         </p>
@@ -195,7 +205,11 @@ export function LibraryDetail({
           <h3>Possible drops</h3>
           {entry.drops.length ? (
             entry.drops.map((drop) =>
-              referenceButton(drop, `${formatChance(drop.chance)}%`),
+              referenceButton(
+                drop,
+                `${drop.quantity === undefined ? "" : `×${drop.quantity} · `}${formatChance(drop.chance)}%`,
+                drop.id,
+              ),
             )
           ) : (
             <p className="library-note">No item or spell drops configured.</p>
@@ -211,8 +225,12 @@ export function LibraryDetail({
       {droppedBy.length ? (
         <section className="library-detail-section">
           <h3>Drops from</h3>
-          {droppedBy.map(({ entry: source, chance }) =>
-            referenceButton(source, `${formatChance(chance)}%`),
+          {droppedBy.map(({ id, entry: source, chance, quantity }) =>
+            referenceButton(
+              source,
+              `${quantity === undefined ? "" : `×${quantity} · `}${formatChance(chance)}%`,
+              id,
+            ),
           )}
         </section>
       ) : null}
@@ -222,5 +240,5 @@ export function LibraryDetail({
 }
 
 function formatChance(chance: number) {
-  return Number((chance * 100).toFixed(2));
+  return Number((chance * 100).toPrecision(15));
 }

@@ -126,6 +126,14 @@ CREATE TABLE "friendship" (
 	CONSTRAINT "friendship_ordered_accounts" CHECK ("friendship"."user_a" collate "C" < "friendship"."user_b" collate "C")
 );
 
+CREATE TABLE "item_stack" (
+	"user_id" text NOT NULL,
+	"type" text NOT NULL,
+	"quantity" integer NOT NULL,
+	CONSTRAINT "item_stack_user_id_type_pk" PRIMARY KEY("user_id","type"),
+	CONSTRAINT "item_stack_positive_quantity" CHECK ("item_stack"."quantity" > 0)
+);
+
 CREATE TABLE "loot" (
 	"id" text PRIMARY KEY NOT NULL,
 	"battle_id" text NOT NULL,
@@ -215,6 +223,7 @@ ALTER TABLE "friend_request" ADD CONSTRAINT "friend_request_sender_id_user_id_fk
 ALTER TABLE "friend_request" ADD CONSTRAINT "friend_request_recipient_id_user_id_fk" FOREIGN KEY ("recipient_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;
 ALTER TABLE "friendship" ADD CONSTRAINT "friendship_user_a_user_id_fk" FOREIGN KEY ("user_a") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;
 ALTER TABLE "friendship" ADD CONSTRAINT "friendship_user_b_user_id_fk" FOREIGN KEY ("user_b") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;
+ALTER TABLE "item_stack" ADD CONSTRAINT "item_stack_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;
 ALTER TABLE "loot" ADD CONSTRAINT "loot_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;
 ALTER TABLE "passive_skill_stats" ADD CONSTRAINT "passive_skill_stats_equipped_by_character_id_fk" FOREIGN KEY ("equipped_by") REFERENCES "public"."character"("id") ON DELETE no action ON UPDATE no action;
 ALTER TABLE "passive_skill_stats" ADD CONSTRAINT "passive_skill_stats_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;

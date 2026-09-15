@@ -2,17 +2,21 @@ import { faker } from "@faker-js/faker";
 import type { EnemyType } from "@loot-game/game/enemies/base/enemy-types";
 import type { DungeonRoute } from "@loot-game/game/dungeons/route";
 import type { Team } from "@loot-game/game/entity-types";
-import type { ItemType } from "@loot-game/game/items/item-types";
+import type { EquipmentType } from "@loot-game/game/items/equipment-types";
+import type { StackableItemType } from "@loot-game/game/items/item-types";
+import { sql } from "drizzle-orm";
 import type { PassiveType } from "@loot-game/game/passive-skills/base/passive-types";
 import type { SpellType } from "@loot-game/game/spells/base/spell-types";
 import type { GridSetup } from "@loot-game/game/tactical/types";
 import type { LootEntity } from "@loot-game/game/types";
 import {
   boolean,
+  check,
   integer,
   json,
   PgDatabase,
   pgTable,
+  primaryKey,
   text,
   timestamp,
   unique,
@@ -98,12 +102,27 @@ export const TB_equipmentStats = pgTable("equipment_stats", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => id()),
-  type: text("type").$type<ItemType>().notNull(),
+  type: text("type").$type<EquipmentType>().notNull(),
   equippedBy: text("equipped_by").references(() => TB_character.id),
   userId: text("user_id")
     .notNull()
     .references(() => TB_user.id),
 });
+
+export const TB_itemStack = pgTable(
+  "item_stack",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => TB_user.id),
+    type: text("type").$type<StackableItemType>().notNull(),
+    quantity: integer("quantity").notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.userId, table.type] }),
+    check("item_stack_positive_quantity", sql`${table.quantity} > 0`),
+  ],
+);
 
 export const TB_dungeonData = pgTable("dungeon_data", {
   id: text("id")

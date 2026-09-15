@@ -2,9 +2,9 @@ import { BaseEntity } from "../base-entity";
 import { BM } from "../bm";
 import { EnemyTypeSchema } from "../enemies/base/enemy-types";
 import { createEnemyFromType } from "../enemies/enemy-factory";
-import { itemFactory } from "../items/equipment/item-factory";
 import { formatEquipmentModifier } from "../items/equipment/format-modifier";
-import { ItemTypeSchema } from "../items/item-types";
+import { getItemDefinitions, consumableContextLabel } from "../items/catalog";
+import { itemQuantity } from "../items/quantity";
 import { passiveSkillFactory } from "../passive-skills/base/passive-skill.factory";
 import { PassiveTypeSchema } from "../passive-skills/base/passive-types";
 import { createSpellFromType } from "../spells/base/spell-from-type";
@@ -119,23 +119,44 @@ function weaponStats(profile: WeaponAttackProfile) {
 }
 
 export function createItemLibrary(): LibraryEntry[] {
-  const holder = new BaseEntity(
-    "library-holder",
-    "Holder",
-    "TEAM_A",
-    100,
-    100,
-    { ...DEFAULT_LIBRARY_ATTRIBUTES },
-  );
-  return ItemTypeSchema.options.map((type) => {
-    const item = itemFactory(type, `library:${type}`, holder);
-    const profile = weaponProfileFor(type);
+  return getItemDefinitions().map((item): LibraryEntry => {
+    const { type } = item;
+    if (item.kind !== "equipment")
+      return {
+        category: "items",
+        type,
+        itemKind: item.kind,
+        name: item.name,
+        description: item.description,
+        tier: item.tier,
+        might: null,
+        assessmentStatus: "not-applicable",
+        referenceId: null,
+        family: `items:${item.kind}`,
+        group: item.kind,
+        stats: [
+          { label: "Item kind", value: libraryName(item.kind) },
+          ...(item.kind === "consumable"
+            ? [
+                {
+                  label: "Use contexts",
+                  value: item.useContexts
+                    .map(consumableContextLabel)
+                    .join("; "),
+                },
+              ]
+            : []),
+        ],
+        related: [],
+      };
+    const profile = weaponProfileFor(item.type);
     return {
       category: "items",
+      itemKind: item.kind,
       type,
       name: item.name,
       description: item.description,
-      ...assessMight(`items:${type}`, mightAssessments.items[type]),
+      ...assessMight(`items:${type}`, mightAssessments.items[item.type]),
       family: `items:${item.equipmentSlot.toLowerCase() as Lowercase<typeof item.equipmentSlot>}`,
       group: item.equipmentSlot.toLowerCase(),
       targeting: profile?.targeting,
@@ -144,9 +165,9 @@ export function createItemLibrary(): LibraryEntry[] {
           label: "Equipment slot",
           value: libraryName(item.equipmentSlot.toLowerCase()),
         },
-        ...item.modifiers.map((modifier) => ({
+        ...item.bonuses.map((modifier) => ({
           label: libraryName(modifier.attribute.replace(/([A-Z])/g, " $1")),
-          value: formatEquipmentModifier(modifier),
+          value: formatEquipmentModifier({ ...modifier, operation: "ADD" }),
         })),
         ...(profile ? weaponStats(profile) : []),
       ],
@@ -236,14 +257,21 @@ export function createEnemyLibrary(): LibraryEntry[] {
           }),
         ),
       ],
-      drops: enemy.loot.items.map((loot) => {
+      drops: enemy.loot.items.map((loot, index) => {
         const reference: LibraryReference =
           loot.type === "SPELL"
             ? { category: "spells", type: loot.data.spellType }
             : loot.type === "PASSIVE"
               ? { category: "passives", type: loot.data.passiveType }
               : { category: "items", type: loot.data.itemType };
-        return { ...reference, chance: loot.dropRate };
+        return {
+          ...reference,
+          id: `${type}:drop:${index}`,
+          chance: loot.dropRate,
+          ...(loot.type === "ITEM"
+            ? { quantity: itemQuantity(loot.data) }
+            : {}),
+        };
       }),
     };
   });

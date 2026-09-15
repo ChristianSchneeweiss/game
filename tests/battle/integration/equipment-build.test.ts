@@ -2,7 +2,7 @@ import { afterEach, beforeEach, expect, test } from "bun:test";
 import { eq } from "drizzle-orm";
 import { BM } from "../../../apps/game/src/bm";
 import { equipmentBuildPreview } from "../../../apps/game/src/items/equipment/build-preview";
-import { itemFactory } from "../../../apps/game/src/items/equipment/item-factory";
+import { equipmentFactory } from "../../../apps/game/src/items/equipment/equipment-factory";
 import {
   TB_character,
   TB_equipmentStats,
@@ -29,8 +29,8 @@ test("equipment comparisons use the same attributes as battle initialization and
   const hero = await EntityFactory.createCharacter("audit-hero", data.db);
   for (const weapon of ["iron-sword", "oakwarden-staff"] as const) {
     const items = {
-      WEAPON: itemFactory(weapon, "test-weapon", hero),
-      ARMOR: itemFactory("iron-cuirass", "test-armor", hero),
+      WEAPON: equipmentFactory(weapon, "test-weapon", hero),
+      ARMOR: equipmentFactory("iron-cuirass", "test-armor", hero),
     };
     const preview = equipmentBuildPreview(hero, items);
     expect(hero.equipped).toEqual({});
