@@ -36,7 +36,7 @@ export function estimateMight(
   return {
     might,
     status: "estimated",
-    referenceId: `docs/might-assessments.md#${anchor}`,
+    referenceId: `docs/might/assessments.md#${anchor}`,
     conditions,
     rationale,
   };

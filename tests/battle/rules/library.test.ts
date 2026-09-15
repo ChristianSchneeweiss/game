@@ -43,7 +43,7 @@ test("library includes every authored type and every combat-kit and drop referen
     expect(isMight(entry.might)).toBe(true);
     expect(entry.tier).toBe(tierFromMight(entry.might!));
     expect(entry.assessmentStatus).toBe("estimated");
-    expect(entry.referenceId).toStartWith("docs/might-assessments.md#");
+    expect(entry.referenceId).toStartWith("docs/might/assessments.md#");
     expect(entry.referenceId).toEndWith("-v2");
     expect(entry.family.length).toBeGreaterThan(0);
     expect(entry.name.length).toBeGreaterThan(0);

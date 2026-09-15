@@ -1,45 +1,49 @@
 # Documentation
 
-The current local candidate is implemented; staging and production release qualification remain incomplete. Start with the active checklist and use the evidence for demonstrated results and limits.
+Start with [setup and commands](production/setup.md) to run the game, or the
+[feature guide](features/README.md) to understand its behavior.
 
-## Current development and release
+The implementation records describe local work. Staging and production release
+qualification remain incomplete in the recorded evidence. Use the
+[release checklist](production/checklist.md) for remaining gates and
+[release evidence](production/evidence.md) for dated results and their limits.
 
-| Document | Purpose |
+## Browse by topic
+
+| Section | Contents |
 | --- | --- |
-| [Setup and commands](production-setup.md) | Pinned runtimes, isolated development, checks and historical exception policy. |
-| [Release checklist](release-checklist.md) | Remaining candidate, staging, browser and promotion requirements. |
-| [Release evidence](release-evidence.md) | Candidate identity, local results, decisions and retained reports. |
-| [Release, migration and recovery runbook](production-release.md) | Target preflight, backups, cutover, deployment and rollback. |
-| [Persistence and module boundaries](production-architecture.md) | Run commands, transaction order and saved-data compatibility. |
-| [Client sessions and presentation](production-client.md) | Connection/command ownership, private query lifetimes and Cards controls. |
-| [Security and operations review](production-security-review.md) | Findings, remediations, permission baseline and dependency dispositions. |
-| [Browser qualification](production-browser.md) | Observed flows, device-specific measurements and remaining live proof. |
-| [Manual database migrations](../apps/server/migrations/manual/README.md) | Exact historical migration preflights and ordering. |
+| [Production and development](production/README.md) | Setup, architecture, client sessions, security, browser qualification, releases and recovery. |
+| [Features](features/README.md) | Library, friends, tactical grids, equipment, dungeon runs and encounter presentation. |
+| [Might and balance](might/README.md) | Might specification, current assessments, calibration, research and reproducible probes. |
+| [Enemy models](enemy-models/README.md) | Asset mapping, provenance, licenses, conversion and validation evidence. |
+| [Domain model](../CONTEXT.md) | Shared game vocabulary. |
+| [Architecture decisions](adr/) | Accepted decisions and their rationale. |
 
-## Domain and feature references
+## Working conventions
 
-These feature milestones document implementation and evidence at their recorded dates; the release checklist and evidence determine current qualification status.
+- [Issue tracker](agents/issue-tracker.md)
+- [Triage labels](agents/triage-labels.md)
+- [Domain documentation](agents/domain.md)
 
-| Document | Purpose |
-| --- | --- |
-| [Domain model](../CONTEXT.md) | Shared game vocabulary and behavior distinctions. |
-| [Tactical grid implementation](tactical-grid-implementation.md) | Local implementation checkpoint, movement, tile targeting, catalogue/layout authoring, versioned recovery, verification and remaining deployment qualification. |
-| [Tactical grid specification](tactical-grid-spec.md) | Accepted decisions for [Convert all battles to configurable tactical grids with movement and tile targeting](https://github.com/ChristianSchneeweiss/game/issues/3). |
-| [Tactical grid spell and weapon defaults](tactical-grid-spell-conversion.md) | Implemented initial assignments; tier/scaling redesign remains deferred. |
-| [Might and tier research](tier-budget-research.md) | Power valuation, special-effect budgets, and the agreed Might terminology. |
-| [Might calibration](might-calibration.md) | Exponential promotion thresholds, first reference proposal, and reproducible combat probes. |
-| [Might specification](might-spec.md) | Approved Might model and Library implementation scope, published as [issue #4](https://github.com/ChristianSchneeweiss/game/issues/4). |
-| [Tactical grid feasibility](tactical-grid-feasibility.md) | Historical research and design discussion preceding the completed specification and local implementation. |
-| [Friends specification](friends-spec.md) | [Issue #2](https://github.com/ChristianSchneeweiss/game/issues/2): user stories, implementation decisions, and testing boundaries. |
-| [Friends implementation](friends-implementation.md) | Player controls, consent and concurrency boundaries, migrations, automated verification, and pending browser walkthrough. |
-| [Friends design](friends-design.md) | Agreed interaction rules and codebase foundations behind the friends specification. |
-| [Equipment milestone](equipment-milestone.md) | Gear ownership, attributes, appearance and frozen builds. |
-| [Dungeon-run milestone](dungeon-run-milestone.md) | Preparation, full-run progression, results and restart. |
-| [Branching dungeon milestone](branching-dungeon-milestone.md) | Persisted routes, room decisions, balance and compatibility. |
-| [Forest encounter milestone](forest-encounter-milestone.md) | Forest arena, actors and effects. |
-| [Biome encounter milestone](biome-encounter-milestone.md) | Encounter presentation and biome verification. |
-| [Enemy model documentation](enemy-models/README.md) | Provenance, conversion, licenses, animation gaps and placement/validation evidence. |
+## Reading and maintaining these docs
 
-## Historical material
+Implementation guides describe delivered behavior; specifications preserve the
+accepted requirements. Research and dated evidence retain their original scope
+and are not an active backlog. Check each document's date and status before
+treating a proposed task or reported defect as current work.
 
-[Archive index](archive/README.md) preserves prototype specifications, rendering milestones and earlier battle-audit findings. Historical limits and open items are not the current release checklist. The protected [battle test README](../tests/battle/README.md) retains its original baseline; current accepted exceptions and results are documented above.
+Keep documents in the matching topic folder and link them from its index.
+Keep supporting reports beside the relevant guide. Remove superseded material;
+Git history preserves earlier versions. Update repository references when moving
+or removing a document. Use repository-relative links so they work in any checkout.
+
+## Historical documents
+
+Commit `eb016e5` contains the retired archive, initial Might assessments and
+tactical-grid feasibility research at their original paths. For example:
+
+```sh
+git show eb016e5:docs/archive/battle-audit/README.md
+git show eb016e5:docs/might-assessments-v1.md
+git show eb016e5:docs/tactical-grid-feasibility.md
+```

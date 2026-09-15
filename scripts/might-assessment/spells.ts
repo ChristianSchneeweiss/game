@@ -65,7 +65,7 @@ const rows = (
   });
 });
 await Bun.write(
-  "docs/might-assessments/spell-previews-v2.json",
+  "docs/might/assessments/spell-previews-v2.json",
   JSON.stringify({ version: 2, reference: MIGHT_REFERENCE, rows }),
 );
 for (const row of rows) console.log(JSON.stringify(row));

@@ -11,7 +11,7 @@ import {
 import { spellAssessments } from "./spell-assessments";
 
 /** One provisional assessment per current definition, using developed-build v2 references.
- * See docs/might-assessments.md. Future missing assessments remain Unrated;
+ * See docs/might/assessments.md. Future missing assessments remain Unrated;
  * old runtime tiers never supply missing values.
  */
 export const mightAssessments: {

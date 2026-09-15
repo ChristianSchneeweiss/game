@@ -56,8 +56,8 @@ const report = {
   },
   reports,
 };
-const directory = new URL("../../docs/might-calibration/", import.meta.url);
+const directory = new URL("../../docs/might/calibration/", import.meta.url);
 await mkdir(directory, { recursive: true });
 await Bun.write(new URL("engine-results.json", directory), JSON.stringify(report) + "\n");
 console.table(reports.map(({ probe, summary }) => ({ id: probe.id, ...summary })));
-console.log(`Wrote ${reports.length} probes × ${seeds.length} seeds to docs/might-calibration/engine-results.json`);
+console.log(`Wrote ${reports.length} probes × ${seeds.length} seeds to docs/might/calibration/engine-results.json`);

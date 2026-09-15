@@ -19,7 +19,9 @@ All of these decisions are scoped to an individual dungeon run. Players and
 characters can participate in other runs concurrently; a waiting friend does not
 reserve their account or character across the game.
 
-This records the accepted design; implementation has not started. The complete
+This records the accepted design. The feature is implemented locally; the
+[implementation record](../features/friends/implementation.md) documents its
+verification and remaining browser and deployment work. The complete
 specification is published as
 [issue #2](https://github.com/ChristianSchneeweiss/game/issues/2), with the
-interaction decisions recorded in [the feature design](../friends-design.md).
+interaction decisions recorded in [the feature design](../features/friends/design.md).

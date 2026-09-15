@@ -100,7 +100,7 @@ if (import.meta.main) {
     ),
   );
   await Bun.write(
-    "docs/might-assessments/enemy-probes-v2.json",
+    "docs/might/assessments/enemy-probes-v2.json",
     JSON.stringify({
       version: 2,
       bun: Bun.version,

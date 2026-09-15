@@ -53,5 +53,5 @@ checksum history. The generated fresh schema includes them. The PostgreSQL
 rehearsal checks that upgrades and fresh installations agree and retains old
 results and resources. These migrations have only been applied to disposable
 test databases during issue #2 implementation. See
-[implementation notes](../../../../docs/friends-implementation.md) for the new
+[implementation notes](../../../../docs/features/friends/implementation.md) for the new
 Worker binding and remaining browser verification.

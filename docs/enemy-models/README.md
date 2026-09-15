@@ -84,7 +84,6 @@ Native clips map to idle, attack, cast/heal, hit and death. Generic stock punch/
 
 [Open the battle art preview](http://127.0.0.1:3001/dev/battle-replay.html?lineup=2) to cycle six mixed lineups covering the complete roster. This development-only selector replaces displayed enemy identities in the existing recording; recorded actions and combat results stay the same.
 
-See [the supplementary source research](../archive/prototype/enemy-model-alternatives.md) for other candidates and acquisition details. The mapping in this document supersedes that research's earlier fishfolk/golem gaps.
 
 ## Verification
 

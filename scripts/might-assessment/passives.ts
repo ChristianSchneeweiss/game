@@ -178,7 +178,7 @@ if (import.meta.main) {
     }),
   );
   await Bun.write(
-    "docs/might-assessments/passive-probes-v2.json",
+    "docs/might/assessments/passive-probes-v2.json",
     JSON.stringify({
       version: 2,
       bun: Bun.version,
