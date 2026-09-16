@@ -105,6 +105,17 @@ describe("the complete dungeon run", () => {
         .map((enemy) =>
           EntityFactory.createEnemyFromType(enemy.type, enemy.id),
         );
+      // Guarantee the rewards this progression fixture claims and equips.
+      // Production drop probabilities are covered by rules/loot.test.ts.
+      for (const enemy of deadEnemies) {
+        if (enemy.type !== "hollowed-oakwarden") continue;
+        enemy.loot.items = enemy.loot.items.map((item) =>
+          (item.type === "SPELL" && item.data.spellType === "natures-embrace") ||
+          (item.type === "ITEM" && item.data.itemType === "oakwarden-staff")
+            ? { ...item, dropRate: 1 }
+            : item,
+        );
+      }
       await dungeonManager.handleDungeonCleared(
         entered.id,
         battleId,
