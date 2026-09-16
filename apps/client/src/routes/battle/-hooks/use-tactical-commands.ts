@@ -24,7 +24,7 @@ type Plan = {
   error?: string;
 };
 
-/** Planning uses the server's read-only rules. Only the three explicit commits send commands. */
+/** Planning uses the server's read-only rules. Only explicit commits send commands. */
 export function useTacticalCommands(
   connection: BattleConnection,
   ownsTurn: boolean,
@@ -81,7 +81,13 @@ export function useTacticalCommands(
   const spellGuidance = useMemo(
     () =>
       grid && activeEntity && targeting && canChoose
-        ? buildSpellGuidance(grid, actors, activeEntity.id, targeting, reachable)
+        ? buildSpellGuidance(
+            grid,
+            actors,
+            activeEntity.id,
+            targeting,
+            reachable,
+          )
         : undefined,
     [grid, actors, activeEntity, targeting, reachable, canChoose],
   );
@@ -238,7 +244,8 @@ export function useTacticalCommands(
     action:
       | { type: "move"; destination: Tile }
       | { type: "castSpatial"; spellId: string; selection: CastSelection }
-      | { type: "endTurn" },
+      | { type: "endTurn" }
+      | { type: "useConsumable"; slot: 0 | 1 },
   ) => {
     if (!canChoose || latest.current.pendingId || !state || !activation) return;
     const requestId = crypto.randomUUID();
@@ -260,7 +267,9 @@ export function useTacticalCommands(
                 selection: action.selection,
               },
             }
-          : { type: "endTurn", data };
+          : action.type === "useConsumable"
+            ? { type: "useConsumable", data: { ...data, slot: action.slot } }
+            : { type: "endTurn", data };
     setPlan({ ...latest.current, pendingId: requestId });
     if (!connection.send(message)) setPlan({});
   };
@@ -343,6 +352,14 @@ export function useTacticalCommands(
               commit({ type: "move", destination: move.tile });
           },
           endTurn: () => commit({ type: "endTurn" }),
+          useConsumable: (slot: 0 | 1) => {
+            if (
+              state?.consumables?.some(
+                (item) => item.slot === slot && item.available,
+              )
+            )
+              commit({ type: "useConsumable", slot });
+          },
         }
       : undefined,
   };

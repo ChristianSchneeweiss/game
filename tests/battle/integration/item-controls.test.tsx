@@ -10,6 +10,7 @@ import {
 } from "../../../apps/server/src/game-usecases/inventory";
 import type { LootEntity } from "../../../apps/game/src/types";
 import { createItemLibrary } from "../../../apps/game/src/library/catalog";
+import { getItemDefinition } from "../../../apps/game/src/items/catalog";
 import { parseLibrarySearch } from "../../../apps/client/src/features/library/library-search";
 
 const browser = new Window({ url: "http://localhost/items" });
@@ -52,8 +53,93 @@ const { RewardEntry } =
   await import("../../../apps/client/src/features/expedition/reward-entry");
 const { groupDrops } =
   await import("../../../apps/client/src/features/expedition/run-info");
+const { ConsumableUseForm } =
+  await import("../../../apps/client/src/features/armoury/consumable-use");
 let root: Root;
 let container: HTMLElement;
+test("outside-use controls choose a run, show actual restoration and block repeated clicks while pending", async () => {
+  const item = getItemDefinition("healing-potion");
+  if (item.kind !== "consumable") throw new Error("Expected potion");
+  const targets = [
+    {
+      dungeonId: "first-run",
+      dungeonName: "Forest",
+      round: 1,
+      characterId: "hero",
+      name: "Mira",
+      health: 90,
+      maxHealth: 100,
+      mana: 20,
+      maxMana: 50,
+    },
+    {
+      dungeonId: "second-run",
+      dungeonName: "Crypt",
+      round: 2,
+      characterId: "hero",
+      name: "Mira",
+      health: 20,
+      maxHealth: 100,
+      mana: 20,
+      maxMana: 50,
+    },
+    {
+      dungeonId: "full-run",
+      dungeonName: "Full",
+      round: 0,
+      characterId: "hero",
+      name: "Mira",
+      health: 100,
+      maxHealth: 100,
+      mana: 20,
+      maxMana: 50,
+    },
+  ];
+  const used: string[] = [];
+  await mount(
+    <ConsumableUseForm
+      item={item}
+      targets={targets}
+      pending={false}
+      onUse={(target) => used.push(target.dungeonId)}
+    />,
+  );
+  const select = container.querySelector("select")!;
+  expect(select.options).toHaveLength(2);
+  expect(container.textContent).toContain("+10 health");
+  await act(async () => {
+    select.value = "second-run:hero";
+    select.dispatchEvent(
+      new browser.Event("change", { bubbles: true }) as unknown as Event,
+    );
+  });
+  expect(container.textContent).toContain("+40 health");
+  await act(async () =>
+    container.querySelector<HTMLButtonElement>("button")!.click(),
+  );
+  expect(used).toEqual(["second-run"]);
+  await mount(
+    <ConsumableUseForm
+      item={item}
+      targets={targets}
+      pending={true}
+      onUse={() => used.push("unexpected")}
+    />,
+  );
+  expect(container.querySelector<HTMLButtonElement>("button")!.disabled).toBe(
+    true,
+  );
+  await mount(
+    <ConsumableUseForm
+      item={item}
+      targets={[targets[2]!]}
+      pending={false}
+      onUse={() => used.push("unexpected")}
+    />,
+  );
+  expect(container.textContent).toContain("No living character needs health");
+  expect(container.querySelector("button")).toBeNull();
+});
 beforeEach(() => {
   container = document.createElement("div");
   document.body.appendChild(container);
@@ -161,7 +247,7 @@ function LibraryHarness() {
   );
   return <LibraryPage search={search} onSearchChange={setSearch} />;
 }
-test("Library list and details agree on assigned tiers; Unrated and numeric Might filters omit stackables", async () => {
+test("Library item list and details agree on assigned tiers and omit Might controls", async () => {
   await mount(<LibraryHarness />);
   const detail = () => container.querySelector('[aria-label="Entry details"]')!;
   expect(detail().querySelector(".library-might")?.textContent).toBe("Tier B");
@@ -179,18 +265,9 @@ test("Library list and details agree on assigned tiers; Unrated and numeric Migh
   expect(container.querySelector(".library-list")?.textContent).toContain(
     "Test Material",
   );
-  await act(async () => {
-    tier.value = "unrated";
-    tier.dispatchEvent(
-      new browser.Event("change", { bubbles: true }) as unknown as Event,
-    );
-  });
-  expect(container.querySelector(".library-list")?.textContent).not.toContain(
-    "Test Material",
-  );
-  expect(container.querySelector(".library-list")?.textContent).not.toContain(
-    "Test Supply",
-  );
+  expect(tier.querySelector('option[value="unrated"]')).toBeNull();
+  expect(container.querySelector(".library-might-range")).toBeNull();
+  expect(container.querySelector('option[value="mightDesc"]')).toBeNull();
 });
 
 test("reward summaries sum quantities and share inventory metadata; duplicate enemy references remain navigable", async () => {

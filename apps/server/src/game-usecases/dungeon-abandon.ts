@@ -11,6 +11,8 @@ import { getDungeonParty, requireDungeonParty } from "./dungeon-access";
 import { bmStorage } from "./bm-storage";
 import { dungeonManager } from "./dungeon-manager";
 import { EntityFactory } from "./entity-factory";
+import type { Entity } from "@loot-game/game/entity-types";
+import { returnBattleSupplies } from "./battle-supplies";
 
 export class DungeonEncounterChangedError extends TRPCError {
   constructor() {
@@ -27,7 +29,11 @@ export async function abandonDungeon(
   dungeonId: string,
   userId: string,
   db: Database,
-  options: { allowActiveBattle?: boolean; expectedBattleId?: string } = {},
+  options: {
+    allowActiveBattle?: boolean;
+    expectedBattleId?: string;
+    remainingSupplies?: readonly Pick<Entity, "id" | "consumables">[];
+  } = {},
 ) {
   return db.transaction(async (tx) => {
     const [run] = await tx
@@ -77,7 +83,12 @@ export async function abandonDungeon(
           result.winner,
           tx,
         );
-      } else
+      } else {
+        await returnBattleSupplies(
+          battleId,
+          options.remainingSupplies ?? [],
+          tx,
+        );
         await tx
           .update(TB_dungeonBattle)
           .set({ abandonedAt: new Date() })
@@ -87,6 +98,7 @@ export async function abandonDungeon(
               isNull(TB_dungeonBattle.completedAt),
             ),
           );
+      }
     }
     const abandonedAt = new Date();
     await tx

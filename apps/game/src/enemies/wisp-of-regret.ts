@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import { BaseEnemy } from "./base/base.enemy";
-import { defaultSpellDropRate } from "../utils/loot";
+import { defaultItemDropRate, defaultSpellDropRate } from "../utils/loot";
 
 export class WispOfRegret extends BaseEnemy {
   constructor(id?: string) {
@@ -23,7 +23,7 @@ export class WispOfRegret extends BaseEnemy {
         gold: 20,
         items: [
           ...defaultSpellDropRate(["cinder-wisp"]),
-          { type: "ITEM", data: { itemType: "hollow-scepter" }, dropRate: 0.2 },
+          ...defaultItemDropRate(["hollow-scepter"]),
         ],
       },
       spells: ["cinder-wisp", "basic-attack"],

@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { ItemIcon } from "@/components/item-icon";
 import type { BattleSession } from "../-hooks/use-battle";
 import type { Stats } from "./timeline";
 import { SkillIcon } from "../../../components/skill-icon";
@@ -79,6 +80,32 @@ export function BattleCommandPanel({
           );
         })}
       </div>
+      {session.tactical && !!session.battleState?.consumables?.length && (
+        <div className="battle-spell-list" aria-label="Equipped consumables">
+          {session.battleState.consumables.map((item) => (
+            <Button
+              key={item.slot}
+              variant="outline"
+              disabled={!session.canChoose || !item.available}
+              onClick={() => session.tactical?.useConsumable(item.slot)}
+            >
+              <ItemIcon type={item.type} />
+              <span className="battle-spell-text">
+                <strong>
+                  {item.name} ×{item.quantity}
+                </strong>
+                <small>
+                  {item.quantity === 0
+                    ? "Used"
+                    : !item.available
+                      ? `Full ${item.restoration.resource}`
+                      : `Restore ${item.restoration.amount} ${item.restoration.resource} · Uses action`}
+                </small>
+              </span>
+            </Button>
+          ))}
+        </div>
+      )}
       <div className="battle-cast-row">
         <div className="battle-prepared-action">
           <div className="battle-prepared-heading">

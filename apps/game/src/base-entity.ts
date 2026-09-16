@@ -17,6 +17,7 @@ import type { WeaponAttackProfile } from "./tactical/types";
 export const CHARACTER_HEALTH_REGEN_PER_VITALITY = 0.375;
 
 export class BaseEntity implements Entity {
+  consumables: BattleConsumable[] = [];
   id: string;
   name: string;
   team: Team;
@@ -275,3 +276,4 @@ export class Character extends BaseEntity {
     this.userId = userId;
   }
 }
+import type { BattleConsumable } from "./items/consumables";

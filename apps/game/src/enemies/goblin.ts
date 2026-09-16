@@ -1,5 +1,7 @@
 import { nanoid } from "nanoid";
 import { BaseEnemy } from "./base/base.enemy";
+import { getItemDefinition } from "../items/catalog";
+import { defaultItemDropRate, defaultPassiveDropRate } from "../utils/loot";
 
 export class Goblin extends BaseEnemy {
   constructor(id?: string) {
@@ -25,25 +27,16 @@ export class Goblin extends BaseEnemy {
       loot: {
         gold: 10,
         items: [
-          {
-            type: "ITEM",
-            dropRate: 0.6,
-            data: {
-              itemType: "int-armor",
-            },
-          },
-          {
-            type: "PASSIVE",
-            dropRate: 0.6,
-            data: {
-              passiveType: "armor-up",
-            },
-          },
+          ...defaultItemDropRate(["int-armor"]),
+          ...defaultPassiveDropRate(["armor-up"]),
         ],
       },
       spells: ["basic-attack"],
       passiveSkills: ["armor-up"],
       equipment: ["int-armor"],
     });
+    this.loot.items.push(
+      ...defaultItemDropRate([getItemDefinition("healing-potion").type]),
+    );
   }
 }

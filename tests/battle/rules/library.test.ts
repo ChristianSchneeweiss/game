@@ -42,11 +42,19 @@ test("library includes every authored type and every combat-kit and drop referen
   );
   expect(keys.size).toBe(entries.length);
   for (const entry of entries) {
-    expect(isMight(entry.might)).toBe(true);
-    expect(entry.tier).toBe(tierFromMight(entry.might!));
-    expect(entry.assessmentStatus).toBe("estimated");
-    expect(entry.referenceId).toStartWith("docs/might/assessments.md#");
-    expect(entry.referenceId).toEndWith("-v3");
+    if (entry.itemKind === "consumable" || entry.itemKind === "material") {
+      expect(entry.might).toBeNull();
+      expect(entry.assessmentStatus).toBe("not-applicable");
+      expect(entry.tier).toBe(
+        getItemDefinitions().find((item) => item.type === entry.type)!.tier,
+      );
+    } else {
+      expect(isMight(entry.might)).toBe(true);
+      expect(entry.tier).toBe(tierFromMight(entry.might!));
+      expect(entry.assessmentStatus).toBe("estimated");
+      expect(entry.referenceId).toStartWith("docs/might/assessments.md#");
+      expect(entry.referenceId).toEndWith("-v3");
+    }
     expect(entry.family.length).toBeGreaterThan(0);
     expect(entry.name.length).toBeGreaterThan(0);
     expect(entry.description.length).toBeGreaterThan(0);
@@ -126,7 +134,19 @@ test("equipment and enemies expose authored modifiers, kits, and exact drop chan
     value: "100%",
   });
   expect(skeleton.drops).toEqual([
-    { id: "ashen-skeleton:drop:0", category: "spells", type: "splinter-shot", chance: 1 },
+    {
+      id: "ashen-skeleton:drop:0",
+      category: "spells",
+      type: "splinter-shot",
+      chance: 0.1,
+    },
+    {
+      id: "ashen-skeleton:drop:1",
+      category: "items",
+      type: "bone-shard",
+      chance: 0.1,
+      quantity: 1,
+    },
   ]);
   expect(
     createPassiveLibrary().find((entry) => entry.type === "stoneform-resolve")

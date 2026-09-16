@@ -27,6 +27,7 @@ CREATE TABLE "battle_result" (
 
 CREATE TABLE "battle_start" (
 	"battle_id" text PRIMARY KEY NOT NULL,
+	"supplies_returned_at" timestamp with time zone,
 	"builds" json NOT NULL
 );
 
@@ -43,8 +44,19 @@ CREATE TABLE "character" (
 	"xp" integer DEFAULT 0 NOT NULL,
 	"level" integer DEFAULT 1 NOT NULL,
 	"build_revision" integer DEFAULT 0 NOT NULL,
+	"consumable_loadout" json DEFAULT '[null,null]'::json NOT NULL,
 	"stat_points_available" integer DEFAULT 0 NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now()
+);
+
+CREATE TABLE "consumable_use" (
+	"user_id" text NOT NULL,
+	"request_id" text NOT NULL,
+	"dungeon_id" text NOT NULL,
+	"character_id" text NOT NULL,
+	"item_type" text NOT NULL,
+	"restored" double precision NOT NULL,
+	CONSTRAINT "consumable_use_user_id_request_id_pk" PRIMARY KEY("user_id","request_id")
 );
 
 CREATE TABLE "dungeon_battle" (
@@ -208,6 +220,7 @@ CREATE TABLE "user" (
 );
 
 ALTER TABLE "character" ADD CONSTRAINT "character_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;
+ALTER TABLE "consumable_use" ADD CONSTRAINT "consumable_use_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;
 ALTER TABLE "dungeon_battle" ADD CONSTRAINT "dungeon_battle_dungeon_id_dungeon_data_id_fk" FOREIGN KEY ("dungeon_id") REFERENCES "public"."dungeon_data"("id") ON DELETE no action ON UPDATE no action;
 ALTER TABLE "dungeon_data" ADD CONSTRAINT "dungeon_data_created_by_user_id_fk" FOREIGN KEY ("created_by") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;
 ALTER TABLE "dungeon_enemy" ADD CONSTRAINT "dungeon_enemy_dungeon_id_dungeon_data_id_fk" FOREIGN KEY ("dungeon_id") REFERENCES "public"."dungeon_data"("id") ON DELETE no action ON UPDATE no action;

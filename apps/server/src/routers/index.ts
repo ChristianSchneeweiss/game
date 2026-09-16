@@ -25,8 +25,19 @@ import { characterRouter } from "./character-router";
 import { dungeonRouter } from "./dungeon-router";
 import { socialRouter } from "./social-router";
 import { preparationRouter } from "./shared-preparation-router";
+import {
+  consumableTargets,
+  useConsumable,
+  UseConsumableSchema,
+} from "../game-usecases/consumable-use";
 
 export const appRouter = router({
+  getConsumableTargets: protectedProcedure.query(({ ctx }) =>
+    consumableTargets(ctx.session.id, ctx.db),
+  ),
+  useConsumable: protectedProcedure
+    .input(UseConsumableSchema)
+    .mutation(({ ctx, input }) => useConsumable(input, ctx.session.id, ctx.db)),
   healthCheck: publicProcedure.query(() => {
     return "OK";
   }),

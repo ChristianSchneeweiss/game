@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import {
   BookOpen,
+  FlaskConical,
   Shield,
   Skull,
   SlidersHorizontal,
@@ -27,6 +28,7 @@ import { libraryFamilyLabel } from "@loot-game/game/library/types";
 import {
   filterLibrary,
   libraryCategories,
+  libraryTab,
   parseLibrarySearch,
   type LibrarySearch,
 } from "./library-search";
@@ -36,23 +38,22 @@ const categories = {
   spells: {
     name: "Spells",
     icon: Sparkles,
-    description: "Attacks, healing, and the effects that shape a fight.",
+  },
+  equipment: {
+    name: "Equipment",
+    icon: Sword,
   },
   items: {
     name: "Items",
-    icon: Sword,
-    description:
-      "Equipment, consumables, and materials: tiers, properties, and sources.",
+    icon: FlaskConical,
   },
   passives: {
     name: "Passive skills",
     icon: Shield,
-    description: "Persistent abilities that bring a build together.",
   },
   enemies: {
     name: "Enemies",
     icon: Skull,
-    description: "Base attributes, combat kits, and possible rewards.",
   },
 };
 
@@ -78,7 +79,7 @@ export function LibraryPage({
     [spells, staticEntries],
   );
   const categoryEntries = entries.filter(
-    (entry) => entry.category === search.category,
+    (entry) => libraryTab(entry) === search.category,
   );
   const filtered = filterLibrary(entries, search);
   const selected =
@@ -88,10 +89,12 @@ export function LibraryPage({
     onSearchChange({ ...search, ...patch });
   const inspect = (reference: LibraryReference) => {
     setRangeReset((value) => value + 1);
-    onSearchChange({
-      ...parseLibrarySearch({ category: reference.category }),
-      entry: reference.type,
-    });
+    onSearchChange(
+      parseLibrarySearch({
+        category: reference.category,
+        entry: reference.type,
+      }),
+    );
   };
   const clearFilters = () => {
     setRangeReset((value) => value + 1);
@@ -111,9 +114,12 @@ export function LibraryPage({
     search.mightMin !== undefined ||
     search.mightMax !== undefined;
   const familyGroups =
-    search.category === "items" &&
-    (search.sort === "mightAsc" || search.sort === "mightDesc")
-      ? [...new Set(filtered.map((entry) => entry.family))]
+    search.category === "items" ||
+    (search.category === "equipment" &&
+      (search.sort === "mightAsc" || search.sort === "mightDesc"))
+      ? [...new Set(filtered.map((entry) => entry.family))].sort((a, b) =>
+          libraryFamilyLabel(a).localeCompare(libraryFamilyLabel(b)),
+        )
       : [];
 
   return (
@@ -149,52 +155,48 @@ export function LibraryPage({
                   <span>{name}</span>
                   <small>
                     {
-                      entries.filter((entry) => entry.category === category)
+                      entries.filter((entry) => libraryTab(entry) === category)
                         .length
                     }
                   </small>
                 </button>
               );
             })}
-            <p className="library-scope">
-              The complete catalogue.
-              <br />
-              Collected and undiscovered.
-            </p>
           </nav>
           <div className="library-browser">
-            <div className="library-browser-heading">
-              <h2>{currentCategory.name}</h2>
-              <p>{currentCategory.description}</p>
-              <details className="library-explanation">
-                <summary>Understanding Might</summary>
-                <p>
-                  Might values overall power, including special effects, among
-                  comparable content under standard conditions. Unrated entries
-                  have not been assessed yet.
-                </p>
-              </details>
-            </div>
+            <h2 className="sr-only">{currentCategory.name}</h2>
             <LibraryToolbar
+              key={search.category}
               search={search}
               categoryName={currentCategory.name}
               entries={categoryEntries}
               onChange={change}
-            />
-            <LibraryAdvancedControls search={search}>
-              <MightRange
-                key={`${search.category}:${rangeReset}`}
-                mightMin={search.mightMin}
-                mightMax={search.mightMax}
-                onChange={(bounds) => change({ ...bounds, entry: "" })}
-              />
-              {search.category === "spells" ? (
-                <LibraryPreview
-                  attributes={attributes}
-                  onChange={setAttributes}
-                />
-              ) : null}
-            </LibraryAdvancedControls>
+            >
+              {search.category !== "items" && (
+                <>
+                  <MightRange
+                    key={`${search.category}:${rangeReset}`}
+                    mightMin={search.mightMin}
+                    mightMax={search.mightMax}
+                    onChange={(bounds) => change({ ...bounds, entry: "" })}
+                  />
+                  {search.category === "spells" && (
+                    <LibraryPreview
+                      attributes={attributes}
+                      onChange={setAttributes}
+                    />
+                  )}
+                  <details className="library-explanation">
+                    <summary>Understanding Might</summary>
+                    <p>
+                      Might values overall power, including special effects,
+                      among comparable content under standard conditions.
+                      Unrated entries have not been assessed yet.
+                    </p>
+                  </details>
+                </>
+              )}
+            </LibraryToolbar>
             <div className="library-results">
               <span role="status">
                 {filtered.length} of {categoryEntries.length} entries
@@ -233,7 +235,7 @@ export function LibraryPage({
                   <div className="library-empty">
                     <BookOpen size={32} />
                     <h3>No matching entries</h3>
-                    <p>Try another name, effect, tier, or Might range.</p>
+                    <p>Try another search or clear your filters.</p>
                     <button type="button" onClick={clearFilters}>
                       Clear filters
                     </button>
@@ -252,27 +254,6 @@ export function LibraryPage({
         </div>
       </div>
     </main>
-  );
-}
-
-function LibraryAdvancedControls({
-  search,
-  children,
-}: {
-  search: LibrarySearch;
-  children: React.ReactNode;
-}) {
-  return (
-    <details className="library-advanced">
-      <summary>
-        <SlidersHorizontal size={15} /> Might range
-        {search.category === "spells" ? " & preview attributes" : ""}
-        {(search.mightMin !== undefined || search.mightMax !== undefined) && (
-          <span>Range active</span>
-        )}
-      </summary>
-      {children}
-    </details>
   );
 }
 
@@ -351,7 +332,7 @@ function LibraryTable({
   const headings = {
     spells: ["Might", "Mana", "CD", "Est. dmg", "Range"],
     enemies: ["Might", "HP", "Mana", "XP"],
-    items: tierOnly ? ["Tier", "Kind"] : ["Tier / Might", "Kind / slot"],
+    items: tierOnly ? ["Tier"] : ["Tier / Might", "Kind / slot"],
     passives: ["Might", "Effect"],
   }[category];
   return (
@@ -361,7 +342,7 @@ function LibraryTable({
           ? tierOnly
             ? familyLabel
             : `${familyLabel} · Might comparison`
-          : `${categories[category].name} catalogue`}
+          : `${categories[libraryTab(entries[0])].name} catalogue`}
       </caption>
       <thead>
         <tr>
@@ -392,7 +373,9 @@ function LibraryTable({
                     entry.stats.find((stat) => stat.label === "XP reward")
                       ?.value,
                   ]
-                : [category === "items" ? entry.group : entry.description];
+                : tierOnly
+                  ? []
+                  : [category === "items" ? entry.group : entry.description];
           return (
             <tr key={entry.type} data-selected={entry.type === selected}>
               <th scope="row">

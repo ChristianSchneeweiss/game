@@ -1,5 +1,6 @@
 import { nanoid } from "nanoid";
 import { BaseEnemy } from "./base/base.enemy";
+import { defaultItemDropRate } from "../utils/loot";
 
 export class ElderTreant extends BaseEnemy {
   constructor(id?: string) {
@@ -20,9 +21,7 @@ export class ElderTreant extends BaseEnemy {
       xp: 50,
       loot: {
         gold: 75,
-        items: [
-          { type: "ITEM", data: { itemType: "iron-cuirass" }, dropRate: 1 },
-        ],
+        items: defaultItemDropRate(["iron-cuirass"]),
       },
       spells: ["rootgrasp", "crushing-blow", "basic-attack"],
       passiveSkills: ["stoneform-resolve"],

@@ -1,6 +1,7 @@
 import { nanoid } from "nanoid";
 import { BaseEnemy } from "./base/base.enemy";
-import { defaultSpellDropRate } from "../utils/loot";
+import { getItemDefinition } from "../items/catalog";
+import { defaultItemDropRate, defaultSpellDropRate } from "../utils/loot";
 
 export class FishfolkShaman extends BaseEnemy {
   constructor(id?: string) {
@@ -23,14 +24,13 @@ export class FishfolkShaman extends BaseEnemy {
         gold: 30,
         items: [
           ...defaultSpellDropRate(["ocean-blessing", "aqua-wave"]),
-          {
-            type: "ITEM",
-            data: { itemType: "tidewoven-robes" },
-            dropRate: 0.25,
-          },
+          ...defaultItemDropRate(["tidewoven-robes"]),
         ],
       },
       spells: ["ocean-blessing", "aqua-wave", "basic-attack"],
     });
+    this.loot.items.push(
+      ...defaultItemDropRate([getItemDefinition("mana-potion").type]),
+    );
   }
 }

@@ -5,7 +5,9 @@ to 12 items and 16 passives in the first batch. The subsequent
 [all-slot tier pass](equipment-tiers.md) adds 49 more items, for 61 total.
 All additions appear in the Library and drop from
 existing dungeon enemies. Existing enemy combat kits and previous rewards retain
-their definitions. No inventory migration is needed.
+their definitions. The chances below reflect the
+[16 September tier-based drop update](items/drop-rate-research.md).
+No inventory migration is needed.
 
 ## Equipment
 
@@ -15,14 +17,14 @@ Critical-chance bonuses below are percentage points.
 
 | Item | Slot | Bonuses | Source | Drop chance |
 | --- | --- | --- | --- | ---: |
-| Ashen Falchion | Weapon | +10 strength, +4 armor penetration | Emberbound Revenant, Ashen trial | 100% |
-| Tideglass Staff | Weapon | +10 intelligence, +3 mana regeneration | Water Elemental, Tides trial | 100% |
-| Stormfang Blade | Weapon | +8 agility, +8% critical chance | Thundermaw, Storm trial | 100% |
-| Hollow Scepter | Weapon | +10 intelligence, +5 magic penetration | Wisp of Regret, Crypt | 20% |
-| Emberguard Mail | Armor | +10 armor, +6 magic resistance | Lurking Flame Wraith, Ashen trial | 25% |
-| Tidewoven Robes | Armor | +6 intelligence, +5 blessed | Fishfolk Shaman, Tides trial | 25% |
-| Stormrunner Leathers | Armor | +8 agility, +1 movement | Skybolt Wyvern, Storm trial | 25% |
-| Gravewarden Plate | Armor | +18 armor, +8 magic resistance, −1 movement | Ghoul Knight Ivern, Crypt | 100% |
+| Ashen Falchion | Weapon | +10 strength, +4 armor penetration | Emberbound Revenant, Ashen trial | 7% |
+| Tideglass Staff | Weapon | +10 intelligence, +3 mana regeneration | Water Elemental, Tides trial | 7% |
+| Stormfang Blade | Weapon | +8 agility, +8% critical chance | Thundermaw, Storm trial | 4% |
+| Hollow Scepter | Weapon | +10 intelligence, +5 magic penetration | Wisp of Regret, Crypt | 4% |
+| Emberguard Mail | Armor | +10 armor, +6 magic resistance | Lurking Flame Wraith, Ashen trial | 10% |
+| Tidewoven Robes | Armor | +6 intelligence, +5 blessed | Fishfolk Shaman, Tides trial | 10% |
+| Stormrunner Leathers | Armor | +8 agility, +1 movement | Skybolt Wyvern, Storm trial | 7% |
+| Gravewarden Plate | Armor | +18 armor, +8 magic resistance, −1 movement | Ghoul Knight Ivern, Crypt | 7% |
 
 The Falchion attacks in melee with physical damage and Strength scaling.
 Stormfang attacks in melee with physical damage scaled by 30% Agility and 10%
@@ -38,12 +40,12 @@ for related abilities, with their own names and descriptions.
 
 | Passive | Effect | Source | Drop chance |
 | --- | --- | --- | ---: |
-| Predator's Focus | +10 percentage points of critical chance | Skybolt Wyvern | 20% |
-| Fleet Footed | +1 movement tile per activation | Fishfolk Scout | 20% |
-| Arcane Barrier | 15% less magical damage after resistance | Lurking Flame Wraith | 20% |
-| Last Bastion | 20% less damage while already at or below 35% health | Ghoul Knight Ivern | 25% |
-| Merciful Light | 25% stronger healing on targets at or below 50% health | Barkhide Shaman | 25% |
-| Executioner | 20% more direct damage against enemies at or below 35% health, before defenses | Emberbound Revenant | 25% |
+| Predator's Focus | +10 percentage points of critical chance | Skybolt Wyvern | 2% |
+| Fleet Footed | +1 movement tile per activation | Fishfolk Scout | 7% |
+| Arcane Barrier | 15% less magical damage after resistance | Lurking Flame Wraith | 2% |
+| Last Bastion | 20% less damage while already at or below 35% health | Ghoul Knight Ivern | 4% |
+| Merciful Light | 25% stronger healing on targets at or below 50% health | Barkhide Shaman | 4% |
+| Executioner | 20% more direct damage against enemies at or below 35% health, before defenses | Emberbound Revenant | 7% |
 
 Thresholds are checked before each hit or heal. Last Bastion does not reduce a hit
 that starts above its threshold. Executioner excludes periodic and reflected

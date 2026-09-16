@@ -4,6 +4,7 @@ import type { DungeonRoute } from "@loot-game/game/dungeons/route";
 import type { Team } from "@loot-game/game/entity-types";
 import type { EquipmentType } from "@loot-game/game/items/equipment-types";
 import type { StackableItemType } from "@loot-game/game/items/item-types";
+import type { ConsumableLoadout } from "@loot-game/game/items/consumables";
 import { sql } from "drizzle-orm";
 import type { PassiveType } from "@loot-game/game/passive-skills/base/passive-types";
 import type { SpellType } from "@loot-game/game/spells/base/spell-types";
@@ -12,6 +13,7 @@ import type { LootEntity } from "@loot-game/game/types";
 import {
   boolean,
   check,
+  doublePrecision,
   integer,
   json,
   PgDatabase,
@@ -71,6 +73,10 @@ export const TB_character = pgTable("character", {
   xp: integer("xp").notNull().default(0),
   level: integer("level").notNull().default(1),
   buildRevision: integer("build_revision").notNull().default(0),
+  consumableLoadout: json("consumable_loadout")
+    .$type<ConsumableLoadout>()
+    .notNull()
+    .default([null, null]),
   statPointsAvailable: integer("stat_points_available").notNull().default(0),
 
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
@@ -185,10 +191,26 @@ export const TB_dungeonBattle = pgTable("dungeon_battle", {
 // loadout are captured together, before any battle hooks run.
 export const TB_battleStart = pgTable("battle_start", {
   battleId: text("battle_id").primaryKey(),
+  suppliesReturnedAt: timestamp("supplies_returned_at", { withTimezone: true }),
   builds: json("builds")
     .$type<SuperJSONResult & { version?: number; grid?: GridSetup }>()
     .notNull(),
 });
+
+export const TB_consumableUse = pgTable(
+  "consumable_use",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => TB_user.id),
+    requestId: text("request_id").notNull(),
+    dungeonId: text("dungeon_id").notNull(),
+    characterId: text("character_id").notNull(),
+    itemType: text("item_type").notNull(),
+    restored: doublePrecision("restored").notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.userId, table.requestId] })],
+);
 
 export const TB_battleParticipants = pgTable("battle_participants", {
   id: text("id")

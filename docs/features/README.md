@@ -19,9 +19,12 @@ The [foundation spec](items/spec.md), published as
 [issue #6](https://github.com/ChristianSchneeweiss/game/issues/6), covers the shared
 catalog, inventory stacks, assigned material/consumable tiers without required
 Might, and extensions to existing per-enemy drops. The
-[design notes](items/design.md) retain the later equipped-consumable direction;
-effects, action costs, and exact loadout rules remain open. The
+[design notes](items/design.md) retain the original equipped-consumable direction. The
 [maintainability assessment](items/research.md) records the supporting research.
+The [first consumables and materials](items/consumables.md) add five items,
+equipped battle supplies, and direct inventory use between encounters.
+The [drop-rate research and implementation](items/drop-rate-research.md) records
+the shared tier curve, all enemy drop changes, and verification.
 
 ## Friends and shared runs
 

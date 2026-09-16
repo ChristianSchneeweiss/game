@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { CollectionHeader } from "@/components/collection-ui";
 import { OwnedInventory } from "@/features/armoury/owned-armoury";
+import { ConsumableUse } from "@/features/armoury/consumable-use";
 import { RpgPage } from "@/components/rpg-ui";
 import { trpc } from "@/utils/trpc";
 import { useQuery } from "@tanstack/react-query";
@@ -51,6 +52,9 @@ function RouteComponent() {
             loading={isLoading}
             error={isError}
             onRetry={() => void refetch()}
+            renderConsumableAction={(item) => (
+              <ConsumableUse key={item.type} item={item} />
+            )}
           />
         </section>
       </div>

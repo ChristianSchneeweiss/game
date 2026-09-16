@@ -8,6 +8,7 @@ import {
   applyGridCommand,
   advanceBots,
   availableSpells,
+  availableConsumables,
   describeBattleSpell,
 } from "../../../server/src/battle/commands";
 import type {
@@ -20,6 +21,7 @@ import recording from "../../../../tests/battle/recordings/forest-showcase.json"
 import { commands, makeCharacter, scenario } from "./fixtures";
 import { ownerId } from "./auth";
 import { createSpellFromType } from "@loot-game/game/spells/base/spell-from-type";
+import { getItemDefinition } from "@loot-game/game/items/catalog";
 
 registerRecipes();
 const recorded = SuperJSON.parse<{
@@ -68,6 +70,24 @@ if (scenario === "battle-mobile") {
   ).map((type) => createSpellFromType(`hero-${type}`, type));
 }
 hero.baseAttributes.agility = 100;
+if (scenario === "consumables") {
+  hero.health = 70;
+  hero.mana = 15;
+  hero.consumables = (["healing-potion", "mana-potion"] as const).map(
+    (type, slot) => {
+      const item = getItemDefinition(type);
+      if (item.kind !== "consumable") throw new Error("Invalid preview supply");
+      return {
+        version: 1,
+        slot: slot as 0 | 1,
+        type,
+        name: item.name,
+        restoration: item.restoration,
+        quantity: 1,
+      };
+    },
+  );
+}
 const partner = makeCharacter("partner", "Rowan's guardian", "fixture-guest");
 if (scenario === "battle-mobile") partner.name = "Araceli_Schroeder7";
 const enemy = createEnemyFromType(
@@ -141,6 +161,7 @@ class PreviewSocket extends EventTarget {
         effectTracking: bm.effectTracking,
         revision: bm.revision,
         availableSpells: availableSpells(bm),
+        consumables: availableConsumables(bm),
         grid: bm.grid,
         actors: bm.entities.map((entity) => ({
           id: entity.id,
@@ -197,7 +218,8 @@ class PreviewSocket extends EventTarget {
     } else if (
       message.type === "move" ||
       message.type === "endTurn" ||
-      message.type === "castSpatial"
+      message.type === "castSpatial" ||
+      message.type === "useConsumable"
     ) {
       commands.push({ path: message.type, input: message.data });
       try {

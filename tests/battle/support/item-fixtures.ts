@@ -18,6 +18,7 @@ export function installItemFixtures() {
     description: "An isolated supply with no implemented effect.",
     tier: "C",
     useContexts: ["battle", "outside-battle"],
+    restoration: { resource: "health", amount: 40 },
   };
   const material = getItemDefinition("test-material");
   const consumable = getItemDefinition("test-supply");

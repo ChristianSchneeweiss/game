@@ -131,6 +131,7 @@ test("list and details agree for Assessed, Estimated, zero and Unrated", async (
 
 test("range edits apply valid values, preserve focus and retain the last valid range on errors", async () => {
   await mount();
+  await click("More");
   input("Minimum Might").focus();
   await type("Minimum Might", "189");
   expect(document.activeElement).toBe(input("Minimum Might"));
@@ -175,7 +176,7 @@ test("range edits apply valid values, preserve focus and retain the last valid r
 });
 
 test("Might ordering labels item families and combines ranges with slot restrictions", async () => {
-  await mount({ category: "items", group: "bogus" });
+  await mount({ category: "equipment", group: "bogus" });
   expect(applied.sort).toBe("mightDesc");
   expect(
     [...container.querySelectorAll(".library-list caption")].map(
@@ -203,13 +204,16 @@ test("Might ordering labels item families and combines ranges with slot restrict
     ),
   ).toBe(true);
   await select("Sort entries", "mightAsc");
+  await click("More");
   await type("Minimum Might", "190");
   expect(rows()).toHaveLength(2);
   await select("Filter by type", "weapon");
   expect(rows()).toHaveLength(1);
   expect(detail().textContent).not.toContain("Comparison family:");
   await click("Clear filters");
-  expect(rows()).toHaveLength(getItemDefinitions().length);
+  expect(rows()).toHaveLength(
+    getItemDefinitions().filter((item) => item.kind === "equipment").length,
+  );
   expect(container.querySelectorAll(".library-family-heading")).toHaveLength(9);
 });
 
@@ -222,6 +226,7 @@ test("preview changes ordinary damage while keeping list/detail ratings and tier
     mightMax: 190,
   });
   const before = detail().querySelector(".library-description")!.textContent;
+  await click("More");
   await act(async () => {
     container.querySelector("details")!.open = true;
   });
@@ -260,6 +265,7 @@ test("category and related-entry navigation reset ordering, bounds and group res
   });
   await select("Filter by tier", "B");
   await select("Sort entries", "mightDesc");
+  await click("More");
   await type("Minimum Might", "263");
   expect(rows()).toHaveLength(1);
   expect(detail().textContent).toContain("Ashen Skeleton");
@@ -283,4 +289,43 @@ test("category and related-entry navigation reset ordering, bounds and group res
     "Might —Unrated",
   );
   expect(input("Minimum Might").value).toBe("");
+});
+
+test("Equipment and Items tabs stay separate and enemy drop links open the right tab", async () => {
+  await mount({ category: "items", entry: "copper-band" });
+  expect(applied.category).toBe("equipment");
+  expect(detail().textContent).toContain("Copper Band");
+  expect(
+    container.querySelector(".library-options-panel")?.hasAttribute("hidden"),
+  ).toBe(true);
+  const tab = (name: string) =>
+    [...container.querySelectorAll("nav button")].find((node) =>
+      node.textContent?.startsWith(name),
+    ) as HTMLButtonElement;
+  await act(async () => tab("Items").click());
+  expect(applied).toMatchObject({ category: "items", sort: "name" });
+  expect(rows()).toHaveLength(5);
+  expect(container.querySelector(".library-list")?.textContent).toContain(
+    "Healing Potion",
+  );
+  expect(container.querySelector(".library-list")?.textContent).not.toContain(
+    "Copper Band",
+  );
+  expect(container.querySelector(".library-options-toggle")).toBeNull();
+  await click("Healing Potion");
+  const goblin = [...detail().querySelectorAll("button")].find((node) =>
+    node.textContent?.startsWith("Goblin"),
+  )!;
+  await act(async () => goblin.click());
+  expect(applied).toMatchObject({ category: "enemies", entry: "goblin" });
+  const gear = [...detail().querySelectorAll("button")].find((node) =>
+    node.textContent?.startsWith("Copper Band"),
+  )!;
+  await act(async () => gear.click());
+  expect(applied).toMatchObject({
+    category: "equipment",
+    entry: "copper-band",
+  });
+  expect(tab("Equipment").getAttribute("aria-pressed")).toBe("true");
+  expect(detail().textContent).toContain("Copper Band");
 });

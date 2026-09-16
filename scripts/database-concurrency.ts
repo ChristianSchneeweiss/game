@@ -15,6 +15,9 @@ import { registerRecipes } from "../apps/server/src/lib/superjson-recipes";
 import { connection, verifyConnection } from "./database-target";
 import { grantItems, spendItems, readInventory } from "../apps/server/src/game-usecases/inventory";
 import { installItemFixtures } from "../tests/battle/support/item-fixtures";
+import { getItemDefinition } from "../apps/game/src/items/catalog";
+import { useConsumable } from "../apps/server/src/game-usecases/consumable-use";
+import { setConsumableLoadout } from "../apps/server/src/game-usecases/battle-supplies";
 
 registerRecipes();
 const owner = "proof-owner";
@@ -295,6 +298,29 @@ export async function proveConcurrency(target: URL, database: string) {
     );
     assert.equal((await db.select().from(schema.TB_itemStack)).length, 2);
     assert.equal((await db.select().from(schema.TB_loot)).length, 0);
+    await seed();
+    const potion = getItemDefinition("healing-potion").type;
+    await db.transaction((tx) => grantItems(owner, [{ type: potion, quantity: 1 }], tx));
+    const request = { requestId: crypto.randomUUID(), dungeonId: dungeon, characterId: hero, itemType: potion, expected: { round: 0, health: 37, mana: 9 } };
+    const uses = await contend("duplicate consumable use restores and spends once", "dungeon_data", dungeon,
+      [0, 1].map(() => (client) => useConsumable(request, owner, client)));
+    assert(uses.every((result) => result.status === "fulfilled"));
+    assert.equal((await db.select().from(schema.TB_dungeonData))[0]!.characterData[0]!.health, 77);
+    assert.equal((await db.select().from(schema.TB_consumableUse)).length, 1);
+    assert.equal((await readInventory(owner, db)).length, 0);
+
+    await seed();
+    await db.transaction((tx) => grantItems(owner, [{ type: potion, quantity: 1 }], tx));
+    await setConsumableLoadout(hero, [potion, null], owner, db);
+    const raced = await contend("outside use versus battle reservation", "dungeon_data", dungeon, [
+      (client) => useConsumable({ ...request, requestId: crypto.randomUUID() }, owner, client),
+      (client) => beginDungeonAttempt(dungeon, owner, client),
+    ]);
+    assert.equal(raced.filter((result) => result.status === "fulfilled").length, 1);
+    assert.equal((await readInventory(owner, db)).length, 0);
+    const [racedRun] = await db.select().from(schema.TB_dungeonData);
+    assert.equal(racedRun!.characterData[0]!.health, raced[0]!.status === "fulfilled" ? 77 : 37);
+    assert.equal(racedRun!.activeBattle, raced[1]!.status === "fulfilled");
     return { backendPids: identities.map((identity) => identity.pid), collation: identities[0]!.collation, observations };
   } finally {
     fixtures.restore();

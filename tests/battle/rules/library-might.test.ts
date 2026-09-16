@@ -214,7 +214,7 @@ test("item Might ordering keeps alphabetic slot families and Unrated last in eac
   for (const sort of ["mightAsc", "mightDesc"]) {
     const all = filterLibrary(
       entries,
-      parseLibrarySearch({ category: "items", sort, group: "unknown" }),
+      parseLibrarySearch({ category: "equipment", sort, group: "unknown" }),
     );
     expect(all.map((entry) => entry.type)).toEqual([
       "iron-cuirass",
@@ -232,7 +232,7 @@ test("item Might ordering keeps alphabetic slot families and Unrated last in eac
       filterLibrary(
         entries,
         parseLibrarySearch({
-          category: "items",
+          category: "equipment",
           sort,
           mightMin: 190,
           mightMax: 500,
@@ -252,7 +252,7 @@ test("item Might ordering keeps alphabetic slot families and Unrated last in eac
   ).toHaveLength(2);
   expect(
     filterLibrary(entries, {
-      ...parseLibrarySearch({ category: "items", sort: "mightDesc" }),
+      ...parseLibrarySearch({ category: "equipment", sort: "mightDesc" }),
       group: "bogus",
     }),
   ).toHaveLength(entries.length);
@@ -303,7 +303,7 @@ test("URL validation discards malformed and reversed ranges and keeps supported 
   expect(parseLibrarySearch(Object.fromEntries(url.searchParams))).toEqual(
     parsed,
   );
-  for (const category of ["spells", "items", "passives", "enemies"]) {
+  for (const category of ["spells", "equipment", "passives", "enemies"]) {
     expect(parseLibrarySearch({ category, group: "invalid" }).group).toBe(
       "all",
     );
@@ -318,7 +318,19 @@ test("URL validation discards malformed and reversed ranges and keeps supported 
   }
   expect(
     parseLibrarySearch({ category: "items", group: "enemies", sort: "mana" }),
-  ).toMatchObject({ group: "all", sort: "mightDesc" });
+  ).toMatchObject({ group: "all", sort: "name" });
+  expect(
+    parseLibrarySearch({ category: "items", sort: "mightDesc", mightMin: 100 }),
+  ).toMatchObject({
+    category: "items",
+    sort: "name",
+    mightMin: undefined,
+    mightMax: undefined,
+  });
+  expect(
+    parseLibrarySearch({ category: "items", entry: "sovereign-signet" })
+      .category,
+  ).toBe("equipment");
   expect(
     parseLibrarySearch({ category: "enemies", tier: "B", sort: "tier" }).tier,
   ).toBe("B");

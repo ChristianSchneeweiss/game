@@ -1,4 +1,5 @@
 import _ from "lodash";
+import { restorationAmount } from "./items/consumables";
 import { nanoid } from "nanoid";
 import seedrandom from "seedrandom";
 import type { BattleHandler, BattleManager, BattleRound } from "./battle-types";
@@ -467,6 +468,32 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     return events;
   }
 
+  /** Reserved bottles restore only their holder and spend the current activation. */
+  useConsumable(entityId: string, slot: number): boolean {
+    const entity = this.activeEntity(entityId);
+    if (!entity) return false;
+    const item = entity.consumables?.find((item) => item.slot === slot);
+    if (!item || item.quantity !== 1) return false;
+    const amount = restorationAmount(item.restoration, entity);
+    if (amount <= 0) return false;
+    entity[item.restoration.resource] += amount;
+    item.quantity = 0;
+    this.processEvent({
+      eventType: "CONSUMABLE_USE",
+      data: {
+        entityId,
+        slot: item.slot,
+        itemType: item.type,
+        name: item.name,
+        resource: item.restoration.resource,
+        amount,
+      },
+    });
+    this.finishedActorId = entityId;
+    this.endActivation("consumable");
+    return true;
+  }
+
   /** Validate a voluntary pass; lifecycle progression remains caller controlled. */
   passTurn(entityId: string): boolean {
     if (!this.activeEntity(entityId)) return false;
@@ -475,7 +502,9 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     return true;
   }
 
-  private endActivation(reason: "cast" | "pass" | "blocked"): void {
+  private endActivation(
+    reason: "cast" | "pass" | "blocked" | "consumable",
+  ): void {
     const activation = this.grid?.activation;
     if (!activation || !this.grid) return;
     this.grid.activation = null;

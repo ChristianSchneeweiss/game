@@ -1,5 +1,7 @@
 import { nanoid } from "nanoid";
 import { BaseEnemy } from "./base/base.enemy";
+import { getItemDefinition } from "../items/catalog";
+import { defaultItemDropRate, defaultSpellDropRate } from "../utils/loot";
 
 export class AshenSkeleton extends BaseEnemy {
   constructor(id?: string) {
@@ -20,17 +22,12 @@ export class AshenSkeleton extends BaseEnemy {
       xp: 20,
       loot: {
         gold: 20,
-        items: [
-          {
-            type: "SPELL",
-            dropRate: 1,
-            data: {
-              spellType: "splinter-shot",
-            },
-          },
-        ],
+        items: defaultSpellDropRate(["splinter-shot"]),
       },
       spells: ["splinter-shot", "crude-strike", "basic-attack"],
     });
+    this.loot.items.push(
+      ...defaultItemDropRate([getItemDefinition("bone-shard").type]),
+    );
   }
 }

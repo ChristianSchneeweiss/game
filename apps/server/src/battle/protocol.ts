@@ -14,6 +14,10 @@ import {
   type GridState,
 } from "@loot-game/game/tactical/types";
 import z from "zod";
+import {
+  ConsumableSlotSchema,
+  type BattleConsumable,
+} from "@loot-game/game/items/consumables";
 
 export const castSelectionSchema = CastSelectionSchema;
 const gridCommandIdentity = {
@@ -25,6 +29,12 @@ const gridCommandIdentity = {
 const moveSchema = z.object({
   type: z.literal("move"),
   data: z.object({ ...gridCommandIdentity, destination: TileSchema }).strict(),
+});
+const useConsumableSchema = z.object({
+  type: z.literal("useConsumable"),
+  data: z
+    .object({ ...gridCommandIdentity, slot: ConsumableSlotSchema })
+    .strict(),
 });
 const endTurnSchema = z.object({
   type: z.literal("endTurn"),
@@ -77,6 +87,7 @@ const getSpellDescriptionSchema = z.object({
 });
 
 export const messageSchema = z.union([
+  useConsumableSchema,
   moveSchema,
   endTurnSchema,
   castSpatialSchema,
@@ -89,7 +100,7 @@ export const messageSchema = z.union([
 export type BattleMessage = z.infer<typeof messageSchema>;
 export type GridCommand = Extract<
   BattleMessage,
-  { type: "move" | "endTurn" | "castSpatial" }
+  { type: "move" | "endTurn" | "castSpatial" | "useConsumable" }
 >;
 export type BattleCommand =
   | Extract<BattleMessage, { type: "castSpell" }>
@@ -98,7 +109,13 @@ export type BattleCommand =
 export function isBattleCommand(
   message: BattleMessage,
 ): message is BattleCommand {
-  return ["castSpell", "move", "endTurn", "castSpatial"].includes(message.type);
+  return [
+    "castSpell",
+    "move",
+    "endTurn",
+    "castSpatial",
+    "useConsumable",
+  ].includes(message.type);
 }
 
 export type BattleState = {
@@ -107,6 +124,7 @@ export type BattleState = {
   effectTracking: EffectTracking;
   revision: number;
   availableSpells: string[];
+  consumables?: (BattleConsumable & { available: boolean })[];
   grid?: GridState;
   actors?: Array<{
     id: string;

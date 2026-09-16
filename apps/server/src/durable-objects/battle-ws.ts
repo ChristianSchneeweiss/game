@@ -44,6 +44,7 @@ import {
   validateGridCommandIdentity,
   getBattleTargets,
   availableSpells,
+  availableConsumables,
   describeBattleSpell,
 } from "../battle/commands";
 import {
@@ -422,6 +423,7 @@ export class BattleWebsocket extends DurableObject {
       result = await abandonDungeon(intent.dungeonId, intent.userId, this.db, {
         allowActiveBattle: true,
         expectedBattleId: this.battleId,
+        remainingSupplies: this.bm.entities,
       });
     } catch (error) {
       if (!(error instanceof DungeonEncounterChangedError)) throw error;
@@ -562,6 +564,7 @@ export class BattleWebsocket extends DurableObject {
         effectTracking: this.bm.effectTracking,
         revision: battleRevision(this.bm),
         availableSpells: availableSpells(this.bm),
+        consumables: availableConsumables(this.bm),
         ...(this.bm.grid
           ? {
               grid: this.bm.grid,

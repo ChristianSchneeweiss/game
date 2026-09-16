@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import { BaseEnemy } from "./base/base.enemy";
-import { defaultSpellDropRate } from "../utils/loot";
+import { defaultItemDropRate, defaultSpellDropRate } from "../utils/loot";
 
 export class HollowedOakwarden extends BaseEnemy {
   constructor(id?: string) {
@@ -22,13 +22,12 @@ export class HollowedOakwarden extends BaseEnemy {
       loot: {
         gold: 150, // Boss enemy, higher gold
         items: [
-          ...defaultSpellDropRate(["verdant-smite", "festering-blow"]),
-          {
-            type: "SPELL",
-            data: { spellType: "natures-embrace" },
-            dropRate: 1,
-          },
-          { type: "ITEM", data: { itemType: "oakwarden-staff" }, dropRate: 1 },
+          ...defaultSpellDropRate([
+            "verdant-smite",
+            "festering-blow",
+            "natures-embrace",
+          ]),
+          ...defaultItemDropRate(["oakwarden-staff"]),
         ],
       },
       spells: [

@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRight, Search, Shield } from "lucide-react";
 import {
   consumableContextLabel,
   getItemDefinition,
   type ItemKind,
+  type ItemDefinition,
 } from "@loot-game/game/items/catalog";
 import {
   EQUIPMENT_SLOTS,
@@ -74,11 +75,15 @@ export function OwnedInventory({
   loading,
   error,
   onRetry,
+  renderConsumableAction,
 }: {
   items: OwnedItem[];
   loading: boolean;
   error?: boolean;
   onRetry?: () => void;
+  renderConsumableAction?: (
+    item: Extract<ItemDefinition, { kind: "consumable" }>,
+  ) => ReactNode;
 }) {
   const [filters, setFilters] = useState<InventoryFilters>({
     kind: "all",
@@ -159,7 +164,14 @@ export function OwnedInventory({
                   detailLabel="Selected item"
                   description="Item description, tier, quantity and properties."
                 >
-                  <ItemPage entry={selected} />
+                  <ItemPage
+                    entry={selected}
+                    consumableAction={
+                      selected.item.kind === "consumable"
+                        ? renderConsumableAction?.(selected.item)
+                        : undefined
+                    }
+                  />
                 </InventoryBrowser>
               ) : (
                 <RpgEmptyState
@@ -195,7 +207,13 @@ export function OwnedInventory({
   );
 }
 
-function ItemPage({ entry }: { entry: CollectionEntry }) {
+function ItemPage({
+  entry,
+  consumableAction,
+}: {
+  entry: CollectionEntry;
+  consumableAction?: ReactNode;
+}) {
   return (
     <article
       className="inventory-page armoury-page rpg-reading-surface"
@@ -255,7 +273,13 @@ function ItemPage({ entry }: { entry: CollectionEntry }) {
           </ul>
         </section>
       )}
+      {consumableAction}
       <footer>
+        {entry.kind === "consumable" && (
+          <Link to="/characters">
+            Equip battle supplies on a character <ArrowUpRight size={16} />
+          </Link>
+        )}
         {entry.kind === "equipment" &&
           (entry.equippedBy !== null ? (
             <>

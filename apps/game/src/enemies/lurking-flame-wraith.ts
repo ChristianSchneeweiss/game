@@ -1,5 +1,10 @@
 import { nanoid } from "nanoid";
 import { BaseEnemy } from "./base/base.enemy";
+import {
+  defaultItemDropRate,
+  defaultPassiveDropRate,
+  defaultSpellDropRate,
+} from "../utils/loot";
 
 export class LurkingFlameWraith extends BaseEnemy {
   constructor(id?: string) {
@@ -20,30 +25,9 @@ export class LurkingFlameWraith extends BaseEnemy {
       xp: 30,
       loot: {
         items: [
-          {
-            type: "ITEM",
-            data: { itemType: "emberguard-mail" },
-            dropRate: 0.25,
-          },
-          {
-            type: "PASSIVE",
-            data: { passiveType: "arcane-barrier" },
-            dropRate: 0.2,
-          },
-          {
-            type: "SPELL",
-            data: {
-              spellType: "cinderbrand",
-            },
-            dropRate: 0.1,
-          },
-          {
-            type: "SPELL",
-            data: {
-              spellType: "splinter-shot",
-            },
-            dropRate: 0.2,
-          },
+          ...defaultItemDropRate(["emberguard-mail"]),
+          ...defaultPassiveDropRate(["arcane-barrier"]),
+          ...defaultSpellDropRate(["cinderbrand", "splinter-shot"]),
         ],
         gold: 35,
       },

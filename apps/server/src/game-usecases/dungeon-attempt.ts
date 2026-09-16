@@ -20,6 +20,7 @@ import { TB_preparation } from "../db/shared-preparation-schema";
 import { connectedPreparationUsers } from "./shared-preparation-presence";
 import { requirePreparationRevision } from "./shared-preparation-membership";
 import { deserializeStartingGrid } from "../battle/starting-build-codec";
+import { reserveBattleSupplies } from "./battle-supplies";
 
 /** Run -> preparation -> character locks, then atomic attempt/snapshot writes. */
 export async function beginDungeonAttempt(
@@ -144,6 +145,7 @@ export async function beginDungeonAttempt(
         message: "Dungeon encounter is missing",
       });
     const battleId = id();
+    await reserveBattleSupplies(dungeon.playerTeam, tx);
     await tx
       .update(TB_dungeonData)
       .set({ activeBattle: true, activeBattleId: battleId })

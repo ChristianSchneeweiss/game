@@ -1,5 +1,10 @@
 import { faker } from "@faker-js/faker";
 import z from "zod";
+import { ConsumableLoadoutSchema } from "@loot-game/game/items/consumables";
+import {
+  readConsumableLoadout,
+  setConsumableLoadout,
+} from "../game-usecases/battle-supplies";
 import {
   applyStatIncrease,
   createCharacter,
@@ -15,6 +20,26 @@ import { EntityFactory } from "../game-usecases/entity-factory";
 import { protectedProcedure, router } from "../lib/trpc";
 
 export const characterRouter = router({
+  getConsumableLoadout: protectedProcedure
+    .input(z.object({ characterId: z.string().min(1) }))
+    .query(({ ctx, input }) =>
+      readConsumableLoadout(input.characterId, ctx.session.id, ctx.db),
+    ),
+  setConsumableLoadout: protectedProcedure
+    .input(
+      z.object({
+        characterId: z.string().min(1),
+        loadout: ConsumableLoadoutSchema,
+      }),
+    )
+    .mutation(({ ctx, input }) =>
+      setConsumableLoadout(
+        input.characterId,
+        input.loadout,
+        ctx.session.id,
+        ctx.db,
+      ),
+    ),
   createCharacter: protectedProcedure.mutation(async ({ ctx }) => {
     const { session, db } = ctx;
     if (!session) {

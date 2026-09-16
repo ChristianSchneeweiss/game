@@ -1,4 +1,5 @@
 import seedrandom from "seedrandom";
+import { restorationAmount } from "@loot-game/game/items/consumables";
 import type { Entity } from "@loot-game/game/entity-types";
 import type { Spell } from "@loot-game/game/types";
 import { Character } from "@loot-game/game/base-entity";
@@ -37,6 +38,18 @@ export function availableSpells(bm: BM) {
   return (
     actor?.spells.filter((s) => s.canCast(actor)).map((s) => s.config.id) ?? []
   );
+}
+
+export function availableConsumables(bm: BM) {
+  if (!bm.grid || bm.isGameOver()) return [];
+  const actor = bm.getEntityById(bm.getCurrentRound().orderQueue[0]);
+  return (actor?.consumables ?? []).map((item) => ({
+    ...item,
+    available:
+      item.quantity > 0 &&
+      !!actor &&
+      restorationAmount(item.restoration, actor) > 0,
+  }));
 }
 
 export function getBattleTargets(bm: BM, data: TargetRequest) {
@@ -113,6 +126,10 @@ export function applyGridCommand(bm: BM, command: GridCommand, userId: string) {
   validateGridCommandIdentity(bm, command, userId);
   const data = command.data;
   switch (command.type) {
+    case "useConsumable":
+      if (!bm.useConsumable(data.entityId, command.data.slot))
+        throw new Error("This bottle is empty or would restore no resources.");
+      break;
     case "move":
       if (!bm.moveEntity(data.entityId, command.data.destination))
         throw new Error("That destination is unavailable.");

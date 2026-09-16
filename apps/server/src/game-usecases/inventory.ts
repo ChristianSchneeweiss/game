@@ -53,7 +53,7 @@ function batch(items: readonly ItemAmount[], stackableOnly = false) {
   );
 }
 
-async function lockInventory(userId: string, tx: Transaction) {
+export async function lockInventory(userId: string, tx: Transaction) {
   // Lock the existing owner even for a first grant, when no stack row exists.
   // NO KEY UPDATE allows foreign-key checks; all inventory mutations take this
   // one lock before touching stock. It lasts only for the gameplay transaction.
@@ -92,14 +92,12 @@ export async function grantItems(
     if (item.kind === "equipment") {
       // Bound statement size without imposing a gameplay capacity limit.
       for (let remaining = quantity; remaining > 0; remaining -= 1000) {
-        await tx
-          .insert(TB_equipmentStats)
-          .values(
-            Array.from({ length: Math.min(remaining, 1000) }, () => ({
-              userId,
-              type: item.type,
-            })),
-          );
+        await tx.insert(TB_equipmentStats).values(
+          Array.from({ length: Math.min(remaining, 1000) }, () => ({
+            userId,
+            type: item.type,
+          })),
+        );
       }
     } else {
       await tx
@@ -113,7 +111,7 @@ export async function grantItems(
   }
 }
 
-/** No client use command exists yet. Costs are checked as one batch under the
+/** Costs are checked as one batch under the
  * same inventory lock as grants, so insufficient stock changes nothing. */
 export async function spendItems(
   userId: string,

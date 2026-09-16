@@ -1,5 +1,7 @@
 import { nanoid } from "nanoid";
 import { BaseEnemy } from "./base/base.enemy";
+import { getItemDefinition } from "../items/catalog";
+import { defaultItemDropRate } from "../utils/loot";
 
 export class StormHatchling extends BaseEnemy {
   constructor(id?: string) {
@@ -23,5 +25,8 @@ export class StormHatchling extends BaseEnemy {
       },
       spells: ["staggering-jab", "basic-attack"],
     });
+    this.loot.items.push(
+      ...defaultItemDropRate([getItemDefinition("storm-scale").type]),
+    );
   }
 }

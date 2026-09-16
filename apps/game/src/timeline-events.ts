@@ -116,6 +116,17 @@ const regenEvent = z.object({
 });
 
 const allEvents = z.union([
+  z.object({
+    eventType: z.literal("CONSUMABLE_USE"),
+    data: z.object({
+      entityId: z.string(),
+      slot: z.number().int(),
+      itemType: z.string(),
+      name: z.string(),
+      resource: z.enum(["health", "mana"]),
+      amount: z.number().positive(),
+    }),
+  }),
   spellCastEvent,
   EffectTriggerEvent,
   effectRemovalEvent,
@@ -162,7 +173,7 @@ const allEvents = z.union([
     data: z.object({
       id: z.string(),
       entityId: z.string(),
-      reason: z.enum(["cast", "pass", "blocked"]),
+      reason: z.enum(["cast", "pass", "blocked", "consumable"]),
       revision: z.number().int(),
     }),
   }),

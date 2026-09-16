@@ -149,6 +149,24 @@ try {
   assert.deepEqual(await rows(upgrade.sql), beforeItemsRows);
   assert.equal(await applyMigration(upgrade.sql, itemMigration), true);
   assert.equal(await applyMigration(upgrade.sql, itemMigration), false);
+  const consumableMigration = "../manual/20260916_consumable_use.sql";
+  const beforeConsumables = await schemaShape(upgrade.sql);
+  const consumableSql = readFileSync(
+    join(migrationDirectory, consumableMigration),
+    "utf8",
+  );
+  await assert.rejects(
+    upgrade.sql.unsafe(
+      consumableSql.replace(/COMMIT;\s*$/, "SELECT 1 / 0; COMMIT;"),
+    ),
+  );
+  await upgrade.sql`ROLLBACK`;
+  assert.deepEqual(await schemaShape(upgrade.sql), beforeConsumables);
+  assert.equal(await applyMigration(upgrade.sql, consumableMigration), true);
+  assert.equal(await applyMigration(upgrade.sql, consumableMigration), false);
+  const [legacyLoadout] =
+    await upgrade.sql`SELECT consumable_loadout FROM character WHERE id = 'legacy-hero'`;
+  assert.deepEqual(legacyLoadout!.consumable_loadout, [null, null]);
   assert.deepEqual(await schemaShape(upgrade.sql), currentShape);
   const [legacyRun] = await upgrade.sql`SELECT active_battle_id, route, character_data FROM dungeon_data WHERE id = 'legacy-run'`;
   assert.equal(legacyRun!.active_battle_id, null);

@@ -11,6 +11,7 @@ import { z } from "zod";
 import { COL_characterDungeonDataSchema } from "../db/character-dungeon-data";
 import { TB_battleResult, type Database } from "../db/schema";
 import { battleResultSchema } from "../battle/result";
+import { returnBattleSupplies } from "./battle-supplies";
 
 const storageSchema = z.object({
   startEntityData: COL_characterDungeonDataSchema,
@@ -78,26 +79,30 @@ export const bmStorage = {
       })),
     } satisfies StorageSchema;
 
-    await db
-      .insert(TB_battleResult)
-      .values({
-        battleId: bm.battleId,
-        timelineData: serialize(storageData.timelineData),
-        startEntityData: serialize(storageData.startEntityData),
-        participants: serialize(storageData.participants),
-        effectTracking: serialize(storageData.effectTracking),
-        winner: storageData.winner,
-        teamA: serialize(storageData.teamA),
-        teamB: serialize(storageData.teamB),
-      })
-      .onConflictDoNothing();
+    await db.transaction(async (tx) => {
+      await returnBattleSupplies(bm.battleId, bm.entities, tx);
+      await tx
+        .insert(TB_battleResult)
+        .values({
+          battleId: bm.battleId,
+          timelineData: serialize(storageData.timelineData),
+          startEntityData: serialize(storageData.startEntityData),
+          participants: serialize(storageData.participants),
+          effectTracking: serialize(storageData.effectTracking),
+          winner: storageData.winner,
+          teamA: serialize(storageData.teamA),
+          teamB: serialize(storageData.teamB),
+        })
+        .onConflictDoNothing();
+    });
   },
   get: async (id: string, db: Database) => {
     const [storageData] = await db
       .select()
       .from(TB_battleResult)
       .where(eq(TB_battleResult.battleId, id));
-    if (!storageData) throw new BattleResultNotFoundError("Battle result not found");
+    if (!storageData)
+      throw new BattleResultNotFoundError("Battle result not found");
     const y = {
       timelineData: deserialize(storageData.timelineData as SuperJSONResult),
       startEntityData: deserialize(

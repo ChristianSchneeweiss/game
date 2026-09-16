@@ -142,6 +142,18 @@ export function buildTimeline(
       if (actor) actor.team = event.data.team;
       cue.label = "Allegiance changes";
       cue.targetIds = [event.data.entityId];
+    } else if (event.eventType === "CONSUMABLE_USE") {
+      const actor = stats.get(event.data.entityId);
+      if (actor) {
+        actor[event.data.resource] += event.data.amount;
+        if (event.data.resource === "health")
+          actor.deltaHealth = event.data.amount;
+        else actor.deltaMana = event.data.amount;
+      }
+      cue.casterId = event.data.entityId;
+      cue.targetIds = [event.data.entityId];
+      cue.label = event.data.name;
+      cue.style = event.data.resource === "health" ? "heal" : "ward";
     } else if (event.eventType === "MOVE") {
       if (grid)
         grid = {

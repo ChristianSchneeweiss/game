@@ -8,6 +8,7 @@ import Loader from "@/components/loader";
 import { RpgBackLink, RpgEmptyState, RpgPage } from "@/components/rpg-ui";
 import { SkillIcon } from "@/components/skill-icon";
 import { EquipmentLoadout } from "@/features/expedition/equipment-loadout";
+import { ConsumableLoadout } from "@/features/armoury/consumable-loadout";
 import { Button } from "@/components/ui/button";
 import { Feedback } from "@/components/ui/status";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -157,11 +158,17 @@ function RouteComponent() {
           </TabsList>
           <TabsContent value={activeTab}>
             {activeTab === "equipment" ? (
-              <EquipmentLoadout
-                key={character.id}
-                character={character}
-                party={[character]}
-              />
+              <div className="space-y-6">
+                <EquipmentLoadout
+                  key={character.id}
+                  character={character}
+                  party={[character]}
+                />
+                <ConsumableLoadout
+                  key={`supplies:${character.id}`}
+                  characterId={character.id}
+                />
+              </div>
             ) : (
               <div
                 className="character-build-columns"

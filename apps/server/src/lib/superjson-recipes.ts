@@ -129,6 +129,7 @@ export const registerRecipes = () => {
       "spells",
       "passiveSkills",
       "equipped",
+      "consumables",
       "isBot",
       "xp",
       "level",

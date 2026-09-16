@@ -1,6 +1,11 @@
 import { nanoid } from "nanoid";
 import { BaseEnemy } from "./base/base.enemy";
-import { defaultSpellDropRate } from "../utils/loot";
+import { getItemDefinition } from "../items/catalog";
+import {
+  defaultItemDropRate,
+  defaultPassiveDropRate,
+  defaultSpellDropRate,
+} from "../utils/loot";
 
 export class BarkhideShaman extends BaseEnemy {
   constructor(id?: string) {
@@ -23,14 +28,16 @@ export class BarkhideShaman extends BaseEnemy {
         gold: 20,
         items: [
           ...defaultSpellDropRate(["stone-bark", "splinter-shot"]),
-          {
-            type: "PASSIVE",
-            data: { passiveType: "merciful-light" },
-            dropRate: 0.25,
-          },
+          ...defaultPassiveDropRate(["merciful-light"]),
         ],
       },
       spells: ["stone-bark", "splinter-shot", "basic-attack"],
     });
+    this.loot.items.push(
+      ...defaultItemDropRate([
+        getItemDefinition("healing-potion").type,
+        getItemDefinition("living-resin").type,
+      ]),
+    );
   }
 }

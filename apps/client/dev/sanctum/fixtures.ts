@@ -9,6 +9,10 @@ import type { SpellType } from "@loot-game/game/spells/base/spell-types";
 import { ownerId } from "./auth";
 import { getItemDefinition } from "@loot-game/game/items/catalog";
 import { itemQuantity } from "@loot-game/game/items/quantity";
+import {
+  restorationAmount,
+  type ConsumableLoadout,
+} from "@loot-game/game/items/consumables";
 import { installItemFixtures } from "../../../../tests/battle/support/item-fixtures";
 
 export const scenario =
@@ -21,8 +25,17 @@ const itemStacks = new Map<string, number>(
         [itemFixtures.material.type, 7],
         [itemFixtures.consumable.type, 2],
       ]
-    : [],
+    : scenario === "consumables"
+      ? [
+          ["healing-potion", 3],
+          ["mana-potion", 2],
+          ["bone-shard", 4],
+          ["living-resin", 2],
+          ["storm-scale", 1],
+        ]
+      : [],
 );
+const consumableLoadouts = new Map<string, ConsumableLoadout>();
 export const commands: { path: string; input: unknown }[] = [];
 export function makeCharacter(id: string, name: string, userId = ownerId) {
   const hero = new Character(
@@ -60,6 +73,10 @@ export const heroes = [
   makeCharacter("hero-2", "Alden"),
 ];
 export const config = trialOfTheNature();
+if (scenario === "consumables") {
+  heroes[0]!.health = 70;
+  heroes[0]!.mana = 15;
+}
 export const equipment = (
   scenario === "equipment"
     ? EquipmentTypeSchema.options
@@ -267,6 +284,26 @@ export const run = {
 
 export function queryFixture(path: string, input: unknown): unknown {
   switch (path) {
+    case "character.getConsumableLoadout":
+      return (
+        consumableLoadouts.get(
+          (input as { characterId: string }).characterId,
+        ) ?? [null, null]
+      );
+    case "getConsumableTargets":
+      return scenario === "consumables"
+        ? heroes.map((hero) => ({
+            dungeonId: run.id,
+            dungeonName: run.name,
+            round: run.round,
+            characterId: hero.id,
+            name: hero.name,
+            health: hero.health,
+            mana: hero.mana,
+            maxHealth: hero.maxHealth,
+            maxMana: hero.maxMana,
+          }))
+        : [];
     case "character.getCharacters":
       return empty ? [] : heroes;
     case "character.getCharacter":
@@ -370,6 +407,21 @@ export function mutateFixture(path: string, input: unknown): unknown {
   const hero =
     heroes.find((hero) => hero.id === args?.characterId) ?? heroes[0];
   switch (path) {
+    case "character.setConsumableLoadout":
+      consumableLoadouts.set(hero.id, args.loadout as ConsumableLoadout);
+      return;
+    case "useConsumable": {
+      const item = getItemDefinition(String(args.itemType));
+      if (item.kind !== "consumable" || !(itemStacks.get(item.type) ?? 0))
+        throw new Error("No potion available");
+      const restored = restorationAmount(item.restoration, hero);
+      if (!restored) throw new Error("Resources are already full");
+      hero[item.restoration.resource] += restored;
+      const remaining = itemStacks.get(item.type)! - 1;
+      if (remaining) itemStacks.set(item.type, remaining);
+      else itemStacks.delete(item.type);
+      return { restored };
+    }
     case "character.createCharacter":
       heroes.push(makeCharacter(`hero-${heroes.length + 1}`, "New adventurer"));
       return heroes.at(-1);

@@ -29,7 +29,9 @@ afterAll(fixtures.restore);
 
 test("every kind has one canonical definition independent of a character and equipment boundaries stay narrow", () => {
   expect(getItemDefinitions()).toHaveLength(
-    EquipmentTypeSchema.options.length + 2,
+    EquipmentTypeSchema.options.length +
+      Object.keys(CONSUMABLE_DEFINITIONS).length +
+      Object.keys(MATERIAL_DEFINITIONS).length,
   );
   for (const item of getItemDefinitions()) {
     expect(ItemTypeSchema.parse(item.type)).toBe(item.type);
@@ -52,12 +54,12 @@ test("every kind has one canonical definition independent of a character and equ
     {
       type: "ITEM",
       data: { itemType: fixtures.material.type },
-      dropRate: 0.03,
+      dropRate: 0.02,
     },
     {
       type: "ITEM",
       data: { itemType: fixtures.consumable.type },
-      dropRate: 0.06,
+      dropRate: 0.04,
     },
   ]);
 });
@@ -83,21 +85,24 @@ test("materials and consumables retain authored tiers without Might in queries a
         }),
       ),
     ).toEqual([item]);
-    for (const search of [
-      { mightMin: 0 },
-      { mightMax: 0 },
-      { tier: "unrated" },
-    ]) {
-      expect(
-        filterLibrary(
-          items,
-          parseLibrarySearch({ category: "items", ...search }),
-        ).some((entry) => entry.type === fixture.type),
-      ).toBe(false);
-    }
+    expect(
+      filterLibrary(
+        items,
+        parseLibrarySearch({ category: "items", tier: "unrated" }),
+      ).some((entry) => entry.type === fixture.type),
+    ).toBe(false);
+    // Old Might bounds cannot hide non-combat items in their separate tab.
+    expect(
+      filterLibrary(
+        items,
+        parseLibrarySearch({ category: "items", mightMin: 0, mightMax: 0 }),
+      ).some((entry) => entry.type === fixture.type),
+    ).toBe(true);
   }
   const supplies = items.filter(
-    (entry) => entry.assessmentStatus === "not-applicable",
+    (entry) =>
+      entry.type === fixtures.material.type ||
+      entry.type === fixtures.consumable.type,
   );
   expect(
     filterLibrary(

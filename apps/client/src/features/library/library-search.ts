@@ -1,16 +1,22 @@
-import type {
-  LibraryCategory,
-  LibraryEntry,
-} from "@loot-game/game/library/types";
+import type { LibraryEntry } from "@loot-game/game/library/types";
+import { EquipmentTypeSchema } from "@loot-game/game/items/equipment-types";
 import { isMight } from "@loot-game/game/might/might";
 import { libraryFamilyLabel } from "@loot-game/game/library/types";
 
 export const libraryCategories = [
   "spells",
+  "equipment",
   "items",
   "passives",
   "enemies",
 ] as const;
+export type LibraryTab = (typeof libraryCategories)[number];
+
+export function libraryTab(entry: LibraryEntry): LibraryTab {
+  return entry.category === "items" && entry.itemKind === "equipment"
+    ? "equipment"
+    : entry.category;
+}
 export const libraryTiers = ["S", "A", "B", "C", "D", "E", "unrated"] as const;
 export const librarySorts = [
   "name",
@@ -23,7 +29,7 @@ export const librarySorts = [
   "mightDesc",
 ] as const;
 export type LibrarySearch = {
-  category: LibraryCategory;
+  category: LibraryTab;
   q: string;
   tier: string;
   group: string;
@@ -34,11 +40,10 @@ export type LibrarySearch = {
 };
 
 // Existing content taxonomy, independent of whether a definition is assessed.
-const groups: Record<LibraryCategory, readonly string[]> = {
+const groups: Record<LibraryTab, readonly string[]> = {
   spells: ["enemies", "allies", "everyone"],
-  items: [
-    "consumable",
-    "material",
+  items: ["consumable", "material"],
+  equipment: [
     "weapon",
     "armor",
     "ring",
@@ -67,20 +72,31 @@ export function libraryGroup(entries: LibraryEntry[], group: string): string {
 export function parseLibrarySearch(
   search: Record<string, unknown>,
 ): LibrarySearch {
-  const category =
+  let category =
     libraryCategories.find((value) => value === search.category) ?? "spells";
+  // Existing item links to gear keep opening the same entry in its new tab.
+  if (
+    category === "items" &&
+    (EquipmentTypeSchema.safeParse(search.entry).success ||
+      groups.equipment.includes(String(search.group)))
+  )
+    category = "equipment";
   const sorts =
     category === "spells"
       ? librarySorts.filter((value) => value !== "health")
-      : category === "enemies"
-        ? ["name", "tier", "health", "mightAsc", "mightDesc"]
-        : ["name", "tier", "mightAsc", "mightDesc"];
+      : category === "items"
+        ? ["name", "tier"]
+        : category === "enemies"
+          ? ["name", "tier", "health", "mightAsc", "mightDesc"]
+          : ["name", "tier", "mightAsc", "mightDesc"];
   const sort =
     librarySorts.find(
       (value) => value === search.sort && sorts.includes(value),
-    ) ?? "mightDesc";
-  let mightMin = parseMightBound(search.mightMin);
-  let mightMax = parseMightBound(search.mightMax);
+    ) ?? (category === "items" ? "name" : "mightDesc");
+  let mightMin =
+    category === "items" ? undefined : parseMightBound(search.mightMin);
+  let mightMax =
+    category === "items" ? undefined : parseMightBound(search.mightMax);
   if (mightMin !== undefined && mightMax !== undefined && mightMin > mightMax) {
     mightMin = undefined;
     mightMax = undefined;
@@ -100,7 +116,7 @@ export function parseLibrarySearch(
 export function filterLibrary(entries: LibraryEntry[], search: LibrarySearch) {
   const terms = search.q.trim().toLowerCase().split(/\s+/).filter(Boolean);
   const group = libraryGroup(
-    entries.filter((entry) => entry.category === search.category),
+    entries.filter((entry) => libraryTab(entry) === search.category),
     search.group,
   );
   return entries
@@ -108,7 +124,7 @@ export function filterLibrary(entries: LibraryEntry[], search: LibrarySearch) {
       const text =
         `${entry.name} ${entry.type} ${entry.description} ${entry.group} ${entry.stats.map((stat) => stat.label).join(" ")}`.toLowerCase();
       return (
-        entry.category === search.category &&
+        libraryTab(entry) === search.category &&
         (search.tier === "all" ||
           (search.tier === "unrated"
             ? entry.assessmentStatus === "unrated"

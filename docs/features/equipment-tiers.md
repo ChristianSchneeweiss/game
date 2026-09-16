@@ -23,10 +23,12 @@ slot, additive bonuses, source enemy and provisional Might. Runtime tiers and
 Library assessments derive from that same Might value. Existing legacy items
 keep their stored tiers; the Library continues to derive its tiers from Might.
 
-New equipment is appended to the source enemy's existing loot. It uses the
-existing per-item drop rates: **E 20%, D 10%, C 6%, B 3%, A 1%, S 0.3%**.
+New equipment is appended to the source enemy's existing loot. The
+[16 September drop update](items/drop-rate-research.md) uses actual Might-derived
+tiers for all equipment: **E 10%, D 7%, C 4%, B 2%, A 1%, S 0.3%**.
 These are independent drops, not normalized tier-selection weights. The Library
-shows each source and its chance. Previous drops retain their probabilities.
+shows each source and its chance. Existing enemy sources are preserved; former
+guarantees also use the tier curve, with no first-copy or boss bonus.
 
 This pass establishes coverage, not the final catalogue distribution. Future
 expansions should create many lower-tier options, progressively fewer upper-tier

@@ -1,23 +1,21 @@
-import { nanoid } from "nanoid";
 import { getItemDefinition } from "../items/catalog";
 import type { ItemType } from "../items/item-types";
-import { passiveSkillFactory } from "../passive-skills/base/passive-skill.factory";
+import { mightAssessments } from "../might/assessments";
+import { assessMight, type MightAssessment } from "../might/might";
 import type { PassiveType } from "../passive-skills/base/passive-types";
-import { createSpellFromType } from "../spells/base/spell-from-type";
 import type { SpellType } from "../spells/base/spell-types";
 import type { LootEntity, Tier } from "../types";
-import { FakeEntity } from "./fake-entity";
 
 export const defaultDropRate = (tier: Tier) => {
   switch (tier) {
     case "E":
-      return 0.2;
-    case "D":
       return 0.1;
+    case "D":
+      return 0.07;
     case "C":
-      return 0.06;
+      return 0.04;
     case "B":
-      return 0.03;
+      return 0.02;
     case "A":
       return 0.01;
     case "S":
@@ -25,31 +23,32 @@ export const defaultDropRate = (tier: Tier) => {
   }
 };
 
+/** Acquisition uses the same assessment as the Library, never a legacy label. */
+function assessedDropRate(
+  content: string,
+  assessment: MightAssessment | undefined,
+) {
+  const { tier } = assessMight(content, assessment);
+  // Unrated content remains visible in the Library but cannot drop by default.
+  return tier === null ? 0 : defaultDropRate(tier);
+}
+
 export const defaultSpellDropRate = (spells: SpellType[]): LootEntity[] => {
-  return spells.map((type) => {
-    const spell = createSpellFromType("default", type);
-    return {
-      type: "SPELL",
-      data: {
-        spellType: type,
-      },
-      dropRate: defaultDropRate(spell.config.tier),
-    };
-  });
+  return spells.map((type) => ({
+    type: "SPELL",
+    data: { spellType: type },
+    dropRate: assessedDropRate(`spells:${type}`, mightAssessments.spells[type]),
+  }));
 };
 
 export const defaultPassiveDropRate = (
   passives: PassiveType[],
 ): LootEntity[] => {
-  const fake = new FakeEntity();
-  return passives.map((passive) => {
-    const p = passiveSkillFactory(passive, nanoid(), fake);
-    return {
-      type: "PASSIVE",
-      data: { passiveType: p.passiveType },
-      dropRate: defaultDropRate(p.tier),
-    };
-  });
+  return passives.map((type) => ({
+    type: "PASSIVE",
+    data: { passiveType: type },
+    dropRate: assessedDropRate(`passives:${type}`, mightAssessments.passives[type]),
+  }));
 };
 
 export const defaultItemDropRate = (items: ItemType[]): LootEntity[] => {
@@ -58,7 +57,13 @@ export const defaultItemDropRate = (items: ItemType[]): LootEntity[] => {
     return {
       type: "ITEM",
       data: { itemType },
-      dropRate: defaultDropRate(definition.tier),
+      dropRate:
+        definition.kind === "equipment"
+          ? assessedDropRate(
+              `items:${itemType}`,
+              mightAssessments.items[definition.type],
+            )
+          : defaultDropRate(definition.tier),
     };
   });
 };

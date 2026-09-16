@@ -1,5 +1,6 @@
 import { EnemyTypeSchema } from "@loot-game/game/enemies/base/enemy-types";
 import { EquipmentTypeSchema } from "@loot-game/game/items/equipment-types";
+import { BattleConsumablesSchema } from "@loot-game/game/items/consumables";
 import { PassiveTypeSchema } from "@loot-game/game/passive-skills/base/passive-types";
 import { SpellTypeSchema } from "@loot-game/game/spells/base/spell-types";
 import { LootEntitySchema } from "@loot-game/game/types";
@@ -56,6 +57,7 @@ const buildSchema = z
     health: z.number(),
     maxHealth: z.number(),
     mana: z.number(),
+    consumables: BattleConsumablesSchema.default([]),
     maxMana: z.number(),
     baseAttributes: attributes,
     baseSpecialAttributes: special,

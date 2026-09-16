@@ -77,6 +77,10 @@ Browser checks use the sanctum preview with `?state=items`; the script supports
 
 ## Deferred by the specification
 
+The subsequent [consumable gameplay and content phase](./consumables.md) now
+implements the first items, battle supplies and outside-battle use. The notes
+below record the foundation's original delivery boundary.
+
 Production material/consumable definitions remain empty. Isolated test and
 development fixtures demonstrate authoring through claim and display without
 adding live content or balance changes. Consumable effects, use commands,
