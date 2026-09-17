@@ -441,26 +441,10 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     spellId: string,
     selection: CastSelection,
   ): SpellCastEvent[] | null {
-    const caster = this.activeEntity(entityId);
-    if (!caster || !this.grid) return null;
-    const spell = caster.spells.find((spell) => spell.config.id === spellId);
-    if (
-      !spell?.castSpatial ||
-      !spell.config.targeting ||
-      !spell.canCast(caster)
-    )
-      return null;
-    if (
-      !queryCast(
-        this.grid,
-        this.entities,
-        entityId,
-        spell.config.targeting,
-        selection,
-      ).legal
-    )
-      return null;
-    const events = spell.castSpatial(caster, selection);
+    if (!this.canCastSpatial(entityId, spellId, selection)) return null;
+    const caster = this.getEntityById(entityId)!;
+    const spell = caster.spells.find((spell) => spell.config.id === spellId)!;
+    const events = spell.castSpatial!(caster, selection);
     if (!events) return null;
     this.finishedActorId = entityId;
     events.forEach((event) => this.processEvent(event));
@@ -468,14 +452,48 @@ export class BM implements BattleManager, RoundLifecycleHooks {
     return events;
   }
 
+  canCastSpatial(
+    entityId: string,
+    spellId: string,
+    selection: CastSelection,
+    grid = this.grid,
+  ): boolean {
+    const caster = this.activeEntity(entityId);
+    if (!caster || !grid) return false;
+    const spell = caster.spells.find((spell) => spell.config.id === spellId);
+    if (
+      !spell?.castSpatial ||
+      !spell.config.targeting ||
+      !spell.canCast(caster)
+    )
+      return false;
+    return queryCast(
+      grid,
+      this.entities,
+      entityId,
+      spell.config.targeting,
+      selection,
+    ).legal;
+  }
+
+  canUseConsumable(entityId: string, slot: number): boolean {
+    return this.getUsableConsumable(entityId, slot) !== undefined;
+  }
+
+  private getUsableConsumable(entityId: string, slot: number) {
+    const entity = this.activeEntity(entityId);
+    if (!entity) return;
+    const item = entity.consumables?.find((item) => item.slot === slot);
+    if (!item || item.quantity !== 1) return;
+    const amount = restorationAmount(item.restoration, entity);
+    if (amount > 0) return { entity, item, amount };
+  }
+
   /** Reserved bottles restore only their holder and spend the current activation. */
   useConsumable(entityId: string, slot: number): boolean {
-    const entity = this.activeEntity(entityId);
-    if (!entity) return false;
-    const item = entity.consumables?.find((item) => item.slot === slot);
-    if (!item || item.quantity !== 1) return false;
-    const amount = restorationAmount(item.restoration, entity);
-    if (amount <= 0) return false;
+    const use = this.getUsableConsumable(entityId, slot);
+    if (!use) return false;
+    const { entity, item, amount } = use;
     entity[item.restoration.resource] += amount;
     item.quantity = 0;
     this.processEvent({

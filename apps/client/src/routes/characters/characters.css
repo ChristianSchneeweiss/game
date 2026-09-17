@@ -573,6 +573,17 @@
   font-size: 0.8rem;
   line-height: 1.6;
 }
+.character-commander .ai-settings-heading {
+  flex-wrap: wrap;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--rpg-line);
+}
+.character-commander .ai-settings-fields {
+  padding-top: 1.25rem;
+}
+.character-commander .character-panel-note {
+  margin-top: 1.5rem;
+}
 .character-stat-confirm {
   display: flex;
   flex-wrap: wrap;
@@ -904,6 +915,8 @@
   .character-build-tabs .rpg-tab {
     font-size: 0.7rem;
     gap: 0.4rem;
+    flex-direction: column;
+    padding-inline: 0.25rem;
   }
   .character-attribute-row {
     gap: 0.6rem;

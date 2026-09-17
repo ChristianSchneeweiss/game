@@ -13,10 +13,13 @@ import type { PassiveSkill } from "./passive-skills/base/passive-types";
 import type { TimelineEvent } from "./timeline-events";
 import type { AttributeModifier, DamageType, Effect, Spell } from "./types";
 import type { WeaponAttackProfile } from "./tactical/types";
+import type { AiControl } from "./ai-control";
 
 export const CHARACTER_HEALTH_REGEN_PER_VITALITY = 0.375;
 
 export class BaseEntity implements Entity {
+  aiControl?: AiControl;
+  aiFailure?: string;
   consumables: BattleConsumable[] = [];
   id: string;
   name: string;

@@ -95,6 +95,11 @@ export class EntityFactory {
       character.level,
       character.statPointsAvailable,
     );
+    baseEntity.aiControl = {
+      enabled: character.aiEnabled,
+      prompt: character.aiPrompt,
+      allowConsumables: character.aiAllowConsumables,
+    };
     baseEntity.spells = spells
       .filter((spell) => spell !== null)
       .map((spell) => createSpellFromType(spell.id, spell.type));

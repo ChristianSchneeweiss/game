@@ -1,4 +1,5 @@
 import { Character } from "@loot-game/game/base-entity";
+import { MANUAL_CONTROL, type AiControl } from "@loot-game/game/ai-control";
 import { createSpellFromType } from "@loot-game/game/spells/base/spell-from-type";
 import { equipmentFactory } from "@loot-game/game/items/equipment/equipment-factory";
 import { EquipmentTypeSchema } from "@loot-game/game/items/equipment-types";
@@ -282,8 +283,14 @@ export const run = {
   battles: [{ battleId: "result", completedAt: new Date(), round: 0 }],
 };
 
+const aiDefaults = new Map<string, AiControl>();
 export function queryFixture(path: string, input: unknown): unknown {
   switch (path) {
+    case "character.getAiControl":
+      return (
+        aiDefaults.get((input as { characterId: string }).characterId) ??
+        { ...MANUAL_CONTROL }
+      );
     case "character.getConsumableLoadout":
       return (
         consumableLoadouts.get(
@@ -407,6 +414,9 @@ export function mutateFixture(path: string, input: unknown): unknown {
   const hero =
     heroes.find((hero) => hero.id === args?.characterId) ?? heroes[0];
   switch (path) {
+    case "character.setAiControl":
+      aiDefaults.set(hero.id, args.settings as AiControl);
+      return args.settings;
     case "character.setConsumableLoadout":
       consumableLoadouts.set(hero.id, args.loadout as ConsumableLoadout);
       return;

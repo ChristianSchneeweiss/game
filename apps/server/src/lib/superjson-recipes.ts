@@ -142,6 +142,8 @@ export const registerRecipes = () => {
 function stripEntityManager(entity: BaseEntity) {
   return {
     ...entity,
+    aiControl: undefined,
+    aiFailure: undefined,
     battleManager: undefined,
     spells: entity.spells.map((spell) => ({
       ...spell,

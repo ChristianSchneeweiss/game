@@ -6,9 +6,11 @@ import type { TimelineEventFull } from "@loot-game/game/timeline-events";
 import { createEnemyFromType } from "../../../server/src/game-usecases/enemy-factory";
 import {
   applyGridCommand,
+  applyBattleCommand,
   advanceBots,
   availableSpells,
   availableConsumables,
+  aiControls,
   describeBattleSpell,
 } from "../../../server/src/battle/commands";
 import type {
@@ -120,6 +122,7 @@ const bm = new BM(participants, "sanctum-preview", {
 bm.start();
 advanceBots(bm);
 const sockets = new Set<PreviewSocket>();
+let controlVersion = 0;
 class PreviewSocket extends EventTarget {
   readyState = 0;
   onopen: ((event: Event) => void) | null = null;
@@ -163,6 +166,15 @@ class PreviewSocket extends EventTarget {
         availableSpells: availableSpells(bm),
         consumables: availableConsumables(bm),
         grid: bm.grid,
+        ai: {
+          version: controlVersion,
+          choosing: bm.entities.find(
+            (entity) =>
+              entity.id === bm.grid?.activation?.entityId &&
+              entity.aiControl?.enabled,
+          )?.id,
+          controls: aiControls(bm, ownerId),
+        },
         actors: bm.entities.map((entity) => ({
           id: entity.id,
           team: entity.team,
@@ -215,6 +227,14 @@ class PreviewSocket extends EventTarget {
           description: describeBattleSpell(bm, entity, spell),
         },
       });
+    } else if (message.type === "setAiControl") {
+      applyBattleCommand(bm, message, ownerId);
+      controlVersion++;
+      this.emit({
+        type: "castAccepted",
+        data: { requestId: message.data.requestId },
+      });
+      sockets.forEach((socket) => socket.snapshot());
     } else if (
       message.type === "move" ||
       message.type === "endTurn" ||

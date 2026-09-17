@@ -14,6 +14,7 @@ import {
   type GridState,
 } from "@loot-game/game/tactical/types";
 import z from "zod";
+import { AiControlSchema, type AiControl } from "@loot-game/game/ai-control";
 import {
   ConsumableSlotSchema,
   type BattleConsumable,
@@ -86,7 +87,18 @@ const getSpellDescriptionSchema = z.object({
   }),
 });
 
+const setAiControlSchema = z.object({
+  type: z.literal("setAiControl"),
+  data: z.strictObject({
+    entityId: z.string().min(1),
+    controlVersion: z.int().nonnegative(),
+    requestId: z.string().min(1).max(128),
+    settings: AiControlSchema,
+  }),
+});
+
 export const messageSchema = z.union([
+  setAiControlSchema,
   useConsumableSchema,
   moveSchema,
   endTurnSchema,
@@ -103,13 +115,14 @@ export type GridCommand = Extract<
   { type: "move" | "endTurn" | "castSpatial" | "useConsumable" }
 >;
 export type BattleCommand =
-  | Extract<BattleMessage, { type: "castSpell" }>
+  | Extract<BattleMessage, { type: "setAiControl" | "castSpell" }>
   | GridCommand;
 
 export function isBattleCommand(
   message: BattleMessage,
 ): message is BattleCommand {
   return [
+    "setAiControl",
     "castSpell",
     "move",
     "endTurn",
@@ -119,6 +132,16 @@ export function isBattleCommand(
 }
 
 export type BattleState = {
+  ai?: {
+    version: number;
+    choosing?: string;
+    controls: Array<{
+      entityId: string;
+      enabled: boolean;
+      settings?: AiControl;
+      failure?: string;
+    }>;
+  };
   events: TimelineEventFull[];
   round: BattleRound;
   effectTracking: EffectTracking;

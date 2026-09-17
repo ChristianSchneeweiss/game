@@ -9,7 +9,7 @@ import {
 } from "../../../apps/server/src/battle/starting-builds";
 import type { Database } from "../../../apps/server/src/db/schema";
 import { sharedDurable } from "./shared-durable";
-import { combatState } from "./invariants";
+export { tacticalState } from "./tactical-state";
 
 type TacticalAction =
   | { type: "move"; destination: { x: number; y: number } }
@@ -26,7 +26,7 @@ type TacticalAction =
 /** Existing real DO harness, with an explicit v2 frozen starting snapshot. */
 export async function tacticalDurable(
   db: Database,
-  prepare?: (builds: StartingBuilds, grid: GridSetup) => void,
+  prepare?: (builds: StartingBuilds, grid: GridSetup, env: Env) => void,
 ) {
   const fixture = await sharedDurable(db);
   const builds = captureStartingBuilds(
@@ -49,7 +49,7 @@ export async function tacticalDurable(
       "audit-goblin": { x: 6, y: 1 },
     },
   };
-  prepare?.(builds, grid);
+  prepare?.(builds, grid, fixture.env);
   fixture.storage.set(
     "startingBuilds",
     captureStartingBuilds(restoreStartingBuilds(builds), true),
@@ -110,13 +110,5 @@ export async function tacticalDurable(
         SuperJSON.stringify(command),
       );
     },
-  };
-}
-
-export function tacticalState(battle: BM) {
-  return {
-    ...combatState(battle),
-    grid: structuredClone(battle.grid),
-    revision: battle.revision,
   };
 }

@@ -1,5 +1,9 @@
 import { faker } from "@faker-js/faker";
 import z from "zod";
+import { AiControlSchema } from "@loot-game/game/ai-control";
+import { and, eq } from "drizzle-orm";
+import { TRPCError } from "@trpc/server";
+import { TB_character } from "../db/schema";
 import { ConsumableLoadoutSchema } from "@loot-game/game/items/consumables";
 import {
   readConsumableLoadout,
@@ -20,6 +24,55 @@ import { EntityFactory } from "../game-usecases/entity-factory";
 import { protectedProcedure, router } from "../lib/trpc";
 
 export const characterRouter = router({
+  getAiControl: protectedProcedure
+    .input(z.object({ characterId: z.string().min(1) }))
+    .query(async ({ ctx, input }) => {
+      const [settings] = await ctx.db
+        .select({
+          enabled: TB_character.aiEnabled,
+          prompt: TB_character.aiPrompt,
+          allowConsumables: TB_character.aiAllowConsumables,
+        })
+        .from(TB_character)
+        .where(
+          and(
+            eq(TB_character.id, input.characterId),
+            eq(TB_character.userId, ctx.session.id),
+          ),
+        );
+      if (!settings)
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Choose your own character.",
+        });
+      return settings;
+    }),
+  setAiControl: protectedProcedure
+    .input(
+      z.object({ characterId: z.string().min(1), settings: AiControlSchema }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const [saved] = await ctx.db
+        .update(TB_character)
+        .set({
+          aiEnabled: input.settings.enabled,
+          aiPrompt: input.settings.prompt,
+          aiAllowConsumables: input.settings.allowConsumables,
+        })
+        .where(
+          and(
+            eq(TB_character.id, input.characterId),
+            eq(TB_character.userId, ctx.session.id),
+          ),
+        )
+        .returning({ id: TB_character.id });
+      if (!saved)
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Choose your own character.",
+        });
+      return input.settings;
+    }),
   getConsumableLoadout: protectedProcedure
     .input(z.object({ characterId: z.string().min(1) }))
     .query(({ ctx, input }) =>

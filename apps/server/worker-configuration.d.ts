@@ -19,13 +19,18 @@ declare namespace Cloudflare {
       import("./src/index").BattleWebsocket
     >;
     BATTLE_CHAT: DurableObjectNamespace<import("./src/index").BattleChat>;
-    PREPARATION_PRESENCE: DurableObjectNamespace<import("./src/index").PreparationPresence>;
+    PREPARATION_PRESENCE: DurableObjectNamespace<
+      import("./src/index").PreparationPresence
+    >;
     BATTLE_DONE_WORKFLOW: Workflow<
       Parameters<import("./src/index").BattleDoneWorkflow["run"]>[0]["payload"]
     >;
   }
 }
-interface Env extends Cloudflare.Env {}
+interface Env extends Cloudflare.Env {
+  OPENROUTER_API_KEY?: string;
+  BATTLE_AI_MODEL?: string;
+}
 type StringifyValues<EnvType extends Record<string, unknown>> = {
   [Binding in keyof EnvType]: EnvType[Binding] extends string
     ? EnvType[Binding]

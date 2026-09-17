@@ -3,6 +3,7 @@ import { TB_activeBattle, type Database } from "../db/schema";
 import { bmStorage } from "../game-usecases/bm-storage";
 
 export type BattleDelivery = {
+  automation?: boolean;
   activity: boolean;
   completion: "none" | "result" | "workflow" | "delivered";
   failures: number;
@@ -25,7 +26,7 @@ export async function saveDelivery(
         Pick<DurableObjectTransaction, "getAlarm" | "setAlarm" | "deleteAlarm">
       >,
   ) => {
-    if (needsDelivery(delivery)) {
+    if (needsDelivery(delivery) || delivery.automation) {
       // Keep an existing alarm. Constructor/setup must not postpone a retry.
       if ((await tx.getAlarm?.()) == null) {
         const delay = Math.min(

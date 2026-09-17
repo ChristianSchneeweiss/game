@@ -4,6 +4,7 @@ import { lazy, Suspense, useEffect, useState } from "react";
 import { ReadyState } from "react-use-websocket";
 import { BattleRender } from "./-battle-render";
 import { BattleChatBar } from "./-components/battle-chat-bar";
+import { BattleAiControls } from "./-components/battle-ai-controls";
 import { useBattle } from "./-hooks/use-battle";
 import { useChat as useBattleChat } from "./-hooks/use-battle-chat";
 import { PresentationBoundary } from "./-presentation-boundary";
@@ -86,9 +87,10 @@ function LiveBattle({ id }: { id: string }) {
       )}
       {!threeD && (
         <div
-          className="flex justify-end gap-2 px-6 py-3"
+          className="flex flex-wrap items-center justify-end gap-2 px-6 py-3"
           aria-label="Battle presentation"
         >
+          <BattleAiControls session={session} />
           <button
             className="rpg-badge"
             aria-pressed={!threeD}
@@ -160,11 +162,13 @@ function LiveBattle({ id }: { id: string }) {
                 session={session}
                 stats={session.playback.stats}
                 status={
-                  session.canChoose
-                    ? "Your turn · prepare an action"
-                    : session.pending
-                      ? "Awaiting the server…"
-                      : "Waiting for the active owner"
+                  session.battleState?.ai?.choosing
+                    ? "Commander is choosing an action…"
+                    : session.canChoose
+                      ? "Your turn · prepare an action"
+                      : session.pending
+                        ? "Awaiting the server…"
+                        : "Waiting for the active owner"
                 }
                 targetNames={session.chosenTargets
                   .map(

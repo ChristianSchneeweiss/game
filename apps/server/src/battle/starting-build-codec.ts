@@ -14,6 +14,7 @@ import {
 import SuperJSON, { type SuperJSONResult } from "superjson";
 import z from "zod";
 import type { StartingBuilds } from "./starting-builds";
+import { AiControlSchema } from "@loot-game/game/ai-control";
 
 const attributes = z.object({
   strength: z.number(),
@@ -52,6 +53,7 @@ const targetCount = z.union([z.number().nonnegative(), z.literal(Infinity)]);
 const buildSchema = z
   .object({
     id: z.string().min(1),
+    aiControl: AiControlSchema.optional(),
     name: z.string(),
     team: z.enum(["TEAM_A", "TEAM_B"]),
     health: z.number(),
@@ -138,6 +140,7 @@ export function decodeStartingBuilds(
     );
   return parsed.data.map((build) => ({
     ...build,
+    aiControl: build.aiControl,
     character: build.character,
     enemy: build.enemy,
     weaponAttackProfile: build.weaponAttackProfile,

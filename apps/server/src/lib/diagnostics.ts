@@ -5,6 +5,7 @@ type Diagnostic = {
     | "request.failed"
     | "rpc.failed"
     | "battle.command_rejected"
+    | "battle.ai_commit_failed"
     | "battle.recovered"
     | "battle.delivery_retry"
     | "battle.delivery_complete";

@@ -1,4 +1,5 @@
 import type { BattleManager } from "./battle-types";
+import type { AiControl } from "./ai-control";
 import type { BattleConsumable } from "./items/consumables";
 import type { Equipment } from "./items/equipment/equipment";
 import type {
@@ -62,6 +63,8 @@ export interface Entity
   extends
     Pick<RoundLifecycleHooks, "onPreRound" | "onPostRound">,
     TurnLifecycleHooks {
+  aiControl?: AiControl;
+  aiFailure?: string;
   consumables?: BattleConsumable[];
   id: string;
   name: string;

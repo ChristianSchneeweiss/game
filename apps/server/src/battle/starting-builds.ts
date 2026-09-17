@@ -16,6 +16,7 @@ export function captureStartingBuilds(
   return cloneDeep(
     entities.map((entity) => ({
       id: entity.id,
+      aiControl: entity.aiControl,
       name: entity.name,
       team: entity.team,
       health: entity.health,
@@ -79,6 +80,7 @@ export function restoreStartingBuilds(builds: StartingBuilds) {
       : createEnemyFromType(build.enemy!.type, build.id);
     Object.assign(entity, {
       name: build.name,
+      aiControl: build.aiControl,
       team: build.team,
       health: build.health,
       maxHealth: build.maxHealth,

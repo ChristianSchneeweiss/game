@@ -4,4 +4,6 @@ export const envSchema = z.object({
   CLERK_SECRET_KEY: z.string(),
   CLERK_PUBLISHABLE_KEY: z.string(),
   DATABASE_URL: z.string(),
+  OPENROUTER_API_KEY: z.string().optional(),
+  BATTLE_AI_MODEL: z.string().optional(),
 });

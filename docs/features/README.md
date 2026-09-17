@@ -43,6 +43,15 @@ targeting, layout authoring, saved-battle recovery and verification. The
 [spell and weapon defaults](tactical-grid/spell-conversion.md) record the initial
 assignments.
 
+## AI battle control
+
+The [specification](ai-battle-control/spec.md) defines optional character and
+enemy AI control through OpenRouter, custom behavior prompts, whole-activation
+validation, manual takeover, and battle recovery. It is ready for implementation.
+The [design interview](ai-battle-control.md) records the accepted decisions; the
+[activation-plan ADR](../adr/0002-atomic-ai-activation-plans.md) explains why an
+invalid follow-up also rejects the proposed movement.
+
 ## Player-loop and presentation milestones
 
 | Document | Scope |

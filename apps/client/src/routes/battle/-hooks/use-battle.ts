@@ -7,6 +7,7 @@ import { usePlayback } from "../-presentation/use-playback";
 import { useBattleConnection } from "./use-battle-connection";
 import { useBattleCommands } from "./use-battle-commands";
 import { useTacticalCommands } from "./use-tactical-commands";
+import { useBattleAi } from "./use-battle-ai";
 
 const EMPTY_EVENTS: BattleState["events"] = [];
 const EMPTY_EFFECTS: EffectTracking = new Map();
@@ -15,6 +16,7 @@ export function useBattle(id: string) {
   const { user } = useUser();
   const connection = useBattleConnection(id);
   const { participants, battleState } = connection;
+  const ai = useBattleAi(connection);
   const playback = usePlayback(
     participants,
     battleState?.events ?? EMPTY_EVENTS,
@@ -36,7 +38,10 @@ export function useBattle(id: string) {
   );
   const tacticalCommands = useTacticalCommands(
     connection,
-    ownsTurn,
+    ownsTurn &&
+      !battleState?.ai?.controls.find(
+        (control) => control.entityId === activeEntity?.id,
+      )?.enabled,
     playback.caughtUp,
     activeEntity,
     playback.stats,
@@ -55,6 +60,7 @@ export function useBattle(id: string) {
     battleState,
     activeEntity,
     ownsTurn,
+    ai,
     playback,
     winner: connection.winner,
     abandoned: connection.abandoned,

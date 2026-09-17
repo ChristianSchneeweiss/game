@@ -70,7 +70,12 @@ export function useBattleConnection(id: string) {
           case "state": {
             const old = stateRef.current;
             // A delayed snapshot cannot rewind committed state, even on reconnect.
-            if (old && response.data.revision < old.revision) return;
+            if (
+              old &&
+              (response.data.revision < old.revision ||
+                (response.data.ai?.version ?? 0) < (old.ai?.version ?? 0))
+            )
+              return;
             if (needsSnapshot.current) {
               needsSnapshot.current = false;
               setSynchronized(true);
@@ -79,6 +84,7 @@ export function useBattleConnection(id: string) {
             } else if (
               !old ||
               old.revision !== response.data.revision ||
+              old.ai?.version !== response.data.ai?.version ||
               old.round.orderQueue[0] !== response.data.round.orderQueue[0]
             ) {
               events.emit({ type: "reset" });

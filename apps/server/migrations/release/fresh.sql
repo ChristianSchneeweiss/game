@@ -44,6 +44,9 @@ CREATE TABLE "character" (
 	"xp" integer DEFAULT 0 NOT NULL,
 	"level" integer DEFAULT 1 NOT NULL,
 	"build_revision" integer DEFAULT 0 NOT NULL,
+	"ai_enabled" boolean DEFAULT false NOT NULL,
+	"ai_prompt" text DEFAULT '' NOT NULL,
+	"ai_allow_consumables" boolean DEFAULT true NOT NULL,
 	"consumable_loadout" json DEFAULT '[null,null]'::json NOT NULL,
 	"stat_points_available" integer DEFAULT 0 NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now()

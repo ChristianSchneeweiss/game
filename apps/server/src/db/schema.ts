@@ -73,6 +73,9 @@ export const TB_character = pgTable("character", {
   xp: integer("xp").notNull().default(0),
   level: integer("level").notNull().default(1),
   buildRevision: integer("build_revision").notNull().default(0),
+  aiEnabled: boolean("ai_enabled").notNull().default(false),
+  aiPrompt: text("ai_prompt").notNull().default(""),
+  aiAllowConsumables: boolean("ai_allow_consumables").notNull().default(true),
   consumableLoadout: json("consumable_loadout")
     .$type<ConsumableLoadout>()
     .notNull()

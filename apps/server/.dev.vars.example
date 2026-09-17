@@ -2,3 +2,6 @@
 DATABASE_URL=
 CLERK_SECRET_KEY=
 CLERK_PUBLISHABLE_KEY=
+# Optional model-driven battle control
+OPENROUTER_API_KEY=
+BATTLE_AI_MODEL=z-ai/glm-5.3-flash

@@ -160,6 +160,7 @@ export async function sharedDurable(db: Database, lethal = false) {
   const socket = await construct();
   return {
     socket,
+    env,
     sockets,
     messages,
     storage,

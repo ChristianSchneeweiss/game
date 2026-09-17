@@ -1,7 +1,14 @@
 import { useState } from "react";
+import { useUser } from "@clerk/clerk-react";
+import { CharacterAiControl } from "./-components/character-ai-control";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { ChartNoAxesColumnIncreasing, Shield, Sparkles } from "lucide-react";
+import {
+  ChartNoAxesColumnIncreasing,
+  Flag,
+  Shield,
+  Sparkles,
+} from "lucide-react";
 import { toast } from "sonner";
 import { passiveSkillFactory } from "@loot-game/game/passive-skills/base/passive-skill.factory";
 import Loader from "@/components/loader";
@@ -13,10 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Feedback } from "@/components/ui/status";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { queryClient, trpc } from "@/utils/trpc";
-import {
-  CharacterCard,
-  type CharacterDetailTab,
-} from "./-components/character-card";
+import { CharacterCard } from "./-components/character-card";
 import { CharacterReserve } from "./-components/character-reserve";
 import { CharacterSummary } from "./-components/character-summary";
 import {
@@ -33,11 +37,14 @@ const tabs = [
   { value: "stats", label: "Stats", Icon: ChartNoAxesColumnIncreasing },
   { value: "spells", label: "Spells", Icon: Sparkles },
   { value: "equipment", label: "Equipment", Icon: Shield },
+  { value: "commander", label: "Commander", Icon: Flag },
 ] as const;
+type CharacterDetailTab = (typeof tabs)[number]["value"];
 
 function RouteComponent() {
+  const { user } = useUser();
   const { "character-id": characterId } = Route.useParams();
-  const [activeTab, setActiveTab] = useState<CharacterDetailTab>("stats");
+  const [selectedTab, setActiveTab] = useState<CharacterDetailTab>("stats");
   const characterQuery = useQuery(
     trpc.character.getCharacter.queryOptions(
       { id: characterId },
@@ -81,6 +88,9 @@ function RouteComponent() {
     }
   };
   const character = characterQuery.data;
+  const isOwner = Boolean(user?.id && character?.userId === user.id);
+  const activeTab =
+    selectedTab === "commander" && !isOwner ? "stats" : selectedTab;
 
   if (characterQuery.isLoading)
     return (
@@ -149,15 +159,22 @@ function RouteComponent() {
             aria-label="Character build"
             className="character-build-tabs"
           >
-            {tabs.map(({ value, label, Icon }) => (
-              <TabsTrigger key={value} value={value}>
-                <Icon size={17} aria-hidden="true" />
-                <span>{label}</span>
-              </TabsTrigger>
-            ))}
+            {tabs
+              .filter(({ value }) => value !== "commander" || isOwner)
+              .map(({ value, label, Icon }) => (
+                <TabsTrigger key={value} value={value}>
+                  <Icon size={17} aria-hidden="true" />
+                  <span>{label}</span>
+                </TabsTrigger>
+              ))}
           </TabsList>
           <TabsContent value={activeTab}>
-            {activeTab === "equipment" ? (
+            {activeTab === "commander" ? (
+              <CharacterAiControl
+                key={`${user?.id}:${character.id}`}
+                characterId={character.id}
+              />
+            ) : activeTab === "equipment" ? (
               <div className="space-y-6">
                 <EquipmentLoadout
                   key={character.id}

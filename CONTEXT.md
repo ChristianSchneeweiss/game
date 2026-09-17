@@ -9,11 +9,20 @@ combining them into character builds.
 A character or enemy participating in a battle.
 
 **Character**:
-A player-controlled entity with a persistent build of attributes, spells,
+A player-owned entity with a persistent build of attributes, spells,
 passive skills, and equipment.
 
 **Enemy**:
 An automated opposing entity with a configured combat kit.
+
+**AI control**:
+A battle control mode in which AI chooses an entity's actions using the battle
+situation and its behavior prompt. AI control does not change character ownership
+or choose the party's next dungeon encounter.
+
+**Behavior prompt**:
+Instructions describing how an AI-controlled character or enemy should act in
+battle, within the actions and information available to it.
 
 **Party**:
 The one or two characters undertaking a dungeon together; their owners may differ.

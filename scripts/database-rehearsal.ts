@@ -167,6 +167,10 @@ try {
   const [legacyLoadout] =
     await upgrade.sql`SELECT consumable_loadout FROM character WHERE id = 'legacy-hero'`;
   assert.deepEqual(legacyLoadout!.consumable_loadout, [null, null]);
+  assert.equal(await applyMigration(upgrade.sql, "../manual/20260917_ai_control.sql"), true);
+  assert.equal(await applyMigration(upgrade.sql, "../manual/20260917_ai_control.sql"), false);
+  const [legacyAi] = await upgrade.sql`SELECT ai_enabled, ai_prompt, ai_allow_consumables FROM character WHERE id = 'legacy-hero'`;
+  assert.deepEqual(legacyAi, { ai_enabled: false, ai_prompt: "", ai_allow_consumables: true });
   assert.deepEqual(await schemaShape(upgrade.sql), currentShape);
   const [legacyRun] = await upgrade.sql`SELECT active_battle_id, route, character_data FROM dungeon_data WHERE id = 'legacy-run'`;
   assert.equal(legacyRun!.active_battle_id, null);

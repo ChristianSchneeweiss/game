@@ -21,6 +21,8 @@ import { uniqueRandomFromArray } from "../../utils/random-in-array";
 import type { EnemyType } from "./enemy-types";
 
 type EnemyParams = {
+  aiEnabled?: boolean;
+  aiPrompt?: string;
   id: string;
   type: EnemyType;
   name: string;
@@ -57,8 +59,15 @@ export class BaseEnemy extends BaseEntity {
     loot,
     spells,
     passiveSkills,
+    aiEnabled = false,
+    aiPrompt = "",
   }: EnemyParams) {
     super(id, name, team, maxHealth, maxMana, baseAttributes);
+    this.aiControl = {
+      enabled: aiEnabled,
+      prompt: aiPrompt,
+      allowConsumables: true,
+    };
     this.type = type;
     this.xp = xp;
     this.loot = {

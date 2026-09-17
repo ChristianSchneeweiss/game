@@ -3,6 +3,7 @@ import { restorationAmount } from "@loot-game/game/items/consumables";
 import type { Entity } from "@loot-game/game/entity-types";
 import type { Spell } from "@loot-game/game/types";
 import { Character } from "@loot-game/game/base-entity";
+import { MANUAL_CONTROL } from "@loot-game/game/ai-control";
 import type { BM } from "@loot-game/game/bm";
 import { BaseEnemy } from "@loot-game/game/enemies/base/base.enemy";
 import {
@@ -49,6 +50,19 @@ export function availableConsumables(bm: BM) {
       item.quantity > 0 &&
       !!actor &&
       restorationAmount(item.restoration, actor) > 0,
+  }));
+}
+
+export function aiControls(bm: BM, userId?: string) {
+  return bm.entities.map((entity) => ({
+    entityId: entity.id,
+    enabled: entity.aiControl?.enabled ?? false,
+    ...(entity instanceof Character && entity.userId === userId
+      ? {
+          settings: entity.aiControl ?? { ...MANUAL_CONTROL },
+          failure: entity.aiFailure,
+        }
+      : {}),
   }));
 }
 
@@ -111,6 +125,8 @@ export function validateGridCommandIdentity(
   const entity = bm.getEntityById(data.entityId);
   if (!(entity instanceof Character) || entity.userId !== userId)
     throw new Error("You can only act for your own character.");
+  if (entity.aiControl?.enabled)
+    throw new Error("Take over from Commander before choosing an action.");
   if (!bm.grid || bm.isGameOver())
     throw new Error("This tactical battle is unavailable.");
   if (data.revision !== bm.revision)
@@ -159,7 +175,16 @@ export function applyBattleCommand(
   command: BattleCommand,
   userId: string,
 ) {
-  if (command.type === "castSpell") castBattleSpell(bm, command.data, userId);
+  if (command.type === "setAiControl") {
+    const actor = bm.getEntityById(command.data.entityId);
+    if (!(actor instanceof Character) || actor.userId !== userId)
+      throw new Error("You can only change your own character's controls.");
+    if (!bm.grid || bm.isGameOver())
+      throw new Error("This tactical battle is unavailable.");
+    actor.aiControl = { ...command.data.settings };
+    actor.aiFailure = undefined;
+  } else if (command.type === "castSpell")
+    castBattleSpell(bm, command.data, userId);
   else applyGridCommand(bm, command, userId);
 }
 
@@ -170,6 +195,7 @@ export function advanceBots(bm: BM) {
   bm.preTurn();
   while (!bm.isGameOver()) {
     const next = bm.getEntityById(bm.getCurrentRound().orderQueue[0]);
+    if (bm.grid && next?.aiControl?.enabled) return;
     if (!(next instanceof BaseEnemy) || !next.isBot) return;
     if (bm.grid) {
       const plan = planEnemyTurn(bm);

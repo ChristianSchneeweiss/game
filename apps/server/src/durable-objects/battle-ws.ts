@@ -1,5 +1,5 @@
 import type { ClerkClient } from "@clerk/backend";
-import type { BaseEntity } from "@loot-game/game/base-entity";
+import { Character, type BaseEntity } from "@loot-game/game/base-entity";
 import type { BM } from "@loot-game/game/bm";
 import {
   GridSetupSchema,
@@ -45,13 +45,22 @@ import {
   getBattleTargets,
   availableSpells,
   availableConsumables,
+  aiControls,
   describeBattleSpell,
 } from "../battle/commands";
 import {
   captureStartingBuilds,
   type StartingBuilds,
 } from "../battle/starting-builds";
-import { reconstructBattle } from "../battle/reconstruct-battle";
+import {
+  reconstructBattle,
+  journalSchema,
+  applyJournalEntry,
+  type JournalEntry,
+} from "../battle/reconstruct-battle";
+import { battleAiSnapshot } from "../battle/ai-snapshot";
+import { selectAiAction } from "../battle/ai-selector";
+import { deterministicPlan, type ActionPlan } from "../battle/activation-plan";
 import { decodeStartingBuilds } from "../battle/starting-build-codec";
 import {
   deliverBattle,
@@ -86,6 +95,13 @@ export class BattleWebsocket extends DurableObject {
   };
   private operation: Promise<unknown> = Promise.resolve();
   private budget = new SocketBudget();
+  private aiRequest?: {
+    controller: AbortController;
+    entityId: string;
+    activationId: string;
+    revision: number;
+    version: number;
+  };
   private abandonment?: {
     dungeonId: string;
     userId: string;
@@ -122,6 +138,7 @@ export class BattleWebsocket extends DurableObject {
         version: this.env.CF_VERSION_METADATA?.id,
       });
       await this.resumeDelivery();
+      this.startAi();
     });
   }
 
@@ -164,12 +181,7 @@ export class BattleWebsocket extends DurableObject {
     this.messages = z
       .array(z.string())
       .parse((await this.ctx.storage.get("messages")) ?? []);
-    this.bm = reconstructBattle(
-      this.battleId,
-      builds,
-      this.messages,
-      this.startingGrid,
-    );
+    this.bm = this.replayBattle();
     await this.ctx.storage.put("journalVersion", this.startingGrid ? 2 : 1);
     this.delivery = (await this.ctx.storage.get<BattleDelivery>(
       "delivery",
@@ -181,7 +193,8 @@ export class BattleWebsocket extends DurableObject {
     this.abandonment =
       (await this.ctx.storage.get<typeof this.abandonment>("abandonment")) ??
       undefined;
-    if (needsDelivery(this.delivery))
+    this.delivery.automation = !!this.aiActor();
+    if (needsDelivery(this.delivery) || this.delivery.automation)
       await saveDelivery(this.ctx.storage, this.delivery);
   }
 
@@ -195,6 +208,7 @@ export class BattleWebsocket extends DurableObject {
       this.battleId = battleId;
       await this.setupBm();
       await this.resumeDelivery();
+      this.startAi();
     });
   }
 
@@ -288,28 +302,14 @@ export class BattleWebsocket extends DurableObject {
         await this.sendState(ws);
         return;
       }
-      if (parsed.type !== "castSpell")
+      if (parsed.type === "setAiControl") {
+        if (parsed.data.controlVersion !== this.messages.length)
+          throw new Error("The controls changed. Try again.");
+      } else if (parsed.type !== "castSpell")
         validateGridCommandIdentity(this.bm, parsed, owner);
-      const candidate = reconstructBattle(
-        this.battleId,
-        this.startingBuilds,
-        this.messages,
-        this.startingGrid,
-      );
+      const candidate = this.replayBattle();
       applyBattleCommand(candidate, parsed, owner);
-      // Store the schema-normalized payload so command identity ignores object key order.
-      const messages = [...this.messages, SuperJSON.stringify(parsed)];
-      const delivery: BattleDelivery = {
-        activity: true,
-        completion: candidate.isGameOver() ? "result" : "none",
-        failures: 0,
-      };
-      // Storage failure or a resolver exception discards the whole candidate.
-      // The accepted journal and its persistence wakeup commit together.
-      await saveDelivery(this.ctx.storage, delivery, messages);
-      this.bm = candidate;
-      this.messages = messages;
-      this.delivery = delivery;
+      await this.commitBattle(candidate, parsed);
     } catch (error) {
       diagnostic({
         event: "battle.command_rejected",
@@ -331,6 +331,33 @@ export class BattleWebsocket extends DurableObject {
     this.send(ws, { type: "castAccepted", data: { requestId } });
     await this.sendState();
     await this.resumeDelivery();
+    this.startAi();
+  }
+
+  private replayBattle() {
+    return reconstructBattle(
+      this.battleId,
+      this.startingBuilds,
+      this.messages,
+      this.startingGrid,
+    );
+  }
+
+  private async commitBattle(candidate: BM, entry: JournalEntry) {
+    // Store normalized commands so retry identity ignores object key order.
+    const messages = [...this.messages, SuperJSON.stringify(entry)];
+    const delivery: BattleDelivery = {
+      automation: !!this.aiActor(candidate),
+      activity: true,
+      completion: candidate.isGameOver() ? "result" : "none",
+      failures: 0,
+    };
+    // Publish the candidate only after its journal and wakeup commit together.
+    await saveDelivery(this.ctx.storage, delivery, messages);
+    this.bm = candidate;
+    this.messages = messages;
+    this.delivery = delivery;
+    this.cancelAi();
   }
 
   private async handleRead(
@@ -361,8 +388,10 @@ export class BattleWebsocket extends DurableObject {
     owner: string,
   ) {
     for (const raw of this.messages) {
-      const previous = messageSchema.parse(SuperJSON.parse(raw));
+      const previous = journalSchema.parse(SuperJSON.parse(raw));
       if (
+        previous.type === "aiAction" ||
+        previous.type === "aiFailure" ||
         !isBattleCommand(previous) ||
         previous.data.requestId !== command.data.requestId
       )
@@ -389,7 +418,12 @@ export class BattleWebsocket extends DurableObject {
   }
 
   async alarm() {
-    return this.exclusive(() => this.resumeDelivery());
+    return this.exclusive(async () => {
+      await this.resumeDelivery();
+      if (this.aiActor() && !this.abandonment)
+        await this.ctx.storage.setAlarm?.(Date.now() + 6000);
+      this.startAi();
+    });
   }
 
   async abandon(dungeonId: string, userId: string) {
@@ -407,6 +441,7 @@ export class BattleWebsocket extends DurableObject {
         await this.ctx.storage.setAlarm?.(Date.now() + 1000);
         await this.ctx.storage.put("abandonment", intent);
         this.abandonment = intent;
+        this.cancelAi();
       }
       return this.finishAbandonment();
     });
@@ -579,7 +614,143 @@ export class BattleWebsocket extends DurableObject {
       },
     } satisfies ResponseMessage;
     (recipient ? [recipient] : this.ctx.getWebSockets()).forEach((ws) => {
-      this.send(ws, state);
+      const owner = this.sessions.get(ws)?.id;
+      const data: BattleState = { ...state.data };
+      if (this.bm.grid) {
+        data.ai = {
+          version: this.messages.length,
+          choosing: this.aiRequest?.entityId,
+          controls: aiControls(this.bm, owner),
+        };
+      }
+      this.send(ws, { type: "state", data });
+    });
+  }
+
+  private aiActor(battle = this.bm) {
+    if (!battle?.grid?.activation || battle.isGameOver()) return;
+    const actor = battle.getEntityById(battle.grid.activation.entityId);
+    return actor?.aiControl?.enabled ? actor : undefined;
+  }
+
+  private cancelAi() {
+    const pending = this.aiRequest;
+    this.aiRequest = undefined;
+    pending?.controller.abort();
+  }
+
+  /** Start outside the serialization queue: a model wait must never block takeover. */
+  private startAi() {
+    if (this.abandonment || this.aiRequest) return;
+    const actor = this.aiActor();
+    if (!actor) return;
+    const request = {
+      controller: new AbortController(),
+      entityId: actor.id,
+      activationId: this.bm.grid!.activation!.id,
+      revision: this.bm.revision,
+      version: this.messages.length,
+    };
+    this.aiRequest = request;
+    const work = this.chooseAi(request, actor.aiControl!.prompt).catch(() => {
+      // A failed durable write leaves the original activation recoverable by the alarm.
+      if (this.aiRequest === request) this.cancelAi();
+      diagnostic({ event: "battle.ai_commit_failed", battleId: this.battleId });
+    });
+    this.ctx.waitUntil?.(work);
+  }
+
+  private async chooseAi(
+    request: NonNullable<BattleWebsocket["aiRequest"]>,
+    prompt: string,
+  ) {
+    await this.sendState();
+    const { signal } = request.controller;
+    const deadline = Date.now() + 5000;
+    const timer = setTimeout(
+      () =>
+        request.controller.abort(
+          new Error("Commander took longer than five seconds."),
+        ),
+      5000,
+    );
+    let rejectAbort: () => void = () => {};
+    const aborted = new Promise<never>((_, reject) => {
+      rejectAbort = () => reject(signal.reason);
+      signal.addEventListener("abort", rejectAbort, { once: true });
+      if (signal.aborted) rejectAbort();
+    });
+    let plan: ActionPlan | undefined;
+    let reason = "Commander could not choose an action.";
+    try {
+      // Extraction runs on a fresh reconstruction, never on the live combat state.
+      const snapshot = battleAiSnapshot(this.replayBattle());
+      plan = await Promise.race([
+        selectAiAction(snapshot, prompt, signal, this.env),
+        aborted,
+      ]);
+      if (Date.now() >= deadline) {
+        plan = undefined;
+        throw new Error("Commander took longer than five seconds.");
+      }
+    } catch (error) {
+      if (error instanceof Error) reason = error.message;
+    } finally {
+      clearTimeout(timer);
+      signal.removeEventListener("abort", rejectAbort);
+    }
+    await this.exclusive(async () => {
+      if (
+        this.aiRequest !== request ||
+        this.abandonment ||
+        this.messages.length !== request.version ||
+        this.bm.revision !== request.revision ||
+        this.bm.grid?.activation?.id !== request.activationId ||
+        this.aiActor()?.id !== request.entityId
+      )
+        return;
+      let candidate = this.replayBattle();
+      const actionEntry = (
+        selection: ActionPlan,
+        source: "model" | "fallback",
+      ): JournalEntry => ({
+        type: "aiAction",
+        data: {
+          entityId: request.entityId,
+          activationId: request.activationId,
+          revision: request.revision,
+          source,
+          plan: selection,
+        },
+      });
+      let entry: JournalEntry | undefined;
+      if (plan) {
+        try {
+          entry = actionEntry(plan, "model");
+          applyJournalEntry(candidate, entry);
+        } catch {
+          reason = "Commander chose an action that is not legal.";
+          entry = undefined;
+          candidate = this.replayBattle();
+        }
+      }
+      if (!entry) {
+        entry =
+          candidate.getEntityById(request.entityId) instanceof Character
+            ? {
+                type: "aiFailure",
+                data: {
+                  entityId: request.entityId,
+                  reason: `${reason} Manual control has resumed.`,
+                },
+              }
+            : actionEntry(deterministicPlan(candidate), "fallback");
+        applyJournalEntry(candidate, entry);
+      }
+      await this.commitBattle(candidate, entry);
+      await this.sendState();
+      await this.resumeDelivery();
+      this.startAi();
     });
   }
 

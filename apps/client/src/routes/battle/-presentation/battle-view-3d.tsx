@@ -18,6 +18,7 @@ import "./forest-battle.css";
 import "./encounter-battle.css";
 import { SpellGuidanceLegend, TacticalBoard } from "./tactical-board";
 import "./battle-workspace.css";
+import { BattleAiControls } from "../-components/battle-ai-controls";
 
 type Props = {
   participants: Entity[];
@@ -104,11 +105,13 @@ export default function BattleView3D({
         ? session.winner === "TEAM_A"
           ? "Victory"
           : "Defeat"
-        : session.pending
-          ? "Awaiting the server…"
-          : session.canChoose
-            ? "Your turn · prepare an action"
-            : "Watching · waiting for the active owner";
+        : session.battleState?.ai?.choosing
+          ? "Commander is choosing an action…"
+          : session.pending
+            ? "Awaiting the server…"
+            : session.canChoose
+              ? "Your turn · prepare an action"
+              : "Watching · waiting for the active owner";
   const inspector = (
     <BattleInspector
       entity={inspected}
@@ -147,6 +150,7 @@ export default function BattleView3D({
             </h1>
           </div>
           <div className="battle-visual-controls">
+            {session && <BattleAiControls session={session} />}
             {session && (
               <Dialog.Trigger asChild>
                 <button>Inspect</button>

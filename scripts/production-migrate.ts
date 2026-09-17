@@ -35,6 +35,8 @@ try {
       await applyMigration(sql, "../manual/20260914_shared_preparation.sql");
       await applyMigration(sql, "../manual/20260914_social.sql");
       await applyMigration(sql, "../manual/20260915_item_stacks.sql");
+      await applyMigration(sql, "../manual/20260916_consumable_use.sql");
+      await applyMigration(sql, "../manual/20260917_ai_control.sql");
     }
     console.log("Release SQL committed with transactional checksum history.");
   }

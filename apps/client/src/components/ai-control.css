@@ -1,0 +1,188 @@
+.battle-ai-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.battle-ai-trigger,
+.battle-ai-takeover {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.battle-ai-trigger[data-enabled],
+.battle-ai-takeover {
+  color: var(--rpg-gold);
+  border-color: var(--rpg-border-gold);
+}
+.battle-ai-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  background: color-mix(in srgb, var(--rpg-gold) 18%, transparent);
+  font-size: 10px;
+}
+.battle-ai-dialog {
+  width: min(480px, calc(100vw - 24px));
+  gap: 0;
+  padding: 0;
+}
+.ai-dialog-heading {
+  padding: 24px 24px 20px;
+}
+.ai-dialog-eyebrow {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--rpg-gold);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.ai-dialog-heading h2 {
+  margin-bottom: 10px;
+}
+.ai-party-settings > div {
+  border-top: 1px solid var(--rpg-border-bronze);
+  padding: 18px 24px;
+}
+.ai-settings {
+  min-width: 0;
+}
+.ai-settings-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.ai-settings-heading > strong {
+  min-width: 0;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+.ai-control-mode {
+  display: flex;
+  flex: none;
+  padding: 3px;
+  border: 1px solid var(--rpg-border-bronze);
+  background: var(--rpg-bg-0);
+}
+.ai-control-mode button {
+  min-width: 58px;
+  min-height: 32px;
+  border: 1px solid transparent;
+  padding: 5px 10px;
+  color: var(--rpg-text-muted);
+  font-size: 12px;
+  cursor: pointer;
+}
+.ai-control-mode button[aria-pressed="true"] {
+  border-color: var(--rpg-border-gold);
+  background: color-mix(in srgb, var(--rpg-gold) 14%, transparent);
+  color: var(--rpg-gold);
+}
+.ai-control-mode button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+.ai-control-mode button:focus-visible,
+.ai-settings-details summary:focus-visible {
+  outline: 2px solid var(--rpg-gold);
+  outline-offset: 3px;
+}
+.ai-settings-details {
+  margin-top: 10px;
+}
+.ai-settings-details summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  min-height: 32px;
+  list-style: none;
+  color: var(--rpg-text-muted);
+  font-size: 12px;
+  cursor: pointer;
+}
+.ai-settings-details summary::-webkit-details-marker {
+  display: none;
+}
+.ai-settings-details summary > span {
+  margin-left: 6px;
+  color: var(--rpg-gold);
+  font-size: 10px;
+}
+.ai-settings-details[open] summary > svg {
+  transform: rotate(180deg);
+}
+.ai-settings-fields {
+  display: grid;
+  gap: 10px;
+  padding-top: 12px;
+  font-size: 13px;
+}
+.ai-settings-fields textarea {
+  width: 100%;
+  min-height: 96px;
+  padding: 10px 12px;
+  resize: vertical;
+  border: 1px solid var(--rpg-border-bronze);
+  background: var(--rpg-bg-0);
+  color: var(--rpg-text-main);
+  line-height: 1.5;
+}
+.ai-settings-fields textarea:focus {
+  outline: 1px solid var(--rpg-gold);
+  border-color: var(--rpg-gold);
+}
+.ai-settings-fields > p,
+.ai-dialog-footnote {
+  color: var(--rpg-text-muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.ai-settings-fields > button {
+  justify-self: start;
+}
+.ai-supplies-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+}
+.ai-supplies-option input {
+  accent-color: var(--rpg-gold);
+}
+.ai-dialog-footnote {
+  padding: 16px 24px;
+  border-top: 1px solid var(--rpg-border-bronze);
+  background: color-mix(in srgb, var(--rpg-gold) 3%, transparent);
+}
+.ai-control-notice {
+  flex-basis: 100%;
+  max-width: 360px;
+  margin-top: 6px;
+  color: var(--rpg-danger);
+  font-size: 12px;
+  line-height: 1.5;
+}
+@media (max-width: 600px) {
+  .ai-dialog-heading {
+    padding: 22px 18px 18px;
+  }
+  .ai-party-settings > div {
+    padding: 16px 18px;
+  }
+  .ai-dialog-footnote {
+    padding: 14px 18px;
+  }
+  .ai-control-mode button {
+    min-height: 38px;
+  }
+  .ai-settings-details summary {
+    min-height: 40px;
+  }
+}
